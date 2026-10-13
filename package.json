@@ -1,0 +1,11 @@
+{
+  "name": "mighty-mini-missions",
+  "private": true,
+  "description": "Netlify Functions for progress sync and the weekly parent report. The app itself is plain static files.",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.4"
+  }
+}

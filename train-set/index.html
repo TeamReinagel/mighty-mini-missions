@@ -199,6 +199,7 @@
   </div>
 </div>
 
+<script src="../progress.js"></script>
 <script>
 (() => {
 'use strict';
@@ -979,6 +980,14 @@ function onStation(st) {
     sfx.chime();
     burst(st.x + 0.5, st.y + 0.5);
     say(`Yay! You found ${targetLabel()}!`);
+    // Passing other stations on the way isn't a wrong answer, so finds count as practice only.
+    const ask = state.settings.ask;
+    window.MightyProgress?.log({
+      game: 'train-set',
+      skill: ask === 'color' ? 'Colors' : ask === 'shape' ? 'Shapes' : 'Colors + shapes',
+      item: targetLabel().replace(/^the /, ''),
+      correct: null
+    });
   } else {
     sfx.ding();
     say(itemName(st) + '!');

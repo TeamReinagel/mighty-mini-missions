@@ -108,9 +108,15 @@
     return d;
   }
   let data = load();
+  // Open on the child picked on the Mighty Mini Missions home screen when they have a player here.
+  const hubKid = window.MightyProgress?.currentKid().name;
+  if (hubKid && data.players[hubKid]) data.current = hubKid;
   const P = () => data.players[data.current];
   function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) { /* storage full or blocked */ } }
   const level = () => LEVELS[P().level];
+  function logMoney(skill, correct, extra) {
+    window.MightyProgress?.log({ game: "coin-record-run", skill, item: level().name, correct, player: data.current, extra });
+  }
   const SUMMIT = G.champion.level;
   const ENDLESS = LEVELS.findIndex((L) => L.endless);
   const goalFor = (L) => L.inARow || G.unlockPerfectCounts;
@@ -1206,6 +1212,7 @@
     if (n === count.total) {
       count.locked = true;
       const perfect = count.attempts === 0;
+      logMoney("Counting money", perfect, { amount: fmt(count.total), tries: count.attempts + 1 });
       const pending = [];
       if (perfect) {
         p.perfect[p.level] = (p.perfect[p.level] || 0) + 1;
@@ -1482,6 +1489,7 @@
     const n = parseInt(sort.askEntry, 10);
     if (Number.isNaN(n)) return;
     if (n === sort.tithe) {
+      logMoney("Finding the tithe (counting tens)", sort.askAttempts === 0, { amount: fmt(sort.tithe) });
       Sfx.ching();
       $("sortHelp").textContent = `Yes! ${fmt(sort.tithe)} goes to God.`;
       sort.phase = "tithe";
@@ -2008,6 +2016,7 @@
     if (Number.isNaN(n)) return;
     const change = purseTotal(pay.counter) - pay.item.price;
     if (n === change) {
+      logMoney("Making change", pay.changeAttempts === 0, { amount: fmt(change) });
       mergeInto(pay.wallet, makeChange(change));
       return finishPurchase(change);
     }

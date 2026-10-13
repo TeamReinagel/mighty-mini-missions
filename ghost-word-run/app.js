@@ -627,6 +627,13 @@
     const selectedIndex = Math.min(row.choices.length - 1, Math.floor(state.playerX * row.choices.length));
     const selectedWord = row.choices[selectedIndex];
     const correct = selectedWord === row.target;
+    window.MightyProgress?.log({
+      game: "ghost-word-run",
+      skill: `Sight words: ${state.level.name} (${state.level.description.split(" - ")[0]})`,
+      item: row.target,
+      correct,
+      extra: correct ? undefined : { picked: selectedWord }
+    });
     const selectedGate = row.element.children[selectedIndex];
     const candyIdx = Number(selectedGate?.dataset.candyIdx || 0);
 
@@ -841,6 +848,12 @@
 
     visit.busy = true;
     visit.knocks += 1;
+    window.MightyProgress?.log({
+      game: "ghost-word-run",
+      skill: "Rhyming (Trick-or-Treat Street)",
+      item: `${visit.prompt} / ${visit.target}`,
+      correct: visit.firstTry
+    });
     speak(`${SPOKEN_AS[visit.prompt] || visit.prompt}, ${SPOKEN_AS[visit.target] || visit.target}!`);
     house.classList.add("opened");
     makeSparkBurst(house);

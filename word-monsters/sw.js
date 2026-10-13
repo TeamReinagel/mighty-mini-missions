@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "wm-v31";
+const VERSION = "wm-v32";
 const PLACES = ["meadow", "woods", "cave", "castle", "garden", "reef", "lagoon"];
 const SPRITES = [];
 for (let s = 1; s <= 10; s++) for (let st = 1; st <= 3; st++) SPRITES.push(`images/monsters/m${s}-${st}b.webp`, `images/monsters/m${s}-${st}f.webp`);
@@ -8,6 +8,7 @@ const CORE = [
   "index.html",
   "styles.css",
   "app.js",
+  "../progress.js",
   "words.js",
   "monsters.js",
   "map.js",

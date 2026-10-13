@@ -290,11 +290,19 @@
       const n = Number(b.dataset.n);
       if (n === current.answer) {
         busy = true;
+        window.MightyProgress?.log({
+          game: "monster-maker",
+          skill: `${current.skill || "Math"} (${C.LEVELS[spec.level].label})`,
+          item: current.record || current.prompt,
+          correct: !current.misses,
+          extra: current.misses ? { wrongTaps: current.misses } : undefined
+        });
         b.classList.add("right");
         Sfx.right();
         helperReact("cheer");
         await onRight();
       } else {
+        current.misses = (current.misses || 0) + 1;
         b.classList.add("wrong");
         Sfx.boing();
         helperReact("hmm");
@@ -432,6 +440,14 @@
       };
       $("btn-next").onclick = () => {
         spec.feelingStory = sc.text;
+        // Feelings have no wrong answer, so this counts as practice only.
+        window.MightyProgress?.log({
+          game: "monster-maker",
+          skill: "Naming feelings",
+          item: info.name,
+          correct: null,
+          extra: { story: sc.text, fitsStory: fits }
+        });
         nextStep();
       };
       say(`${lead} ${info.tip} ${info.ask}`);

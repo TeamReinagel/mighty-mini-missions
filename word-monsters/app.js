@@ -722,6 +722,13 @@
     if (wrong === 0) r.firstTry++;
     const after = stageOf(r.pts);
     save();
+    window.MightyProgress?.log({
+      game: "word-monsters",
+      skill: trip.region.subtitle,
+      item: e.label || e.w,
+      correct: wrong === 0,
+      extra: { wrongTaps: wrong }
+    });
     trip.results[trip.i] = { e, before, after, award };
     btn.classList.add("right");
 

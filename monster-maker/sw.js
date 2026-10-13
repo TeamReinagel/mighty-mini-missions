@@ -1,10 +1,11 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "mmm-v5";
+const VERSION = "mmm-v6";
 const CORE = [
   "./",
   "index.html",
   "styles.css",
   "app.js",
+  "../progress.js",
   "monster.js",
   "content.js",
   "manifest.webmanifest",

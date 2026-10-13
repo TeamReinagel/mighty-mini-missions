@@ -1,10 +1,11 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "crr-v26";
+const VERSION = "crr-v27";
 const CORE = [
   "./",
   "index.html",
   "styles.css",
   "app.js",
+  "../progress.js",
   "coins.js",
   "jars.js",
   "store.js",

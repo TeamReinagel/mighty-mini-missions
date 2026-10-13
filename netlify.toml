@@ -1,8 +1,19 @@
 [build]
   publish = "."
 
-# Keep this as a static deploy. The local `/server` folder is for optional
+# The app is static files. `netlify/functions` adds progress sync and the weekly
+# Slack report (see README). The local `/server` folder is for optional
 # localhost image generation and is not required on Netlify.
+
+[functions]
+  directory = "netlify/functions"
+
+# Function source sits inside the publish folder; don't serve it as static files.
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
 
 [[headers]]
   for = "/word-monsters/sw.js"

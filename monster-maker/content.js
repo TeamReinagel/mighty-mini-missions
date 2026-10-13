@@ -49,47 +49,50 @@
 
   // ---------------------------------------------------------------- generators by level
 
+  // The skill name feeds the weekly progress report.
+  const tag = (skill, gen) => (a, p) => { const prob = gen(a, p); return prob && { skill, ...prob }; };
+
   const GEN = {
     prek: [
-      (a, p) => ({ visual: { type: "items", n: a, kind: p.id }, prompt: `Count the ${p.noun}!`, say: `Count the ${p.noun}. How many ${p.noun}?`, rec: `Counted ${a}` }),
-      (a) => ({ visual: { type: "dice", n: a }, prompt: "How many dots?", say: "How many dots?", rec: `${a} dot${a === 1 ? "" : "s"}` }),
-      (a, p) => a < 2 ? null : ({ visual: { type: "plus", a: a - 1, b: 1, kind: p.id }, prompt: "One more!", say: `${a - 1}. And one more! How many now?`, rec: `${a - 1} and 1 more = ${a}` })
+      tag("Counting objects", (a, p) => ({ visual: { type: "items", n: a, kind: p.id }, prompt: `Count the ${p.noun}!`, say: `Count the ${p.noun}. How many ${p.noun}?`, rec: `Counted ${a}` })),
+      tag("Subitizing (dice dots)", (a) => ({ visual: { type: "dice", n: a }, prompt: "How many dots?", say: "How many dots?", rec: `${a} dot${a === 1 ? "" : "s"}` })),
+      tag("One more", (a, p) => a < 2 ? null : ({ visual: { type: "plus", a: a - 1, b: 1, kind: p.id }, prompt: "One more!", say: `${a - 1}. And one more! How many now?`, rec: `${a - 1} and 1 more = ${a}` }))
     ],
     k: [
-      (a, p) => a < 4 ? null : ({ visual: { type: "items", n: a, kind: p.id }, prompt: `Count the ${p.noun}!`, say: `Count the ${p.noun}. How many?`, rec: `Counted ${a}` }),
-      (a) => ({ visual: { type: "tenframe", n: a }, prompt: "How many dots in the ten frame?", say: "How many dots are in the ten frame?", rec: `Ten frame: ${a}` }),
-      (a, p) => {
+      tag("Counting objects", (a, p) => a < 4 ? null : ({ visual: { type: "items", n: a, kind: p.id }, prompt: `Count the ${p.noun}!`, say: `Count the ${p.noun}. How many?`, rec: `Counted ${a}` })),
+      tag("Ten frames", (a) => ({ visual: { type: "tenframe", n: a }, prompt: "How many dots in the ten frame?", say: "How many dots are in the ten frame?", rec: `Ten frame: ${a}` })),
+      tag("Addition within 10", (a, p) => {
         if (a < 2) return null;
         const b = ri(1, a - 1);
         return { visual: { type: "plus", a: b, b: a - b, kind: p.id }, eq: `${b} + ${a - b} = ?`, prompt: "Put them together!", say: `${b} plus ${a - b}. How many in all?` };
-      },
-      (a, p) => {
+      }),
+      tag("Subtraction within 10", (a, p) => {
         const b = ri(1, Math.min(4, 10 - a));
         if (b < 1) return null;
         const c = a + b;
         return { visual: { type: "minus", total: c, gone: b, kind: p.id }, eq: `${c} \u2212 ${b} = ?`, prompt: `${b} ran away!`, say: `${c} ${p.noun}. ${b} ran away. How many are left?` };
-      },
-      (a) => a < 4 ? null : ({ eq: `${a - 3}, ${a - 2}, ${a - 1}, ?`, prompt: "What comes next?", say: `What number comes next? ${a - 3}, ${a - 2}, ${a - 1}...` })
+      }),
+      tag("What number comes next", (a) => a < 4 ? null : ({ eq: `${a - 3}, ${a - 2}, ${a - 1}, ?`, prompt: "What comes next?", say: `What number comes next? ${a - 3}, ${a - 2}, ${a - 1}...` }))
     ],
     g1: [
-      (a) => { const b = ri(1, a - 1); return { eq: `${b} + ${a - b} = ?` }; },
-      (a) => { const c = ri(a + 1, Math.min(20, a + 10)); return { eq: `${c} \u2212 ${c - a} = ?` }; },
-      (a) => { const b = ri(1, Math.min(9, 20 - a)); return { eq: `${b} + ? = ${a + b}`, prompt: "What's missing?" }; },
-      (a) => a > 9 ? null : ({ eq: `${10 - a} + ? = 10`, prompt: "Make 10!", visual: { type: "tenframe", n: 10 - a } }),
-      (a) => a % 2 || a < 4 ? null : ({ eq: `${a / 2} + ${a / 2} = ?`, prompt: "Doubles!" }),
-      (a) => {
+      tag("Addition within 20", (a) => { const b = ri(1, a - 1); return { eq: `${b} + ${a - b} = ?` }; }),
+      tag("Subtraction within 20", (a) => { const c = ri(a + 1, Math.min(20, a + 10)); return { eq: `${c} \u2212 ${c - a} = ?` }; }),
+      tag("Missing addend", (a) => { const b = ri(1, Math.min(9, 20 - a)); return { eq: `${b} + ? = ${a + b}`, prompt: "What's missing?" }; }),
+      tag("Make 10", (a) => a > 9 ? null : ({ eq: `${10 - a} + ? = 10`, prompt: "Make 10!", visual: { type: "tenframe", n: 10 - a } })),
+      tag("Doubles", (a) => a % 2 || a < 4 ? null : ({ eq: `${a / 2} + ${a / 2} = ?`, prompt: "Doubles!" })),
+      tag("Addition word problems", (a) => {
         const b = ri(1, a - 1);
         const prompt = `The monster has ${b} cookies. It gets ${a - b} more. How many cookies now?`;
         return { story: prompt, say: prompt, rec: `${b} + ${a - b} = ${a}` };
-      },
-      (a) => {
+      }),
+      tag("Subtraction word problems", (a) => {
         const b = ri(2, Math.min(9, 20 - a));
         const prompt = `${a + b} bugs sit on a log. ${b} fly away. How many bugs are left?`;
         return { story: prompt, say: prompt, rec: `${a + b} \u2212 ${b} = ${a}` };
-      }
+      })
     ],
     g2: [
-      (a) => {
+      tag("Two-digit subtraction with regrouping", (a) => {
         let b, c;
         for (let t = 0; t < 40; t++) {
           b = ri(12, 88 - a);
@@ -97,28 +100,28 @@
           if (c % 10 < b % 10) break;
         }
         return { eq: `${c} \u2212 ${b} = ?` };
-      },
-      (a) => {
+      }),
+      tag("Adding three numbers", (a) => {
         if (a < 3) return null;
         const x = ri(1, a - 2);
         const y = ri(1, a - x - 1);
         return { eq: `${x} + ${y} + ${a - x - y} = ?` };
-      },
-      (a) => {
+      }),
+      tag("Place value (tens)", (a) => {
         if (a > 9) return null;
         const ones = ri(1, 9);
         const n = a * 10 + ones;
         return { visual: { type: "base10", tens: a, ones }, prompt: `How many tens are in ${n}?`, say: `How many tens are in ${n}?`, rec: `${n} = ${a} tens ${ones} ones` };
-      },
-      (a) => a % 2 || a < 8 ? null : ({ eq: `${a - 6}, ${a - 4}, ${a - 2}, ?`, prompt: "Skip count by 2s!", say: `Skip count by twos. ${a - 6}, ${a - 4}, ${a - 2}... what comes next?` }),
-      (a) => {
+      }),
+      tag("Skip counting by 2s", (a) => a % 2 || a < 8 ? null : ({ eq: `${a - 6}, ${a - 4}, ${a - 2}, ?`, prompt: "Skip count by 2s!", say: `Skip count by twos. ${a - 6}, ${a - 4}, ${a - 2}... what comes next?` })),
+      tag("Arrays (early multiplication)", (a) => {
         const opts = [];
         for (let r = 2; r <= 4; r++) if (a % r === 0 && a / r >= 2 && a / r <= 6) opts.push(r);
         if (!opts.length) return null;
         const r = pick(opts);
         return { visual: { type: "array", r, c: a / r }, prompt: `${r} rows of ${a / r}. How many in all?`, say: `${r} rows of ${a / r}. How many in all?`, rec: `${r} rows of ${a / r} = ${a}` };
-      },
-      (a) => {
+      }),
+      tag("Counting coins", (a) => {
         const dimes = a >= 10 ? 1 : 0;
         let rem = a - dimes * 10;
         const nickels = rem >= 5 ? 1 : 0;
@@ -126,9 +129,9 @@
         const coins = [...Array(dimes).fill(10), ...Array(nickels).fill(5), ...Array(rem).fill(1)];
         if (coins.length < 2 || coins.length > 6) return null;
         return { visual: { type: "coins", coins }, prompt: "How many cents?", say: "Add up the coins. How many cents?", rec: `${coins.join("\u00a2 + ")}\u00a2 = ${a}\u00a2` };
-      },
-      (a) => { const c = ri(2, 9) * 10; return { eq: `${c} \u2212 ? = ${c - a}`, prompt: "What's missing?" }; },
-      (a) => {
+      }),
+      tag("Missing number subtraction", (a) => { const c = ri(2, 9) * 10; return { eq: `${c} \u2212 ? = ${c - a}`, prompt: "What's missing?" }; }),
+      tag("Two-digit subtraction word problems", (a) => {
         let b, c;
         for (let t = 0; t < 40; t++) { b = ri(15, 80); c = b + a; if (c % 10 < b % 10 && c < 100) break; }
         const prompt = pick([
@@ -136,7 +139,7 @@
           `There were ${c} kids at the park. ${b} went home. How many are still playing?`
         ]);
         return { story: prompt, say: prompt, rec: `${c} \u2212 ${b} = ${a}` };
-      }
+      })
     ]
   };
 
@@ -191,7 +194,7 @@
     else if (!s.sides) { q = `How many corners does ${name === "oval" ? "an" : "a"} ${name} have?`; answer = 0; }
     else if (level === "g2" && Math.random() < 0.5) { q = `How many vertices (corners) does a ${name} have?`; answer = s.corners; }
     else { q = `How many sides does a ${name} have?`; answer = s.sides; }
-    return { prompt: q, say: q, answer, choices: makeChoices(answer, 4, 0, 8), record: `${q} ${answer}` };
+    return { skill: "Shape attributes (sides, corners)", prompt: q, say: q, answer, choices: makeChoices(answer, 4, 0, 8), record: `${q} ${answer}` };
   }
 
   // ---------------------------------------------------------------- feelings

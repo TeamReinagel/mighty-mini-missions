@@ -1259,6 +1259,13 @@ async function main() {
       note: completionNoteInput.value.trim()
     };
     saveCompletion(state.activeProfileId, completion);
+    window.MightyProgress?.log({
+      game: "missions",
+      skill: `Missions: ${current.raw.category}`,
+      item: completion.missionTitle,
+      correct: null,
+      extra: { rating: completion.rating, difficulty: current.raw.difficulty, note: completion.note.slice(0, 500) || undefined }
+    });
     closeCompletionModalHandler();
     showRewardReveal(current.raw, current.rendered);
   });
