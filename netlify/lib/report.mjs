@@ -329,14 +329,55 @@ const loadState = async (store) => (await store.get(STATE_KEY, { type: "json" })
  * Where each child is right now, for Joyce's skills: practice and observations since the last
  * report, next milestones, and the last report's text. Read-only.
  */
+/** Day-by-day game practice per child (local days, newest first), for "what did they do today?". */
+function dailyActivity(events, tz) {
+  const dayOf = (t) => new Date(t).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: tz });
+  const byKid = new Map();
+  for (const e of events) {
+    const kid = byKid.get(e.kid) || { lastPlayed: null, days: new Map() };
+    kid.lastPlayed = e.t;
+    const day = kid.days.get(dayOf(e.t)) || new Map();
+    const key = `${GAME_NAMES[e.game] || e.game}|${e.skill}`;
+    const row = day.get(key) || { game: GAME_NAMES[e.game] || e.game, skill: e.skill, tries: 0, graded: 0, right: 0, items: new Set() };
+    row.tries += 1;
+    if (e.correct !== null) {
+      row.graded += 1;
+      if (e.correct) row.right += 1;
+    }
+    if (row.items.size < 12) row.items.add(e.item);
+    day.set(key, row);
+    kid.days.set(dayOf(e.t), day);
+    byKid.set(e.kid, kid);
+  }
+  const out = new Map();
+  for (const [kidId, kid] of byKid) {
+    out.set(kidId, {
+      lastPlayed: new Date(kid.lastPlayed).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit", timeZone: tz }),
+      days: [...kid.days].reverse().map(([day, rows]) => ({
+        day,
+        practice: [...rows.values()].map((r) => ({
+          game: r.game,
+          skill: r.skill,
+          tries: r.tries,
+          firstTryRight: r.graded ? `${r.right} of ${r.graded}` : "practice only",
+          examples: [...r.items]
+        }))
+      }))
+    });
+  }
+  return out;
+}
+
 export async function buildKidContext({ store, env = process.env, now = new Date() }) {
   const tz = env.REPORT_TIMEZONE || "America/Chicago";
   const state = await loadState(store);
   const since = state.lastReportAt ? new Date(state.lastReportAt) : new Date(now.getTime() - 7 * DAY_MS);
   const { summaries } = await collectWeek({ store, state, since, now, tz });
+  const activity = dailyActivity(await loadEvents(store, new Date(now.getTime() - 7 * DAY_MS), now), tz);
   const { blobs } = await store.list({ prefix: "reports/" });
   const lastKey = blobs.map((b) => b.key).sort().pop();
   const lastReport = lastKey ? (await store.get(lastKey, { type: "json" }))?.text || "" : "";
+  const noPlay = { lastPlayed: "not in the last 7 days", days: [] };
   return {
     since: since.toISOString(),
     today: now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: tz }),
@@ -344,9 +385,11 @@ export async function buildKidContext({ store, env = process.env, now = new Date
       name: s.name,
       profile: { age: s.age, whereTheyAre: s.whereTheyAre, note: s.note },
       progress: s.week,
+      activity: activity.get(s.kidId) || noPlay,
       observations: s.observations,
       milestones: { metSoFar: s.milestonesMetSoFar, nextUp: s.guide.next.map((m) => `${m.id} (${m.area}): ${m.text}`) }
     })),
+    unassignedDevice: activity.get("unknown") || null,
     lastReport: lastReport.slice(0, 6000)
   };
 }

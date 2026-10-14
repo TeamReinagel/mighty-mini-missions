@@ -50,6 +50,7 @@ Joyce replies in a thread to confirm. Family chatter in the channel that isn't a
 ### Asking Joyce
 Mention her in the channel (`@Joyce`) or message her directly:
 - "What should we do today?" or "Any ideas for Gabi this morning?" gives one short activity per child, based on their next milestones, what's been tricky in the games, and what you've noticed.
+- "What did the kids work on today?" or "Did Max play this week?" looks back at the games: who played, which skills, how it went, and when each child last played. It answers from synced game data only, so play on an offline tablet shows up once it's back online.
 - "What have you learned?" lists her lessons and abilities. "Forget the worksheet lesson" or "stop the morning posts" undoes one.
 
 ### How Joyce learns (always with your OK)

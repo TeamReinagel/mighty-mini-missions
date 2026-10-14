@@ -44,7 +44,7 @@ You read one new Slack message from the family (with the conversation before it,
 
 What you can do:
 1. observations: save things a family member noticed a child do or say in everyday life that show learning, growth, or a struggle (for example "Max counted coins on his own"). One entry per child-moment, using child ids. Plans, logistics, and chit-chat are not observations.
-2. useSkill: when the message asks for something one of your abilities does, pick its id and restate the request.
+2. useSkill: when the message asks for something one of your abilities does, pick its id and restate the request (including the time period, like "today"). Match the purpose: questions about what already happened ("what did the kids work on today?", "did they play?", "how did Max do this week?") use the look-back ability, never the ideas ability. If someone pushes back on your last answer ("not ideas, I want to know..."), use the conversation to work out what they wanted and do that.
 3. lesson: when someone corrects you, tells you how they want you to work or write, or shares a lasting fact about a child that should change your future suggestions ("Gabi hates worksheets", "skip screen ideas before noon", "that milestone wasn't really met"). A lesson is one short, specific instruction to yourself. A one-time moment is an observation, not a lesson. Skip lessons you already have.
 4. newSkill: when someone wants something useful that none of your abilities covers but that you could do by reading your data sources and writing a reply. Also use it to change an ability: set "replaces" to its id and give the full new version (for example, "send me the activity every morning" = the "today" ability with schedule "weekday-morning").
 5. codeChange: when the request needs more than reading data and writing: changes to the games or app, tracking something new, new connections to other services. Describe it clearly for a developer.
@@ -103,9 +103,11 @@ function pickData(ctx, sources) {
       name: k.name,
       ...(want.has("profiles") ? { profile: k.profile } : {}),
       ...(want.has("progress") ? { progress: k.progress } : {}),
+      ...(want.has("activity") ? { activity: k.activity } : {}),
       ...(want.has("observations") ? { observations: k.observations } : {}),
       ...(want.has("milestones") ? { milestones: k.milestones } : {})
     })),
+    ...(want.has("activity") && ctx.unassignedDevice ? { playedWithNoChildPicked: ctx.unassignedDevice } : {}),
     ...(want.has("lastReport") ? { lastReport: ctx.lastReport } : {})
   };
 }
@@ -116,7 +118,7 @@ export async function runSkill({ skill, request, mem, store, env, fetchImpl, ctx
   return chatText({
     env,
     fetchImpl,
-    system: `${VOICE}\n${lessons ? `\n${lessons}\n` : ""}\nYou're using your ability "${skill.name}".\nInstructions: ${skill.instructions}\n\nOnly use the data you're given; never invent numbers, words, skills, or milestones. ${SLACK_FORMAT}`,
+    system: `${VOICE}\n${lessons ? `\n${lessons}\n` : ""}\nYou're using your ability "${skill.name}".\nInstructions: ${skill.instructions}\n\nOnly use the data you're given; never invent numbers, words, skills, or milestones. Never say a child practiced, played, or made progress unless the data shows it; if a child has no game practice, don't mention game practice for them. ${SLACK_FORMAT}`,
     user: `Request: ${request || "(scheduled run; nobody asked, so write it for Stephanie)"}\n\nData (JSON):\n${JSON.stringify(pickData(context, skill.data))}`
   });
 }
@@ -336,17 +338,18 @@ async function readable(text, namer) {
 }
 
 /**
- * The conversation before this message: the thread it's in, or recent messages in a direct
- * message with Joyce. Plain channel messages get no history, so family chatter isn't read.
+ * The conversation before this message: the thread it's in, recent messages in a direct message
+ * with Joyce, or (only when someone mentions her in the channel) the last few channel messages.
+ * Other channel chatter isn't read.
  */
-async function conversation({ event, appId, joyceUserId, isDirect, env, fetchImpl, namer }) {
+async function conversation({ event, appId, joyceUserId, isDirect, mentionsJoyce, env, fetchImpl, namer }) {
   const inThread = event.thread_ts && event.thread_ts !== event.ts;
   let messages = [];
   if (inThread) {
     const data = await slackGet("conversations.replies", { channel: event.channel, ts: event.thread_ts, limit: "40" }, { env, fetchImpl });
     messages = data.messages || [];
-  } else if (isDirect) {
-    const data = await slackGet("conversations.history", { channel: event.channel, latest: event.ts, limit: "12" }, { env, fetchImpl });
+  } else if (isDirect || mentionsJoyce) {
+    const data = await slackGet("conversations.history", { channel: event.channel, latest: event.ts, limit: isDirect ? "12" : "6" }, { env, fetchImpl });
     messages = (data.messages || []).reverse();
   }
   const isJoyce = (m) => Boolean(m.bot_id) && (!appId || m.app_id === appId || m.bot_profile?.app_id === appId) || m.user === joyceUserId;
@@ -419,7 +422,8 @@ export async function handleMessage({ store, env = process.env, fetchImpl = fetc
   if (!env.OPENAI_API_KEY) return handleWithoutAI({ store, env, fetchImpl, event: { ...event, text }, eventId, where, isDirect });
 
   const mem = await loadMemory(store);
-  const convo = await conversation({ event, appId, joyceUserId, isDirect, env, fetchImpl, namer });
+  const mentionsJoyce = /@Joyce\b|\bJoyce\b/i.test(text);
+  const convo = await conversation({ event, appId, joyceUserId, isDirect, mentionsJoyce, env, fetchImpl, namer });
   const speaker = await namer(event.user);
   const role = approverIds(env).includes(event.user) ? " (approves what you learn)" : "";
   const context = [
