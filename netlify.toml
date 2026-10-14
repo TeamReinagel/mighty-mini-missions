@@ -36,6 +36,11 @@
     Cache-Control = "no-cache"
 
 [[headers]]
+  for = "/otter-slide/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
   for = "/missions.json"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"

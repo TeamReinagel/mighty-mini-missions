@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Otter Slide">
+<meta name="theme-color" content="#7fd6e0">
+<title>Otter Slide</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preload" href="fonts/andika-bold-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div id="slots" aria-label="Words read this round"></div>
+    <div class="hud-right">
+      <button class="hud" id="sayBtn" aria-label="Say it again"><img src="art/icon_speaker.png" alt=""></button>
+      <button class="hud" id="chestBtn" aria-label="Pip's treasures"><img src="art/icon_chest.png" alt=""></button>
+      <button class="hud small" id="gear" aria-label="Grown-up settings (hold)"><img src="art/icon_gear.png" alt=""><i class="fill"></i></button>
+    </div>
+  </header>
+  <main id="stage">
+    <div id="track"><div id="trail"></div><div id="pads"></div></div>
+    <button id="pip" aria-label="Pip the otter. Slide her across the lily pads."><img src="art/pip_sit.png" alt=""></button>
+    <div id="choices"></div>
+  </main>
+</div>
+
+<div id="fx" aria-hidden="true"></div>
+
+<div class="overlay show" id="splash">
+  <h1 id="title">Otter Slide</h1>
+  <button id="startBtn" class="big-btn" disabled aria-label="Play"><img src="art/icon_play.png" alt=""></button>
+</div>
+
+<div class="overlay" id="yay">
+  <h1>Splash party!</h1>
+  <div id="yayRow"><img id="yayPip" src="art/pip_cheer.png" alt=""><div id="yayWords"></div></div>
+  <div class="yay-buttons">
+    <button class="big-btn" id="againBtn" aria-label="Play again"><img src="art/icon_play.png" alt=""></button>
+    <button class="big-btn" id="yayChestBtn" aria-label="Pip's treasures"><img src="art/icon_chest.png" alt=""></button>
+  </div>
+</div>
+
+<div class="overlay" id="chest">
+  <div class="chest-top">
+    <button class="hud" id="chestBack" aria-label="Back"><img src="art/icon_play.png" alt="" class="flip"></button>
+    <div id="chestCount"></div>
+    <div id="friendRow"></div>
+  </div>
+  <div id="chestGrid"></div>
+</div>
+
+<div class="overlay" id="parent">
+  <div class="panel">
+    <h2>Grown-up settings</h2>
+    <div class="row"><div class="label">Voice</div>
+      <div class="seg" data-setting="voice"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
+    <div class="row"><div class="label">Sound effects</div>
+      <div class="seg" data-setting="sound"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
+    <div class="row"><div class="label">Letter sounds while Pip slides</div>
+      <div class="seg" data-setting="help"><button data-v="auto">Fade as she learns</button><button data-v="always">Always</button><button data-v="never">Off (she says them)</button></div></div>
+    <div class="row"><div class="label">Pictures to choose from</div>
+      <div class="seg" data-setting="pics"><button data-v="auto">Auto</button><button data-v="2">2</button><button data-v="3">3</button></div></div>
+    <div class="row"><div class="label">Words</div>
+      <div class="seg" data-setting="words"><button data-v="auto">Add as she learns</button><button data-v="all">All 39 now</button></div></div>
+    <div class="row"><div class="label">Sound check (tap to hear each letter sound)</div>
+      <div id="soundCheck"></div></div>
+    <div class="row"><div class="label">Progress on this tablet</div>
+      <div id="status"></div>
+      <p class="tip" id="statusNote"></p>
+    </div>
+    <div class="row seg">
+      <button class="action" id="fullBtn">Full screen</button>
+      <button class="action danger" id="resetBtn">Reset progress</button>
+    </div>
+    <p class="tip">
+      <b>How to play:</b> each word sits on three lily pads, one letter per pad. Gabi slides Pip across with her finger (or taps Pip to watch her slide), and each pad says its sound as Pip passes.
+      Then pictures float up in bubbles and she taps the word she read. Five words make a splash party with an off-screen idea. Every word she reads goes in Pip's treasure chest, and a gold star means three right in a row.<br><br>
+      <b>How it adapts:</b> it starts with short-a words that begin with stretchy sounds (fan, map, van), then adds a word each time she knows nearly all of the current ones, moving through short a, o, i, u, then e.
+      Right answers make the wrong pictures trickier (from "fan or dog" up to "cat, cap or bat", where she has to blend every sound). A miss makes them easier again, replays the sounds, and after two misses the right bubble glows.
+      Once she's read a word right twice in a row, the pads go quiet on that word so she says the sounds herself (she can still tap a pad to hear it).<br><br>
+      Every answer is sent to Joyce as "Blending CVC words" for the weekly report.
+      Hold the gear button to open this panel.
+    </p>
+    <div class="row seg">
+      <a class="action" href="../" style="text-align:center;text-decoration:none">Back to all games</a>
+      <button class="action" id="closeParent">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="../progress.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

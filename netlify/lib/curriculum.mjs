@@ -10,11 +10,12 @@ export const STRANDS = [
   },
   {
     id: "early-literacy",
-    name: "Letters to reading (Monster Hunt, Hatch Match, then Ghost Word Run)",
+    name: "Letters to reading (Monster Hunt, Hatch Match, Otter Slide, then Ghost Word Run)",
     steps: [
       "Letters A to Z",
       "Big & little letters",
       "Letter Sounds",
+      "Blending CVC words",
       "Sight words: Moonlit Meadow (Words 1-50)",
       "Sight words: Pumpkin Path (Words 51-100)",
       "Sight words: Bat Cave (Words 101-150)",
@@ -100,5 +101,6 @@ export const GAME_NAMES = {
   "monster-maker": "Monster Maker",
   "train-set": "Train Set",
   "hatch-match": "Hatch Match",
+  "otter-slide": "Otter Slide",
   missions: "Missions"
 };

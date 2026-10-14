@@ -43,5 +43,11 @@ window.MIGHTY_GAMES = [
     title: "Hatch Match",
     icon: "./hatch-match/icons/icon-192.png",
     href: "./hatch-match/"
+  },
+  {
+    id: "otter-slide",
+    title: "Otter Slide",
+    icon: "./otter-slide/icons/icon-192.png",
+    href: "./otter-slide/"
   }
 ];
