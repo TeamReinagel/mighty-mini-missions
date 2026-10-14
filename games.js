@@ -37,5 +37,11 @@ window.MIGHTY_GAMES = [
     title: "Train Set",
     icon: "./train-set/icons/icon-192.png",
     href: "./train-set/"
+  },
+  {
+    id: "hatch-match",
+    title: "Hatch Match",
+    icon: "./hatch-match/icons/icon-192.png",
+    href: "./hatch-match/"
   }
 ];

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hatch Match">
+<meta name="theme-color" content="#8fd3f4">
+<title>Hatch Match</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preload" href="fonts/andika-bold-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div id="slots" aria-label="Babies hatched this round"></div>
+    <div class="hud-right">
+      <button class="hud" id="sayBtn" aria-label="Say it again"><img src="art/icon_speaker.png" alt=""></button>
+      <button class="hud" id="treeBtn" aria-label="Baby tree"><img src="art/icon_tree.png" alt=""></button>
+      <button class="hud small" id="gear" aria-label="Grown-up settings (hold)"><img src="art/icon_gear.png" alt=""><i class="fill"></i></button>
+    </div>
+  </header>
+  <main id="scene">
+    <div id="top"></div>
+    <div id="choices"></div>
+  </main>
+</div>
+
+<div id="fx" aria-hidden="true"></div>
+
+<div class="overlay show" id="splash">
+  <h1 id="title">Hatch Match</h1>
+  <button id="startBtn" class="big-btn" disabled aria-label="Play"><img src="art/icon_play.png" alt=""></button>
+</div>
+
+<div class="overlay" id="yay">
+  <h1>Hooray!</h1>
+  <div id="yayBabies"></div>
+  <div class="yay-buttons">
+    <button class="big-btn" id="againBtn" aria-label="Play again"><img src="art/icon_play.png" alt=""></button>
+    <button class="big-btn" id="yayTreeBtn" aria-label="Baby tree"><img src="art/icon_tree.png" alt=""></button>
+  </div>
+</div>
+
+<div class="overlay" id="tree">
+  <div class="tree-top">
+    <button class="hud" id="treeBack" aria-label="Back"><img src="art/icon_play.png" alt="" class="flip"></button>
+    <div id="treeCount"></div>
+  </div>
+  <div id="treeGrid"></div>
+</div>
+
+<div class="overlay" id="parent">
+  <div class="panel">
+    <h2>Grown-up settings</h2>
+    <div class="row"><div class="label">Voice</div>
+      <div class="seg" data-setting="voice"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
+    <div class="row"><div class="label">Sounds</div>
+      <div class="seg" data-setting="sound"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
+    <div class="row"><div class="label">Eggs to choose from</div>
+      <div class="seg" data-setting="eggs"><button data-v="auto">Auto</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button></div></div>
+    <div class="row"><div class="label">Letters</div>
+      <div class="seg" data-setting="letters"><button data-v="auto">Add as she learns</button><button data-v="all">All 26 now</button></div></div>
+    <div class="row"><div class="label">"Find Mama" rounds (little letter finds big letter)</div>
+      <div class="seg" data-setting="flip"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
+    <div class="row"><div class="label">Progress on this tablet</div>
+      <div id="status"></div>
+      <p class="tip" id="statusNote"></p>
+    </div>
+    <div class="row seg">
+      <button class="action" id="fullBtn">Full screen</button>
+      <button class="action danger" id="resetBtn">Reset progress</button>
+    </div>
+    <p class="tip">
+      <b>How to play:</b> each Mama bird wears a big letter. Tap the egg with the matching little letter (or drag it into the nest) and it hatches.
+      Five babies fill a nest, then the round ends with a celebration and an off-screen idea. Every hatched letter gets a nest in the Baby Tree; a gold star means three right in a row.<br><br>
+      <b>How it adapts:</b> it starts with letters that look the same big and little (C c, O o, S s...), adds a new letter each time she knows nearly all of the current ones, and saves look-alikes (b d p q, m n) for later.
+      Right answers add eggs (up to 4); a miss drops back to fewer. After two misses the right egg glows, so every round ends in a hatch.<br><br>
+      Every answer is sent to Joyce as "Big &amp; little letters" for the weekly report.
+      Hold the gear button to open this panel.
+    </p>
+    <div class="row seg">
+      <a class="action" href="../" style="text-align:center;text-decoration:none">Back to all games</a>
+      <button class="action" id="closeParent">Done</button>
+    </div>
+  </div>
+</div>
+
+<script src="../progress.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

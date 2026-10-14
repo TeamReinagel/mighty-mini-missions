@@ -31,6 +31,11 @@
     Cache-Control = "no-cache"
 
 [[headers]]
+  for = "/hatch-match/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
   for = "/missions.json"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
