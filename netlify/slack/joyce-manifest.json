@@ -17,7 +17,7 @@
   },
   "oauth_config": {
     "scopes": {
-      "bot": ["chat:write", "channels:history", "groups:history", "im:history", "incoming-webhook"]
+      "bot": ["chat:write", "channels:history", "groups:history", "im:history", "users:read", "incoming-webhook"]
     }
   },
   "settings": {

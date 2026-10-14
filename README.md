@@ -98,7 +98,7 @@ What the report counts as:
 7. On each tablet, open Mighty Mini Missions once and tap that child's name.
 8. Test Joyce: post "Max tested Joyce" in the channel (she should reply in a thread), then message her "what should we do today?".
 
-If you created the Slack app before Joyce could learn, update it from the manifest again (it adds **Interactivity**, which the Approve buttons need), with the same `YOUR-SITE` replacement.
+If you created the Slack app from an older manifest, update it from the manifest again (with the same `YOUR-SITE` replacement), then click **Reinstall to Workspace**. Newer versions add **Interactivity** (for the Approve buttons) and the `users:read` permission (so Joyce knows who's talking).
 
 ### Preview or send a report any time
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`

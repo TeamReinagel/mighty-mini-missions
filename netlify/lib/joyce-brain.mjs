@@ -15,8 +15,16 @@ const DEFAULT_REPO = "https://github.com/stephaniereinagel/mighty-mini-missions"
 const CODE_GIVE_UP_DAYS = 3;
 const REFLECT_LOG_DAYS = 28;
 
-const VOICE = `You are Joyce, the family's learning assistant in their Slack. Stephanie is the mom; she homeschools her young kids and uses Mighty Mini Missions, a set of short learning games plus off-screen "missions".
+const VOICE = `You are Joyce, the Reinagel family's learning assistant in their Slack. Stephanie (mom) homeschools their young kids and uses Mighty Mini Missions, a set of short learning games plus off-screen "missions". Other family members talk to you too.
 Voice: warm, plain, specific, brief. Strengths first. No guilt, streak talk, or "falling behind" language. Prefer playful, short, off-screen ideas.`;
+
+// What Joyce knows about herself, so she can answer "how do you work?" honestly and specifically.
+const ABOUT_JOYCE = `How you work (answer questions about yourself from this; don't invent beyond it):
+- What you do: every Friday at 3pm Central you post a learning report per child (progress, what's tricky, what to try next). Family members tell you things they notice in everyday life ("Max counted coins on his own") and you save them for the report. You suggest activities for today on request. You learn lessons, new abilities, and code changes, but only after Stephanie clicks Approve.
+- How you know what the kids did: each child plays Mighty Mini Missions on their own tablet, picked on the home screen. The games (Ghost Word Run for sight words and rhyming, Monster Hunt for letters and sounds, Coin Record Run for money, Monster Maker for early math and reading, Train Set for colors and shapes, plus off-screen Missions) log every answer: which child, which skill, which item, and whether it was right on the first try. The tablets sync that to you when online. You also use the observations people tell you, and a Kindergarten to 2nd-grade monthly milestones spreadsheet for what comes next. You can't see anything that happens off the app unless someone tells you.
+- Mastery: an item is mastered when it's right on the first try the last 3 times and 75%+ overall.
+- Tech stack: a static HTML/CSS/JavaScript site (no framework) hosted on Netlify, with Netlify Functions (Node.js) for your logic and Netlify Blobs for storage. You're a Slack app (Events API plus interactive buttons; slow work runs in Netlify background functions). Your writing comes from OpenAI (gpt-4o-mini by default). Code changes go to a Cursor cloud agent that opens a pull request on GitHub (stephaniereinagel/mighty-mini-missions) for Stephanie to review; that needs a Cursor API key in Netlify. The code was written with Cursor.
+- Privacy: game answers, observations, and your conversations with the family live in the site's Netlify Blobs storage. You don't keep general family chat.`;
 
 const SLACK_FORMAT = `Write Slack mrkdwn: *bold*, "${BULLET}" bullets, no # headers, no tables. Keep it short enough to read on a phone.`;
 
@@ -30,7 +38,9 @@ const localDate = (env, d = new Date()) => d.toLocaleDateString("en-CA", { timeZ
 
 const UNDERSTAND_PROMPT = `${VOICE}
 
-You read one Slack message from the family and decide what to do. Children (id, name, age): {{KIDS}}.
+${ABOUT_JOYCE}
+
+You read one new Slack message from the family (with the conversation before it, when there is one) and decide what to do. Children (id, name, age): {{KIDS}}.
 
 What you can do:
 1. observations: save things a family member noticed a child do or say in everyday life that show learning, growth, or a struggle (for example "Max counted coins on his own"). One entry per child-moment, using child ids. Plans, logistics, and chit-chat are not observations.
@@ -39,12 +49,14 @@ What you can do:
 4. newSkill: when someone wants something useful that none of your abilities covers but that you could do by reading your data sources and writing a reply. Also use it to change an ability: set "replaces" to its id and give the full new version (for example, "send me the activity every morning" = the "today" ability with schedule "weekday-morning").
 5. codeChange: when the request needs more than reading data and writing: changes to the games or app, tracking something new, new connections to other services. Describe it clearly for a developer.
 6. memory: "list" when asked what you've learned or can do; "forget" with a lesson or ability id when asked to forget or stop one.
-7. reply: a short conversational answer when you're spoken to and nothing above fits, or a question about how you work. If you're proposing something, a one-line lead-in is enough.
+7. reply: answer what was actually asked, directly and specifically (for "how do you know what the kids did?", explain the tablets and game logging; for "what tech stack?", name the stack). Use the person's name when you know it. Don't reintroduce yourself if you already did earlier in the conversation, and don't repeat a generic list of what you can do. If you're proposing something, a one-line lead-in is enough.
 8. unmet: if you're asked for something you can't do and it isn't worth proposing, say what in a few words.
 
 When to act:
 - Direct messages are always to you.
-- In a channel, act only when the message mentions you (@Joyce or "Joyce"), replies in a thread you started, or is an observation about a child. Otherwise return everything empty.
+- In a channel, act only when the message is said to you: it mentions @Joyce and asks or tells you something, or it follows up on what you just said in the conversation. Also save observations about a child wherever they appear.
+- When people talk to each other about you ("@Silas, she will send us a report..."), that isn't said to you: stay quiet (return everything empty) unless it also asks you something.
+- Otherwise return everything empty.
 - Propose at most one new thing per message (lesson, newSkill, or codeChange), and never something on the declined list unless they ask again plainly.
 - Abilities can only read these data sources: {{DATA}}. Schedules: {{SCHEDULES}}.
 
@@ -76,7 +88,7 @@ async function understand({ text, context, mem, env, fetchImpl }) {
     fetchImpl,
     temperature: 0.2,
     system,
-    user: `${describeMemory(mem)}\n\n${context}\n\nMessage:\n${text}`
+    user: `${describeMemory(mem)}\n\n${context}\n\nNew message:\n${text}`
   });
 }
 
@@ -296,13 +308,60 @@ export async function checkCodeRequests({ store, env = process.env, fetchImpl = 
 
 // ---------------------------------------------------------------- messages
 
-async function threadContext({ event, appId, env, fetchImpl }) {
-  if (!event.thread_ts || event.thread_ts === event.ts) return { inJoyceThread: false, parent: "" };
-  const data = await slackGet("conversations.replies", { channel: event.channel, ts: event.thread_ts, limit: "1", inclusive: "true" }, { env, fetchImpl });
-  const parent = data.messages?.[0];
-  if (!parent) return { inJoyceThread: false, parent: "" };
-  const byJoyce = Boolean(parent.bot_id) && (!appId || parent.app_id === appId || parent.bot_profile?.app_id === appId);
-  return { inJoyceThread: byJoyce, parent: clip(parent.text, 3000) };
+const approverIds = (env) => String(env.JOYCE_APPROVERS || "").split(/[\s,]+/).filter(Boolean);
+
+/** Turns Slack user ids into names. Needs the users:read scope; without it, only Stephanie is known (via JOYCE_APPROVERS). */
+function makeNamer({ env, fetchImpl, joyceUserId }) {
+  const cache = new Map();
+  return async (id) => {
+    if (!id) return "someone";
+    if (id === joyceUserId) return "Joyce";
+    if (!cache.has(id)) {
+      const data = await slackGet("users.info", { user: id }, { env, fetchImpl });
+      const p = data.user?.profile || {};
+      const name = data.ok ? p.display_name || p.real_name || data.user.real_name || data.user.name : null;
+      cache.set(id, name || (approverIds(env).includes(id) ? "Stephanie" : null));
+    }
+    return cache.get(id) || "a family member";
+  };
+}
+
+/** Slack's <@U123> mentions become @Name; mentions of a bot (Joyce) become @Joyce. */
+async function readable(text, namer) {
+  let out = String(text || "").replace(/<@B[A-Z0-9]+(\|[^>]*)?>/g, "@Joyce").replace(/(^|\s)@B[A-Z0-9]{8,}\b/g, "$1@Joyce");
+  for (const [whole, id] of [...out.matchAll(/<@([UW][A-Z0-9_]+)(?:\|[^>]*)?>/g)]) {
+    out = out.replace(whole, `@${await namer(id)}`);
+  }
+  return out;
+}
+
+/**
+ * The conversation before this message: the thread it's in, or recent messages in a direct
+ * message with Joyce. Plain channel messages get no history, so family chatter isn't read.
+ */
+async function conversation({ event, appId, joyceUserId, isDirect, env, fetchImpl, namer }) {
+  const inThread = event.thread_ts && event.thread_ts !== event.ts;
+  let messages = [];
+  if (inThread) {
+    const data = await slackGet("conversations.replies", { channel: event.channel, ts: event.thread_ts, limit: "40" }, { env, fetchImpl });
+    messages = data.messages || [];
+  } else if (isDirect) {
+    const data = await slackGet("conversations.history", { channel: event.channel, latest: event.ts, limit: "12" }, { env, fetchImpl });
+    messages = (data.messages || []).reverse();
+  }
+  const isJoyce = (m) => Boolean(m.bot_id) && (!appId || m.app_id === appId || m.bot_profile?.app_id === appId) || m.user === joyceUserId;
+  const earlier = messages.filter((m) => m.ts !== event.ts).slice(-15);
+  const lines = [];
+  for (const m of earlier) {
+    const who = isJoyce(m) ? "Joyce (you)" : m.bot_id ? "another app" : await namer(m.user);
+    lines.push(`${who}: ${clip(await readable(m.text, namer), 700)}`);
+  }
+  return {
+    inThread,
+    startedByJoyce: inThread && earlier[0] ? isJoyce(earlier[0]) : false,
+    joyceTalked: earlier.some(isJoyce),
+    transcript: lines.join("\n")
+  };
 }
 
 async function saveObservation(store, { kids, text, from, eventId, ts }) {
@@ -353,17 +412,20 @@ async function handleWithoutAI({ store, env, fetchImpl, event, eventId, where, i
 
 export async function handleMessage({ store, env = process.env, fetchImpl = fetch, event, eventId, joyceUserId, appId }) {
   const isDirect = event.channel_type === "im";
-  const raw = String(event.text || "");
-  const text = joyceUserId ? raw.replaceAll(`<@${joyceUserId}>`, "@Joyce") : raw;
+  const namer = makeNamer({ env, fetchImpl, joyceUserId });
+  const text = await readable(event.text, namer);
   const where = { channel: event.channel, threadTs: isDirect && !event.thread_ts ? undefined : event.thread_ts || event.ts };
 
   if (!env.OPENAI_API_KEY) return handleWithoutAI({ store, env, fetchImpl, event: { ...event, text }, eventId, where, isDirect });
 
   const mem = await loadMemory(store);
-  const thread = await threadContext({ event, appId, env, fetchImpl });
+  const convo = await conversation({ event, appId, joyceUserId, isDirect, env, fetchImpl, namer });
+  const speaker = await namer(event.user);
+  const role = approverIds(env).includes(event.user) ? " (approves what you learn)" : "";
   const context = [
-    `Where: ${isDirect ? "direct message to you" : "family channel"}${thread.inJoyceThread ? ", replying in a thread you started" : event.thread_ts && event.thread_ts !== event.ts ? ", in a thread" : ""}.`,
-    thread.parent ? `Thread starts with:\n${thread.parent}` : ""
+    `Where: ${isDirect ? "direct message to you" : "family channel"}${convo.inThread ? `, in a thread${convo.startedByJoyce ? " you started" : ""}${convo.joyceTalked ? " where you've already replied" : ""}` : ""}.`,
+    `From: ${speaker}${role}.`,
+    convo.transcript ? `Conversation so far (oldest first):\n${convo.transcript}` : ""
   ].filter(Boolean).join("\n");
 
   let plan;
