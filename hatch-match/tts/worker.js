@@ -119,6 +119,61 @@ let speakToken = 0;
 let activeVoice = 'af_heart';
 let startPromise = null;
 
+// One ONNX session: run generations one after another.
+let modelChain = Promise.resolve();
+function withModel(fn) {
+  const run = modelChain.then(fn, fn);
+  modelChain = run.catch(() => {});
+  return run;
+}
+
+// Sentence jobs from the game. Lower priority number runs first; queued
+// prefetches can be raised (bump) or withdrawn (drop) by id.
+const jobs = [];
+let pumping = false;
+
+function enqueueJob(job) {
+  let at = jobs.findIndex((queued) => queued.priority > job.priority);
+  if (at < 0) at = jobs.length;
+  jobs.splice(at, 0, job);
+}
+
+async function pumpJobs() {
+  if (pumping) return;
+  pumping = true;
+  try {
+    while (jobs.length) {
+      if (!tts && startPromise) await startPromise;
+      if (!tts) {
+        for (const job of jobs.splice(0)) post({ type: 'clip', id: job.id, text: job.text, error: 'Speech model is not ready.' });
+        break;
+      }
+      const job = jobs.shift();
+      const started = performance.now();
+      try {
+        const audio = await withModel(() => tts.generate(job.text, { voice: job.voice, speed: job.speed }));
+        const samples = new Float32Array(audio.audio);
+        post({
+          type: 'clip',
+          id: job.id,
+          text: job.text,
+          voice: job.voice,
+          speed: job.speed,
+          ms: performance.now() - started,
+          sampleRate: audio.sampling_rate,
+          samples
+        }, [samples.buffer]);
+      } catch (err) {
+        post({ type: 'clip', id: job.id, text: job.text, error: err && err.message ? err.message : String(err) });
+      }
+      // generate() holds the thread; let bump/drop messages land before the next job.
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+  } finally {
+    pumping = false;
+  }
+}
+
 function post(message, transfer) {
   if (transfer) self.postMessage(message, transfer);
   else self.postMessage(message);
@@ -137,7 +192,7 @@ async function openFeatureCache(create) {
 async function cacheEntries() {
   const cache = await openFeatureCache(false);
   if (!cache) return [];
-  const keys = await cache.keys();
+  const keys = (await cache.keys()).filter((key) => !key.url.includes('/tts/clip/'));
   return keys.map((key) => {
     const url = new URL(key.url);
     return url.pathname.replace(/^.*\/resolve\/(?:main|[^/]+)\//, '');
@@ -277,7 +332,7 @@ function peakOf(samples) {
 async function prewarm(token, voice) {
   post({ type: 'status', state: 'warming', detail: 'Warming up, silently' });
   const started = performance.now();
-  const audio = await tts.generate('Hello.', { voice, speed: 1 });
+  const audio = await withModel(() => tts.generate('Hello.', { voice, speed: 1 }));
   if (token !== loadToken) return null;
   const samples = audio.audio;
   return {
@@ -404,7 +459,7 @@ async function speak(id, text, voice) {
       }
       const chunk = chunks[index];
       const started = performance.now();
-      const audio = await tts.generate(chunk, { voice: activeVoice, speed: 1 });
+      const audio = await withModel(() => tts.generate(chunk, { voice: activeVoice, speed: 1 }));
       const elapsed = performance.now() - started;
       await new Promise((resolve) => setTimeout(resolve, 0));
       if (token !== speakToken) {
@@ -440,6 +495,20 @@ self.addEventListener('message', (event) => {
   if (data.type === 'start' || data.type === 'warm') start(data.voice || 'af_heart');
   else if (data.type === 'speak') speak(data.id, data.text || '', data.voice || activeVoice);
   else if (data.type === 'cancel') speakToken++;
+  else if (data.type === 'synth') {
+    enqueueJob({ id: data.id, text: data.text || '', voice: data.voice || activeVoice, speed: data.speed || 1, priority: data.priority || 0 });
+    pumpJobs();
+  } else if (data.type === 'bump') {
+    const at = jobs.findIndex((job) => job.id === data.id);
+    if (at >= 0) {
+      const [job] = jobs.splice(at, 1);
+      job.priority = data.priority || 0;
+      enqueueJob(job);
+    }
+  } else if (data.type === 'drop') {
+    const ids = new Set(data.ids || []);
+    for (let i = jobs.length - 1; i >= 0; i--) if (ids.has(jobs[i].id)) jobs.splice(i, 1);
+  }
 });
 
 async function dropOldFeatureCaches() {

@@ -1,8 +1,18 @@
 # Kokoro speech test
 
-On-device speech for Hatch Match. Open it from **Grown-up settings ? Kokoro speech test**, or go to `hatch-match/tts/` on the same host as the game.
+On-device speech for Hatch Match. The game speaks with it, and the test page lives at `hatch-match/tts/` (**Grown-up settings ? Try voices**).
 
-The children’s game still uses the tablet’s built-in voice. This page does not change that.
+## In the game
+
+`voice.js` (`window.HatchVoice`) runs the same worker and model as the test page.
+
+- **Grown-up settings ? Natural voice** is On by default. Off, or any time Kokoro is not ready (not downloaded, still warming, error), the game uses the tablet’s built-in voice instead. Nothing waits on the model.
+- The model is not downloaded automatically. If it is missing, the panel shows **Download natural voice (about 90 MB)**. Once it is saved, every later launch warms it in the background.
+- The voice is the one picked on the test page (default Heart), at speed 0.9.
+- Each sentence is generated once and saved as 16-bit audio in `kokoro-hatch-v1`, under `tts/clip/v1-<revision>/<voice>/<speed>/<text>`. Changing the voice or the model revision makes new entries.
+- When a round starts, its prompt, praise, and wrong-answer lines are generated ahead. While the tablet is idle, the worker also works through the intro, praise, and every letter line for the letters in play. With four letters in play that was 93 sentences, 9.6 MB, finished about three minutes after load.
+- A sentence that is not saved yet is generated on the spot (about 1 s before it starts). If a sentence takes more than 8 s, the tablet voice says it instead.
+- Letters are given to Kokoro as plain capitals (“O”, “V”). Every letter A–Z phonemized to its letter name.
 
 ## What it runs
 
@@ -24,7 +34,9 @@ Phonemizer data is inside `vendor/kokoro-1.2.1.web.js`. Voices download one at a
 
 One cache, `kokoro-hatch-v1`, holds the runtime, the model, the tokenizer, and any voices. kokoro-js would otherwise open `transformers-cache` and `kokoro-voices`; both names are redirected here.
 
-The Hatch Match service worker does not store those files. **Reset saved speech** deletes `kokoro-hatch-v1` only. Game progress and the `hatch-v3` app cache stay.
+The game’s saved sentences are in the same cache.
+
+The Hatch Match service worker does not store those files. **Reset saved speech** deletes `kokoro-hatch-v1` only, which includes the game’s saved sentences. Game progress and the `hatch-v4` app cache stay. The game then falls back to the tablet voice and offers the download again.
 
 The browser is asked to persist storage when Download is pressed. It can still say no, and it can still delete the files later when space is low. “Download once” means reuse while that cache is still there.
 
@@ -32,7 +44,7 @@ The browser is asked to persist storage when Download is pressed. It can still s
 
 The game is static. Serve `mighty-mini-missions` over http (a secure context). `file://` will not run the worker.
 
-On Netlify, `/hatch-match/tts/*` is sent with Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy so Chrome can use more than one WASM thread. Without those headers the same model still runs, on one thread.
+On Netlify, everything under `/hatch-match/*` is sent with Cross-Origin-Resource-Policy, plus Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy so Chrome can use more than one WASM thread. Without those headers the same model still runs, on one thread.
 
 1. Open the test page.
 2. Press **Download** and leave the tab open until it says **Ready**. The first run is about 90 MB.
@@ -70,13 +82,22 @@ Cursor’s Chromium, 15 Oct 2026. The page was cross-origin isolated. `navigator.g
 - The next Speak, “Hello from the saved voice.”, took 1.63 s to generate 2.13 s of audio (0.76×) and the page ended on Finished speaking.
 - An earlier offline pass, before the service worker learned to skip the network when `navigator.onLine` is false, also spoke successfully. That reload took 8.0 s to Ready, mostly waiting on failed network fetches.
 
-**Reset:** the Kokoro cache’s files were removed. `hatch-v3` still had the game files and did not contain the model or the runtime. The speech report and voice preference were cleared.
+**In the game**, same browser, model already saved:
+
+- Kokoro was ready about 3.3 s after the page loaded (7.9 s offline).
+- With no saved sentences, Play about 2 s after Ready: the intro started 3 ms after the tap, and the round prompt followed with no gap.
+- A sentence not saved yet, “Mama Sunny has big X.”, started after 1.1 s. Saved and prefetched lines (wrong-answer feedback, praise, replays) started within a few milliseconds.
+- Natural voice Off: the replay used the tablet voice. Back On: Ready again in 1.6 s and the replay was Kokoro.
+- Offline after reload: the intro and prompt were Kokoro, and a brand-new sentence was generated and saved. The tablet voice was never used.
+
+**Reset:** the Kokoro cache’s files were removed. The app cache (then `hatch-v3`) still had the game files and did not contain the model or the runtime. The speech report and voice preference were cleared.
 
 `navigator.storage.persist()` was offered and this browser declined it. Saved files are best-effort.
 
 ## Not tested
 
 - iPhone or iPad Safari, on a device. The runtime is WASM on purpose so it does not depend on WebGPU. A tap is required before audio can play; Download and Speak both resume the audio context. Safari without the cross-origin-isolation headers uses one WASM thread. Storage can be evicted, and this session did not get a persist grant, so a phone may ask for the download again after iOS clears site data.
+- iOS mute switch. The game sets `navigator.audioSession.type = "playback"` where Safari supports it so Web Audio is not silenced; older iOS may stay silent with the switch on, unlike the tablet voice.
 - Speakers. The checks above are the Web Audio output and the discarded prewarm samples.
 
 Stop was checked: after Stop, later sentences were not played. Changing voice downloads only that voice (about 510 KB), not another model.

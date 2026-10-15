@@ -35,10 +35,11 @@
   [headers.values]
     Cache-Control = "no-cache"
 
-# Lets the Kokoro test page use multi-threaded WASM where the browser supports it.
-# The game pages stay unchanged. Model files are fetched with CORS from Hugging Face.
+# Lets Kokoro (the game's natural voice and the test page) use multi-threaded WASM
+# where the browser supports it. Hatch Match loads nothing cross-origin except the
+# model files, which Hugging Face serves with CORS.
 [[headers]]
-  for = "/hatch-match/tts/*"
+  for = "/hatch-match/*"
   [headers.values]
     Cross-Origin-Opener-Policy = "same-origin"
     Cross-Origin-Embedder-Policy = "require-corp"

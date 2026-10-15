@@ -43,10 +43,11 @@ const OFF_SCREEN = [
   'Can you flap your wings like a baby bird? Flap, flap, flap!',
   'Can you find a letter on a box in the kitchen?'
 ];
-// Letters are spoken from their capital form. Some need help: "a" reads as "uh" and "ay" as "eye"
-// ("A." reads as an initial), and a lone "V" reads as "versus".
+// Letters are spoken from their capital form. The tablet voice needs help: "a" reads as "uh" and
+// "ay" as "eye" ("A." reads as an initial), and a lone "V" reads as "versus". Kokoro says all 26
+// capitals as letter names, and the respellings would add a pause.
 const SPOKEN = { A: 'A.', V: 'vee' };
-const speak = (L) => SPOKEN[L.toUpperCase()] || L.toUpperCase();
+const speak = (L) => (useNatural() ? L.toUpperCase() : SPOKEN[L.toUpperCase()] || L.toUpperCase());
 
 // ---------- saved progress (per child) ----------
 const kid = window.MightyProgress?.currentKid() || { id: 'unknown', name: '' };
@@ -57,7 +58,7 @@ function defaults() {
     intro: ORDER.slice(0, START_LETTERS),
     hatched: 0,
     rares: {},
-    settings: { voice: true, sound: true, eggs: 'auto', letters: 'auto', flip: true }
+    settings: { voice: true, natural: true, sound: true, eggs: 'auto', letters: 'auto', flip: true }
   };
 }
 function load() {
@@ -138,18 +139,43 @@ function pickVoice() {
   voice = vs.find((x) => /^en/i.test(x.lang)) || null;
 }
 if (hasSpeech) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-function say(text, { queue = false } = {}) {
-  if (!state.settings.voice || !hasSpeech) return;
-  if (!queue) speechSynthesis.cancel();
+function utter(text) {
   const u = new SpeechSynthesisUtterance(text);
   if (voice) u.voice = voice;
   u.rate = 0.85; u.pitch = 1.15;
   speechSynthesis.speak(u);
+  return u;
 }
-const hush = () => { if (hasSpeech) speechSynthesis.cancel(); };
+// Kokoro (tts/voice.js) speaks once its model is downloaded and warm; until then, and for any
+// sentence it can't produce, the tablet voice does.
+const natural = window.HatchVoice || null;
+function useNatural() { return !!natural && state.settings.natural && natural.ready(); }
+natural?.init({
+  enabled: state.settings.natural,
+  fallback: (text) => new Promise((res) => {
+    if (!hasSpeech) { res(); return; }
+    const u = utter(text);
+    u.onend = u.onerror = res;
+    setTimeout(res, 6000);
+  })
+});
+function say(text, { queue = false } = {}) {
+  if (!state.settings.voice) return;
+  if (useNatural()) {
+    if (!queue && hasSpeech) speechSynthesis.cancel();
+    natural.say(text, { queue });
+    return;
+  }
+  if (!hasSpeech) return;
+  if (!queue) { natural?.hush(); speechSynthesis.cancel(); }
+  utter(text);
+}
+const hush = () => { natural?.hush(); if (hasSpeech) speechSynthesis.cancel(); };
 // Resolves once the voice has finished, so the next prompt doesn't cut it off.
 function speechDone(maxMs = 5000) {
-  if (!hasSpeech || !state.settings.voice) return Promise.resolve();
+  if (!state.settings.voice) return Promise.resolve();
+  if (natural?.speaking()) return natural.done(maxMs + 2000);
+  if (!hasSpeech) return Promise.resolve();
   const t0 = Date.now();
   return new Promise((res) => {
     const tick = () => {
@@ -310,14 +336,48 @@ function nextRound() {
   const answer = flip ? T : lower(T);
   const options = shuffle([answer, ...distractors(T, n).map((c) => (flip ? c.toUpperCase() : c))]);
   const mama = pick(MAMAS.filter((m) => m.id !== round?.mama?.id));
-  round = { T, flip, fresh: !!fresh, answer, options, mama, lostBaby: pick(MAMAS).id, wrong: [], locked: true, idle: 0 };
+  round = { T, flip, fresh: !!fresh, answer, options, mama, lostBaby: pick(MAMAS).id, wrong: [], locked: true, idle: 0, praise: pick(PRAISE) };
   session.recent = [T, ...session.recent];
   renderRound();
   promptRound();
+  if (useNatural()) {
+    natural.prepare(roundPhrases(round));
+    if (fresh) natural.prepare(letterPhrases([fresh]), 'idle');
+  }
   const r = round;
   setTimeout(() => { if (round === r) r.locked = false; }, 450);
   armIdle();
 }
+
+// What this round may say after the prompt, so Kokoro can generate it before she taps.
+function roundPhrases(r) {
+  const s = speak(r.T);
+  const out = [];
+  if (r.flip) {
+    out.push(`Little ${s}!`, `Find Mama big ${s}!`, `${r.praise} Big ${s}, little ${s}! Together again!`);
+    r.options.filter((o) => o !== r.answer).forEach((o) => out.push(`That's Mama big ${speak(o)}.`));
+  } else {
+    out.push(`Big ${s}!`, `Find little ${s}!`, `${r.praise} Big ${s}, little ${s}!`);
+    r.options.filter((o) => o !== r.answer).forEach((o) => out.push(`That's little ${speak(o)}.`));
+  }
+  const R = state.letters[r.T];
+  if (R && R.s === STAR - 1 && !R.star) out.push(`Gold star! You know big ${s} and little ${s}!`);
+  return out;
+}
+// Sentences worth keeping for the letters in play; generated once in the background and saved.
+// Ordered by kind across all letters, most-used kinds first, so every letter's prompts come early.
+const LETTER_LINES = [
+  (s) => [`Find little ${s}!`, `Where is little ${s}?`],
+  (s) => [`Which egg is little ${s}?`, `That's little ${s}.`, `Big ${s}, little ${s}!`],
+  (s) => MAMAS.flatMap((m) => [`${m.name} has big ${s}.`, `${m.name} wants little ${s}!`]),
+  (s) => [`Big ${s}!`, `Little ${s}!`, `This is big ${s}.`, `Find Mama big ${s}!`, `That's Mama big ${s}.`]
+];
+const letterPhrases = (letters) => LETTER_LINES.flatMap((kind) => letters.flatMap((L) => kind(speak(L))));
+const FIXED_PHRASES = [
+  'Help the mama birds find their babies!', 'Hooray! All five babies hatched!', 'Ooh, a new egg!',
+  'Look at all your babies!', 'Hatch eggs to fill the tree!', ...PRAISE, ...OFF_SCREEN,
+  ...RARES.map((x) => `Wow! ${x.name}!`)
+];
 
 function renderRound() {
   const r = round;
@@ -550,7 +610,7 @@ async function hatch(btn, ghost, baby, rare) {
 
   const s = speak(r.T);
   if (rare) say(`Wow! ${rare.name}! Big ${s}, little ${s}!`);
-  else say(`${pick(PRAISE)} Big ${s}, little ${s}!`);
+  else say(`${r.praise} Big ${s}, little ${s}!`);
   await sleep(rare ? 2200 : 1600);
   return babyEl;
 }
@@ -570,7 +630,7 @@ async function reunite(btn) {
   btn.classList.remove('idle');
   replay(btn, 'happy-mom');
   const s = speak(r.T);
-  say(`${pick(PRAISE)} Big ${s}, little ${s}! Together again!`);
+  say(`${r.praise} Big ${s}, little ${s}! Together again!`);
   await sleep(1700);
   return babyEl;
 }
@@ -708,9 +768,35 @@ document.querySelectorAll('.seg[data-setting]').forEach((seg) => {
     const v = b.dataset.v;
     state.settings[seg.dataset.setting] = v === 'true' ? true : v === 'false' ? false : v;
     if (!state.settings.voice) hush();
+    if (seg.dataset.setting === 'natural') { hush(); natural?.setEnabled(state.settings.natural); }
     syncSettingsUI();
     save();
   });
+});
+const VOICE_NAMES = { af_heart: 'Heart', af_bella: 'Bella', af_nicole: 'Nicole', am_fenrir: 'Fenrir', am_puck: 'Puck', bf_emma: 'Emma', bm_george: 'George' };
+const NATURAL_TEXT = {
+  off: () => 'Off. The tablet voice is speaking.',
+  checking: () => 'Checking for the natural voice...',
+  missing: () => 'Not downloaded yet. The tablet voice speaks until it is. Download once on Wi-Fi; it stays on this tablet unless the browser clears its storage.',
+  downloading: (d) => `Downloading... ${d}`.trim(),
+  warming: () => 'Getting the natural voice ready. The tablet voice speaks until then.',
+  ready: (d, v) => `Ready: ${VOICE_NAMES[v] || v}. New sentences take a moment the first time, then are saved.${d ? ` ${d}` : ''}`,
+  error: (d) => `Could not load (${d}). The tablet voice is speaking.`
+};
+natural?.onStatus(({ phase, detail, voice: v }) => {
+  $('naturalStatus').textContent = (NATURAL_TEXT[phase] || (() => phase))(detail || '', v);
+  const btn = $('naturalBtn');
+  btn.hidden = !(phase === 'missing' || phase === 'error');
+  btn.textContent = phase === 'error' ? 'Try again' : 'Download natural voice (about 90 MB)';
+  if (phase === 'ready') natural.prepare([FIXED_PHRASES[0], ...letterPhrases(pool()), ...FIXED_PHRASES], 'idle');
+});
+if (!natural) $('naturalStatus').textContent = 'Not available in this browser.';
+$('naturalBtn').addEventListener('click', () => {
+  state.settings.natural = true;
+  save();
+  syncSettingsUI();
+  natural?.setEnabled(true);
+  natural?.download();
 });
 $('closeParent').addEventListener('click', () => {
   parentEl.classList.remove('show');

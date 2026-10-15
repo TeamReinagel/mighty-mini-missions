@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "hatch-v3";
+const VERSION = "hatch-v4";
 const ART = [
   "mama_blue", "mama_pink", "mama_yellow", "mama_green",
   "egg_blue", "egg_pink", "egg_yellow", "egg_mint",
@@ -23,6 +23,7 @@ const CORE = [
   "tts/index.html",
   "tts/tts.css",
   "tts/tts.js",
+  "tts/voice.js",
   "tts/worker.js"
 ];
 

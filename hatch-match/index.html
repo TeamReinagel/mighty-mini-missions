@@ -60,6 +60,14 @@
     <h2>Grown-up settings</h2>
     <div class="row"><div class="label">Voice</div>
       <div class="seg" data-setting="voice"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
+    <div class="row"><div class="label">Natural voice (Kokoro, runs on this tablet)</div>
+      <div class="seg" data-setting="natural"><button data-v="true">On</button><button data-v="false">Off</button></div>
+      <p class="tip" id="naturalStatus"></p>
+      <div class="seg">
+        <button class="action" id="naturalBtn" hidden>Download natural voice (about 90 MB)</button>
+        <a class="action" href="tts/" style="text-align:center;text-decoration:none">Try voices</a>
+      </div>
+    </div>
     <div class="row"><div class="label">Sounds</div>
       <div class="seg" data-setting="sound"><button data-v="true">On</button><button data-v="false">Off</button></div></div>
     <div class="row"><div class="label">Eggs to choose from</div>
@@ -85,9 +93,6 @@
       Hold the gear button to open this panel.
     </p>
     <div class="row seg">
-      <a class="action" href="tts/" style="text-align:center;text-decoration:none">Kokoro speech test</a>
-    </div>
-    <div class="row seg">
       <a class="action" href="../" style="text-align:center;text-decoration:none">Back to all games</a>
       <button class="action" id="closeParent">Done</button>
     </div>
@@ -95,6 +100,7 @@
 </div>
 
 <script src="../progress.js"></script>
+<script src="tts/voice.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
