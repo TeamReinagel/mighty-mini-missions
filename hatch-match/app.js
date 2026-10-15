@@ -43,8 +43,10 @@ const OFF_SCREEN = [
   'Can you flap your wings like a baby bird? Flap, flap, flap!',
   'Can you find a letter on a box in the kitchen?'
 ];
-// Speech engines read a lone "a" as "uh", so letters are spoken from their capital form.
-const speak = (L) => (L.toUpperCase() === 'A' ? 'ay' : L.toUpperCase());
+// Letters are spoken from their capital form. Some need help: "a" reads as "uh" and "ay" as "eye"
+// ("A." reads as an initial), and a lone "V" reads as "versus".
+const SPOKEN = { A: 'A.', V: 'vee' };
+const speak = (L) => SPOKEN[L.toUpperCase()] || L.toUpperCase();
 
 // ---------- saved progress (per child) ----------
 const kid = window.MightyProgress?.currentKid() || { id: 'unknown', name: '' };
@@ -145,6 +147,18 @@ function say(text, { queue = false } = {}) {
   speechSynthesis.speak(u);
 }
 const hush = () => { if (hasSpeech) speechSynthesis.cancel(); };
+// Resolves once the voice has finished, so the next prompt doesn't cut it off.
+function speechDone(maxMs = 5000) {
+  if (!hasSpeech || !state.settings.voice) return Promise.resolve();
+  const t0 = Date.now();
+  return new Promise((res) => {
+    const tick = () => {
+      if ((!speechSynthesis.speaking && !speechSynthesis.pending) || Date.now() - t0 > maxMs) res();
+      else setTimeout(tick, 120);
+    };
+    tick();
+  });
+}
 
 // ---------- effects layer ----------
 const fx = $('fx');
@@ -491,6 +505,7 @@ async function onRight(btn, ghost) {
   if (round !== r) { babyEl.remove(); return; }
   session.babies.push(baby);
   await flyToSlot(babyEl, session.babies.length - 1);
+  await speechDone();
   if (round !== r) return;
   if (session.babies.length >= PER_NEST) celebrate();
   else nextRound();
