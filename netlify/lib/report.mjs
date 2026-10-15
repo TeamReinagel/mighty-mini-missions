@@ -4,6 +4,7 @@ import { KIDS, allMilestones, guideFor, kidById } from "./kids.mjs";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const STATE_KEY = "state/report.json";
+const LOAD_CONCURRENCY = 20;
 
 // An item is mastered once the last 3 tries were right on the first try and at least
 // 75% of all its tries were, so a lucky run on a shaky item doesn't count.
@@ -32,11 +33,16 @@ async function loadEvents(store, since, until) {
   const events = [];
   for (const day of dayKeys(since, until)) {
     const { blobs } = await store.list({ prefix: `events/${day}/` });
-    for (const { key } of blobs) {
+    const keys = blobs.map((b) => b.key).filter((key) => {
       const receivedAt = Number(key.split("/").pop().split("-")[0]);
-      if (!(receivedAt > since.getTime() && receivedAt <= until.getTime())) continue;
-      const batch = (await store.get(key, { type: "json" })) || [];
-      for (const e of batch) {
+      return receivedAt > since.getTime() && receivedAt <= until.getTime();
+    });
+    const batches = [];
+    for (let i = 0; i < keys.length; i += LOAD_CONCURRENCY) {
+      batches.push(...(await Promise.all(keys.slice(i, i + LOAD_CONCURRENCY).map((key) => store.get(key, { type: "json" })))));
+    }
+    for (const batch of batches) {
+      for (const e of batch || []) {
         if (seen.has(e.id)) continue;
         seen.add(e.id);
         events.push(e);

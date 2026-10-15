@@ -45,7 +45,7 @@ You read one new Slack message from the family (with the conversation before it,
 
 What you can do:
 1. observations: save things a family member noticed a child do or say in everyday life that show learning, growth, or a struggle (for example "Max counted coins on his own"). One entry per child-moment, using child ids. Plans, logistics, and chit-chat are not observations.
-2. useSkill: when the message asks for something one of your abilities does, pick its id and restate the request (including the time period, like "today"). Match the purpose, never using the ideas ability for questions about the past: questions about how a child is doing ("how is Max doing with his learning?", "how did Max do this week?", "what has Gabi mastered?", "does she need my help with anything?", "what games does he like?") use the check-in ability; questions about what they did on a given day ("what did the kids work on today?", "did they play?") and follow-ups asking for specifics ("which words did he miss?", "how many did she get right?") use the look-back ability. If someone pushes back on your last answer ("not ideas, I want to know..."), use the conversation to work out what they wanted and do that.
+2. useSkill: when the message asks for something one of your abilities does, pick its exact id from "Your abilities" and restate the request (including the time period, like "today"). Match the purpose, never using "today" (ideas) for questions about the past: questions about how a child is doing ("how is Max doing with his learning?", "how did Max do this week?", "what has Gabi mastered?", "does she need my help with anything?", "what games does he like?") use "checkin"; questions about what they did on a given day ("what did the kids work on today?", "did they play?") and follow-ups asking for specifics ("which words did he miss?", "how many did she get right?") use "recap". If someone pushes back on your last answer ("not ideas, I want to know..."), use the conversation to work out what they wanted and do that.
 3. lesson: when someone corrects you, tells you how they want you to work or write, or shares a lasting fact about a child that should change your future suggestions ("Gabi hates worksheets", "skip screen ideas before noon", "that milestone wasn't really met"). A lesson is one short, specific instruction to yourself. A one-time moment is an observation, not a lesson. Skip lessons you already have.
 4. newSkill: when someone wants something useful that none of your abilities covers but that you could do by reading your data sources and writing a reply. Also use it to change an ability: set "replaces" to its id and give the full new version (for example, "send me the activity every morning" = the "today" ability with schedule "weekday-morning").
 5. codeChange: when the request needs more than reading data and writing: changes to the games or app, tracking something new, new connections to other services. Describe it clearly for a developer.
@@ -312,6 +312,10 @@ export async function checkCodeRequests({ store, env = process.env, fetchImpl = 
 
 // ---------------------------------------------------------------- messages
 
+const looseName = (s) => String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+const findSkill = (skills, id) =>
+  skills.find((s) => s.id === id) || skills.find((s) => looseName(s.id) === looseName(id) || looseName(s.name) === looseName(id));
+
 const approverIds = (env) => String(env.JOYCE_APPROVERS || "").split(/[\s,]+/).filter(Boolean);
 
 /** Turns Slack user ids into names. Needs the users:read scope; without it, only Stephanie is known (via JOYCE_APPROVERS). */
@@ -467,7 +471,11 @@ export async function handleMessage({ store, env = process.env, fetchImpl = fetc
     }
   }
 
-  const skill = plan.useSkill?.id && mem.skills.find((s) => s.id === plan.useSkill.id);
+  const skill = plan.useSkill?.id && findSkill(mem.skills, plan.useSkill.id);
+  if (plan.useSkill?.id && !skill) {
+    console.error(`Unknown ability "${plan.useSkill.id}" for: ${clip(text, 200)}`);
+    if (!plan.reply) parts.push("I got a little mixed up on that one. Could you ask me again, maybe in different words?");
+  }
   if (skill) {
     try {
       parts.push(await runSkill({ skill, request: clip(plan.useSkill.request || text, 1000), mem, store, env, fetchImpl }));
