@@ -50,7 +50,8 @@ Joyce replies in a thread to confirm. Family chatter in the channel that isn't a
 ### Asking Joyce
 Mention her in the channel (`@Joyce`) or message her directly:
 - "What should we do today?" or "Any ideas for Gabi this morning?" gives one short activity per child, based on their next milestones, what's been tricky in the games, and what you've noticed.
-- "What did the kids work on today?" or "Did Max play this week?" looks back at the games: who played, which skills, how it went, and when each child last played. It answers from synced game data only, so play on an offline tablet shows up once it's back online.
+- "How is Max doing with his learning?", "What is Gabi struggling with?", "Does he need my help with anything?" or "What games does she like?" answers like a teacher talking with a parent: what they've recently mastered, what they're still working on, where to focus, and (from which games they keep coming back to over the last 4 weeks) what they seem to enjoy. No counts or scores unless you ask for specifics.
+- "What did the kids work on today?", "Did Max play this week?" or a follow-up like "Which words did he miss?" looks back at the games in detail: who played, which skills, how many tries, what was right on the first try, and when each child last played. It answers from synced game data only, so play on an offline tablet shows up once it's back online.
 - "What have you learned?" lists her lessons and abilities. "Forget the worksheet lesson" or "stop the morning posts" undoes one.
 
 ### How Joyce learns (always with your OK)
@@ -60,7 +61,7 @@ Joyce never adopts anything new on her own. She posts a suggestion with **Approv
 - **Code changes**: when something needs the app itself to change ("track handwriting practice"), she proposes it. On approval she starts a [Cursor cloud agent](https://cursor.com/agents) that makes the change and opens a pull request on GitHub, then posts the link in the same thread. Nothing reaches the site until you merge it.
 - **Weekly look-back**: after the Friday report she reviews the last four weeks of conversations with her (not general family chat) and, if she sees a clear pattern such as repeated requests or things she couldn't do, proposes at most one new ability or change. Most weeks she proposes nothing.
 
-What she has learned lives in Netlify Blobs (`joyce/memory.json` in the `progress` store). The built-in "Activity for today" ability is in `netlify/lib/joyce-memory.mjs`.
+What she has learned lives in Netlify Blobs (`joyce/memory.json` in the `progress` store). The built-in abilities ("How they're doing", "Activity for today", and "What they practiced") are in `netlify/lib/joyce-memory.mjs`.
 
 ### How it works
 - Every game logs each answer (`progress.js`): which child, which skill, which item, and whether it was right on the first try. Train Set finds, Monster Maker feelings, and completed Missions count as practice only (no right/wrong).

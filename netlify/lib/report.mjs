@@ -368,12 +368,39 @@ function dailyActivity(events, tz) {
   return out;
 }
 
+const CHOICE_DAYS = 28;
+
+/** Which games each child keeps coming back to (days played and tries per game, most days first). */
+function gameChoices(events, tz) {
+  const dayOf = (t) => new Date(t).toLocaleDateString("en-CA", { timeZone: tz });
+  const byKid = new Map();
+  for (const e of events) {
+    const games = byKid.get(e.kid) || new Map();
+    const name = GAME_NAMES[e.game] || e.game;
+    const g = games.get(name) || { game: name, days: new Set(), tries: 0 };
+    g.days.add(dayOf(e.t));
+    g.tries += 1;
+    games.set(name, g);
+    byKid.set(e.kid, games);
+  }
+  const out = new Map();
+  for (const [kidId, games] of byKid) {
+    out.set(kidId, [...games.values()]
+      .map((g) => ({ game: g.game, daysPlayed: g.days.size, tries: g.tries }))
+      .sort((a, b) => b.daysPlayed - a.daysPlayed || b.tries - a.tries));
+  }
+  return out;
+}
+
 export async function buildKidContext({ store, env = process.env, now = new Date() }) {
   const tz = env.REPORT_TIMEZONE || "America/Chicago";
   const state = await loadState(store);
   const since = state.lastReportAt ? new Date(state.lastReportAt) : new Date(now.getTime() - 7 * DAY_MS);
   const { summaries } = await collectWeek({ store, state, since, now, tz });
-  const activity = dailyActivity(await loadEvents(store, new Date(now.getTime() - 7 * DAY_MS), now), tz);
+  const recent = await loadEvents(store, new Date(now.getTime() - CHOICE_DAYS * DAY_MS), now);
+  const weekAgo = now.getTime() - 7 * DAY_MS;
+  const activity = dailyActivity(recent.filter((e) => Date.parse(e.t) > weekAgo), tz);
+  const choices = gameChoices(recent, tz);
   const { blobs } = await store.list({ prefix: "reports/" });
   const lastKey = blobs.map((b) => b.key).sort().pop();
   const lastReport = lastKey ? (await store.get(lastKey, { type: "json" }))?.text || "" : "";
@@ -386,6 +413,7 @@ export async function buildKidContext({ store, env = process.env, now = new Date
       profile: { age: s.age, whereTheyAre: s.whereTheyAre, note: s.note },
       progress: s.week,
       activity: activity.get(s.kidId) || noPlay,
+      gameChoices: choices.get(s.kidId) || [],
       observations: s.observations,
       milestones: { metSoFar: s.milestonesMetSoFar, nextUp: s.guide.next.map((m) => `${m.id} (${m.area}): ${m.text}`) }
     })),

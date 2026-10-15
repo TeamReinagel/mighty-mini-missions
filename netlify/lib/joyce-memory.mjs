@@ -16,6 +16,7 @@ export const DATA_SOURCES = {
   profiles: "each child's age, where they are, and notes",
   progress: "game practice since the last report: skills, accuracy, newly mastered, tricky items, missions done",
   activity: "day-by-day game practice for the last 7 days (which games and skills, tries, first-try accuracy) and when each child last played",
+  gameChoices: "which games each child played over the last 4 weeks, by how many days they came back to each",
   observations: "things the family noticed at home since the last report",
   milestones: "how many milestones each child has met and their next unmet milestones from the monthly spreadsheet",
   lastReport: "the text of the last weekly report"
@@ -43,9 +44,26 @@ export const BUILTIN_SKILLS = [
     builtin: true
   },
   {
+    id: "checkin",
+    name: "How they're doing",
+    when: "Someone asks how a child is doing or progressing, what they've mastered, what they're struggling with, what to encourage or focus on, whether they need a parent's help in a subject, or which games they enjoy.",
+    instructions: [
+      "Answer the way a teacher talks with a child's parent: the big picture in plain language, not a data dump.",
+      "For each child asked about (every child with recent practice or observations when no one is named): open with one sentence on how they're doing overall.",
+      "Then name what they've recently mastered (1-3 objectives) and what they're still working on (1-2), as learning objectives in everyday words (\"knows all his uppercase letters\", \"sounding out short words like cat and sun\"), not game, level, or skill-label names. Draw on newly mastered items, strong and tricky skills, items that slipped, milestones, the last report, and observations.",
+      "If the question is general, add a sentence on what to encourage next (from next-up milestones and what they're ready for). Mention a subject where they could use a parent's help only when the data shows it: a skill that stayed tricky over many tries, mastered items that slipped, or a next-up milestone area the games don't cover. Mention favorite games when asked or when it's clear: the games they came back to on the most days, framed as what they seem to choose, since the games don't measure enjoyment.",
+      "If the question is specific (just struggles, just favorites, just where to help), answer only that.",
+      "No counts, percentages, scores, or item lists unless someone asks for specifics. If there's too little data to say, say so in a sentence instead of stretching it.",
+      "Format: *Name* first, then 3-6 short sentences per child. No greeting."
+    ].join(" "),
+    data: ["profiles", "progress", "gameChoices", "observations", "milestones", "lastReport"],
+    schedule: "on-request",
+    builtin: true
+  },
+  {
     id: "recap",
     name: "What they practiced",
-    when: "Someone asks what the kids did, worked on, practiced, or played (today, yesterday, this week), how a child is doing in the games, or whether they used Mighty Mini Missions. This looks back; it never suggests activities.",
+    when: "Someone asks what the kids did, practiced, or played on a particular day or period (today, yesterday, this week), whether they used Mighty Mini Missions, or asks for the specifics behind a check-in (how many they got right, which words or items, how many tries). Not for general \"how is she doing?\" questions. This looks back; it never suggests activities.",
     instructions: [
       "Answer the question about what already happened, using only the activity and observations data. Do not suggest activities or next steps unless asked.",
       "For the day or period asked about (today if not said), for each child asked about (all children if no one is named): say whether they played, which games and skills, roughly how many tries, and how it went (first-try right, and any item that was tricky). Mention observations from that period too.",
@@ -53,7 +71,7 @@ export const BUILTIN_SKILLS = [
       "If nobody played, say that in one or two lines, and add that tablets sync when they're online, so play on an offline tablet shows up later.",
       "Format: one short paragraph or a few bullets per child, *Name* first. No greeting."
     ].join(" "),
-    data: ["activity", "observations"],
+    data: ["activity", "progress", "observations"],
     schedule: "on-request",
     builtin: true
   }
