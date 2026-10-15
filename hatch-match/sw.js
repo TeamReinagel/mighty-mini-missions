@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "hatch-v2";
+const VERSION = "hatch-v3";
 const ART = [
   "mama_blue", "mama_pink", "mama_yellow", "mama_green",
   "egg_blue", "egg_pink", "egg_yellow", "egg_mint",
@@ -19,7 +19,11 @@ const CORE = [
   "art/splash.jpg",
   ...ART,
   "icons/icon-192.png",
-  "icons/icon-512.png"
+  "icons/icon-512.png",
+  "tts/index.html",
+  "tts/tts.css",
+  "tts/tts.js",
+  "tts/worker.js"
 ];
 
 self.addEventListener("install", (event) => {
@@ -41,6 +45,17 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== location.origin) return;
+  // Kokoro runtime, model, and voice files live in the kokoro-hatch cache.
+  // Leave them out of this app-shell cache so a game update does not duplicate
+  // or evict them, and so Reset can delete only the speech assets.
+  if (url.pathname.includes("/tts/vendor/")) return;
+  // When the device is offline, don't wait for the network attempt to time out.
+  if (!navigator.onLine) {
+    event.respondWith(
+      caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match("index.html"))
+    );
+    return;
+  }
   // Network first so updates show up; cache keeps it working offline.
   event.respondWith(
     fetch(req, { cache: "no-cache" })

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#8fd3f4">
+<title>Kokoro speech test · Hatch Match</title>
+<link rel="icon" href="../icons/icon-192.png">
+<link rel="stylesheet" href="tts.css">
+</head>
+<body>
+<main class="panel">
+  <p class="back"><a href="../">Back to Hatch Match</a></p>
+  <h1>Kokoro speech test</h1>
+  <p class="lead">On-device speech for a grown-up to try. The children’s game still uses the tablet’s own voice.</p>
+
+  <p id="state" role="status" aria-live="polite">Checking saved speech…</p>
+  <div class="track" aria-hidden="true"><div id="bar"></div></div>
+  <p id="detail"></p>
+  <p id="storage"></p>
+
+  <label for="voice">Voice</label>
+  <select id="voice">
+    <option value="af_heart">Heart · American woman (A)</option>
+    <option value="af_bella">Bella · American woman (A-)</option>
+    <option value="af_nicole">Nicole · American woman (B-)</option>
+    <option value="am_fenrir">Fenrir · American man (C+)</option>
+    <option value="am_puck">Puck · American man (C+)</option>
+    <option value="bf_emma">Emma · British woman (B-)</option>
+    <option value="bm_george">George · British man (C)</option>
+  </select>
+
+  <label for="text">Text</label>
+  <textarea id="text" rows="5">Find little C. That's the matching egg. You did it! Can you flap your wings like a baby bird? Flap, flap, flap!</textarea>
+
+  <div class="actions">
+    <button type="button" id="download" disabled>Download</button>
+    <button type="button" id="reset" class="danger">Reset saved speech</button>
+    <button type="button" id="speak" disabled>Speak</button>
+    <button type="button" id="stop" disabled>Stop</button>
+  </div>
+
+  <h2>Measured this browser</h2>
+  <dl id="report">
+    <dt>First-run download and initialization</dt><dd id="mFirst">Not measured yet.</dd>
+    <dt>Cached startup and prewarm</dt><dd id="mCached">Not measured yet.</dd>
+    <dt>Warm Speak to first audio</dt><dd id="mSpeak">Not measured yet.</dd>
+    <dt>Generation speed</dt><dd id="mSpeed">Not measured yet.</dd>
+  </dl>
+  <pre id="log"></pre>
+</main>
+<script type="module" src="tts.js"></script>
+</body>
+</html>
