@@ -3,12 +3,16 @@ const DESIGN_KEY = "design-studio-latest";
 const TALK_LIMIT_MS = 15 * 60 * 1000;
 
 const $ = (id) => document.getElementById(id);
+const homeTop = $("home-top");
 const unlockPanel = $("unlock");
 const studio = $("studio");
+const callPanel = $("call");
 const unlockForm = $("unlock-form");
 const unlockError = $("unlock-error");
 const talkButton = $("talk");
+const hangupButton = $("hangup");
 const quietButton = $("quiet");
+const homeStatus = $("home-status");
 const status = $("status");
 const transcript = $("transcript");
 const sidFace = $("sid-face");
@@ -29,13 +33,15 @@ let peer = null;
 let events = null;
 let mic = null;
 let audio = null;
-let talkStarted = 0;
 let talkTimer = 0;
 let sidBuffer = "";
 let muted = false;
+let onCall = false;
 
 function showUnlock(message) {
+  leaveCallView("");
   studio.hidden = true;
+  homeTop.hidden = false;
   unlockPanel.hidden = false;
   unlockError.hidden = !message;
   unlockError.textContent = message || "";
@@ -44,7 +50,35 @@ function showUnlock(message) {
 function showStudio() {
   unlockPanel.hidden = true;
   studio.hidden = false;
+  homeTop.hidden = false;
   renderDesign();
+}
+
+function enterCallView() {
+  onCall = true;
+  document.body.classList.add("on-call");
+  homeTop.hidden = true;
+  studio.hidden = true;
+  unlockPanel.hidden = true;
+  callPanel.hidden = false;
+  muted = false;
+  quietButton.classList.remove("on");
+  quietButton.textContent = "Quiet the mic";
+  transcript.hidden = true;
+  sidText.textContent = "";
+  maxLine.classList.add("hidden");
+  maxText.textContent = "";
+}
+
+function leaveCallView(message) {
+  onCall = false;
+  document.body.classList.remove("on-call");
+  callPanel.hidden = true;
+  if (code) {
+    homeTop.hidden = false;
+    studio.hidden = false;
+  }
+  if (message) homeStatus.textContent = message;
 }
 
 async function api(body, extraHeaders) {
@@ -83,7 +117,7 @@ function rememberDesign(next) {
   renderDesign();
 }
 
-function stopTalk() {
+function stopTalk(message) {
   clearTimeout(talkTimer);
   mic?.getTracks().forEach((track) => track.stop());
   events?.close();
@@ -93,10 +127,7 @@ function stopTalk() {
   events = null;
   mic = null;
   talkButton.disabled = false;
-  talkButton.textContent = "Talk with Sid";
-  talkButton.classList.remove("live");
-  quietButton.classList.add("hidden");
-  setStatus("");
+  leaveCallView(message || "");
 }
 
 function sendEvent(event) {
@@ -150,6 +181,8 @@ function onEvent(raw) {
 async function startTalk(micRequest) {
   if (peer) return;
   talkButton.disabled = true;
+  homeStatus.textContent = "";
+  enterCallView();
   setStatus("Calling Sid...");
 
   try {
@@ -157,8 +190,8 @@ async function startTalk(micRequest) {
   } catch (err) {
     talkButton.disabled = false;
     const blocked = err?.name === "NotAllowedError" || err?.name === "SecurityError";
-    setStatus(blocked
-      ? "The phone said no to the microphone. Open the Settings app, tap Privacy & Security, tap Microphone, and turn Safari on. Then come back and tap Talk with Sid."
+    stopTalk(blocked
+      ? "The phone said no to the microphone. In Settings, open Apps, open Safari, open Microphone, and choose Ask. Then tap Talk with Sid."
       : "The microphone did not start. Open this page in Safari, then tap Talk with Sid.");
     return;
   }
@@ -172,10 +205,6 @@ async function startTalk(micRequest) {
   events.addEventListener("message", onEvent);
   let greeting = "There is no game yet. Say hi to Max in one short sentence and ask what he wants to make. Do not offer a ready-made game.";
   events.addEventListener("open", () => {
-    talkButton.textContent = "Bye, Sid";
-    talkButton.classList.add("live");
-    talkButton.disabled = false;
-    quietButton.classList.remove("hidden");
     setStatus("Sid is listening");
     askSid(greeting);
   });
@@ -205,36 +234,36 @@ async function startTalk(micRequest) {
     if (data.greeting) greeting = data.greeting;
     await peer.setRemoteDescription({ type: "answer", sdp: data.sdp });
   } catch (err) {
-    stopTalk();
-    if (err.status === 401) showUnlock("This phone needs the grown-up code again.");
-    else setStatus(err.message);
+    if (err.status === 401) {
+      stopTalk("");
+      showUnlock("This phone needs the grown-up code again.");
+    } else {
+      stopTalk(err.message);
+    }
     return;
   }
 
-  talkStarted = Date.now();
   talkTimer = setTimeout(() => {
-    stopTalk();
-    setStatus("Break time. Tap Talk with Sid when you want more.");
+    stopTalk("Break time. Tap Talk with Sid when you want more.");
   }, TALK_LIMIT_MS);
 }
 
 talkButton.addEventListener("click", () => {
-  if (peer) {
-    stopTalk();
-    return;
-  }
   if (navigator.audioSession) navigator.audioSession.type = "play-and-record";
   const micRequest = navigator.mediaDevices?.getUserMedia({ audio: true });
   if (!micRequest) {
-    setStatus("Open this page in Safari, then tap Talk with Sid.");
+    homeStatus.textContent = "Open this page in Safari, then tap Talk with Sid.";
     return;
   }
   startTalk(micRequest);
 });
 
+hangupButton.addEventListener("click", () => stopTalk(""));
+
 quietButton.addEventListener("click", () => {
   muted = !muted;
   mic?.getTracks().forEach((track) => { track.enabled = !muted; });
+  quietButton.classList.toggle("on", muted);
   quietButton.textContent = muted ? "Sid can listen" : "Quiet the mic";
   setStatus(muted ? "Mic is quiet" : "Sid is listening");
   if (muted) sendEvent({ type: "input_audio_buffer.clear" });
@@ -275,7 +304,7 @@ buildForm.addEventListener("submit", async (event) => {
 $("forget").addEventListener("click", () => {
   localStorage.removeItem(CODE_KEY);
   code = "";
-  stopTalk();
+  stopTalk("");
   showUnlock("");
 });
 

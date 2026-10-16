@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="./studio.css" />
   </head>
   <body>
-    <header class="top">
+    <header class="top" id="home-top">
       <div class="brand">
-        <img id="sid-face" src="./sid-listen.jpg" alt="Sid, listening" />
+        <img src="./sid-listen.jpg" alt="" />
         <div>
           <h1>Sid</h1>
           <p>Game design coach</p>
@@ -32,13 +32,7 @@
 
     <section id="studio" hidden>
       <button id="talk" class="primary talk" type="button">Talk with Sid</button>
-      <p id="status" class="status"></p>
-      <button id="quiet" class="quiet hidden" type="button">Quiet the mic</button>
-
-      <article id="transcript" class="card" hidden>
-        <p class="said"><span class="who">Sid</span><span id="sid-text"></span></p>
-        <p id="max-line" class="said hidden"><span class="who">Max</span><span id="max-text"></span></p>
-      </article>
+      <p id="home-status" class="status"></p>
 
       <article id="design-card" class="card" hidden>
         <p class="who">Your plan</p>
@@ -58,6 +52,23 @@
         <p id="build-note" class="note"></p>
         <button id="forget" class="quiet" type="button">Forget this phone's unlock</button>
       </details>
+    </section>
+
+    <section id="call" class="call" hidden aria-label="Call with Sid">
+      <img id="sid-face" class="call-face" src="./sid-listen.jpg" alt="Sid, listening" />
+      <div class="call-shade"></div>
+      <div class="call-top">
+        <p class="call-name">Sid</p>
+        <p id="status" class="call-status">Calling Sid...</p>
+      </div>
+      <div id="transcript" class="call-caption" hidden>
+        <p class="said"><span class="who">Sid</span><span id="sid-text"></span></p>
+        <p id="max-line" class="said hidden"><span class="who">Max</span><span id="max-text"></span></p>
+      </div>
+      <div class="call-bar">
+        <button id="quiet" class="call-btn mute" type="button">Quiet the mic</button>
+        <button id="hangup" class="call-btn end" type="button">Bye, Sid</button>
+      </div>
     </section>
 
     <script type="module" src="./studio.js"></script>
