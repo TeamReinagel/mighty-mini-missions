@@ -640,6 +640,7 @@ async function main() {
     hubGrid.innerHTML = "";
     const activities = Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : [];
     for (const activity of activities) {
+      if (Array.isArray(activity.profiles) && (!p || !activity.profiles.includes(p.id))) continue;
       const frame = document.createElement("span");
       frame.className = "hub-icon-frame";
       const icon = document.createElement("img");

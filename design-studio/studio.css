@@ -1,0 +1,155 @@
+:root {
+  color-scheme: light;
+  --ink: #1d2a24;
+  --paper: #f7f1e4;
+  --card: #fffaf1;
+  --green: #1f6f5b;
+  --green-deep: #164f41;
+  --gold: #f4c95d;
+  --clay: #e07a3d;
+  --line: #e4d8c4;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+body {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1rem 1rem 2.5rem;
+}
+
+h1, h2, p { margin: 0; }
+
+a { color: var(--green-deep); }
+
+button, input {
+  font: inherit;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand img {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 1rem;
+  object-fit: cover;
+  background: #f3e2c4;
+}
+
+h1 { font-size: 1.7rem; line-height: 1.1; }
+
+.back {
+  color: var(--green-deep);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 1.25rem;
+  padding: 1rem;
+  margin-top: 0.9rem;
+}
+
+.lede { font-size: 1.15rem; line-height: 1.35; }
+
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+input[type="password"], input[type="text"] {
+  width: 100%;
+  border: 2px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.85rem 1rem;
+  background: white;
+  font-size: 1.15rem;
+}
+
+.primary, .secondary, .quiet {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 1rem 1.1rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-top: 0.8rem;
+}
+
+.primary { background: var(--green); color: white; }
+.primary:disabled { background: #9bb3ab; }
+.secondary { background: var(--gold); color: var(--ink); }
+.quiet {
+  background: transparent;
+  color: var(--green-deep);
+  border: 2px solid var(--green);
+}
+
+.talk {
+  min-height: 8.5rem;
+  border-radius: 2rem;
+  background: var(--green);
+  color: white;
+  font-size: 2rem;
+}
+
+.talk.live { background: var(--clay); }
+.talk:disabled { background: #9bb3ab; }
+
+.status {
+  min-height: 1.5rem;
+  margin-top: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.said {
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.said + .said { margin-top: 0.7rem; }
+
+.who { display: block; font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; color: #6d6456; }
+
+.design-title { font-size: 1.6rem; }
+
+.meta { margin-top: 0.35rem; line-height: 1.35; }
+
+.note { color: #6d6456; font-size: 0.95rem; line-height: 1.4; margin-top: 0.6rem; }
+
+.error { color: #9a3412; font-weight: 700; margin-top: 0.6rem; }
+
+.hidden { display: none; }
+
+.grownup summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--green-deep);
+}
+
+.grownup p { margin-top: 0.6rem; line-height: 1.4; }

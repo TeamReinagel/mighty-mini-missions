@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f1e4" />
+    <title>Design with Sid</title>
+    <link rel="icon" href="./icon.svg" />
+    <link rel="stylesheet" href="./studio.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <img id="sid-face" src="./sid-listen.jpg" alt="Sid, listening" />
+        <div>
+          <h1>Sid</h1>
+          <p>Game design coach</p>
+        </div>
+      </div>
+      <a class="back" href="../">Games</a>
+    </header>
+
+    <section id="unlock" class="card">
+      <p class="lede">A grown-up unlocks this phone once. After that, Max can talk with Sid on his own.</p>
+      <form id="unlock-form">
+        <label for="unlock-code">Grown-up code</label>
+        <input id="unlock-code" type="password" autocomplete="off" />
+        <button class="primary" type="submit">Unlock</button>
+      </form>
+      <p id="unlock-error" class="error" hidden></p>
+    </section>
+
+    <section id="studio" hidden>
+      <button id="talk" class="primary talk" type="button">Talk with Sid</button>
+      <p id="status" class="status"></p>
+      <button id="quiet" class="quiet hidden" type="button">Quiet the mic</button>
+
+      <article id="transcript" class="card" hidden>
+        <p class="said"><span class="who">Sid</span><span id="sid-text"></span></p>
+        <p id="max-line" class="said hidden"><span class="who">Max</span><span id="max-text"></span></p>
+      </article>
+
+      <article id="design-card" class="card" hidden>
+        <p class="who">Your plan</p>
+        <h2 id="design-title" class="design-title"></h2>
+        <p id="design-blurb" class="meta"></p>
+        <p class="note">Nothing to play yet. A grown-up builds the real game from this plan.</p>
+      </article>
+
+      <details class="card grownup">
+        <summary>Grown-up: build the full game</summary>
+        <p>This sends Max's design to Cursor. A coding agent opens a pull request. The game joins the others after that pull request is merged. Type the grown-up code again so a playing kid does not start a build by accident.</p>
+        <form id="build-form">
+          <label for="build-code">Grown-up code</label>
+          <input id="build-code" type="password" autocomplete="off" />
+          <button class="primary" type="submit">Send this design to build</button>
+        </form>
+        <p id="build-note" class="note"></p>
+        <button id="forget" class="quiet" type="button">Forget this phone's unlock</button>
+      </details>
+    </section>
+
+    <script type="module" src="./studio.js"></script>
+  </body>
+</html>

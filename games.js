@@ -49,5 +49,12 @@ window.MIGHTY_GAMES = [
     title: "Otter Slide",
     icon: "./otter-slide/icons/icon-192.png",
     href: "./otter-slide/"
+  },
+  {
+    id: "design-studio",
+    title: "Design with Sid",
+    icon: "./design-studio/icon.svg",
+    href: "./design-studio/",
+    profiles: ["max"]
   }
 ];

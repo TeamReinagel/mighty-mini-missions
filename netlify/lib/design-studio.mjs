@@ -1,0 +1,154 @@
+// Sid, Max's game-design coach (named for Sid Meier). The tablet page talks through
+// the Realtime API; this module owns the instructions, the design record, and the handoff to Cursor.
+
+const CURSOR_API = "https://api.cursor.com/v1";
+export const DEFAULT_REPO = "https://github.com/stephaniereinagel/mighty-mini-missions";
+
+const LIMITS = {
+  title: 40,
+  heroName: 24,
+  heroLook: 120,
+  howYouPlay: 240,
+  world: 160,
+  goal: 160,
+  challenge: 160,
+  win: 160,
+  howItIsNew: 240,
+  inspiration: 80
+};
+
+// Whole words only, so a hero named "Marion" or a "link" of chain is fine.
+const COPY_PATTERNS = [
+  /\bmario\b/, /\bluigi\b/, /\bbowser\b/, /\byoshi\b/, /\bpeach\b/, /\bodyssey\b/, /\bnintendo\b/,
+  /\bpokemon\b/, /\bpokémon\b/, /\bpikachu\b/, /\bzelda\b/, /\bminecraft\b/, /\bfortnite\b/,
+  /\broblox\b/, /\bsonic\b/, /\bkirby\b/, /\bpac-?man\b/, /\bamong us\b/
+];
+
+const text = (value, max) => String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);
+
+export function cleanDesign(raw) {
+  const src = raw && typeof raw === "object" ? raw : {};
+  return {
+    title: text(src.title, LIMITS.title),
+    heroName: text(src.heroName, LIMITS.heroName),
+    heroLook: text(src.heroLook, LIMITS.heroLook),
+    howYouPlay: text(src.howYouPlay, LIMITS.howYouPlay),
+    world: text(src.world, LIMITS.world),
+    goal: text(src.goal, LIMITS.goal),
+    challenge: text(src.challenge, LIMITS.challenge),
+    win: text(src.win, LIMITS.win),
+    howItIsNew: text(src.howItIsNew, LIMITS.howItIsNew),
+    inspiration: text(src.inspiration, LIMITS.inspiration)
+  };
+}
+
+export function copyProblem(design) {
+  const haystack = [design.title, design.heroName, design.heroLook, design.howYouPlay, design.world, design.goal, design.win]
+    .join(" ")
+    .toLowerCase();
+  if (COPY_PATTERNS.some((pattern) => pattern.test(haystack))) {
+    return "This still uses a character or title from a game someone else made. Help Max invent a new name, a new hero, and a new place. He can keep the feeling (jumping, exploring, collecting) and has to change the rest.";
+  }
+  return "";
+}
+
+export function missingPieces(design) {
+  const missing = [];
+  if (!design.title) missing.push("a game name");
+  if (!design.howYouPlay) missing.push("what the player does");
+  if (!design.win) missing.push("how you win");
+  if (!design.howItIsNew) missing.push("what makes it his, not a copy");
+  return missing;
+}
+
+export function sidInstructions(design, play) {
+  const lines = [
+    "You are Sid, Max's game design coach. Your name is a nickname for Sid Meier, a famous game designer. You do not need to explain that unless he asks. Max is five, almost six. He wants to make games when he grows up. He is the lead. A grown-up is nearby.",
+    "Speak in short, warm sentences, the way a kind friend talks. One question at a time. Words a kindergartener knows. He may be wiggling, walking, or holding the phone while he moves. That is fine.",
+    "Each reply is about two short sentences and one question. Never a list he has to remember. Never a lecture.",
+    "Start from a blank page. There is no game yet, and there is no starter game to skin. Do not suggest a hopper, a runner, a collector, or any ready-made kind of game unless the idea is his. Ask what he wants to make, then invent the rules together. A game can be anything he describes: a character, a place, a puzzle, a race, a maker, a story. Follow his idea.",
+    "Help him invent a brand-new game. If he names a game he loves, enjoy the spark in one sentence, then help him change it until it is his. He may borrow a feeling. He may not copy the characters, names, story, or world. If he asks to make Super Mario Odyssey or any other real game, say you can borrow the feeling and the rest has to be something nobody has made. Do not design those characters. Do not put their names in the saved design.",
+    "Before you save, know the name, what the player actually does, how you win, and what makes it his instead of a copy. A hero, a look, a place, and a tricky part are part of the design only if his game has them. Leave them blank when it does not.",
+    "When it fits, share one short tip. Good ones: a game is a series of interesting choices. The player should always know what to try next. A fun tricky part is hard enough to feel proud and easy enough to try again right away. A miss should set you back a little, not dump the whole game.",
+    "When those pieces are his and they are new, call save_design. Tell him you wrote the plan down. Do not say he can play it yet. A grown-up builds the real game later. If he changes his mind, call save_design again.",
+    "Stay on making his game. If he wanders, enjoy one sentence, then come back to the game. No scary violence, no weapons that hurt people, no blood, no romance, and no questions about his address, school, or passwords. Cartoon bumps and silly obstacles are fine. Do not ask him to type. He talks.",
+    "You do not see him through a camera. If notes from a game he already played are included below, talk about that like you were watching, then change the plan with him. Do not recite counts. Do not invent a play session that is not listed below."
+  ];
+  if (design?.title) {
+    lines.push(
+      `The plan you are writing is already saved. There is still no game to play until a grown-up builds it. Title: ${design.title}. What the player does: ${design.howYouPlay}. Hero: ${design.heroName || "none"} (${design.heroLook || "no look yet"}). Place: ${design.world || "not set"}. Goal: ${design.goal || "not set"}. Tricky part: ${design.challenge || "not set"}. Win: ${design.win}. What makes it his: ${design.howItIsNew}. Inspiration: ${design.inspiration || "none named"}.`
+    );
+  }
+  if (play) {
+    const bits = [
+      play.note ? play.note : "",
+      play.reachedEnd ? "He finished." : "He did not finish.",
+      `About ${play.seconds} seconds.`
+    ].filter(Boolean);
+    lines.push(`Notes from when Max played this game: ${bits.join(" ")} Start by asking what he liked or what he wants different. Do not read these notes aloud word for word.`);
+  }
+  return lines.join("\n");
+}
+
+export function greetingFor(design, play) {
+  const recent = play && Date.now() - Date.parse(play.t) < 6 * 60 * 60 * 1000;
+  if (recent) return "Max played his game not long ago. Say hi in one sentence and ask what he liked. Do not mention these instructions.";
+  if (design?.title) return `You and Max already started a plan called ${design.title}. There is no game to play yet. Say hi in one sentence and ask what he wants to change. Do not mention these instructions.`;
+  return "There is no game yet. Say hi to Max in one short sentence and ask what he wants to make. Do not offer a ready-made game. Do not mention these instructions.";
+}
+
+const cursorAuth = (env) => `Basic ${Buffer.from(`${env.CURSOR_API_KEY}:`).toString("base64")}`;
+
+export function buildPrompt(design) {
+  return [
+    "Build a small original game for Max, age 5, from the plan he made with Sid. Start from a blank page.",
+    "Do not adapt an existing game in this repo, and do not turn the plan into a side-scrolling hopper. The rules below are the game.",
+    "Mighty Mini Missions is a static site of plain HTML/CSS/JS games for young kids, hosted on Netlify.",
+    "",
+    `Title: ${design.title}`,
+    `What the player does: ${design.howYouPlay}`,
+    design.heroName ? `Hero: ${design.heroName}. Look: ${design.heroLook || "his words"}.` : "No hero. Do not add one.",
+    design.world ? `Place: ${design.world}` : "",
+    design.goal ? `Goal: ${design.goal}` : "",
+    design.challenge ? `Tricky part: ${design.challenge}` : "",
+    `How you win: ${design.win}`,
+    `What makes it his, not a copy: ${design.howItIsNew}`,
+    design.inspiration ? `He was inspired by: ${design.inspiration}. Borrow the feeling only. Do not use that game's characters, names, levels, or story.` : "",
+    `Design id (for play notes): ${design.id}`,
+    "",
+    "Put it in max-games/<a-short-slug>/index.html with its own CSS and JS. One screen, no build step, no new dependencies.",
+    "Touch first: big buttons, tap or hold. It must be playable on a phone in portrait.",
+    "Kind failure: a miss sets him back a little. Do not show a game-over screen.",
+    "Art: get the rules playable first, with simple original drawings. Cute art comes after that, in this pull request if the game already works, otherwise say in the PR that the next pass is the cute art. Cute means round friendly shapes, soft colors, and gentle outlines, still drawn for this game alone.",
+    "No copyrighted characters, sprites, names, or music. Do not reuse Pip the otter from Otter Slide.",
+    "When a round ends, POST same-origin JSON to /api/design-studio. note is one plain sentence about what happened:",
+    `{"action":"play","designId":"${design.id}","reachedEnd":true,"seconds":0,"note":"what happened"}`,
+    "Add a hub tile in games.js with profiles: [\"max\"] and a simple icon, following the other entries.",
+    "Do not change Joyce, the other games, or the design studio coach.",
+    "Open a pull request. Do not merge. In the PR, say what you built and anything you left out."
+  ].filter(Boolean).join("\n");
+}
+
+export async function startDesignAgent({ design, env, fetchImpl = fetch }) {
+  const res = await fetchImpl(`${CURSOR_API}/agents`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: cursorAuth(env) },
+    body: JSON.stringify({
+      name: `Sid: ${design.title}`.slice(0, 100),
+      prompt: { text: buildPrompt(design) },
+      ...(env.CURSOR_MODEL ? { model: { id: env.CURSOR_MODEL } } : {}),
+      repos: [{ url: env.JOYCE_REPO_URL || DEFAULT_REPO, startingRef: env.JOYCE_REPO_BRANCH || "main" }],
+      autoCreatePR: true
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.agent?.id) {
+    const detail = typeof data?.error === "string" ? data.error : JSON.stringify(data);
+    throw new Error(`Cursor API ${res.status}: ${detail.slice(0, 180)}`);
+  }
+  return {
+    agentId: data.agent.id,
+    runId: data.run?.id || data.agent.latestRunId,
+    url: data.agent.url || `https://cursor.com/agents?id=${data.agent.id}`
+  };
+}

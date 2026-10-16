@@ -106,6 +106,25 @@ If you created the Slack app from an older manifest, update it from the manifest
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`
 - Send now: add `&send=1`. It appears in Slack within a minute or two, followed by Joyce's weekly look-back. This also starts a new report week, so Friday's report covers only what happens after.
 
+## Design with Sid (Max's game-design coach)
+
+Sid is a voice coach on the phone or tablet, nicknamed for the game designer Sid Meier. Max and Sid start from a blank page and invent the game together. A feeling from a game Max loves is fine. A copy is not. There is no starter game to play. When the plan is ready, a grown-up sends it to Cursor, which builds that game and opens a pull request. Nothing joins the games until the pull request is merged.
+
+The first build should make his rules playable. Cute art (round shapes, soft colors, gentle outlines) can come at the end of that build, or as a later pass. Sid does not use the camera. After the built game is on the site, it can leave a short note about how play went, and Sid can talk about that the next time Max calls.
+
+His voice is sent to OpenAI for the conversation. The API key stays on the server. A talk stops itself after 15 minutes. The build asks for the grown-up code again, so talking does not start one.
+
+On Max's game list, the tile is **Design with Sid**. Other profiles do not see it.
+
+### Setup
+Add these with the other Netlify environment variables, then redeploy:
+
+- `DESIGN_PARENT_CODE`: a code a grown-up types once on the spare phone. Voice stays unlocked on that phone. Builds ask for it every time.
+- `OPENAI_API_KEY` and `CURSOR_API_KEY`: already used by Joyce. Cursor needs GitHub connected so the agent can open a pull request.
+- Optional: `OPENAI_REALTIME_MODEL` (default `gpt-realtime-2.1`), `DESIGN_VOICE` (default `ash`, a male voice).
+
+The first time on the phone, a grown-up enters the code. After that Max can tap **Talk with Sid**.
+
 ## Run it
 
 ### Option A (recommended): run the local app server (also enables image generation)
