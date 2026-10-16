@@ -147,17 +147,19 @@ function onEvent(raw) {
   }
 }
 
-async function startTalk() {
+async function startTalk(micRequest) {
   if (peer) return;
   talkButton.disabled = true;
   setStatus("Calling Sid...");
-  if (navigator.audioSession) navigator.audioSession.type = "playback";
 
   try {
-    mic = await navigator.mediaDevices.getUserMedia({ audio: true });
-  } catch {
+    mic = await micRequest;
+  } catch (err) {
     talkButton.disabled = false;
-    setStatus("The phone needs the microphone for Sid to hear Max.");
+    const blocked = err?.name === "NotAllowedError" || err?.name === "SecurityError";
+    setStatus(blocked
+      ? "The phone said no to the microphone. Open the Settings app, tap Privacy & Security, tap Microphone, and turn Safari on. Then come back and tap Talk with Sid."
+      : "The microphone did not start. Open this page in Safari, then tap Talk with Sid.");
     return;
   }
 
@@ -217,8 +219,17 @@ async function startTalk() {
 }
 
 talkButton.addEventListener("click", () => {
-  if (peer) stopTalk();
-  else startTalk();
+  if (peer) {
+    stopTalk();
+    return;
+  }
+  if (navigator.audioSession) navigator.audioSession.type = "play-and-record";
+  const micRequest = navigator.mediaDevices?.getUserMedia({ audio: true });
+  if (!micRequest) {
+    setStatus("Open this page in Safari, then tap Talk with Sid.");
+    return;
+  }
+  startTalk(micRequest);
 });
 
 quietButton.addEventListener("click", () => {
