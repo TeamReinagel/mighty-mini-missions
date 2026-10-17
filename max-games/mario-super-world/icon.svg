@@ -1,37 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <!-- Background -->
-  <rect width="192" height="192" rx="32" fill="#87ceeb"/>
-  
-  <!-- Ground -->
-  <rect x="0" y="150" width="192" height="42" fill="#8b4513"/>
-  <rect x="0" y="150" width="192" height="10" fill="#4caf50"/>
-  
-  <!-- Cloud -->
-  <ellipse cx="50" cy="40" rx="25" ry="15" fill="white" opacity="0.8"/>
-  <ellipse cx="70" cy="35" rx="20" ry="12" fill="white" opacity="0.8"/>
-  <ellipse cx="90" cy="40" rx="25" ry="15" fill="white" opacity="0.8"/>
-  
-  <!-- Mario body -->
-  <ellipse cx="96" cy="115" rx="25" ry="20" fill="#e63946"/>
-  
-  <!-- Mario head -->
-  <circle cx="96" cy="80" r="22" fill="#ffccaa"/>
-  
-  <!-- Mario hat -->
-  <ellipse cx="96" cy="65" rx="26" ry="10" fill="#e63946"/>
-  
-  <!-- M on hat -->
-  <text x="96" y="70" text-anchor="middle" fill="white" font-family="sans-serif" font-weight="bold" font-size="14">M</text>
-  
-  <!-- Eyes -->
-  <circle cx="90" cy="78" r="3" fill="#333"/>
-  <circle cx="102" cy="78" r="3" fill="#333"/>
-  
-  <!-- Wings -->
-  <path d="M65 100 Q45 85 60 70 Q70 85 70 100 Z" fill="white" opacity="0.9"/>
-  <path d="M127 100 Q147 85 132 70 Q122 85 122 100 Z" fill="white" opacity="0.9"/>
-  
-  <!-- Wing block -->
-  <rect x="140" y="50" width="30" height="30" fill="#ffd700" stroke="#ff8c00" stroke-width="3" rx="4"/>
-  <text x="155" y="72" text-anchor="middle" fill="#333" font-family="sans-serif" font-weight="bold" font-size="20">!</text>
+  <rect width="192" height="192" rx="40" fill="#b7e4fb"/>
+  <ellipse cx="48" cy="46" rx="26" ry="16" fill="#fff"/>
+  <ellipse cx="68" cy="42" rx="18" ry="14" fill="#fff"/>
+  <ellipse cx="150" cy="58" rx="22" ry="14" fill="#fff" opacity="0.9"/>
+  <ellipse cx="96" cy="168" rx="90" ry="28" fill="#8ed18a"/>
+  <ellipse cx="96" cy="160" rx="78" ry="16" fill="#b6e7a8"/>
+  <ellipse cx="78" cy="118" rx="16" ry="10" fill="#fff8ee" transform="rotate(-20 78 118)"/>
+  <ellipse cx="118" cy="116" rx="16" ry="10" fill="#fff8ee" transform="rotate(18 118 116)"/>
+  <rect x="78" y="104" width="36" height="28" rx="10" fill="#ef5d52" stroke="#6d5648" stroke-width="3"/>
+  <rect x="82" y="116" width="28" height="22" rx="8" fill="#3d7edb" stroke="#6d5648" stroke-width="3"/>
+  <circle cx="90" cy="126" r="2.5" fill="#ffe08a"/>
+  <circle cx="102" cy="126" r="2.5" fill="#ffe08a"/>
+  <circle cx="96" cy="86" r="20" fill="#ffd0b5" stroke="#6d5648" stroke-width="3"/>
+  <ellipse cx="96" cy="74" rx="22" ry="12" fill="#e23d45" stroke="#6d5648" stroke-width="3"/>
+  <ellipse cx="108" cy="80" rx="10" ry="5" fill="#e23d45" stroke="#6d5648" stroke-width="3"/>
+  <circle cx="90" cy="86" r="2.4" fill="#5c4636"/>
+  <circle cx="104" cy="86" r="2.4" fill="#5c4636"/>
+  <path d="M90 94 Q96 99 102 94" fill="none" stroke="#c47a62" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="84" cy="92" r="3" fill="#ff9b8a"/>
+  <circle cx="108" cy="92" r="3" fill="#ff9b8a"/>
+  <rect x="132" y="78" width="36" height="36" rx="10" fill="#ffcf4d" stroke="#e09a2e" stroke-width="4"/>
+  <rect x="138" y="84" width="14" height="8" rx="4" fill="#fff6cc" opacity="0.9"/>
+  <text x="150" y="104" text-anchor="middle" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="26" font-weight="700" fill="#8a4b12">!</text>
 </svg>

@@ -1,877 +1,1242 @@
-// Mario Super World - A platformer for Max
-// 50 levels, wing power-ups, beat Bowser!
+/* Mario Super World
+   Fixed levels for Max. Baby Mario, blue overalls and a red cap, grows up.
+   A shiny gold block with ! gives wings. A miss puts him back a little.
+*/
+(function () {
+  "use strict";
 
-(function() {
-  'use strict';
+  const DESIGN_ID = "ds_db396dea-b340-4c5b-86e3-c59bff2f3ba0";
+  const G = 400;
+  const GRAVITY = 980;
+  const JUMP_V = -560;
+  const RUN = 185;
+  const SIZES = [
+    { w: 40, h: 50, label: "Baby" },
+    { w: 46, h: 64, label: "Kid" },
+    { w: 52, h: 78, label: "Big" }
+  ];
 
-  const DESIGN_ID = 'ds_db396dea-b340-4c5b-86e3-c59bff2f3ba0';
-  const TOTAL_LEVELS = 50;
+  const LEVELS = [
+    {
+      name: "First Hill",
+      hint: true,
+      sky: ["#b7e4fb", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 500, h: 48 },
+        { x: 580, y: G, w: 360, h: 48 },
+        { x: 1020, y: G, w: 460, h: 48 },
+        { x: 680, y: 248, w: 150, h: 34 }
+      ],
+      blocks: [{ x: 420, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      pickups: [],
+      flagX: 1340
+    },
+    {
+      name: "Little Gaps",
+      sky: ["#c5ebff", "#ffe7c8"],
+      platforms: [
+        { x: 0, y: G, w: 360, h: 48 },
+        { x: 470, y: G, w: 280, h: 48 },
+        { x: 860, y: G, w: 280, h: 48 },
+        { x: 1080, y: 316, w: 180, h: 36 },
+        { x: 1220, y: 232, w: 180, h: 36 },
+        { x: 1360, y: 148, w: 240, h: 40 }
+      ],
+      blocks: [{ x: 280, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      pickups: [],
+      flagX: 1500
+    },
+    {
+      name: "Stepping Stones",
+      sky: ["#d4e9ff", "#ffe8f2"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 408, y: G, w: 200, h: 48 },
+        { x: 708, y: 328, w: 180, h: 40 },
+        { x: 944, y: G, w: 240, h: 48 },
+        { x: 1288, y: G, w: 360, h: 48 }
+      ],
+      blocks: [{ x: 220, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      pickups: [{ x: 1040, y: G - 38, w: 38, h: 38 }],
+      flagX: 1520
+    },
+    {
+      name: "Sky Flag",
+      sky: ["#f7c9a2", "#fff0c8"],
+      platforms: [
+        { x: 0, y: G, w: 440, h: 48 },
+        { x: 548, y: G, w: 260, h: 48 },
+        { x: 760, y: 316, w: 180, h: 36 },
+        { x: 900, y: 232, w: 180, h: 36 },
+        { x: 1040, y: 148, w: 260, h: 40 },
+        { x: 470, y: 96, w: 170, h: 32 }
+      ],
+      blocks: [{ x: 360, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      pickups: [],
+      flagX: 1180
+    },
+    {
+      name: "Big Hops",
+      sky: ["#b7e4fb", "#e7f6ff"],
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 448, y: G, w: 190, h: 48 },
+        { x: 746, y: G, w: 190, h: 48 },
+        { x: 1044, y: G, w: 190, h: 48 },
+        { x: 1342, y: G, w: 340, h: 48 },
+        { x: 690, y: 78, w: 180, h: 32 }
+      ],
+      blocks: [{ x: 250, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      pickups: [],
+      flagX: 1540
+    },
+    {
+      name: "Bowser's Yard",
+      sky: ["#c8f0c4", "#fff6d8"],
+      bowser: true,
+      platforms: [
+        { x: 0, y: G, w: 1320, h: 48 },
+        { x: 140, y: 246, w: 150, h: 34 },
+        { x: 1080, y: 246, w: 160, h: 34 }
+      ],
+      blocks: [{ x: 250, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      pickups: [],
+      flagX: 980,
+      bowserHome: 640
+    }
+  ];
 
-  // Game state
-  const state = {
-    level: 1,
-    lives: 3,
-    maxLives: 3,
-    playing: false,
-    paused: false,
-    startTime: 0,
-    hasWings: false,
-    wingTimer: 0,
-    marioSize: 0, // 0=baby, 1=normal, 2=super
-    isBowserLevel: false,
-    bowserHits: 0,
-    bowserDefeated: false
-  };
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const stage = document.getElementById("stage");
+  const overlay = document.getElementById("overlay");
+  const cardTitle = document.getElementById("card-title");
+  const cardBody = document.getElementById("card-body");
+  const goBtn = document.getElementById("go");
+  const goldDemo = document.querySelector(".gold-demo");
+  const levelNameEl = document.getElementById("level-name");
+  const sizePill = document.getElementById("size-pill");
+  const wingPill = document.getElementById("wing-pill");
+  const jumpBtn = document.getElementById("jump");
+  const live = document.getElementById("live");
 
-  // Physics
-  const GRAVITY = 0.6;
-  const JUMP_POWER = -14;
-  const FLY_POWER = -8;
-  const MOVE_SPEED = 5;
-  const WING_DURATION = 300; // frames
+  const held = { left: false, right: false, jump: false };
+  const keys = { left: false, right: false, jump: false };
+  let jumpEdge = false;
+  let prevJump = false;
+  let queuedEdge = false;
 
-  // Canvas setup
-  const canvas = document.getElementById('game');
-  const ctx = canvas.getContext('2d');
-  let width, height;
-
-  // Game objects
+  let mode = "title";
+  let levelIndex = 0;
+  let level = null;
+  let size = 0;
   let mario = null;
-  let platforms = [];
-  let blocks = []; // power-up blocks
-  let flag = null;
-  let enemies = [];
   let bowser = null;
-  let camera = { x: 0, y: 0 };
+  let flag = null;
+  let checkpoint = { x: 36, y: 0 };
+  let spawn = { x: 36, y: 0 };
+  let falls = 0;
+  let gotWings = false;
+  let grewFromFlag = false;
+  let grewFromPickup = false;
+  let levelStartSize = 0;
+  let cleared = 0;
+  let levelT0 = 0;
+  let oops = 0;
+  let invuln = 0;
+  let growPop = 0;
+  let toastText = "";
+  let toastLife = 0;
+  let flagPop = 0;
+  let autoTimer = 0;
+  let particles = [];
+  let audioCtx = null;
+  let view = { cssW: 360, cssH: 480, dpr: 1 };
+  let lastTs = 0;
 
-  // Controls state
-  const keys = {
-    left: false,
-    right: false,
-    jump: false
-  };
-
-  // Touch controls
-  function setupControls() {
-    const btnLeft = document.getElementById('btn-left');
-    const btnRight = document.getElementById('btn-right');
-    const btnJump = document.getElementById('btn-jump');
-
-    function handleStart(key) {
-      return (e) => {
-        e.preventDefault();
-        keys[key] = true;
-      };
-    }
-
-    function handleEnd(key) {
-      return (e) => {
-        e.preventDefault();
-        keys[key] = false;
-      };
-    }
-
-    // Left button
-    btnLeft.addEventListener('touchstart', handleStart('left'), { passive: false });
-    btnLeft.addEventListener('touchend', handleEnd('left'), { passive: false });
-    btnLeft.addEventListener('touchcancel', handleEnd('left'), { passive: false });
-    btnLeft.addEventListener('mousedown', handleStart('left'));
-    btnLeft.addEventListener('mouseup', handleEnd('left'));
-    btnLeft.addEventListener('mouseleave', handleEnd('left'));
-
-    // Right button
-    btnRight.addEventListener('touchstart', handleStart('right'), { passive: false });
-    btnRight.addEventListener('touchend', handleEnd('right'), { passive: false });
-    btnRight.addEventListener('touchcancel', handleEnd('right'), { passive: false });
-    btnRight.addEventListener('mousedown', handleStart('right'));
-    btnRight.addEventListener('mouseup', handleEnd('right'));
-    btnRight.addEventListener('mouseleave', handleEnd('right'));
-
-    // Jump button
-    btnJump.addEventListener('touchstart', handleStart('jump'), { passive: false });
-    btnJump.addEventListener('touchend', handleEnd('jump'), { passive: false });
-    btnJump.addEventListener('touchcancel', handleEnd('jump'), { passive: false });
-    btnJump.addEventListener('mousedown', handleStart('jump'));
-    btnJump.addEventListener('mouseup', handleEnd('jump'));
-    btnJump.addEventListener('mouseleave', handleEnd('jump'));
-
-    // Keyboard fallback
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
-      if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
-      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.jump = true;
-    });
-
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
-      if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
-      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') keys.jump = false;
-    });
-  }
-
-  // Resize canvas
-  function resize() {
-    const container = document.getElementById('game-container');
-    width = container.clientWidth;
-    height = container.clientHeight;
-    canvas.width = width;
-    canvas.height = height;
-  }
-
-  // Generate level
-  function generateLevel(levelNum) {
-    platforms = [];
-    blocks = [];
-    enemies = [];
-    flag = null;
-    bowser = null;
-    state.isBowserLevel = (levelNum === TOTAL_LEVELS);
-    state.bowserHits = 0;
-
-    const difficulty = Math.min(levelNum / 10, 5); // 0-5 scale
-    const levelWidth = 800 + levelNum * 40; // levels get longer
-    const groundY = height - 60;
-
-    // Ground platforms (with gaps that get wider)
-    let x = 0;
-    while (x < levelWidth) {
-      const platformWidth = 150 + Math.random() * 200 - difficulty * 20;
-      platforms.push({
-        x: x,
-        y: groundY,
-        w: Math.max(100, platformWidth),
-        h: 40,
-        type: 'ground'
-      });
-
-      // Gap size increases with difficulty
-      const gapSize = 60 + difficulty * 15 + Math.random() * 30;
-      x += platformWidth + gapSize;
-    }
-
-    // Floating platforms
-    const numFloating = 3 + Math.floor(levelNum / 5);
-    for (let i = 0; i < numFloating; i++) {
-      const px = 200 + i * (levelWidth / numFloating) + Math.random() * 100;
-      const py = groundY - 100 - Math.random() * 150;
-      platforms.push({
-        x: px,
-        y: py,
-        w: 80 + Math.random() * 60,
-        h: 20,
-        type: 'floating'
-      });
-    }
-
-    // Wing blocks (1-3 per level, more in harder levels)
-    const numBlocks = 1 + Math.floor(levelNum / 20);
-    for (let i = 0; i < numBlocks; i++) {
-      const bx = 300 + i * (levelWidth / (numBlocks + 1)) + Math.random() * 100;
-      const by = groundY - 150 - Math.random() * 100;
-      blocks.push({
-        x: bx,
-        y: by,
-        w: 40,
-        h: 40,
-        hit: false,
-        type: 'wing'
-      });
-    }
-
-    // Enemies (more and faster in later levels)
-    if (levelNum > 3) {
-      const numEnemies = Math.floor(levelNum / 5) + 1;
-      for (let i = 0; i < numEnemies; i++) {
-        const ex = 400 + i * 200 + Math.random() * 150;
-        enemies.push({
-          x: ex,
-          y: groundY - 30,
-          w: 30,
-          h: 30,
-          vx: (1 + difficulty * 0.3) * (Math.random() > 0.5 ? 1 : -1),
-          startX: ex - 80,
-          endX: ex + 80,
-          alive: true
-        });
-      }
-    }
-
-    // Flag at the end
-    flag = {
-      x: levelWidth - 50,
-      y: groundY - 150,
-      w: 20,
-      h: 150,
-      poleH: 150
+  function cloneLevel(i) {
+    const src = LEVELS[i];
+    return {
+      name: src.name,
+      hint: !!src.hint,
+      sky: src.sky,
+      bowser: !!src.bowser,
+      bowserHome: src.bowserHome || 0,
+      flagX: src.flagX,
+      platforms: src.platforms.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h })),
+      blocks: src.blocks.map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h, kind: b.kind, used: false })),
+      pickups: src.pickups.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h, got: false }))
     };
+  }
 
-    // Bowser on final level
-    if (state.isBowserLevel) {
-      bowser = {
-        x: levelWidth - 200,
-        y: groundY - 80,
-        w: 80,
-        h: 80,
-        vx: 2,
-        startX: levelWidth - 350,
-        endX: levelWidth - 100,
-        hp: 3,
-        hit: false,
-        hitTimer: 0
-      };
-      // Remove the flag for Bowser level
-      flag = null;
-    }
+  function worldWidth() {
+    let right = level.flagX + 120;
+    for (const p of level.platforms) right = Math.max(right, p.x + p.w + 40);
+    return right;
+  }
 
-    // Mario start position
+  function applySize(next, keepFeet) {
+    const prevH = mario ? mario.h : 0;
+    size = next;
+    const spec = SIZES[size];
+    if (!mario) return;
+    mario.w = spec.w;
+    mario.h = spec.h;
+    mario.size = size;
+    if (keepFeet) mario.y -= spec.h - prevH;
+  }
+
+  function beginLevel() {
+    level = cloneLevel(levelIndex);
+    applySize(size, false);
+    const spec = SIZES[size];
     mario = {
-      x: 50,
-      y: groundY - 60,
-      w: 30 + state.marioSize * 5,
-      h: 40 + state.marioSize * 10,
+      x: 36,
+      y: G - spec.h,
+      w: spec.w,
+      h: spec.h,
       vx: 0,
       vy: 0,
+      facing: 1,
+      size,
+      wings: false,
       grounded: false,
-      facing: 1
+      coyote: 0,
+      buffer: 0
     };
-
-    camera.x = 0;
-    state.hasWings = false;
-    state.wingTimer = 0;
+    spawn = { x: mario.x, y: mario.y };
+    checkpoint = { x: mario.x, y: mario.y };
+    const stand = platformAtFlag();
+    flag = { x: level.flagX, y: stand ? stand.y : G, on: !level.bowser };
+    bowser = level.bowser
+      ? {
+          x: level.bowserHome,
+          y: G - 100,
+          w: 140,
+          h: 86,
+          dir: 1,
+          hp: 3,
+          minX: 560,
+          maxX: 760,
+          sit: false,
+          flash: 0
+        }
+      : null;
+    falls = 0;
+    gotWings = false;
+    grewFromFlag = false;
+    grewFromPickup = false;
+    levelStartSize = size;
+    oops = 0;
+    invuln = 0;
+    growPop = 0;
+    flagPop = 0;
+    toastText = "";
+    particles = [];
+    levelT0 = performance.now();
+    mode = "play";
+    blip(480, 0.05);
+    document.body.dataset.mode = "play";
+    hideCard();
+    say(level.bowser ? "Jump on Bowser, then touch the flag." : level.name);
+    updateHud();
   }
 
-  // Update HUD
-  function updateHUD() {
-    document.getElementById('level-display').textContent = `Level ${state.level}`;
-
-    const hearts = document.querySelectorAll('.heart');
-    hearts.forEach((h, i) => {
-      h.classList.toggle('lost', i >= state.lives);
-    });
-
-    let powerText = '';
-    if (state.hasWings) powerText = '🪽';
-    else if (state.marioSize === 2) powerText = '⭐';
-    else if (state.marioSize === 1) powerText = '🍄';
-    document.getElementById('power-display').textContent = powerText;
+  function platformAtFlag() {
+    let best = null;
+    for (const p of level.platforms) {
+      if (level.flagX >= p.x + 8 && level.flagX <= p.x + p.w - 8) {
+        if (!best || p.y < best.y) best = p;
+      }
+    }
+    return best;
   }
 
-  // Physics update
-  function update() {
-    if (!state.playing || state.paused) return;
+  function overlap(a, b) {
+    return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  }
 
-    // Wing timer
-    if (state.hasWings) {
-      state.wingTimer--;
-      if (state.wingTimer <= 0) {
-        state.hasWings = false;
-      }
+  function toast(text) {
+    toastText = text;
+    toastLife = 1;
+  }
+
+  function say(text) {
+    live.textContent = text;
+  }
+
+  function blip(freq, dur) {
+    try {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      const t = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.setValueAtTime(freq, t);
+      g.gain.setValueAtTime(0.04, t);
+      g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start(t);
+      o.stop(t + dur);
+    } catch (err) {
+      /* sound is optional */
     }
+  }
 
-    // Mario movement
-    mario.vx = 0;
-    if (keys.left) {
-      mario.vx = -MOVE_SPEED;
-      mario.facing = -1;
+  function burst(x, y, color) {
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      particles.push({
+        x, y,
+        vx: Math.cos(a) * 50,
+        vy: Math.sin(a) * 50 - 20,
+        life: 0.6,
+        color,
+        r: 4
+      });
     }
-    if (keys.right) {
-      mario.vx = MOVE_SPEED;
-      mario.facing = 1;
+  }
+
+  function update(dt) {
+    const down = held.jump || keys.jump;
+    if ((down && !prevJump) || queuedEdge) jumpEdge = true;
+    prevJump = down;
+    queuedEdge = false;
+
+    const dir = (held.right || keys.right ? 1 : 0) - (held.left || keys.left ? 1 : 0);
+    mario.vx = dir * RUN;
+    if (dir) mario.facing = dir;
+
+    if (mario.wings && down) {
+      mario.vy -= 1100 * dt;
+      if (mario.vy < -240) mario.vy = -240;
+    } else {
+      mario.vy += (mario.wings ? 340 : GRAVITY) * dt;
     }
+    if (mario.vy > 560) mario.vy = 560;
+    if (mario.y < 24 && mario.vy < 0) mario.vy = 0;
 
-    // Jumping / Flying
-    if (keys.jump) {
-      if (state.hasWings) {
-        // Flying - can keep going up while holding
-        mario.vy = FLY_POWER;
-      } else if (mario.grounded) {
-        mario.vy = JUMP_POWER;
-        mario.grounded = false;
-      }
+    const canJump = mario.grounded || mario.coyote > 0;
+    if (!mario.wings && down && canJump) {
+      mario.vy = JUMP_V;
+      mario.grounded = false;
+      mario.coyote = 0;
+      mario.buffer = 0;
+      blip(520, 0.07);
+    } else if (jumpEdge && !canJump) {
+      mario.buffer = 0.16;
     }
+    jumpEdge = false;
+    mario.buffer -= dt;
+    mario.coyote -= dt;
 
-    // Gravity
-    if (!state.hasWings || !keys.jump) {
-      mario.vy += GRAVITY;
-    }
-    mario.vy = Math.min(mario.vy, 15); // terminal velocity
-
-    // Move Mario
-    mario.x += mario.vx;
-    mario.y += mario.vy;
-
-    // Keep Mario in bounds (left side)
+    const prevY = mario.y;
+    mario.x += mario.vx * dt;
     if (mario.x < 0) mario.x = 0;
+    const maxX = worldWidth() - mario.w;
+    if (mario.x > maxX) mario.x = maxX;
 
-    // Platform collisions
+    mario.y += mario.vy * dt;
     mario.grounded = false;
-    for (const p of platforms) {
-      if (rectCollide(mario, p)) {
-        // Landing on top
-        if (mario.vy > 0 && mario.y + mario.h - mario.vy <= p.y + 5) {
-          mario.y = p.y - mario.h;
-          mario.vy = 0;
-          mario.grounded = true;
-        }
-        // Hitting from side or bottom - push out
-        else if (mario.vy <= 0) {
-          // Hitting from below
-          if (mario.y < p.y + p.h) {
-            mario.y = p.y + p.h;
-            mario.vy = 0;
-          }
-        }
+    let land = null;
+    const prevBottom = prevY + mario.h;
+    const nowBottom = mario.y + mario.h;
+    if (mario.vy >= 0) {
+      for (const p of level.platforms) {
+        const overlapX = Math.min(mario.x + mario.w, p.x + p.w) - Math.max(mario.x, p.x);
+        if (overlapX < 10) continue;
+        if (prevBottom <= p.y + 30 && nowBottom >= p.y && (!land || p.y < land.y)) land = p;
+      }
+    }
+    if (land) {
+      mario.y = land.y - mario.h;
+      mario.vy = 0;
+      mario.grounded = true;
+      mario.coyote = 0.16;
+      if (mario.buffer > 0) {
+        mario.vy = JUMP_V;
+        mario.grounded = false;
+        mario.coyote = 0;
+        mario.buffer = 0;
+        blip(520, 0.08);
       }
     }
 
-    // Block collisions
-    for (const b of blocks) {
-      if (!b.hit && rectCollide(mario, b)) {
-        // Hit from below
-        if (mario.vy < 0 && mario.y > b.y) {
-          b.hit = true;
-          if (b.type === 'wing') {
-            state.hasWings = true;
-            state.wingTimer = WING_DURATION;
-          }
-          mario.vy = 0;
-        }
+    for (const b of level.blocks) {
+      const near = mario.x < b.x + b.w + 18 && mario.x + mario.w > b.x - 18 && mario.y < b.y + b.h + 10 && mario.y + mario.h > b.y - 6;
+      if (!b.used && near) {
+        b.used = true;
+        if (b.kind === "wing") grantWings(b);
+        if (mario.vy < 0) mario.vy = 70;
+        continue;
+      }
+      if (mario.vy >= 0 && prevY + mario.h <= b.y + 16 && overlap(mario, b)) {
+        mario.y = b.y - mario.h;
+        mario.vy = 0;
+        mario.grounded = true;
+        mario.coyote = 0.16;
       }
     }
 
-    // Enemy collisions
-    for (const e of enemies) {
-      if (e.alive) {
-        // Move enemy
-        e.x += e.vx;
-        if (e.x <= e.startX || e.x >= e.endX) {
-          e.vx *= -1;
-        }
-
-        // Check collision with Mario
-        if (rectCollide(mario, e)) {
-          // Jumping on enemy
-          if (mario.vy > 0 && mario.y + mario.h - 10 < e.y + e.h / 2) {
-            e.alive = false;
-            mario.vy = JUMP_POWER / 2; // bounce
-          } else {
-            // Mario got hit
-            hitMario();
-          }
-        }
+    for (const item of level.pickups) {
+      const zone = { x: item.x - 24, y: item.y - 240, w: item.w + 48, h: item.h + 240 };
+      if (item.got || !overlap(mario, zone)) continue;
+      item.got = true;
+      if (size < 2) {
+        applySize(size + 1, true);
+        grewFromPickup = true;
+        growPop = 1;
+        burst(item.x + 18, item.y, "#ff8d7a");
+        blip(640, 0.12);
+        toast("You grew!");
+      } else {
+        burst(item.x + 18, item.y, "#ffe08a");
       }
     }
 
-    // Bowser logic
-    if (bowser && bowser.hp > 0) {
-      // Move Bowser
-      bowser.x += bowser.vx;
-      if (bowser.x <= bowser.startX || bowser.x >= bowser.endX) {
-        bowser.vx *= -1;
+    if (bowser && !bowser.sit) {
+      bowser.x += bowser.dir * 42 * dt;
+      if (bowser.x < bowser.minX || bowser.x > bowser.maxX) {
+        bowser.dir *= -1;
+        bowser.x = Math.max(bowser.minX, Math.min(bowser.maxX, bowser.x));
       }
-
-      // Hit timer
-      if (bowser.hitTimer > 0) bowser.hitTimer--;
-
-      // Check collision with Mario
-      if (rectCollide(mario, bowser)) {
-        // Jumping on Bowser
-        if (mario.vy > 0 && mario.y + mario.h - 10 < bowser.y + bowser.h / 2 && bowser.hitTimer === 0) {
-          bowser.hp--;
-          bowser.hitTimer = 60;
-          state.bowserHits++;
-          mario.vy = JUMP_POWER; // big bounce
+      bowser.y = G - bowser.h;
+      if (bowser.flash > 0) bowser.flash -= dt;
+      const head = { x: bowser.x - 18, y: bowser.y - 28, w: bowser.w + 36, h: 78 };
+      const feet = mario.y + mario.h;
+      const onHead = mario.vy > 20 && feet < bowser.y + 52 && overlap(mario, head);
+      if ((onHead || overlap(mario, bowser)) && bowser.flash <= 0 && invuln <= 0) {
+        if (onHead) {
+          bowser.hp -= 1;
+          bowser.flash = 0.4;
+          mario.vy = -340;
+          mario.y = Math.min(mario.y, bowser.y - mario.h);
+          burst(bowser.x + bowser.w / 2, bowser.y + 8, "#ffe08a");
+          blip(180, 0.1);
           if (bowser.hp <= 0) {
-            state.bowserDefeated = true;
-            winGame();
+            bowser.sit = true;
+            bowser.y = G - 70;
+            flag.on = true;
+            flagPop = 1;
+            toast("Flag!");
+            blip(660, 0.15);
           }
-        } else if (bowser.hitTimer === 0) {
-          // Mario got hit by Bowser
-          hitMario();
+        } else {
+          const back = mario.x + mario.w / 2 < bowser.x + bowser.w / 2 ? -70 : 70;
+          mario.x = Math.max(0, Math.min(worldWidth() - mario.w, mario.x + back));
+          mario.vy = -220;
+          invuln = 0.45;
+          oops = 0.6;
+          toast("Oops!");
+          blip(200, 0.1);
         }
       }
     }
 
-    // Flag collision (level complete)
-    if (flag && rectCollide(mario, { x: flag.x, y: flag.y, w: flag.w, h: flag.poleH })) {
-      completeLevel();
-      return;
-    }
+    if (flag.on && reachedFlag()) finishLevel();
 
-    // Fall detection - kind failure
-    if (mario.y > height + 100) {
-      handleFall();
-    }
+    if (mode === "play" && mario.y > G + 180) respawn();
 
-    // Camera follow
-    const targetX = mario.x - width / 3;
-    camera.x = Math.max(0, targetX);
-
-    updateHUD();
-  }
-
-  // Rectangle collision
-  function rectCollide(a, b) {
-    return a.x < b.x + b.w &&
-           a.x + a.w > b.x &&
-           a.y < b.y + b.h &&
-           a.y + a.h > b.y;
-  }
-
-  // Mario got hit
-  function hitMario() {
-    if (state.marioSize > 0) {
-      state.marioSize--;
-      mario.w = 30 + state.marioSize * 5;
-      mario.h = 40 + state.marioSize * 10;
-      // Brief invincibility effect could go here
-    } else {
-      handleFall();
-    }
-  }
-
-  // Kind failure - set back a little
-  function handleFall() {
-    state.lives--;
-    if (state.lives <= 0) {
-      // Kind failure: restore one life, restart level
-      state.lives = 1;
-    }
-    // Restart current level
-    generateLevel(state.level);
-    updateHUD();
-  }
-
-  // Level complete
-  function completeLevel() {
-    state.playing = false;
-    const seconds = Math.floor((Date.now() - state.startTime) / 1000);
-
-    // Check if flag gives mushroom (if almost out = 1 life or small Mario)
-    if (state.lives === 1 || state.marioSize === 0) {
-      state.marioSize = Math.min(state.marioSize + 1, 2);
-      if (state.lives < state.maxLives) {
-        state.lives++;
+    if (mario.grounded && mode === "play") {
+      const under = platformUnder();
+      if (under) {
+        const inset = 14;
+        const safe = mario.x > under.x + inset && mario.x + mario.w < under.x + under.w - inset;
+        if (safe) checkpoint = { x: mario.x, y: mario.y };
       }
     }
 
-    // Report to design studio
-    reportPlay(true, seconds, `Completed level ${state.level}`);
-
-    if (state.level < TOTAL_LEVELS) {
-      showLevelComplete();
-    } else {
-      // Show Bowser intro
-      showBowserScreen();
-    }
+    if (oops > 0) oops -= dt;
+    if (invuln > 0) invuln -= dt;
+    if (growPop > 0) growPop -= dt;
+    if (flagPop > 0) flagPop -= dt;
+    if (toastLife > 0) toastLife -= dt;
   }
 
-  // Win the game (beat Bowser)
-  function winGame() {
-    state.playing = false;
-    const seconds = Math.floor((Date.now() - state.startTime) / 1000);
-    reportPlay(true, seconds, 'Defeated Bowser and won the game!');
-    showVictory();
-  }
-
-  // Show level complete overlay
-  function showLevelComplete() {
-    document.getElementById('complete-title').textContent = `Level ${state.level} Complete!`;
-    document.getElementById('level-complete').classList.add('show');
-  }
-
-  // Show Bowser screen
-  function showBowserScreen() {
-    document.getElementById('bowser-screen').classList.add('show');
-  }
-
-  // Show victory screen
-  function showVictory() {
-    document.getElementById('victory').classList.add('show');
-  }
-
-  // Start next level
-  function nextLevel() {
-    document.getElementById('level-complete').classList.remove('show');
-    state.level++;
-    generateLevel(state.level);
-    state.playing = true;
-    state.startTime = Date.now();
-  }
-
-  // Start Bowser fight
-  function startBowserFight() {
-    document.getElementById('bowser-screen').classList.remove('show');
-    generateLevel(state.level);
-    state.playing = true;
-    state.startTime = Date.now();
-  }
-
-  // Restart game
-  function restartGame() {
-    document.getElementById('victory').classList.remove('show');
-    state.level = 1;
-    state.lives = 3;
-    state.marioSize = 0;
-    state.bowserDefeated = false;
-    generateLevel(1);
-    state.playing = true;
-    state.startTime = Date.now();
-  }
-
-  // Draw everything
-  function draw() {
-    // Sky background
-    ctx.fillStyle = '#87ceeb';
-    ctx.fillRect(0, 0, width, height);
-
-    // Draw clouds
-    drawClouds();
-
-    ctx.save();
-    ctx.translate(-camera.x, 0);
-
-    // Draw platforms
-    for (const p of platforms) {
-      if (p.type === 'ground') {
-        // Ground - brown with grass top
-        ctx.fillStyle = '#8b4513';
-        ctx.fillRect(p.x, p.y, p.w, p.h);
-        ctx.fillStyle = '#4caf50';
-        ctx.fillRect(p.x, p.y, p.w, 10);
-      } else {
-        // Floating platform - brick style
-        ctx.fillStyle = '#cd853f';
-        ctx.fillRect(p.x, p.y, p.w, p.h);
-        ctx.strokeStyle = '#8b4513';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(p.x, p.y, p.w, p.h);
+  function platformUnder() {
+    const cx = mario.x + mario.w / 2;
+    const feet = mario.y + mario.h;
+    let best = null;
+    for (const p of level.platforms) {
+      if (cx >= p.x && cx <= p.x + p.w && Math.abs(feet - p.y) < 6) {
+        if (!best || p.y < best.y) best = p;
       }
     }
+    return best;
+  }
 
-    // Draw blocks
-    for (const b of blocks) {
-      if (!b.hit) {
-        // Wing block - gold with exclamation
-        ctx.fillStyle = '#ffd700';
-        ctx.fillRect(b.x, b.y, b.w, b.h);
-        ctx.strokeStyle = '#ff8c00';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(b.x, b.y, b.w, b.h);
-        // Exclamation mark
-        ctx.fillStyle = '#333';
-        ctx.font = 'bold 24px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText('!', b.x + b.w / 2, b.y + b.h / 2);
-      } else {
-        // Used block - gray
-        ctx.fillStyle = '#999';
-        ctx.fillRect(b.x, b.y, b.w, b.h);
+  function reachedFlag() {
+    const nearX = mario.x + mario.w > flag.x - 42 && mario.x < flag.x + 58;
+    return nearX && mario.y < flag.y + 8;
+  }
+
+  function grantWings(block) {
+    mario.wings = true;
+    gotWings = true;
+    burst(block.x + block.w / 2, block.y, "#ffe08a");
+    blip(700, 0.14);
+    toast("Wings!");
+  }
+
+  function respawn() {
+    mario.vx = 0;
+    mario.vy = 0;
+    mario.x = checkpoint.x;
+    mario.y = checkpoint.y;
+    const cx = mario.x + mario.w / 2;
+    let stand = null;
+    for (const p of level.platforms) {
+      if (cx >= p.x && cx <= p.x + p.w) {
+        const feet = checkpoint.y + mario.h;
+        if (p.y >= feet - 40 && p.y <= feet + 80 && (!stand || p.y < stand.y)) stand = p;
       }
     }
-
-    // Draw enemies
-    for (const e of enemies) {
-      if (e.alive) {
-        drawEnemy(e);
-      }
+    if (stand) mario.y = stand.y - mario.h;
+    else {
+      mario.x = spawn.x;
+      mario.y = spawn.y;
     }
-
-    // Draw Bowser
-    if (bowser && bowser.hp > 0) {
-      drawBowser();
-    }
-
-    // Draw flag
-    if (flag) {
-      drawFlag();
-    }
-
-    // Draw Mario
-    drawMario();
-
-    ctx.restore();
-
-    // Draw wing indicator
-    if (state.hasWings) {
-      ctx.fillStyle = 'rgba(255, 215, 0, 0.9)';
-      ctx.beginPath();
-      ctx.roundRect(width - 80, 50, 70, 30, 15);
-      ctx.fill();
-      ctx.fillStyle = '#333';
-      ctx.font = 'bold 14px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('🪽 FLY!', width - 45, 70);
-    }
+    falls += 1;
+    oops = 0.9;
+    invuln = 0.55;
+    toast("Oops!");
+    say("Oops, back a little.");
+    burst(mario.x + mario.w / 2, mario.y + mario.h, "#cfe9ff");
+    blip(210, 0.12);
   }
 
-  // Draw clouds
-  function drawClouds() {
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-    const cloudX = ((Date.now() / 50) % (width + 200)) - 100;
-    drawCloud(cloudX, 60, 60);
-    drawCloud(cloudX + 200, 100, 40);
-    drawCloud(cloudX + 400, 40, 50);
-  }
-
-  function drawCloud(x, y, size) {
-    ctx.beginPath();
-    ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
-    ctx.arc(x + size * 0.4, y - size * 0.2, size * 0.4, 0, Math.PI * 2);
-    ctx.arc(x + size * 0.8, y, size * 0.5, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Draw Mario
-  function drawMario() {
-    const m = mario;
-    const size = state.marioSize;
-
-    // Body color
-    ctx.fillStyle = '#e63946';
-
-    // Body
-    ctx.beginPath();
-    ctx.ellipse(m.x + m.w / 2, m.y + m.h * 0.6, m.w / 2, m.h * 0.4, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Head
-    ctx.fillStyle = '#ffccaa';
-    const headSize = m.w * 0.4 + size * 2;
-    ctx.beginPath();
-    ctx.arc(m.x + m.w / 2, m.y + m.h * 0.25, headSize, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Hat
-    ctx.fillStyle = '#e63946';
-    ctx.beginPath();
-    ctx.ellipse(m.x + m.w / 2, m.y + m.h * 0.15, headSize * 1.1, headSize * 0.4, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // M on hat
-    ctx.fillStyle = 'white';
-    ctx.font = `bold ${10 + size * 2}px sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('M', m.x + m.w / 2, m.y + m.h * 0.15);
-
-    // Eyes
-    ctx.fillStyle = '#333';
-    const eyeOffset = 4 * m.facing;
-    ctx.beginPath();
-    ctx.arc(m.x + m.w / 2 + eyeOffset - 3, m.y + m.h * 0.22, 2, 0, Math.PI * 2);
-    ctx.arc(m.x + m.w / 2 + eyeOffset + 3, m.y + m.h * 0.22, 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Mustache (bigger for bigger Mario)
-    if (size > 0) {
-      ctx.fillStyle = '#5c3317';
-      ctx.beginPath();
-      ctx.ellipse(m.x + m.w / 2, m.y + m.h * 0.32, 6 + size * 2, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
+  function playNote() {
+    const who = levelStartSize === 0 ? "Baby Mario" : "Mario";
+    const place = level.name;
+    if (level.bowser) {
+      if (falls && gotWings) return who + " used the gold wings, got set back a little, bounced on Bowser until he sat down, and touched the last flag.";
+      if (falls) return who + " got set back a little, bounced on Bowser until he sat down, and touched the last flag.";
+      if (gotWings) return who + " flew in with gold wings, bounced on Bowser until he sat down, and touched the last flag.";
+      return who + " bounced on Bowser until he sat down, and touched the last flag.";
     }
-
-    // Wings if flying
-    if (state.hasWings) {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-      const wingFlap = Math.sin(Date.now() / 50) * 10;
-      // Left wing
-      ctx.beginPath();
-      ctx.moveTo(m.x, m.y + m.h * 0.4);
-      ctx.quadraticCurveTo(m.x - 25, m.y + m.h * 0.2 + wingFlap, m.x - 5, m.y);
-      ctx.quadraticCurveTo(m.x, m.y + m.h * 0.2, m.x, m.y + m.h * 0.4);
-      ctx.fill();
-      // Right wing
-      ctx.beginPath();
-      ctx.moveTo(m.x + m.w, m.y + m.h * 0.4);
-      ctx.quadraticCurveTo(m.x + m.w + 25, m.y + m.h * 0.2 + wingFlap, m.x + m.w + 5, m.y);
-      ctx.quadraticCurveTo(m.x + m.w, m.y + m.h * 0.2, m.x + m.w, m.y + m.h * 0.4);
-      ctx.fill();
+    if (gotWings && falls && grewFromFlag) {
+      return who + " got wings from the gold block, came back a little after a miss, touched the flag at " + place + ", and grew from its mushroom.";
     }
-  }
-
-  // Draw enemy (Goomba-style)
-  function drawEnemy(e) {
-    // Body
-    ctx.fillStyle = '#8b4513';
-    ctx.beginPath();
-    ctx.ellipse(e.x + e.w / 2, e.y + e.h * 0.6, e.w / 2, e.h * 0.4, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Head
-    ctx.beginPath();
-    ctx.arc(e.x + e.w / 2, e.y + e.h * 0.3, e.w * 0.45, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Angry eyes
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.arc(e.x + e.w / 2 - 5, e.y + e.h * 0.25, 4, 0, Math.PI * 2);
-    ctx.arc(e.x + e.w / 2 + 5, e.y + e.h * 0.25, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = '#333';
-    ctx.beginPath();
-    ctx.arc(e.x + e.w / 2 - 5, e.y + e.h * 0.25, 2, 0, Math.PI * 2);
-    ctx.arc(e.x + e.w / 2 + 5, e.y + e.h * 0.25, 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Frown
-    ctx.strokeStyle = '#333';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(e.x + e.w / 2, e.y + e.h * 0.45, 6, 0.2 * Math.PI, 0.8 * Math.PI);
-    ctx.stroke();
-  }
-
-  // Draw Bowser
-  function drawBowser() {
-    const b = bowser;
-    const flash = b.hitTimer > 0 && Math.floor(b.hitTimer / 5) % 2;
-
-    // Shell
-    ctx.fillStyle = flash ? '#fff' : '#228b22';
-    ctx.beginPath();
-    ctx.ellipse(b.x + b.w / 2, b.y + b.h * 0.6, b.w / 2, b.h * 0.4, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Spikes on shell
-    ctx.fillStyle = flash ? '#ccc' : '#ffd700';
-    for (let i = 0; i < 3; i++) {
-      const spikeX = b.x + b.w * 0.25 + i * b.w * 0.25;
-      ctx.beginPath();
-      ctx.moveTo(spikeX - 8, b.y + b.h * 0.5);
-      ctx.lineTo(spikeX, b.y + b.h * 0.2);
-      ctx.lineTo(spikeX + 8, b.y + b.h * 0.5);
-      ctx.fill();
+    if (gotWings && grewFromFlag) {
+      return who + " hit the shiny gold block, flew to the flag at " + place + ", and grew from the mushroom there.";
     }
-
-    // Head
-    ctx.fillStyle = flash ? '#fff' : '#90ee90';
-    ctx.beginPath();
-    ctx.arc(b.x + b.w / 2, b.y + b.h * 0.2, b.w * 0.35, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Horns
-    ctx.fillStyle = flash ? '#ccc' : '#ffd700';
-    ctx.beginPath();
-    ctx.moveTo(b.x + b.w * 0.25, b.y + b.h * 0.15);
-    ctx.lineTo(b.x + b.w * 0.15, b.y - 10);
-    ctx.lineTo(b.x + b.w * 0.35, b.y + b.h * 0.1);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.moveTo(b.x + b.w * 0.75, b.y + b.h * 0.15);
-    ctx.lineTo(b.x + b.w * 0.85, b.y - 10);
-    ctx.lineTo(b.x + b.w * 0.65, b.y + b.h * 0.1);
-    ctx.fill();
-
-    // Eyes
-    ctx.fillStyle = 'white';
-    ctx.beginPath();
-    ctx.arc(b.x + b.w / 2 - 10, b.y + b.h * 0.15, 8, 0, Math.PI * 2);
-    ctx.arc(b.x + b.w / 2 + 10, b.y + b.h * 0.15, 8, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.fillStyle = 'red';
-    ctx.beginPath();
-    ctx.arc(b.x + b.w / 2 - 10, b.y + b.h * 0.15, 4, 0, Math.PI * 2);
-    ctx.arc(b.x + b.w / 2 + 10, b.y + b.h * 0.15, 4, 0, Math.PI * 2);
-    ctx.fill();
-
-    // HP indicator
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 14px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(`❤️ x${b.hp}`, b.x + b.w / 2, b.y - 20);
+    if (gotWings && grewFromPickup && falls) {
+      return who + " grew from a mushroom, flew with gold wings, got set back a little, and touched the flag at " + place + ".";
+    }
+    if (gotWings && grewFromPickup) {
+      return who + " grew from a mushroom, hit the gold wing block, and flew to the flag at " + place + ".";
+    }
+    if (gotWings && falls) {
+      return who + " got wings from the gold block, got set back a little, and still touched the flag at " + place + ".";
+    }
+    if (gotWings) return who + " hit the shiny gold block, flew to a new spot, and touched the flag at " + place + ".";
+    if (falls && grewFromFlag) {
+      return who + " missed a jump and came back a little, then touched the flag at " + place + " and grew from its mushroom.";
+    }
+    if (grewFromFlag) return who + " touched the flag at " + place + " and grew from the mushroom it shared.";
+    if (grewFromPickup && falls) return who + " grew from a mushroom, got set back a little, and touched the flag at " + place + ".";
+    if (grewFromPickup) return who + " grew from a mushroom and touched the flag at " + place + ".";
+    if (falls) return who + " missed a jump, got set back a little, and then touched the flag at " + place + ".";
+    return who + " jumped across " + place + " and touched the flag.";
   }
 
-  // Draw flag
-  function drawFlag() {
-    const f = flag;
-
-    // Pole
-    ctx.fillStyle = '#666';
-    ctx.fillRect(f.x + f.w / 2 - 3, f.y, 6, f.poleH);
-
-    // Ball on top
-    ctx.fillStyle = '#ffd700';
-    ctx.beginPath();
-    ctx.arc(f.x + f.w / 2, f.y, 8, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Flag
-    ctx.fillStyle = '#4caf50';
-    ctx.beginPath();
-    ctx.moveTo(f.x + f.w / 2 + 3, f.y + 5);
-    ctx.lineTo(f.x + f.w / 2 + 50, f.y + 25);
-    ctx.lineTo(f.x + f.w / 2 + 3, f.y + 45);
-    ctx.fill();
-
-    // Star on flag
-    ctx.fillStyle = '#ffd700';
-    ctx.font = 'bold 20px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('⭐', f.x + f.w / 2 + 25, f.y + 30);
-  }
-
-  // Report to design studio
-  function reportPlay(reachedEnd, seconds, note) {
+  function postPlay(note, seconds) {
     const body = {
-      action: 'play',
+      action: "play",
       designId: DESIGN_ID,
-      reachedEnd,
-      seconds,
-      note
+      reachedEnd: true,
+      seconds: seconds,
+      note: note
     };
-
-    fetch('/api/design-studio', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    fetch("/api/design-studio", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body)
     }).catch(() => {});
   }
 
-  // Game loop
-  function gameLoop() {
-    update();
-    draw();
-    requestAnimationFrame(gameLoop);
+  function finishLevel() {
+    if (mode !== "play") return;
+    if (level.bowser && !flag.on) return;
+    if (size === 0) {
+      applySize(1, true);
+      grewFromFlag = true;
+      growPop = 1;
+      burst(flag.x, flag.y - 40, "#ff8d7a");
+    }
+    const seconds = Math.max(0, Math.round((performance.now() - levelT0) / 1000));
+    const note = playNote();
+    postPlay(note, seconds);
+    blip(523, 0.12);
+    setTimeout(() => blip(659, 0.16), 90);
+    burst(flag.x, flag.y - 80, "#fff");
+    cleared = Math.max(cleared, levelIndex + 1);
+    const last = levelIndex === LEVELS.length - 1;
+    mode = last ? "win" : "cheer";
+    document.body.dataset.mode = mode;
+    showCard(last);
+    say(note);
+    clearTimeout(autoTimer);
+    if (!last) autoTimer = setTimeout(nextLevel, 3200);
   }
 
-  // Initialize
-  function init() {
-    resize();
-    window.addEventListener('resize', resize);
-    setupControls();
+  function showCard(win) {
+    goldDemo.hidden = true;
+    if (win) {
+      cardTitle.textContent = "You did it!";
+      cardBody.textContent = "Every flag is yours, and Bowser sat down.";
+      goBtn.textContent = "Again";
+    } else if (grewFromFlag) {
+      cardTitle.textContent = "You grew!";
+      cardBody.textContent = "The flag shared a mushroom.";
+      goBtn.textContent = "Next";
+    } else {
+      cardTitle.textContent = "Flag!";
+      cardBody.textContent = "You touched the flag.";
+      goBtn.textContent = "Next";
+    }
+    overlay.classList.add("show");
+    updateHud();
+  }
 
-    // Start button
-    document.getElementById('start-btn').addEventListener('click', () => {
-      document.getElementById('splash').classList.remove('show');
-      state.level = 1;
-      state.lives = 3;
-      state.marioSize = 0;
-      generateLevel(1);
-      state.playing = true;
-      state.startTime = Date.now();
+  function hideCard() {
+    overlay.classList.remove("show");
+  }
+
+  function showTitle() {
+    mode = "title";
+    document.body.dataset.mode = "title";
+    level = cloneLevel(0);
+    applySize(0, false);
+    const spec = SIZES[0];
+    mario = {
+      x: 80, y: G - spec.h, w: spec.w, h: spec.h,
+      vx: 0, vy: 0, facing: 1, size: 0, wings: false, grounded: true
+    };
+    flag = { x: level.flagX, y: G, on: true };
+    bowser = null;
+    goldDemo.hidden = false;
+    cardTitle.textContent = "Mario Super World";
+    cardBody.textContent = "Hit the shiny gold block. Wings let you fly to the flag.";
+    goBtn.textContent = "Play";
+    overlay.classList.add("show");
+    levelNameEl.textContent = "Mario Super World";
+    sizePill.textContent = "Baby";
+    wingPill.hidden = true;
+    jumpBtn.classList.remove("is-fly");
+    jumpBtn.setAttribute("aria-label", "Jump");
+  }
+
+  function nextLevel() {
+    clearTimeout(autoTimer);
+    if (mode !== "cheer") return;
+    if (levelIndex >= LEVELS.length - 1) return;
+    levelIndex += 1;
+    beginLevel();
+  }
+
+  function again() {
+    clearTimeout(autoTimer);
+    levelIndex = 0;
+    size = 0;
+    cleared = 0;
+    beginLevel();
+  }
+
+  function onGo() {
+    if (mode === "title") {
+      levelIndex = 0;
+      size = 0;
+      cleared = 0;
+      beginLevel();
+    } else if (mode === "cheer") nextLevel();
+    else if (mode === "win") again();
+  }
+
+  function updateHud() {
+    if (mode === "title") {
+      levelNameEl.textContent = "Mario Super World";
+    } else {
+      levelNameEl.textContent = (levelIndex + 1) + " " + level.name;
+    }
+    sizePill.textContent = SIZES[size].label;
+    const flying = mario && mario.wings && mode === "play";
+    wingPill.hidden = !flying;
+    jumpBtn.classList.toggle("is-fly", !!flying);
+    jumpBtn.setAttribute("aria-label", flying ? "Fly" : "Jump");
+  }
+
+  function updateParticles(dt) {
+    for (const p of particles) {
+      p.life -= dt;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 40 * dt;
+    }
+    particles = particles.filter((p) => p.life > 0);
+  }
+
+  function resize() {
+    const rect = stage.getBoundingClientRect();
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    view.cssW = Math.max(1, rect.width);
+    view.cssH = Math.max(1, rect.height);
+    view.dpr = dpr;
+    canvas.width = Math.max(1, Math.round(view.cssW * dpr));
+    canvas.height = Math.max(1, Math.round(view.cssH * dpr));
+  }
+
+  function camera() {
+    const viewW = 360;
+    if (view.cssW < 2 || view.cssH < 2) {
+      return { camX: 0, camY: 0, scale: 1, viewW, viewH: 480 };
+    }
+    const scale = view.cssW / viewW;
+    const viewH = view.cssH / scale;
+    let camX = mario.x - viewW * 0.34;
+    const maxX = Math.max(0, worldWidth() - viewW);
+    if (camX < 0) camX = 0;
+    if (camX > maxX) camX = maxX;
+    let camY = G - viewH * 0.72;
+    if (mario.y < camY + 70) camY = mario.y - 70;
+    if (camY > G - viewH * 0.62) camY = G - viewH * 0.62;
+    return { camX, camY, scale, viewW, viewH };
+  }
+
+  function draw() {
+    const dpr = view.dpr;
+    const cam = camera();
+    const t = performance.now() / 1000;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    const colors = level ? level.sky : ["#b7e4fb", "#fff1d6"];
+    sky.addColorStop(0, colors[0]);
+    sky.addColorStop(1, colors[1]);
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.setTransform(dpr * cam.scale, 0, 0, dpr * cam.scale, -cam.camX * cam.scale * dpr, -cam.camY * cam.scale * dpr);
+    drawHills(t, cam);
+    drawPonds();
+    for (let i = 0; i < level.platforms.length; i++) drawPlatform(level.platforms[i], i);
+    for (const item of level.pickups) if (!item.got) drawMushroom(item.x, item.y + Math.sin(t * 3) * 2, item.w);
+    for (const b of level.blocks) drawBlock(b, t);
+    if (flag && flag.on) drawFlag(t);
+    if (bowser) drawBowser(t);
+    if (mario) drawMario(t);
+    for (const p of particles) {
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+    if (toastLife > 0 && mario) {
+      ctx.globalAlpha = Math.min(1, toastLife * 2);
+      ctx.fillStyle = "#5c4636";
+      ctx.font = "700 22px Trebuchet MS, Segoe UI, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(toastText, mario.x + mario.w / 2, mario.y - 18);
+      ctx.globalAlpha = 1;
+    }
+    if (level && level.hint && mode === "play" && !gotWings) drawHint(t);
+    if (level && level.bowser && mode === "play" && bowser && !bowser.sit && performance.now() - levelT0 < 2400) {
+      ctx.fillStyle = "#5c4636";
+      ctx.font = "700 20px Trebuchet MS, Segoe UI, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Jump on Bowser", 640, 150);
+    }
+  }
+
+  function drawHills(t, cam) {
+    ctx.save();
+    ctx.translate(cam.camX * 0.4, 0);
+    const hills = [
+      { x: -40, c: "#d5f0c6" },
+      { x: 260, c: "#c3e7b0" },
+      { x: 620, c: "#d8f3c8" },
+      { x: 980, c: "#b7e3a4" },
+      { x: 1360, c: "#c9ebba" }
+    ];
+    for (const h of hills) {
+      ctx.fillStyle = h.c;
+      ctx.beginPath();
+      ctx.ellipse(h.x, G + 30, 220, 78, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.translate(cam.camX * 0.25, -20);
+    for (let x = -80; x < worldWidth() + 200; x += 280) {
+      drawCloud(x, 36 + ((x / 280) % 3) * 26, 0.9);
+    }
+    ctx.restore();
+    void t;
+  }
+
+  function drawCloud(x, y, s) {
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.beginPath();
+    ctx.ellipse(x, y, 34 * s, 20 * s, 0, 0, Math.PI * 2);
+    ctx.ellipse(x + 28 * s, y + 4, 26 * s, 16 * s, 0, 0, Math.PI * 2);
+    ctx.ellipse(x - 26 * s, y + 6, 22 * s, 14 * s, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawPonds() {
+    const grounds = level.platforms.filter((p) => p.y === G).slice().sort((a, b) => a.x - b.x);
+    for (let i = 0; i < grounds.length - 1; i++) {
+      const a = grounds[i];
+      const b = grounds[i + 1];
+      const x = a.x + a.w;
+      const w = b.x - x;
+      if (w < 8) continue;
+      ctx.fillStyle = "#9edcf0";
+      ctx.beginPath();
+      ctx.ellipse(x + w / 2, G + 18, w / 2, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,255,255,0.7)";
+      ctx.beginPath();
+      ctx.ellipse(x + w * 0.4, G + 12, w * 0.18, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function drawPlatform(p, index) {
+    const r = Math.min(16, p.h / 2);
+    ctx.fillStyle = "#e7b98a";
+    ctx.beginPath();
+    ctx.roundRect(p.x, p.y, p.w, p.h, r);
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#6d5648";
+    ctx.stroke();
+    ctx.fillStyle = "#8ed18a";
+    ctx.beginPath();
+    ctx.roundRect(p.x, p.y, p.w, Math.min(16, p.h), [r, r, 6, 6]);
+    ctx.fill();
+    if (p.w > 150 && p.y === G) {
+      for (let k = 0; k < 2; k++) drawFlower(p.x + 36 + ((index * 47 + k * 80) % (p.w - 70)), p.y);
+    }
+  }
+
+  function drawFlower(x, y) {
+    ctx.fillStyle = "#7dce7a";
+    ctx.fillRect(x - 1.5, y - 10, 3, 10);
+    ctx.fillStyle = "#ff9bb5";
+    ctx.beginPath();
+    ctx.arc(x, y - 12, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffe08a";
+    ctx.beginPath();
+    ctx.arc(x, y - 12, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawBlock(b, t) {
+    const y = b.y + Math.sin(t * 4 + b.x) * 2;
+    ctx.beginPath();
+    ctx.roundRect(b.x, y, b.w, b.h, 12);
+    if (b.used) {
+      ctx.fillStyle = "#f3e6cf";
+      ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#d7c4a4";
+      ctx.stroke();
+      return;
+    }
+    const g = ctx.createLinearGradient(b.x, y, b.x, y + b.h);
+    g.addColorStop(0, "#fff6cc");
+    g.addColorStop(0.45, "#ffcf4d");
+    g.addColorStop(1, "#f0a322");
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#e09a2e";
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,0.75)";
+    ctx.beginPath();
+    ctx.ellipse(b.x + 16, y + 14, 10, 6, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#8a4b12";
+    ctx.font = "700 30px Trebuchet MS, Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("!", b.x + b.w / 2, y + b.h / 2 + 1);
+    ctx.textBaseline = "alphabetic";
+  }
+
+  function drawMushroom(x, y, w) {
+    ctx.fillStyle = "#fff6ea";
+    ctx.beginPath();
+    ctx.roundRect(x + w * 0.28, y + w * 0.42, w * 0.44, w * 0.5, 8);
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#6d5648";
+    ctx.stroke();
+    ctx.fillStyle = "#ef5d52";
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + w * 0.4, w * 0.48, w * 0.32, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(x + w * 0.38, y + w * 0.28, 4, 0, Math.PI * 2);
+    ctx.arc(x + w * 0.62, y + w * 0.32, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawFlag(t) {
+    const rise = flagPop > 0 ? (flagPop / 1) * 30 : 0;
+    const x = flag.x;
+    const y = flag.y + rise;
+    ctx.strokeStyle = "#f7f1e4";
+    ctx.lineWidth = 6;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y - 210);
+    ctx.stroke();
+    ctx.fillStyle = "#ffcf4d";
+    ctx.beginPath();
+    ctx.arc(x, y - 214, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#e0b45a";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    const wave = Math.sin(t * 4) * 6;
+    ctx.fillStyle = "#8fd0ef";
+    ctx.beginPath();
+    ctx.moveTo(x + 3, y - 200);
+    ctx.quadraticCurveTo(x + 34, y - 188 + wave, x + 46, y - 176);
+    ctx.quadraticCurveTo(x + 30, y - 168, x + 3, y - 158);
+    ctx.closePath();
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#6d5648";
+    ctx.stroke();
+    if (grewFromFlag && mode !== "play") drawMushroom(x + 16, y - 210, 36);
+  }
+
+  function drawBowser(t) {
+    const b = bowser;
+    const sit = b.sit ? 16 : 0;
+    const x = b.x;
+    const y = b.y + sit;
+    const flash = b.flash > 0 && Math.floor(b.flash * 12) % 2 === 0;
+    ctx.save();
+    ctx.translate(x + b.w / 2, y + b.h);
+    if (b.dir < 0) ctx.scale(-1, 1);
+    ctx.translate(-(b.w / 2), -b.h);
+    const body = flash ? "#fff6ea" : "#7dce7a";
+    ctx.fillStyle = "#5eae62";
+    ctx.beginPath();
+    ctx.ellipse(b.w * 0.55, b.h * 0.62, b.w * 0.42, b.h * 0.36, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#6d5648";
+    ctx.stroke();
+    ctx.fillStyle = "#f0c14a";
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(b.w * 0.4 + i * 16, b.h * 0.4, 7, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.ellipse(b.w * 0.42, b.h * 0.48, b.w * 0.32, b.h * 0.28, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#ffe7c2";
+    ctx.beginPath();
+    ctx.ellipse(b.w * 0.4, b.h * 0.58, 16, 14, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = body;
+    ctx.beginPath();
+    ctx.arc(b.w * 0.62, b.h * 0.28, 26, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#f0c14a";
+    ctx.beginPath();
+    ctx.arc(b.w * 0.48, b.h * 0.12, 6, 0, Math.PI * 2);
+    ctx.arc(b.w * 0.74, b.h * 0.1, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(b.w * 0.54, b.h * 0.28, 6, 0, Math.PI * 2);
+    ctx.arc(b.w * 0.7, b.h * 0.28, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#5c4636";
+    ctx.beginPath();
+    if (b.sit) {
+      ctx.arc(b.w * 0.54, b.h * 0.3, 2, 0, Math.PI * 2);
+      ctx.arc(b.w * 0.7, b.h * 0.3, 2, 0, Math.PI * 2);
+    } else {
+      ctx.arc(b.w * 0.55, b.h * 0.28, 3, 0, Math.PI * 2);
+      ctx.arc(b.w * 0.71, b.h * 0.28, 3, 0, Math.PI * 2);
+    }
+    ctx.fill();
+    ctx.strokeStyle = "#c47a62";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(b.w * 0.62, b.h * 0.36, 6, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+    ctx.restore();
+    if (!b.sit) {
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath();
+        ctx.arc(b.x + 20 + i * 16, b.y - 14, 6, 0, Math.PI * 2);
+        ctx.fillStyle = i < b.hp ? "#ff9b8a" : "#f3e6cf";
+        ctx.fill();
+        ctx.strokeStyle = "#6d5648";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+    void t;
+  }
+
+  function drawMario(t) {
+    const m = mario;
+    const blink = invuln > 0 && Math.floor(t * 12) % 2 === 0;
+    if (blink) return;
+    const pop = 1 + Math.max(0, growPop) * 0.18;
+    const bob = mode !== "play" ? Math.sin(t * 3) * 2 : 0;
+    const cx = m.x + m.w / 2;
+    const foot = m.y + m.h + bob;
+    ctx.save();
+    ctx.translate(cx, foot);
+    ctx.scale(pop, pop);
+    if (oops > 0.6) ctx.rotate(-0.08);
+    ctx.fillStyle = "rgba(109, 86, 72, 0.18)";
+    ctx.beginPath();
+    ctx.ellipse(0, 2, m.w * 0.42, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (m.facing < 0) ctx.scale(-1, 1);
+
+    if (m.wings) {
+      const flap = Math.sin(t * 14) * 0.45;
+      ctx.save();
+      ctx.translate(0, -m.h * 0.58);
+      ctx.fillStyle = "#fff4c8";
+      ctx.strokeStyle = "#e0b15a";
+      ctx.lineWidth = 3;
+      ctx.save();
+      ctx.rotate(-0.9 + flap);
+      ctx.beginPath();
+      ctx.ellipse(-16, 0, 22, 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.rotate(0.9 - flap);
+      ctx.beginPath();
+      ctx.ellipse(16, 0, 22, 11, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+      ctx.restore();
+    }
+
+    const walk = Math.sin(t * 12) * (Math.abs(m.vx) > 8 ? 1 : 0);
+    const headR = m.size === 0 ? m.h * 0.36 : m.size === 1 ? m.h * 0.3 : m.h * 0.26;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#6d5648";
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+
+    ctx.fillStyle = "#5c4033";
+    ctx.beginPath();
+    ctx.ellipse(-8, -6 + walk * 2, 7, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(8, -6 - walk * 2, 7, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#3d7edb";
+    ctx.beginPath();
+    ctx.roundRect(-m.w * 0.32, -m.h * 0.52, m.w * 0.64, m.h * 0.4, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#ef5d52";
+    ctx.beginPath();
+    ctx.roundRect(-m.w * 0.28, -m.h * 0.62, m.w * 0.56, m.h * 0.28, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#ffd56a";
+    ctx.beginPath();
+    ctx.arc(-4, -m.h * 0.38, 2.2, 0, Math.PI * 2);
+    ctx.arc(4, -m.h * 0.38, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffd0b5";
+    ctx.beginPath();
+    ctx.arc(-m.w * 0.42, -m.h * 0.48 + walk * 2, 5, 0, Math.PI * 2);
+    ctx.arc(m.w * 0.34, -m.h * 0.5 - walk * 2, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    const headY = -m.h + headR + 2;
+    ctx.fillStyle = "#ffd0b5";
+    ctx.beginPath();
+    ctx.arc(0, headY, headR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#5c4636";
+    ctx.beginPath();
+    ctx.arc(-headR * 0.32, headY - 1, m.size === 0 ? 2.4 : 2, 0, Math.PI * 2);
+    ctx.arc(headR * 0.32, headY - 1, m.size === 0 ? 2.4 : 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.beginPath();
+    ctx.arc(-headR * 0.24, headY - 2.4, 1, 0, Math.PI * 2);
+    ctx.arc(headR * 0.4, headY - 2.4, 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ff9b8a";
+    ctx.beginPath();
+    ctx.arc(-headR * 0.55, headY + 4, m.size === 0 ? 3.4 : 2.6, 0, Math.PI * 2);
+    ctx.arc(headR * 0.55, headY + 4, m.size === 0 ? 3.4 : 2.6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "#c47a62";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, headY + 4, 5, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+
+    ctx.fillStyle = "#e23d45";
+    ctx.strokeStyle = "#6d5648";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(0, headY - headR * 0.42, headR * 0.92, headR * 0.5, 0, Math.PI, 0);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(headR * 0.72, headY - headR * 0.28, headR * 0.34, headR * 0.14, 0.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    if (m.size === 2) {
+      ctx.fillStyle = "#6b4226";
+      ctx.beginPath();
+      ctx.ellipse(0, headY + 7, 8, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawHint(t) {
+    const block = level.blocks[0];
+    if (!block || block.used) return;
+    const y = block.y + block.h + 16 + Math.sin(t * 3) * 3;
+    ctx.fillStyle = "#f0a322";
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(block.x - 36 - (2 - i) * 14, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function frame(ts) {
+    const dt = Math.min(0.033, lastTs ? (ts - lastTs) / 1000 : 0.016);
+    lastTs = ts;
+    if (mode === "play") update(dt);
+    updateParticles(dt);
+    if (level && mario) draw();
+    updateHud();
+    requestAnimationFrame(frame);
+  }
+
+  function bindHold(button, key) {
+    const pointers = new Set();
+    function sync(e, on) {
+      if (on) pointers.add(e.pointerId);
+      else pointers.delete(e.pointerId);
+      const was = held[key];
+      held[key] = pointers.size > 0;
+      if (key === "jump" && held[key] && !was) queuedEdge = true;
+    }
+    function down(e) {
+      e.preventDefault();
+      try { button.setPointerCapture(e.pointerId); } catch (err) { /* already gone */ }
+      sync(e, true);
+    }
+    function up(e) { sync(e, false); }
+    button.addEventListener("pointerdown", down);
+    button.addEventListener("pointerup", up);
+    button.addEventListener("pointercancel", up);
+    button.addEventListener("lostpointercapture", up);
+  }
+
+  function bindKeys() {
+    window.addEventListener("keydown", (e) => {
+      if (e.repeat) return;
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " ") {
+        keys.jump = true;
+        queuedEdge = true;
+        if (mode === "play") e.preventDefault();
+      }
+      if (e.key === "Enter") onGo();
     });
-
-    // Next level button
-    document.getElementById('next-btn').addEventListener('click', nextLevel);
-
-    // Fight Bowser button
-    document.getElementById('fight-btn').addEventListener('click', startBowserFight);
-
-    // Replay button
-    document.getElementById('replay-btn').addEventListener('click', restartGame);
-
-    // Initial draw
-    generateLevel(1);
-    draw();
-
-    // Start game loop
-    gameLoop();
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = false;
+      if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = false;
+      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " ") keys.jump = false;
+    });
   }
 
-  init();
+  function boot() {
+    resize();
+    window.addEventListener("resize", resize);
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+    bindHold(document.getElementById("left"), "left");
+    bindHold(document.getElementById("right"), "right");
+    bindHold(jumpBtn, "jump");
+    bindKeys();
+    goBtn.addEventListener("click", onGo);
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    showTitle();
+    requestAnimationFrame(frame);
+  }
+
+  window.__msw = {
+    snapshot() {
+      return {
+        mode,
+        levelIndex,
+        levelName: level ? level.name : "",
+        size,
+        falls,
+        gotWings,
+        grewFromFlag,
+        grewFromPickup,
+        flagOn: flag ? flag.on : false,
+        wings: mario ? !!mario.wings : false,
+        mario: mario ? { x: mario.x, y: mario.y, w: mario.w, h: mario.h, vx: mario.vx, vy: mario.vy, grounded: mario.grounded } : null,
+        checkpoint: { x: checkpoint.x, y: checkpoint.y },
+        platforms: level ? level.platforms.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h })) : [],
+        blocks: level ? level.blocks.map((b) => ({ x: b.x, y: b.y, used: b.used })) : [],
+        bowser: bowser ? { x: bowser.x, y: bowser.y, w: bowser.w, h: bowser.h, hp: bowser.hp, sit: bowser.sit } : null,
+        flag: flag ? { x: flag.x, y: flag.y, on: flag.on } : null,
+        layout: LEVELS.map((L) => L.platforms.map((p) => [p.x, p.y, p.w, p.h]))
+      };
+    },
+    setHolds(h) {
+      held.left = !!h.left;
+      held.right = !!h.right;
+      if (h.jump && !held.jump) queuedEdge = true;
+      held.jump = !!h.jump;
+    },
+    start: onGo,
+    next: nextLevel,
+    note: playNote
+  };
+
+  boot();
 })();
