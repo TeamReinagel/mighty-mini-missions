@@ -56,5 +56,12 @@ window.MIGHTY_GAMES = [
     icon: "./design-studio/icon.svg",
     href: "./design-studio/",
     profiles: ["max"]
+  },
+  {
+    id: "mario-super-world",
+    title: "Mario Super World",
+    icon: "./max-games/mario-super-world/icon.svg",
+    href: "./max-games/mario-super-world/",
+    profiles: ["max"]
   }
 ];

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mario Super World">
+<meta name="theme-color" content="#87ceeb">
+<title>Mario Super World</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <!-- HUD -->
+  <header id="hud">
+    <div class="hud-left">
+      <span id="level-display">Level 1</span>
+    </div>
+    <div class="hud-center">
+      <div id="lives">
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+      </div>
+    </div>
+    <div class="hud-right">
+      <span id="power-display"></span>
+    </div>
+  </header>
+
+  <!-- Game Canvas -->
+  <main id="game-container">
+    <canvas id="game"></canvas>
+  </main>
+
+  <!-- Touch Controls -->
+  <footer id="controls">
+    <div class="control-row">
+      <button id="btn-left" class="ctrl-btn" aria-label="Move left">◀</button>
+      <button id="btn-right" class="ctrl-btn" aria-label="Move right">▶</button>
+    </div>
+    <div class="control-row">
+      <button id="btn-jump" class="ctrl-btn jump-btn" aria-label="Jump">⬆</button>
+    </div>
+  </footer>
+</div>
+
+<!-- Splash Screen -->
+<div class="overlay show" id="splash">
+  <div class="splash-content">
+    <h1>Mario Super World</h1>
+    <div id="splash-mario" class="mario-preview"></div>
+    <p>Help Baby Mario through 50 levels!</p>
+    <p class="hint">Find the <span class="wing-icon">❗</span> blocks for wings!</p>
+    <button id="start-btn" class="big-btn">Play!</button>
+  </div>
+</div>
+
+<!-- Level Complete -->
+<div class="overlay" id="level-complete">
+  <div class="complete-content">
+    <h2 id="complete-title">Level Complete!</h2>
+    <div id="complete-mario" class="mario-preview"></div>
+    <button id="next-btn" class="big-btn">Next Level</button>
+  </div>
+</div>
+
+<!-- Bowser Battle -->
+<div class="overlay" id="bowser-screen">
+  <div class="bowser-content">
+    <h2 id="bowser-title">Bowser!</h2>
+    <div id="bowser-preview"></div>
+    <p id="bowser-text">You found Bowser! Jump on him 3 times!</p>
+    <button id="fight-btn" class="big-btn">Fight!</button>
+  </div>
+</div>
+
+<!-- Victory -->
+<div class="overlay" id="victory">
+  <div class="victory-content">
+    <h1>🎉 You Win! 🎉</h1>
+    <div id="victory-mario" class="mario-preview big"></div>
+    <p>You beat all 50 levels and defeated Bowser!</p>
+    <button id="replay-btn" class="big-btn">Play Again!</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
