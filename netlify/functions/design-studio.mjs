@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 import {
-  cleanDesign, copyProblem, greetingFor, missingPieces, sidInstructions, startDesignAgent
+  cleanDesign, greetingFor, missingPieces, sidInstructions, startDesignAgent
 } from "../lib/design-studio.mjs";
 
 const STORE = "design-studio";
@@ -111,9 +111,6 @@ export default async (req) => {
         tellSid: `Still need ${missing.join(", ")}. Ask Max for the next piece. Do not say he can play it. Do not read this note aloud.`
       });
     }
-    const problem = copyProblem(design);
-    if (problem) return json({ ok: false, tellSid: problem + " Do not read this note aloud." });
-
     const previousId = String(body.designId || "");
     const id = /^ds_[a-z0-9-]+$/i.test(previousId) ? previousId : `ds_${crypto.randomUUID()}`;
     const existing = await store.get(`designs/${id}`, { type: "json" });
@@ -166,21 +163,21 @@ export default async (req) => {
         {
           type: "function",
           name: "save_design",
-          description: "Save the original game Max invented once you know its name, what the player does, how you win, and how it is not a copy. Leave hero, place, and tricky part empty if his game does not have them. Call again when he changes it.",
+          description: "Save Max's game plan once you know its name, what the player does, how you win, and his own creative twist. Characters and games he already plays are fine. Leave hero, place, and tricky part empty if his game does not have them. Call again when he changes it.",
           parameters: {
             type: "object",
             additionalProperties: false,
             properties: {
-              title: { type: "string", description: "Original game name. Not the name of an existing game." },
+              title: { type: "string", description: "The game name Max chose. Can be based on a game he loves." },
               howYouPlay: { type: "string", description: "What the player actually does, in his words." },
-              heroName: { type: "string", description: "Empty if this game has no hero." },
+              heroName: { type: "string", description: "Empty if this game has no hero. Characters from games he plays are fine." },
               heroLook: { type: "string", description: "What the hero looks like, or empty." },
               world: { type: "string", description: "Where it happens, or empty." },
               goal: { type: "string", description: "What the player is trying to do, or empty if howYouPlay already says it." },
               challenge: { type: "string", description: "What makes it tricky, or empty." },
               win: { type: "string" },
-              howItIsNew: { type: "string", description: "How this game is different from any game Max named." },
-              inspiration: { type: "string", description: "A game or feeling that sparked this, if he named one. Empty if not." }
+              howItIsNew: { type: "string", description: "His twist: what he is adding or changing to make it feel like his." },
+              inspiration: { type: "string", description: "A game or character that sparked this, if he named one. Empty if not." }
             },
             required: ["title", "howYouPlay", "heroName", "heroLook", "world", "goal", "challenge", "win", "howItIsNew", "inspiration"]
           }
@@ -221,8 +218,6 @@ export default async (req) => {
 
     const design = await store.get(`designs/${id}`, { type: "json" });
     if (!design) return json({ error: "That design is not on the site yet." }, 404);
-    const problem = copyProblem(design);
-    if (problem) return json({ error: "This plan is still too close to a game someone else made. Keep talking with Sid." }, 400);
     if (design.build?.url && design.build.status === "running") {
       return json({ ok: true, url: design.build.url, already: true });
     }

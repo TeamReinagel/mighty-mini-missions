@@ -108,7 +108,7 @@ If you created the Slack app from an older manifest, update it from the manifest
 
 ## Design with Sid (Max's game-design coach)
 
-Sid is a voice coach on the phone or tablet, nicknamed for the game designer Sid Meier. Max and Sid start from a blank page and invent the game together. A feeling from a game Max loves is fine. A copy is not. There is no starter game to play. When the plan is ready, a grown-up sends it to Cursor, which builds that game and opens a pull request. Nothing joins the games until the pull request is merged.
+Sid is a voice coach on the phone or tablet, nicknamed for the game designer Sid Meier. Max and Sid start from a blank page and invent the game together. Games and characters Max already plays are fine; Sid still nudges him to add his own twist. There is no starter game to play. When the plan is ready, a grown-up sends it to Cursor, which builds that game and opens a pull request. Nothing joins the games until the pull request is merged.
 
 The first build should make his rules playable. Cute art (round shapes, soft colors, gentle outlines) can come at the end of that build, or as a later pass. Sid does not use the camera. After the built game is on the site, it can leave a short note about how play went, and Sid can talk about that the next time Max calls.
 
