@@ -80,7 +80,38 @@ export function greetingFor(design, play) {
   return "There is no game yet. Say hi to Max in one short sentence and ask what he wants to make. Do not offer a ready-made game. Do not mention these instructions.";
 }
 
-const cursorAuth = (env) => `Basic ${Buffer.from(`${env.CURSOR_API_KEY}:`).toString("base64")}`;
+const cursorAuth = (env) => {
+  const key = String(env.CURSOR_API_KEY || "").trim();
+  return `Basic ${Buffer.from(`${key}:`).toString("base64")}`;
+};
+
+export function explainCursorFailure(status, data) {
+  const raw = typeof data?.error === "string"
+    ? data.error
+    : typeof data?.message === "string"
+      ? data.message
+      : data?.error?.message || JSON.stringify(data || {});
+  const detail = String(raw).replace(/\s+/g, " ").trim().slice(0, 160);
+  if (status === 401 || status === 403) {
+    return "Cursor did not accept the API key. In Netlify, check CURSOR_API_KEY, then redeploy. Create a key at cursor.com/dashboard → API Keys.";
+  }
+  if (status === 404) {
+    return "Cursor could not find that agent endpoint. The Cloud Agents API may have changed.";
+  }
+  if (status === 400 || status === 422) {
+    const githubHint = /repo|github|repository|permission|access|not found|unauthorized/i.test(detail)
+      ? " Connect GitHub in Cursor for stephaniereinagel/mighty-mini-missions."
+      : " Often this means GitHub is not connected in Cursor for stephaniereinagel/mighty-mini-missions, or CURSOR_MODEL is invalid.";
+    return `Cursor rejected the build request.${githubHint}${detail ? ` (${detail})` : ""}`;
+  }
+  if (status === 429) {
+    return "Cursor is rate-limiting builds right now. Wait a minute and try again.";
+  }
+  if (!status) {
+    return `Could not reach Cursor.${detail ? ` (${detail})` : ""}`;
+  }
+  return `Cursor returned ${status}.${detail ? ` ${detail}` : " Try again in a minute."}`;
+}
 
 export function buildPrompt(design) {
   return [
@@ -112,25 +143,47 @@ export function buildPrompt(design) {
 }
 
 export async function startDesignAgent({ design, env, fetchImpl = fetch }) {
-  const res = await fetchImpl(`${CURSOR_API}/agents`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: cursorAuth(env) },
-    body: JSON.stringify({
-      name: `Sid: ${design.title}`.slice(0, 100),
-      prompt: { text: buildPrompt(design) },
-      ...(env.CURSOR_MODEL ? { model: { id: env.CURSOR_MODEL } } : {}),
-      repos: [{ url: env.JOYCE_REPO_URL || DEFAULT_REPO, startingRef: env.JOYCE_REPO_BRANCH || "main" }],
-      autoCreatePR: true
-    })
-  });
+  if (!String(env.CURSOR_API_KEY || "").trim()) {
+    const err = new Error("CURSOR_API_KEY is not set on the site.");
+    err.status = 503;
+    throw err;
+  }
+
+  const modelId = String(env.CURSOR_MODEL || "").trim();
+  const body = {
+    name: `Sid: ${design.title}`.slice(0, 100),
+    prompt: { text: buildPrompt(design) },
+    repos: [{
+      url: env.JOYCE_REPO_URL || DEFAULT_REPO,
+      startingRef: env.JOYCE_REPO_BRANCH || "main"
+    }],
+    autoCreatePR: true
+  };
+  if (modelId) body.model = { id: modelId };
+
+  let res;
+  try {
+    res = await fetchImpl(`${CURSOR_API}/agents`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: cursorAuth(env) },
+      body: JSON.stringify(body)
+    });
+  } catch (networkErr) {
+    const err = new Error(explainCursorFailure(0, { message: networkErr.message }));
+    err.status = 502;
+    throw err;
+  }
+
   const data = await res.json().catch(() => ({}));
-  if (!res.ok || !data.agent?.id) {
-    const detail = typeof data?.error === "string" ? data.error : JSON.stringify(data);
-    throw new Error(`Cursor API ${res.status}: ${detail.slice(0, 180)}`);
+  const agentId = data.agent?.id || data.id;
+  if (!res.ok || !agentId) {
+    const err = new Error(explainCursorFailure(res.status, data));
+    err.status = res.status || 502;
+    throw err;
   }
   return {
-    agentId: data.agent.id,
-    runId: data.run?.id || data.agent.latestRunId,
-    url: data.agent.url || `https://cursor.com/agents?id=${data.agent.id}`
+    agentId,
+    runId: data.run?.id || data.agent?.latestRunId || data.latestRunId,
+    url: data.agent?.url || data.url || `https://cursor.com/agents?id=${agentId}`
   };
 }

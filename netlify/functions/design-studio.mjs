@@ -232,8 +232,11 @@ export default async (req) => {
     try {
       agent = await startDesignAgent({ design, env, fetchImpl });
     } catch (err) {
-      console.error(err);
-      return json({ error: "The coding agent did not start. A grown-up can try again in a minute." }, 502);
+      console.error("Starting the design agent failed:", err);
+      const status = Number(err.status) || 502;
+      return json({
+        error: err.message || "The coding agent did not start. A grown-up can try again in a minute."
+      }, status >= 400 && status < 600 ? status : 502);
     }
 
     design.build = { ...agent, status: "running", startedAt: new Date().toISOString() };

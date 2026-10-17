@@ -271,20 +271,27 @@ quietButton.addEventListener("click", () => {
 
 buildForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  buildNote.textContent = "Sending…";
+  buildNote.textContent = "Sendingï¿½";
   if (!design?.id) {
     buildNote.textContent = "Talk with Sid until the plan appears, then try again.";
     return;
   }
   try {
-    const { data } = await api({
-      action: "build",
-      designId: design.id,
-      parentCode: $("build-code").value
+    const headers = { "Content-Type": "application/json" };
+    if (code) headers["x-studio-code"] = code;
+    const res = await fetch("/api/design-studio", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        action: "build",
+        designId: design.id,
+        parentCode: $("build-code").value
+      })
     });
+    const data = await res.json().catch(() => ({}));
     $("build-code").value = "";
     buildNote.replaceChildren();
-    if (data.url) {
+    if (res.ok && data.url) {
       const link = document.createElement("a");
       link.href = data.url;
       link.textContent = "Follow along";
@@ -294,7 +301,7 @@ buildForm.addEventListener("submit", async (event) => {
         ". A grown-up reviews the pull request before it joins the games."
       );
     } else {
-      buildNote.textContent = data.error || "Could not start.";
+      buildNote.textContent = data.error || `Could not start (${res.status}).`;
     }
   } catch (err) {
     buildNote.textContent = err.message;
