@@ -147,7 +147,13 @@ input[type="password"], input[type="text"] {
 
 .meta { margin-top: 0.35rem; line-height: 1.35; }
 
-.note { color: #6d6456; font-size: 0.95rem; line-height: 1.4; margin-top: 0.6rem; }
+.note {
+  color: #6d6456;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-top: 0.6rem;
+  white-space: pre-wrap;
+}
 
 .error { color: #9a3412; font-weight: 700; margin-top: 0.6rem; }
 

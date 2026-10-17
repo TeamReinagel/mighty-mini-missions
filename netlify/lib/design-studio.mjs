@@ -85,24 +85,24 @@ const cursorAuth = (env) => {
   return `Basic ${Buffer.from(`${key}:`).toString("base64")}`;
 };
 
+export function cursorDetail(data) {
+  if (!data || typeof data !== "object") return String(data || "");
+  if (typeof data.message === "string" && data.message.trim()) return data.message.trim();
+  if (typeof data.error === "string" && data.error.trim()) return data.error.trim();
+  if (typeof data.error?.message === "string") return data.error.message.trim();
+  try { return JSON.stringify(data); } catch { return ""; }
+}
+
 export function explainCursorFailure(status, data) {
-  const raw = typeof data?.error === "string"
-    ? data.error
-    : typeof data?.message === "string"
-      ? data.message
-      : data?.error?.message || JSON.stringify(data || {});
-  const detail = String(raw).replace(/\s+/g, " ").trim().slice(0, 160);
+  const detail = cursorDetail(data).replace(/\s+/g, " ").trim().slice(0, 220);
   if (status === 401 || status === 403) {
-    return "Cursor did not accept the API key. In Netlify, check CURSOR_API_KEY, then redeploy. Create a key at cursor.com/dashboard → API Keys.";
+    return `Cursor did not accept the API key (${detail || status}). In Netlify, set CURSOR_API_KEY from the same Cursor account that connected GitHub, then redeploy.`;
   }
   if (status === 404) {
-    return "Cursor could not find that agent endpoint. The Cloud Agents API may have changed.";
+    return `Cursor could not find that endpoint (${detail || status}).`;
   }
   if (status === 400 || status === 422) {
-    const githubHint = /repo|github|repository|permission|access|not found|unauthorized/i.test(detail)
-      ? " Connect GitHub in Cursor for stephaniereinagel/mighty-mini-missions."
-      : " Often this means GitHub is not connected in Cursor for stephaniereinagel/mighty-mini-missions, or CURSOR_MODEL is invalid.";
-    return `Cursor rejected the build request.${githubHint}${detail ? ` (${detail})` : ""}`;
+    return `Cursor rejected the build (${detail || status}). Check that GitHub is connected in that Cursor account for stephaniereinagel/mighty-mini-missions, and clear CURSOR_MODEL in Netlify if it is set to something odd.`;
   }
   if (status === 429) {
     return "Cursor is rate-limiting builds right now. Wait a minute and try again.";
@@ -110,7 +110,81 @@ export function explainCursorFailure(status, data) {
   if (!status) {
     return `Could not reach Cursor.${detail ? ` (${detail})` : ""}`;
   }
-  return `Cursor returned ${status}.${detail ? ` ${detail}` : " Try again in a minute."}`;
+  return `Cursor returned ${status}.${detail ? ` ${detail}` : ""}`;
+}
+
+/** Grown-up check: does the Netlify key work, and can this account create an agent on the family repo? */
+export async function diagnoseCursor({ env, fetchImpl = fetch }) {
+  const key = String(env.CURSOR_API_KEY || "").trim();
+  const repo = env.JOYCE_REPO_URL || DEFAULT_REPO;
+  const steps = [];
+  if (!key) {
+    return {
+      ok: false,
+      summary: "CURSOR_API_KEY is missing in Netlify. Add it, redeploy, then check again.",
+      steps
+    };
+  }
+  steps.push(`Key is set (starts with ${key.slice(0, 6)}…).`);
+  if (key.startsWith("grok_")) {
+    return {
+      ok: false,
+      summary: "This looks like a grok_ key. Cloud Agents need a Cursor user API key from cursor.com/dashboard → API Keys.",
+      steps
+    };
+  }
+
+  const headers = { Authorization: cursorAuth(env), "Content-Type": "application/json" };
+  const meRes = await fetchImpl(`${CURSOR_API}/me`, { headers }).catch((err) => ({ ok: false, status: 0, json: async () => ({ message: err.message }) }));
+  const meData = await meRes.json?.().catch?.(() => ({})) || {};
+  if (!meRes.ok) {
+    steps.push(`/v1/me failed: ${meRes.status} ${cursorDetail(meData)}`);
+    return {
+      ok: false,
+      summary: explainCursorFailure(meRes.status, meData),
+      steps
+    };
+  }
+  steps.push(`/v1/me ok${meData.email || meData.user?.email ? ` (${meData.email || meData.user.email})` : ""}.`);
+
+  const modelsRes = await fetchImpl(`${CURSOR_API}/models`, { headers }).catch((err) => ({ ok: false, status: 0, json: async () => ({ message: err.message }) }));
+  const modelsData = await modelsRes.json?.().catch?.(() => ({})) || {};
+  if (!modelsRes.ok) {
+    steps.push(`/v1/models failed: ${modelsRes.status} ${cursorDetail(modelsData)}`);
+  } else {
+    const count = Array.isArray(modelsData.models) ? modelsData.models.length : Array.isArray(modelsData) ? modelsData.length : "?";
+    steps.push(`/v1/models ok (${count} models).`);
+  }
+
+  const probeRes = await fetchImpl(`${CURSOR_API}/agents`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      name: "Sid setup check",
+      prompt: { text: "Do not change any files. Reply with the single word OK and finish." },
+      repos: [{ url: repo, startingRef: env.JOYCE_REPO_BRANCH || "main" }],
+      autoCreatePR: false
+    })
+  }).catch((err) => ({ ok: false, status: 0, json: async () => ({ message: err.message }) }));
+  const probeData = await probeRes.json?.().catch?.(() => ({})) || {};
+  const agentId = probeData.agent?.id || probeData.id;
+  if (!probeRes.ok || !agentId) {
+    steps.push(`Create agent on ${repo} failed: ${probeRes.status} ${cursorDetail(probeData)}`);
+    return {
+      ok: false,
+      summary: explainCursorFailure(probeRes.status, probeData),
+      steps,
+      repo
+    };
+  }
+  steps.push(`Create agent on ${repo} worked (${agentId}).`);
+  return {
+    ok: true,
+    summary: "Cursor key and GitHub repo look good. Try Send this design to build again.",
+    steps,
+    repo,
+    agentUrl: probeData.agent?.url || `https://cursor.com/agents?id=${agentId}`
+  };
 }
 
 export function buildPrompt(design) {

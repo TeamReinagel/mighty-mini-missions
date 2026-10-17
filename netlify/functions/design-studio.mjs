@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 import {
-  cleanDesign, greetingFor, missingPieces, sidInstructions, startDesignAgent
+  cleanDesign, diagnoseCursor, greetingFor, missingPieces, sidInstructions, startDesignAgent
 } from "../lib/design-studio.mjs";
 
 const STORE = "design-studio";
@@ -208,6 +208,12 @@ export default async (req) => {
       design,
       play
     });
+  }
+
+  if (action === "diagnose") {
+    if (!codeOk(env, body.parentCode)) return json({ error: "That grown-up code did not match." }, 401);
+    const report = await diagnoseCursor({ env, fetchImpl });
+    return json(report, report.ok ? 200 : 502);
   }
 
   if (action === "build") {

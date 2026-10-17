@@ -269,26 +269,31 @@ quietButton.addEventListener("click", () => {
   if (muted) sendEvent({ type: "input_audio_buffer.clear" });
 });
 
+async function postGrownup(action, extra = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (code) headers["x-studio-code"] = code;
+  const res = await fetch("/api/design-studio", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      action,
+      parentCode: $("build-code").value,
+      ...extra
+    })
+  });
+  const data = await res.json().catch(() => ({}));
+  return { res, data };
+}
+
 buildForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  buildNote.textContent = "Sending�";
+  buildNote.textContent = "Sending...";
   if (!design?.id) {
     buildNote.textContent = "Talk with Sid until the plan appears, then try again.";
     return;
   }
   try {
-    const headers = { "Content-Type": "application/json" };
-    if (code) headers["x-studio-code"] = code;
-    const res = await fetch("/api/design-studio", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        action: "build",
-        designId: design.id,
-        parentCode: $("build-code").value
-      })
-    });
-    const data = await res.json().catch(() => ({}));
+    const { res, data } = await postGrownup("build", { designId: design.id });
     $("build-code").value = "";
     buildNote.replaceChildren();
     if (res.ok && data.url) {
@@ -301,8 +306,24 @@ buildForm.addEventListener("submit", async (event) => {
         ". A grown-up reviews the pull request before it joins the games."
       );
     } else {
-      buildNote.textContent = data.error || `Could not start (${res.status}).`;
+      buildNote.textContent = data.error || data.summary || `Could not start (${res.status}).`;
     }
+  } catch (err) {
+    buildNote.textContent = err.message;
+  }
+});
+
+$("diagnose").addEventListener("click", async () => {
+  buildNote.textContent = "Checking Cursor...";
+  try {
+    const { res, data } = await postGrownup("diagnose");
+    $("build-code").value = "";
+    const lines = [data.summary || data.error || `Check finished (${res.status}).`];
+    if (Array.isArray(data.steps) && data.steps.length) {
+      lines.push(...data.steps.map((step) => `• ${step}`));
+    }
+    if (data.agentUrl) lines.push(`Probe agent: ${data.agentUrl}`);
+    buildNote.textContent = lines.join("\n");
   } catch (err) {
     buildNote.textContent = err.message;
   }
