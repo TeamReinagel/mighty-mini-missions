@@ -43,11 +43,12 @@
 
       <details class="card grownup">
         <summary>Grown-up: build the full game</summary>
-        <p>This sends Max's design to Cursor. A coding agent opens a pull request. The game joins the others after that pull request is merged. Type the grown-up code again so a playing kid does not start a build by accident.</p>
+        <p>This sends Max's design to Cursor. A coding agent opens a pull request. Open Follow along while signed in with the same Cursor account whose API key is in Netlify. Type the grown-up code again so a playing kid does not start a build by accident.</p>
         <form id="build-form">
           <label for="build-code">Grown-up code</label>
           <input id="build-code" type="password" autocomplete="off" />
           <button class="primary" type="submit">Send this design to build</button>
+          <button id="build-status" class="quiet" type="button">Check build status</button>
           <button id="diagnose" class="quiet" type="button">Check Cursor setup</button>
         </form>
         <p id="build-note" class="note"></p>

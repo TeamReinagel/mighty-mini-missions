@@ -299,14 +299,51 @@ buildForm.addEventListener("submit", async (event) => {
     if (res.ok && data.url) {
       const link = document.createElement("a");
       link.href = data.url;
+      link.target = "_blank";
+      link.rel = "noopener";
       link.textContent = "Follow along";
       buildNote.append(
         data.already ? "Already building. " : "Cursor is building it. ",
         link,
-        ". A grown-up reviews the pull request before it joins the games."
+        ". Sign in with the same Cursor account whose API key is in Netlify. Then tap Check build status for the pull request."
       );
+      if (design) rememberDesign({ ...design, build: { ...(design.build || {}), url: data.url, status: "running" } });
     } else {
       buildNote.textContent = data.error || data.summary || `Could not start (${res.status}).`;
+    }
+  } catch (err) {
+    buildNote.textContent = err.message;
+  }
+});
+
+$("build-status").addEventListener("click", async () => {
+  buildNote.textContent = "Checking build...";
+  if (!design?.id) {
+    buildNote.textContent = "Talk with Sid until the plan appears, then try again.";
+    return;
+  }
+  try {
+    const { res, data } = await postGrownup("build-status", { designId: design.id });
+    $("build-code").value = "";
+    if (data.design) rememberDesign(data.design);
+    buildNote.replaceChildren();
+    buildNote.append(data.summary || data.error || `Status ${res.status}.`);
+    if (data.prUrl) {
+      buildNote.append(" ");
+      const pr = document.createElement("a");
+      pr.href = data.prUrl;
+      pr.target = "_blank";
+      pr.rel = "noopener";
+      pr.textContent = "Open pull request";
+      buildNote.append(pr);
+    } else if (data.url) {
+      buildNote.append(" ");
+      const link = document.createElement("a");
+      link.href = data.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = "Open agent";
+      buildNote.append(link);
     }
   } catch (err) {
     buildNote.textContent = err.message;

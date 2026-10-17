@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 import {
-  cleanDesign, diagnoseCursor, greetingFor, missingPieces, sidInstructions, startDesignAgent
+  checkDesignBuild, cleanDesign, diagnoseCursor, greetingFor, missingPieces, sidInstructions, startDesignAgent
 } from "../lib/design-studio.mjs";
 
 const STORE = "design-studio";
@@ -214,6 +214,25 @@ export default async (req) => {
     if (!codeOk(env, body.parentCode)) return json({ error: "That grown-up code did not match." }, 401);
     const report = await diagnoseCursor({ env, fetchImpl });
     return json(report, report.ok ? 200 : 502);
+  }
+
+  if (action === "build-status") {
+    if (!codeOk(env, body.parentCode)) return json({ error: "That grown-up code did not match." }, 401);
+    const id = String(body.designId || "");
+    if (!/^ds_[a-z0-9-]+$/i.test(id)) return json({ error: "Save the plan with Sid first." }, 400);
+    const design = await store.get(`designs/${id}`, { type: "json" });
+    if (!design?.build?.agentId) return json({ error: "No build has been started for this plan yet." }, 404);
+    const report = await checkDesignBuild({ build: design.build, env, fetchImpl });
+    if (report.prUrl && design.build.status !== "pr-ready") {
+      design.build = { ...design.build, status: "pr-ready", prUrl: report.prUrl };
+      await store.setJSON(`designs/${id}`, design);
+      const latest = await store.get("designs/latest", { type: "json" });
+      if (latest?.id === id) await store.setJSON("designs/latest", design);
+    } else if (report.status === "failed" || report.status === "finished") {
+      design.build = { ...design.build, status: report.status };
+      await store.setJSON(`designs/${id}`, design);
+    }
+    return json({ ...report, design });
   }
 
   if (action === "build") {

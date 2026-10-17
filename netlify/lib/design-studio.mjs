@@ -183,7 +183,81 @@ export async function diagnoseCursor({ env, fetchImpl = fetch }) {
     summary: "Cursor key and GitHub repo look good. Try Send this design to build again.",
     steps,
     repo,
-    agentUrl: probeData.agent?.url || `https://cursor.com/agents?id=${agentId}`
+    agentUrl: probeData.agent?.url || `https://cursor.com/agents/${agentId}`
+  };
+}
+
+export function agentPageUrl(agentId, provided) {
+  if (provided && String(provided).includes("/agents/")) return String(provided);
+  return `https://cursor.com/agents/${agentId}`;
+}
+
+/** Poll a Sid build for run status and pull request URL. */
+export async function checkDesignBuild({ build, env, fetchImpl = fetch }) {
+  if (!build?.agentId) return { status: "unknown", summary: "No agent id saved for this build." };
+  const headers = { Authorization: cursorAuth(env) };
+  const agentRes = await fetchImpl(`${CURSOR_API}/agents/${build.agentId}`, { headers });
+  const agent = await agentRes.json().catch(() => ({}));
+  if (!agentRes.ok) {
+    return {
+      status: "error",
+      summary: explainCursorFailure(agentRes.status, agent),
+      url: agentPageUrl(build.agentId, build.url)
+    };
+  }
+
+  const runId = build.runId || agent.latestRunId;
+  let run = null;
+  if (runId) {
+    const runRes = await fetchImpl(`${CURSOR_API}/agents/${build.agentId}/runs/${runId}`, { headers });
+    run = await runRes.json().catch(() => ({}));
+    if (!runRes.ok) {
+      return {
+        status: "error",
+        summary: explainCursorFailure(runRes.status, run),
+        url: agentPageUrl(build.agentId, agent.url || build.url)
+      };
+    }
+  }
+
+  const prUrl = run?.git?.branches?.find((b) => b.prUrl)?.prUrl
+    || agent?.git?.branches?.find?.((b) => b.prUrl)?.prUrl
+    || null;
+  const runStatus = String(run?.status || agent?.status || "UNKNOWN").toUpperCase();
+  const url = agentPageUrl(build.agentId, agent.url || build.url);
+
+  if (prUrl) {
+    return {
+      status: "pr-ready",
+      summary: "The pull request is ready. Merge it on GitHub when you like it; Netlify deploys after that.",
+      url,
+      prUrl,
+      runStatus
+    };
+  }
+  if (["ERROR", "CANCELLED", "EXPIRED", "FAILED"].includes(runStatus)) {
+    return {
+      status: "failed",
+      summary: `The agent stopped (${runStatus.toLowerCase()}). Open it while signed in as the Cursor account that owns the API key.`,
+      url,
+      runStatus,
+      result: run?.result || ""
+    };
+  }
+  if (["FINISHED", "COMPLETED"].includes(runStatus)) {
+    return {
+      status: "finished",
+      summary: "The agent finished, but no pull request link yet. Check GitHub for a new branch/PR on TeamReinagel/mighty-mini-missions, or open the agent while signed in as the API-key owner.",
+      url,
+      runStatus,
+      result: run?.result || ""
+    };
+  }
+  return {
+    status: "running",
+    summary: `Still working (${runStatus.toLowerCase()}). Open the agent while signed in with the same Cursor account whose API key is in Netlify.`,
+    url,
+    runStatus
   };
 }
 
@@ -258,6 +332,6 @@ export async function startDesignAgent({ design, env, fetchImpl = fetch }) {
   return {
     agentId,
     runId: data.run?.id || data.agent?.latestRunId || data.latestRunId,
-    url: data.agent?.url || data.url || `https://cursor.com/agents?id=${agentId}`
+    url: agentPageUrl(agentId, data.agent?.url || data.url)
   };
 }
