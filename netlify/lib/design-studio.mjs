@@ -2,7 +2,7 @@
 // the Realtime API; this module owns the instructions, the design record, and the handoff to Cursor.
 
 const CURSOR_API = "https://api.cursor.com/v1";
-export const DEFAULT_REPO = "https://github.com/stephaniereinagel/mighty-mini-missions";
+export const DEFAULT_REPO = "https://github.com/TeamReinagel/mighty-mini-missions";
 
 const LIMITS = {
   title: 40,
@@ -102,7 +102,7 @@ export function explainCursorFailure(status, data) {
     return `Cursor could not find that endpoint (${detail || status}).`;
   }
   if (status === 400 || status === 422) {
-    return `Cursor rejected the build (${detail || status}). Check that GitHub is connected in that Cursor account for stephaniereinagel/mighty-mini-missions, and clear CURSOR_MODEL in Netlify if it is set to something odd.`;
+    return `Cursor rejected the build (${detail || status}). Check that GitHub is connected in that Cursor account for TeamReinagel/mighty-mini-missions, and clear CURSOR_MODEL in Netlify if it is set to something odd.`;
   }
   if (status === 429) {
     return "Cursor is rate-limiting builds right now. Wait a minute and try again.";

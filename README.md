@@ -120,8 +120,8 @@ On Max's game list, the tile is **Design with Sid**. Other profiles do not see i
 Add these with the other Netlify environment variables, then redeploy:
 
 - `DESIGN_PARENT_CODE`: a code a grown-up types once on the spare phone. Voice stays unlocked on that phone. Builds ask for it every time.
-- `OPENAI_API_KEY` and `CURSOR_API_KEY`: already used by Joyce. Cursor needs GitHub connected so the agent can open a pull request.
-- Optional: `OPENAI_REALTIME_MODEL` (default `gpt-realtime-2.1`), `DESIGN_VOICE` (default `ash`, a male voice).
+- `OPENAI_API_KEY` and `CURSOR_API_KEY`: already used by Joyce. The Cursor account that owns the API key must have GitHub connected for `TeamReinagel/mighty-mini-missions`.
+- Optional: `JOYCE_REPO_URL` (default `https://github.com/TeamReinagel/mighty-mini-missions`), `OPENAI_REALTIME_MODEL` (default `gpt-realtime-2.1`), `DESIGN_VOICE` (default `ash`, a male voice).
 
 The first time on the phone, a grown-up enters the code. After that Max can tap **Talk with Sid**.
 

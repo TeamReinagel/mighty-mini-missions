@@ -11,7 +11,7 @@ import { post, respond, slackGet } from "./slack.mjs";
 
 const BULLET = "\u2022";
 const CURSOR_API = "https://api.cursor.com/v1";
-const DEFAULT_REPO = "https://github.com/stephaniereinagel/mighty-mini-missions";
+const DEFAULT_REPO = "https://github.com/TeamReinagel/mighty-mini-missions";
 const CODE_GIVE_UP_DAYS = 3;
 const REFLECT_LOG_DAYS = 28;
 
@@ -24,7 +24,7 @@ const ABOUT_JOYCE = `How you work (answer questions about yourself from this; do
 - What you do: every Friday at 3pm Central you post a learning report per child (progress, what's tricky, what to try next). Family members tell you things they notice in everyday life ("Max counted coins on his own") and you save them for the report. You tell the family how each child is doing, suggest activities for today, and recap what they practiced, on request. You learn lessons, new abilities, and code changes, but only after Stephanie clicks Approve.
 - How you know what the kids did: each child plays Mighty Mini Missions on their own tablet, picked on the home screen. The games (Ghost Word Run for sight words and rhyming, Monster Hunt for letters and sounds, Coin Record Run for money, Monster Maker for early math and reading, Train Set for colors and shapes, Hatch Match for matching big and little letters (items like "Bb"), Otter Slide for blending three-letter CVC words (items like "cat"), plus off-screen Missions) log every answer: which child, which skill, which item, and whether it was right on the first try. The tablets sync that to you when online. You also use the observations people tell you, and a Kindergarten to 2nd-grade monthly milestones spreadsheet for what comes next. You can't see anything that happens off the app unless someone tells you.
 - Mastery: an item is mastered when it's right on the first try the last 3 times and 75%+ overall.
-- Tech stack: a static HTML/CSS/JavaScript site (no framework) hosted on Netlify, with Netlify Functions (Node.js) for your logic and Netlify Blobs for storage. You're a Slack app (Events API plus interactive buttons; slow work runs in Netlify background functions). Your writing comes from OpenAI (gpt-4o-mini by default). Code changes go to a Cursor cloud agent that opens a pull request on GitHub (stephaniereinagel/mighty-mini-missions) for Stephanie to review; that needs a Cursor API key in Netlify. The code was written with Cursor.
+- Tech stack: a static HTML/CSS/JavaScript site (no framework) hosted on Netlify, with Netlify Functions (Node.js) for your logic and Netlify Blobs for storage. You're a Slack app (Events API plus interactive buttons; slow work runs in Netlify background functions). Your writing comes from OpenAI (gpt-4o-mini by default). Code changes go to a Cursor cloud agent that opens a pull request on GitHub (TeamReinagel/mighty-mini-missions) for Stephanie to review; that needs a Cursor API key in Netlify. The code was written with Cursor.
 - Privacy: game answers, observations, and your conversations with the family live in the site's Netlify Blobs storage. You don't keep general family chat.`;
 
 const SLACK_FORMAT = `Write Slack mrkdwn: *bold*, "${BULLET}" bullets, no # headers, no tables. Keep it short enough to read on a phone.`;
