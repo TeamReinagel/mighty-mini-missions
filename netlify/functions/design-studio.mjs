@@ -1,7 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { getStore } from "@netlify/blobs";
 import {
-  checkDesignBuild, cleanDesign, diagnoseCursor, greetingFor, missingPieces, sidInstructions, startDesignAgent
+  cancelDesignBuild, checkDesignBuild, cleanDesign, diagnoseCursor, greetingFor, missingPieces, sidInstructions, startDesignAgent
 } from "../lib/design-studio.mjs";
 
 const STORE = "design-studio";
@@ -228,11 +228,13 @@ export default async (req) => {
       await store.setJSON(`designs/${id}`, design);
       const latest = await store.get("designs/latest", { type: "json" });
       if (latest?.id === id) await store.setJSON("designs/latest", design);
-    } else if (report.status === "failed" || report.status === "finished") {
+    } else if (report.status === "failed" || report.status === "finished" || report.status === "orphaned") {
       design.build = { ...design.build, status: report.status };
       await store.setJSON(`designs/${id}`, design);
+      const latest = await store.get("designs/latest", { type: "json" });
+      if (latest?.id === id) await store.setJSON("designs/latest", design);
     }
-    return json({ ...report, design });
+    return json({ ...report, design, canRestart: report.status === "orphaned" || report.status === "failed" });
   }
 
   if (action === "build") {
@@ -243,8 +245,20 @@ export default async (req) => {
 
     const design = await store.get(`designs/${id}`, { type: "json" });
     if (!design) return json({ error: "That design is not on the site yet." }, 404);
-    if (design.build?.url && design.build.status === "running") {
-      return json({ ok: true, url: design.build.url, already: true });
+
+    const force = Boolean(body.force);
+    if (design.build?.url && design.build.status === "running" && !force) {
+      const report = await checkDesignBuild({ build: design.build, env, fetchImpl });
+      if (report.status === "orphaned") {
+        design.build = { ...design.build, status: "orphaned" };
+        await store.setJSON(`designs/${id}`, design);
+      } else {
+        return json({ ok: true, url: design.build.url, already: true, canRestart: true });
+      }
+    }
+
+    if (force && design.build?.agentId) {
+      await cancelDesignBuild({ build: design.build, env, fetchImpl }).catch(() => null);
     }
 
     const day = new Date().toISOString().slice(0, 10);
@@ -279,7 +293,7 @@ export default async (req) => {
         })
       }).catch((err) => console.error("Slack notify failed", err));
     }
-    return json({ ok: true, url: agent.url });
+    return json({ ok: true, url: agent.url, forced: force });
   }
 
   return json({ error: "Unknown action" }, 400);

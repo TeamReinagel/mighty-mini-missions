@@ -285,32 +285,51 @@ async function postGrownup(action, extra = {}) {
   return { res, data };
 }
 
-buildForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  buildNote.textContent = "Sending...";
+async function startBuild({ force = false } = {}) {
+  buildNote.textContent = force ? "Stopping old build and starting fresh..." : "Sending...";
   if (!design?.id) {
     buildNote.textContent = "Talk with Sid until the plan appears, then try again.";
     return;
   }
-  try {
-    const { res, data } = await postGrownup("build", { designId: design.id });
-    $("build-code").value = "";
-    buildNote.replaceChildren();
-    if (res.ok && data.url) {
-      const link = document.createElement("a");
-      link.href = data.url;
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.textContent = "Follow along";
-      buildNote.append(
-        data.already ? "Already building. " : "Cursor is building it. ",
-        link,
-        ". Sign in with the same Cursor account whose API key is in Netlify. Then tap Check build status for the pull request."
-      );
-      if (design) rememberDesign({ ...design, build: { ...(design.build || {}), url: data.url, status: "running" } });
-    } else {
-      buildNote.textContent = data.error || data.summary || `Could not start (${res.status}).`;
+  const { res, data } = await postGrownup("build", { designId: design.id, force });
+  $("build-code").value = "";
+  buildNote.replaceChildren();
+  if (res.ok && data.url) {
+    const link = document.createElement("a");
+    link.href = data.url;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = "Follow along";
+    buildNote.append(
+      data.already
+        ? "Already building. "
+        : force
+          ? "Started a fresh build. "
+          : "Cursor is building it. ",
+      link,
+      ". Sign in with the same Cursor account whose API key is in Netlify. Then tap Check build status for the pull request."
+    );
+    if (data.already && data.canRestart) {
+      buildNote.append(" If that old build is stuck on another account, tap Stop / start a fresh build.");
     }
+    if (design) rememberDesign({ ...design, build: { ...(design.build || {}), url: data.url, status: "running" } });
+  } else {
+    buildNote.textContent = data.error || data.summary || `Could not start (${res.status}).`;
+  }
+}
+
+buildForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await startBuild({ force: false });
+  } catch (err) {
+    buildNote.textContent = err.message;
+  }
+});
+
+$("build-fresh").addEventListener("click", async () => {
+  try {
+    await startBuild({ force: true });
   } catch (err) {
     buildNote.textContent = err.message;
   }

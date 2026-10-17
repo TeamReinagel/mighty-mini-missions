@@ -192,6 +192,29 @@ export function agentPageUrl(agentId, provided) {
   return `https://cursor.com/agents/${agentId}`;
 }
 
+/** Best-effort stop for a Sid build on the current Cursor account. */
+export async function cancelDesignBuild({ build, env, fetchImpl = fetch }) {
+  if (!build?.agentId) return { ok: false, reason: "no-agent" };
+  const headers = { Authorization: cursorAuth(env) };
+  let runId = build.runId;
+  if (!runId) {
+    const agentRes = await fetchImpl(`${CURSOR_API}/agents/${build.agentId}`, { headers });
+    const agent = await agentRes.json().catch(() => ({}));
+    if (!agentRes.ok) {
+      return { ok: false, reason: "unreachable", status: agentRes.status, detail: explainCursorFailure(agentRes.status, agent) };
+    }
+    runId = agent.latestRunId;
+  }
+  if (!runId) return { ok: false, reason: "no-run" };
+  const res = await fetchImpl(`${CURSOR_API}/agents/${build.agentId}/runs/${runId}/cancel`, {
+    method: "POST",
+    headers
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.ok || res.status === 409) return { ok: true, runId, alreadyDone: res.status === 409 };
+  return { ok: false, reason: "cancel-failed", status: res.status, detail: explainCursorFailure(res.status, data) };
+}
+
 /** Poll a Sid build for run status and pull request URL. */
 export async function checkDesignBuild({ build, env, fetchImpl = fetch }) {
   if (!build?.agentId) return { status: "unknown", summary: "No agent id saved for this build." };
@@ -199,9 +222,13 @@ export async function checkDesignBuild({ build, env, fetchImpl = fetch }) {
   const agentRes = await fetchImpl(`${CURSOR_API}/agents/${build.agentId}`, { headers });
   const agent = await agentRes.json().catch(() => ({}));
   if (!agentRes.ok) {
+    const orphaned = agentRes.status === 401 || agentRes.status === 403 || agentRes.status === 404;
     return {
-      status: "error",
-      summary: explainCursorFailure(agentRes.status, agent),
+      status: orphaned ? "orphaned" : "error",
+      httpStatus: agentRes.status,
+      summary: orphaned
+        ? "That build belongs to a different Cursor account (or was deleted). You can start a fresh build with the current Netlify API key."
+        : explainCursorFailure(agentRes.status, agent),
       url: agentPageUrl(build.agentId, build.url)
     };
   }
