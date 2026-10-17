@@ -5,88 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Mario Super World">
-<meta name="theme-color" content="#87ceeb">
+<meta name="theme-color" content="#b7e4fb">
 <title>Mario Super World</title>
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-mode="title">
 <div id="app">
-  <!-- HUD -->
   <header id="hud">
-    <div class="hud-left">
-      <span id="level-display">Level 1</span>
-    </div>
-    <div class="hud-center">
-      <div id="lives">
-        <span class="heart">❤️</span>
-        <span class="heart">❤️</span>
-        <span class="heart">❤️</span>
-      </div>
-    </div>
-    <div class="hud-right">
-      <span id="power-display"></span>
+    <a id="home" href="../../index.html">Games</a>
+    <div id="level-name">Mario Super World</div>
+    <div id="pills">
+      <span id="size-pill">Baby</span>
+      <span id="wing-pill" hidden>Wings</span>
     </div>
   </header>
-
-  <!-- Game Canvas -->
-  <main id="game-container">
-    <canvas id="game"></canvas>
+  <main id="stage">
+    <canvas id="game" width="360" height="480"></canvas>
   </main>
-
-  <!-- Touch Controls -->
   <footer id="controls">
-    <div class="control-row">
-      <button id="btn-left" class="ctrl-btn" aria-label="Move left">◀</button>
-      <button id="btn-right" class="ctrl-btn" aria-label="Move right">▶</button>
+    <div class="move">
+      <button type="button" id="left" aria-label="Move left">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32 10 L14 24 L32 38" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" id="right" aria-label="Move right">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
-    <div class="control-row">
-      <button id="btn-jump" class="ctrl-btn jump-btn" aria-label="Jump">⬆</button>
-    </div>
+    <button type="button" id="jump" aria-label="Jump">
+      <svg class="icon-jump" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 34 V14 M14 24 L24 12 L34 24" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg class="icon-fly" viewBox="0 0 48 48" aria-hidden="true"><path d="M22 28c-2-8-8-14-16-16 2 8 8 14 16 16z" fill="currentColor"/><path d="M26 28c2-8 8-14 16-16-2 8-8 14-16 16z" fill="currentColor"/></svg>
+    </button>
   </footer>
 </div>
 
-<!-- Splash Screen -->
-<div class="overlay show" id="splash">
-  <div class="splash-content">
-    <h1>Mario Super World</h1>
-    <div id="splash-mario" class="mario-preview"></div>
-    <p>Help Baby Mario through 50 levels!</p>
-    <p class="hint">Find the <span class="wing-icon">❗</span> blocks for wings!</p>
-    <button id="start-btn" class="big-btn">Play!</button>
+<div id="overlay" class="overlay show">
+  <div class="card" id="card">
+    <div class="gold-demo" aria-hidden="true">!</div>
+    <h1 id="card-title">Mario Super World</h1>
+    <p id="card-body">Hit the shiny gold block. Wings let you fly to the flag.</p>
+    <button type="button" id="go">Play</button>
   </div>
 </div>
-
-<!-- Level Complete -->
-<div class="overlay" id="level-complete">
-  <div class="complete-content">
-    <h2 id="complete-title">Level Complete!</h2>
-    <div id="complete-mario" class="mario-preview"></div>
-    <button id="next-btn" class="big-btn">Next Level</button>
-  </div>
-</div>
-
-<!-- Bowser Battle -->
-<div class="overlay" id="bowser-screen">
-  <div class="bowser-content">
-    <h2 id="bowser-title">Bowser!</h2>
-    <div id="bowser-preview"></div>
-    <p id="bowser-text">You found Bowser! Jump on him 3 times!</p>
-    <button id="fight-btn" class="big-btn">Fight!</button>
-  </div>
-</div>
-
-<!-- Victory -->
-<div class="overlay" id="victory">
-  <div class="victory-content">
-    <h1>🎉 You Win! 🎉</h1>
-    <div id="victory-mario" class="mario-preview big"></div>
-    <p>You beat all 50 levels and defeated Bowser!</p>
-    <button id="replay-btn" class="big-btn">Play Again!</button>
-  </div>
-</div>
-
+<div id="live" class="sr" aria-live="polite"></div>
 <script src="app.js"></script>
 </body>
 </html>

@@ -1,341 +1,205 @@
-/* Mario Super World - Portrait phone game for Max */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  touch-action: manipulation;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 html, body {
   height: 100%;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(180deg, #87ceeb 0%, #b5e3f5 50%, #d4f0fc 100%);
+  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  color: #5c4636;
+  background: #b7e4fb;
 }
 
 #app {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   height: 100dvh;
-  max-width: 500px;
+  max-width: 520px;
   margin: 0 auto;
-}
-
-/* HUD */
-#hud {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: rgba(0,0,0,0.15);
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-  z-index: 10;
-}
-
-#level-display {
-  background: #e63946;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 16px;
-}
-
-#lives {
-  display: flex;
-  gap: 4px;
-}
-
-.heart {
-  font-size: 20px;
-  transition: transform 0.2s;
-}
-
-.heart.lost {
-  opacity: 0.3;
-  transform: scale(0.8);
-}
-
-#power-display {
-  font-size: 22px;
-  min-width: 30px;
-  text-align: right;
-}
-
-/* Game Container */
-#game-container {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  min-height: 0;
-}
-
-#game {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* Controls */
-#controls {
-  background: rgba(0,0,0,0.2);
-  padding: 10px;
-  padding-bottom: max(10px, env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  background: linear-gradient(180deg, #b7e4fb 0%, #fff1d6 70%);
 }
 
-.control-row {
+#hud {
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: max(6px, env(safe-area-inset-top)) 10px 6px;
+  background: rgba(255, 248, 238, 0.72);
+  border-bottom: 3px solid rgba(240, 196, 140, 0.7);
 }
 
-.ctrl-btn {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 4px solid rgba(255,255,255,0.5);
-  background: rgba(255,255,255,0.3);
-  color: white;
-  font-size: 32px;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+#home {
+  flex: 0 0 auto;
+  min-width: 64px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #f0d2a4;
+  color: #8a5a32;
+  font-weight: 800;
+  font-size: 15px;
+  text-decoration: none;
+  display: grid;
+  place-items: center;
+}
+
+#level-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 800;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#pills { display: flex; gap: 6px; flex: 0 0 auto; }
+
+#size-pill, #wing-pill {
+  min-height: 32px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;
+  display: grid;
+  place-items: center;
+  border: 3px solid transparent;
+}
+
+#wing-pill[hidden] { display: none; }
+
+#size-pill { background: #ffd0dc; color: #8a3048; border-color: #f3b0c0; }
+#wing-pill { background: #ffe08a; color: #7a4e08; border-color: #f0c14a; }
+
+#stage { flex: 1; min-height: 0; position: relative; }
+#game { width: 100%; height: 100%; display: block; touch-action: none; }
+
+#controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 8px 12px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(255, 248, 238, 0.9);
+  border-top: 3px solid rgba(240, 196, 140, 0.8);
+  visibility: hidden;
+}
+
+body[data-mode="play"] #controls { visibility: visible; }
+
+.move { display: flex; gap: 10px; }
+
+button {
+  font-family: inherit;
   cursor: pointer;
-  transition: transform 0.1s, background 0.1s;
+  touch-action: none;
+  user-select: none;
 }
 
-.ctrl-btn:active {
-  transform: scale(0.95);
-  background: rgba(255,255,255,0.5);
+#left, #right, #jump {
+  border: 4px solid #e7c79a;
+  background: #fff8ee;
+  color: #8a5a32;
+  border-radius: 28px;
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 5px 0 #e2c091;
 }
 
-.jump-btn {
-  width: 100px;
-  height: 100px;
-  background: rgba(76, 175, 80, 0.6);
-  border-color: rgba(76, 175, 80, 0.8);
+#left svg, #right svg, #jump svg { width: 52px; height: 52px; display: block; }
+
+#jump {
+  width: 118px;
+  height: 118px;
+  border-radius: 36px;
+  background: #b6e7a8;
+  border-color: #7fbf78;
+  color: #2d6a32;
+  box-shadow: 0 6px 0 #6eaa68;
 }
 
-.jump-btn:active {
-  background: rgba(76, 175, 80, 0.8);
+#jump .icon-fly { display: none; }
+#jump.is-fly { background: #ffd56a; border-color: #e0a42a; color: #8a4b12; box-shadow: 0 6px 0 #d4922a; }
+#jump.is-fly .icon-jump { display: none; }
+#jump.is-fly .icon-fly { display: block; }
+
+#left:active, #right:active, #jump:active {
+  transform: translateY(4px);
+  box-shadow: 0 1px 0 #e2c091;
 }
 
-/* Overlays */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  padding: 18px;
+  background: rgba(120, 170, 200, 0.28);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
+  pointer-events: none;
+  z-index: 5;
 }
 
-.overlay.show {
-  opacity: 1;
-  visibility: visible;
-}
+.overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
 
-.splash-content, .complete-content, .bowser-content, .victory-content {
+.card {
+  width: min(420px, 94vw);
+  background: #fff8ee;
+  border: 4px solid #f0d2a4;
+  border-radius: 32px;
+  padding: 22px 20px 18px;
   text-align: center;
-  color: white;
-  padding: 30px;
+  box-shadow: 0 12px 0 rgba(190, 140, 80, 0.18);
 }
 
-h1 {
+.gold-demo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 10px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, #fff4c4, #ffcf4d 45%, #f0a322);
+  border: 4px solid #e09a2e;
+  color: #8a4b12;
+  font-size: 40px;
+  font-weight: 900;
+  line-height: 56px;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.45);
+}
+
+.card h1 { font-size: 34px; line-height: 1.05; color: #e25b4a; margin-bottom: 8px; }
+.card p { font-size: 20px; line-height: 1.35; margin-bottom: 16px; overflow-wrap: anywhere; }
+
+#go {
+  width: 100%;
+  min-height: 76px;
+  border: none;
+  border-radius: 24px;
+  background: #7dce7a;
+  color: #21421f;
   font-size: 32px;
-  margin-bottom: 20px;
-  color: #ffd700;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  font-weight: 800;
+  box-shadow: 0 6px 0 #4e9a52;
 }
 
-h2 {
-  font-size: 28px;
-  margin-bottom: 16px;
-  color: #ffd700;
-}
+#go:active { transform: translateY(4px); box-shadow: 0 2px 0 #4e9a52; }
 
-p {
-  font-size: 18px;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.hint {
-  font-size: 16px;
-  color: #adf;
-}
-
-.wing-icon {
-  display: inline-block;
-  background: #ffd700;
-  color: #333;
-  width: 24px;
-  height: 24px;
-  line-height: 24px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.big-btn {
-  margin-top: 20px;
-  padding: 16px 48px;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%);
-  border: 4px solid #2e7d32;
-  border-radius: 30px;
-  cursor: pointer;
-  box-shadow: 0 6px 0 #1b5e20, 0 8px 10px rgba(0,0,0,0.3);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-
-.big-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 #1b5e20, 0 4px 6px rgba(0,0,0,0.3);
-}
-
-/* Mario Preview (for overlays) */
-.mario-preview {
-  width: 80px;
-  height: 80px;
-  margin: 20px auto;
-  border-radius: 50%;
-  background: #e63946;
-  position: relative;
-}
-
-.mario-preview.big {
-  width: 120px;
-  height: 120px;
-}
-
-.mario-preview::before {
-  content: '';
+.sr {
   position: absolute;
-  top: 20%;
-  left: 25%;
-  width: 50%;
-  height: 30%;
-  background: #ffccaa;
-  border-radius: 50%;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
 }
 
-.mario-preview::after {
-  content: 'M';
-  position: absolute;
-  top: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-}
-
-/* Bowser preview */
-#bowser-preview {
-  width: 100px;
-  height: 100px;
-  margin: 20px auto;
-  background: #228b22;
-  border-radius: 20px;
-  position: relative;
-}
-
-#bowser-preview::before {
-  content: '👹';
-  font-size: 60px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-/* Flying indicator */
-.flying-indicator {
-  position: absolute;
-  top: 60px;
-  right: 10px;
-  background: rgba(255, 215, 0, 0.9);
-  color: #333;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 14px;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-/* Level progress dots */
-.level-dots {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-  max-width: 300px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.level-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-}
-
-.level-dot.done {
-  background: #4caf50;
-}
-
-.level-dot.current {
-  background: #ffd700;
-  animation: pulse 0.5s infinite;
-}
-
-/* Responsive */
-@media (max-height: 600px) {
-  .ctrl-btn {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-  }
-  .jump-btn {
-    width: 70px;
-    height: 70px;
-  }
-  #controls {
-    padding: 6px;
-    gap: 4px;
-  }
-  .control-row {
-    gap: 12px;
-  }
-}
-
-@media (max-width: 350px) {
-  .ctrl-btn {
-    width: 60px;
-    height: 60px;
-  }
-  .jump-btn {
-    width: 70px;
-    height: 70px;
-  }
+@media (max-height: 640px) {
+  #left, #right { width: 78px; height: 78px; border-radius: 22px; }
+  #jump { width: 96px; height: 96px; }
+  #left svg, #right svg, #jump svg { width: 42px; height: 42px; }
+  .card h1 { font-size: 28px; }
+  #go { min-height: 64px; font-size: 28px; }
 }
