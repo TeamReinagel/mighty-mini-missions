@@ -13,6 +13,17 @@ html, body {
   height: 100dvh;
 }
 
+#shell, #shell * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+#screen, #stage, #game, .pad, button {
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
 #shell {
   height: 100%;
   max-width: 480px;
@@ -200,7 +211,9 @@ button {
   font-family: inherit;
   cursor: pointer;
   touch-action: none;
+  -webkit-user-select: none;
   user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #left, #right, #jump {
@@ -311,7 +324,7 @@ button {
   clip: rect(0 0 0 0);
 }
 
-@media (max-height: 700px) {
+@media (max-height: 700px) and (orientation: portrait) {
   .pad { min-height: 118px; padding-top: 12px; }
   .dpad { width: 104px; height: 104px; }
   .dpad-cross {
@@ -327,15 +340,20 @@ button {
   #go { min-height: 64px; font-size: 28px; }
 }
 
-/* Tablet: screen in the middle, controls on the left and the right. */
-@media (min-width: 700px) and (min-height: 700px) {
+/* Tablet, and a phone turned sideways: screen in the middle, controls on the left and the right. */
+@media (min-width: 700px) and (min-height: 700px),
+       (orientation: landscape) and (max-height: 640px) {
   html, body, #app { background: #101114; }
 
   #shell {
     max-width: none;
     border: none;
     box-shadow: none;
-    padding: 0;
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
     background: #101114;
     grid-template-columns: clamp(120px, 15vw, 188px) minmax(0, 1fr) clamp(120px, 15vw, 188px);
     grid-template-rows: auto minmax(0, 1fr);

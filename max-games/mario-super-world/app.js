@@ -2626,6 +2626,10 @@
     bindHold(jumpBtn, "jump");
     bindKeys();
     goBtn.addEventListener("click", onGo);
+    const shell = document.getElementById("shell");
+    shell.addEventListener("selectstart", (e) => e.preventDefault());
+    shell.addEventListener("dragstart", (e) => e.preventDefault());
+    shell.addEventListener("contextmenu", (e) => e.preventDefault());
     canvas.addEventListener("contextmenu", (e) => e.preventDefault());
     showTitle();
     requestAnimationFrame(frame);
