@@ -5,43 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#b7e4fb">
+<meta name="theme-color" content="#c5c6ae">
 <title>Mario Super World</title>
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="icon.png" type="image/png">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body data-mode="title">
 <div id="app">
-  <header id="hud">
-    <a id="home" href="../../index.html">Games</a>
-    <div id="level-name">Mario Super World</div>
-    <div id="pills">
-      <span id="size-pill">Baby</span>
-      <span id="wing-pill" hidden>Wings</span>
+  <div id="shell">
+    <header id="hud">
+      <a id="home" href="../../index.html">Games</a>
+      <div id="level-name">Mario Super World</div>
+      <div id="pills">
+        <span id="size-pill">Baby</span>
+        <span id="wing-pill" hidden>Wings</span>
+      </div>
+    </header>
+    <div id="screen">
+      <main id="stage">
+        <canvas id="game" width="360" height="480"></canvas>
+      </main>
     </div>
-  </header>
-  <main id="stage">
-    <canvas id="game" width="360" height="480"></canvas>
-  </main>
-  <footer id="controls">
-    <div class="move">
-      <button type="button" id="left" aria-label="Move left">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32 10 L14 24 L32 38" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <aside class="pad pad-left">
+      <div class="dpad">
+        <span class="dpad-cross" aria-hidden="true"></span>
+        <button type="button" id="left" aria-label="Move left">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M32 10 L14 24 L32 38" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" id="right" aria-label="Move right">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </aside>
+    <aside class="pad pad-right">
+      <button type="button" id="jump" aria-label="Jump">
+        <svg class="icon-jump" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 34 V14 M14 24 L24 12 L34 24" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <svg class="icon-fly" viewBox="0 0 48 48" aria-hidden="true"><path d="M22 28c-2-8-8-14-16-16 2 8 8 14 16 16z" fill="currentColor"/><path d="M26 28c2-8 8-14 16-16-2 8-8 14-16 16z" fill="currentColor"/></svg>
       </button>
-      <button type="button" id="right" aria-label="Move right">
-        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M16 10 L34 24 L16 38" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-    </div>
-    <button type="button" id="jump" aria-label="Jump">
-      <svg class="icon-jump" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 34 V14 M14 24 L24 12 L34 24" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <svg class="icon-fly" viewBox="0 0 48 48" aria-hidden="true"><path d="M22 28c-2-8-8-14-16-16 2 8 8 14 16 16z" fill="currentColor"/><path d="M26 28c2-8 8-14 16-16-2 8-8 14-16 16z" fill="currentColor"/></svg>
-    </button>
-  </footer>
+    </aside>
+  </div>
 </div>
 
 <div id="overlay" class="overlay show">
   <div class="card" id="card">
-    <div class="gold-demo" aria-hidden="true">!</div>
+    <img class="gold-demo" src="art/block.png" alt="">
     <h1 id="card-title">Mario Super World</h1>
     <p id="card-body">Hit the shiny gold block. Wings let you fly to the flag.</p>
     <button type="button" id="go">Play</button>

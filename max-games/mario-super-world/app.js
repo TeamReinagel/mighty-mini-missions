@@ -1,6 +1,7 @@
 /* Mario Super World
-   Fixed levels for Max. Baby Mario, blue overalls and a red cap, grows up.
+   Twenty fixed levels for Max. Baby Mario, blue overalls and a red cap, grows up.
    A shiny gold block with ! gives wings. A miss puts him back a little.
+   Little enemies wait on later courses. Jump on them. Prickles send him back a little.
 */
 (function () {
   "use strict";
@@ -16,93 +17,356 @@
     { w: 52, h: 78, label: "Big" }
   ];
 
+  const WING = { w: 52, h: 48, kind: "wing" };
   const LEVELS = [
     {
       name: "First Hill",
       hint: true,
       sky: ["#b7e4fb", "#fff1d6"],
       platforms: [
-        { x: 0, y: G, w: 500, h: 48 },
-        { x: 580, y: G, w: 360, h: 48 },
-        { x: 1020, y: G, w: 460, h: 48 },
-        { x: 680, y: 248, w: 150, h: 34 }
+        { x: 0, y: G, w: 520, h: 48 },
+        { x: 610, y: G, w: 380, h: 48 },
+        { x: 1080, y: G, w: 420, h: 48 }
       ],
-      blocks: [{ x: 420, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      blocks: [{ x: 220, y: G - 150, ...WING }],
       pickups: [],
-      flagX: 1340
+      flagX: 1360
     },
     {
       name: "Little Gaps",
       sky: ["#c5ebff", "#ffe7c8"],
       platforms: [
-        { x: 0, y: G, w: 360, h: 48 },
-        { x: 470, y: G, w: 280, h: 48 },
-        { x: 860, y: G, w: 280, h: 48 },
-        { x: 1080, y: 316, w: 180, h: 36 },
-        { x: 1220, y: 232, w: 180, h: 36 },
-        { x: 1360, y: 148, w: 240, h: 40 }
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 440, y: G, w: 260, h: 48 },
+        { x: 800, y: G, w: 240, h: 48 },
+        { x: 1120, y: 300, w: 170, h: 34 },
+        { x: 1360, y: 190, w: 220, h: 36 }
       ],
-      blocks: [{ x: 280, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      blocks: [{ x: 180, y: G - 150, ...WING }],
       pickups: [],
-      flagX: 1500
+      flagX: 1480
     },
     {
       name: "Stepping Stones",
       sky: ["#d4e9ff", "#ffe8f2"],
       platforms: [
-        { x: 0, y: G, w: 300, h: 48 },
-        { x: 408, y: G, w: 200, h: 48 },
-        { x: 708, y: 328, w: 180, h: 40 },
-        { x: 944, y: G, w: 240, h: 48 },
-        { x: 1288, y: G, w: 360, h: 48 }
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 400, y: G, w: 340, h: 48 },
+        { x: 860, y: 310, w: 170, h: 34 },
+        { x: 1120, y: G, w: 260, h: 48 },
+        { x: 1480, y: G, w: 280, h: 48 }
       ],
-      blocks: [{ x: 220, y: G - 150, w: 52, h: 48, kind: "wing" }],
-      pickups: [{ x: 1040, y: G - 38, w: 38, h: 38 }],
-      flagX: 1520
+      blocks: [{ x: 160, y: G - 150, ...WING }],
+      pickups: [{ x: 1200, y: G - 38, w: 38, h: 38 }],
+      enemies: [{ x: 460, minX: 430, maxX: 660, speed: 34 }],
+      flagX: 1640
     },
     {
-      name: "Sky Flag",
+      name: "Prickle Path",
+      sky: ["#d8f3c8", "#fff1d0"],
+      platforms: [
+        { x: 0, y: G, w: 420, h: 48 },
+        { x: 540, y: G, w: 320, h: 48 },
+        { x: 980, y: G, w: 240, h: 48 },
+        { x: 1320, y: 270, w: 220, h: 36 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 280, w: 70 }],
+      enemies: [{ x: 600, minX: 570, maxX: 780, speed: 36 }],
+      flagX: 1430
+    },
+    {
+      name: "Sky Steps",
       sky: ["#f7c9a2", "#fff0c8"],
       platforms: [
-        { x: 0, y: G, w: 440, h: 48 },
-        { x: 548, y: G, w: 260, h: 48 },
-        { x: 760, y: 316, w: 180, h: 36 },
-        { x: 900, y: 232, w: 180, h: 36 },
-        { x: 1040, y: 148, w: 260, h: 40 },
-        { x: 470, y: 96, w: 170, h: 32 }
+        { x: 0, y: G, w: 400, h: 48 },
+        { x: 520, y: G, w: 220, h: 48 },
+        { x: 820, y: 300, w: 160, h: 32 },
+        { x: 1060, y: 200, w: 160, h: 32 },
+        { x: 1300, y: 120, w: 240, h: 36 }
       ],
-      blocks: [{ x: 360, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      blocks: [{ x: 170, y: G - 150, ...WING }],
       pickups: [],
-      flagX: 1180
+      enemies: [{ x: 560, minX: 540, maxX: 660, speed: 34 }],
+      flagX: 1420
     },
     {
       name: "Big Hops",
       sky: ["#b7e4fb", "#e7f6ff"],
       platforms: [
-        { x: 0, y: G, w: 340, h: 48 },
-        { x: 448, y: G, w: 190, h: 48 },
-        { x: 746, y: G, w: 190, h: 48 },
-        { x: 1044, y: G, w: 190, h: 48 },
-        { x: 1342, y: G, w: 340, h: 48 },
-        { x: 690, y: 78, w: 180, h: 32 }
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 450, y: G, w: 180, h: 48 },
+        { x: 780, y: G, w: 180, h: 48 },
+        { x: 1110, y: G, w: 180, h: 48 },
+        { x: 1440, y: G, w: 320, h: 48 }
       ],
-      blocks: [{ x: 250, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
       pickups: [],
+      enemies: [
+        { x: 480, minX: 470, maxX: 560, speed: 36 },
+        { x: 1140, minX: 1130, maxX: 1220, speed: 40 }
+      ],
+      flagX: 1640
+    },
+    {
+      name: "Garden Jumps",
+      sky: ["#c8f0c4", "#fff6d8"],
+      platforms: [
+        { x: 0, y: G, w: 1500, h: 48 },
+        { x: 1240, y: 280, w: 240, h: 36 }
+      ],
+      blocks: [{ x: 160, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 340, w: 80 },
+        { x: 560, w: 90 },
+        { x: 860, w: 100 },
+        { x: 1100, w: 80 }
+      ],
+      enemies: [{ x: 700, minX: 680, maxX: 790, speed: 38 }],
+      flagX: 1360
+    },
+    {
+      name: "Two Bridges",
+      sky: ["#c5ebff", "#ffe8f2"],
+      platforms: [
+        { x: 0, y: G, w: 360, h: 48 },
+        { x: 500, y: G, w: 340, h: 48 },
+        { x: 980, y: G, w: 340, h: 48 },
+        { x: 1460, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 160, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [
+        { x: 560, minX: 530, maxX: 760, speed: 40 },
+        { x: 1040, minX: 1010, maxX: 1240, speed: 42 }
+      ],
+      flagX: 1620
+    },
+    {
+      name: "The Log",
+      sky: ["#d4e9ff", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 420, h: 48 },
+        { x: 900, y: G, w: 380, h: 48 },
+        { x: 1400, y: G, w: 300, h: 48 }
+      ],
+      movers: [{ x: 500, y: 340, w: 150, h: 30, min: 470, max: 720, speed: 42 }],
+      blocks: [{ x: 170, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [{ x: 980, minX: 940, maxX: 1180, speed: 40 }],
+      flagX: 1580
+    },
+    {
+      name: "Up and Over",
+      sky: ["#f7d7b0", "#fff0c8"],
+      platforms: [
+        { x: 0, y: G, w: 320, h: 48 },
+        { x: 450, y: 300, w: 160, h: 32 },
+        { x: 700, y: 190, w: 160, h: 32 },
+        { x: 960, y: G, w: 360, h: 48 },
+        { x: 1440, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1140, w: 70 }],
+      enemies: [{ x: 1000, minX: 990, maxX: 1060, speed: 44 }],
+      flagX: 1600
+    },
+    {
+      name: "Busy Path",
+      sky: ["#b7e4fb", "#ffe7c8"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 460, y: G, w: 260, h: 48 },
+        { x: 880, y: G, w: 260, h: 48 },
+        { x: 1300, y: G, w: 280, h: 48 },
+        { x: 1720, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1760, w: 60 }],
+      enemies: [
+        { x: 500, minX: 490, maxX: 640, speed: 46 },
+        { x: 920, minX: 910, maxX: 1060, speed: 48 },
+        { x: 1360, minX: 1340, maxX: 1480, speed: 48 }
+      ],
+      flagX: 1900
+    },
+    {
+      name: "Stair Street",
+      sky: ["#e7d4ff", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 380, y: 330, w: 140, h: 30 },
+        { x: 580, y: 250, w: 140, h: 30 },
+        { x: 780, y: 170, w: 150, h: 30 },
+        { x: 1020, y: G, w: 320, h: 48 },
+        { x: 1460, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [{ x: 1080, minX: 1060, maxX: 1240, speed: 46 }],
+      flagX: 1620
+    },
+    {
+      name: "Ferry",
+      sky: ["#b7e4fb", "#d8f3c8"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 1120, y: G, w: 520, h: 48 },
+        { x: 1480, y: 280, w: 220, h: 34 }
+      ],
+      movers: [
+        { x: 380, y: G, w: 140, h: 32, min: 350, max: 560, speed: 48 },
+        { x: 760, y: 340, w: 140, h: 32, min: 700, max: 940, speed: 40 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1360, w: 70 }],
+      enemies: [{ x: 1180, minX: 1160, maxX: 1280, speed: 44 }],
+      flagX: 1580
+    },
+    {
+      name: "Prickle Islands",
+      sky: ["#c8f0c4", "#fff6d8"],
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 510, y: G, w: 210, h: 48 },
+        { x: 860, y: G, w: 210, h: 48 },
+        { x: 1220, y: G, w: 210, h: 48 },
+        { x: 1560, y: G, w: 300, h: 48 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 570, w: 60 },
+        { x: 930, w: 60 },
+        { x: 1290, w: 60 }
+      ],
+      enemies: [{ x: 1620, minX: 1600, maxX: 1680, speed: 50 }],
+      flagX: 1780
+    },
+    {
+      name: "High Road",
+      sky: ["#d4e9ff", "#ffe8f2"],
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 430, y: 280, w: 180, h: 32 },
+        { x: 700, y: 180, w: 170, h: 32 },
+        { x: 960, y: 280, w: 170, h: 32 },
+        { x: 1220, y: G, w: 260, h: 48 },
+        { x: 1560, y: 300, w: 140, h: 30 },
+        { x: 1760, y: 200, w: 240, h: 34 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [
+        { x: 450, minX: 445, maxX: 540, speed: 42 },
+        { x: 1280, minX: 1260, maxX: 1400, speed: 50 }
+      ],
+      flagX: 1880
+    },
+    {
+      name: "Long Evening",
+      sky: ["#7f93c4", "#f3d2b4"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 470, y: G, w: 280, h: 48 },
+        { x: 900, y: G, w: 240, h: 48 },
+        { x: 1400, y: 250, w: 280, h: 36 }
+      ],
+      movers: [{ x: 1220, y: G, w: 130, h: 30, axis: "y", min: 250, max: G, speed: 38 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1040, w: 60 }],
+      enemies: [
+        { x: 520, minX: 500, maxX: 670, speed: 52 },
+        { x: 940, minX: 930, maxX: 980, speed: 52 }
+      ],
       flagX: 1540
+    },
+    {
+      name: "Switchbacks",
+      sky: ["#f0c9b0", "#ffe7c8"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 400, y: 270, w: 170, h: 32 },
+        { x: 1020, y: 270, w: 170, h: 32 },
+        { x: 1280, y: G, w: 300, h: 48 },
+        { x: 1660, y: 300, w: 150, h: 30 },
+        { x: 1880, y: 190, w: 240, h: 34 }
+      ],
+      movers: [{ x: 640, y: 270, w: 130, h: 28, min: 610, max: 860, speed: 52 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1500, w: 50 }],
+      enemies: [{ x: 1340, minX: 1320, maxX: 1450, speed: 52 }],
+      flagX: 2000
+    },
+    {
+      name: "Crowded Islands",
+      sky: ["#c5ebff", "#f7d7b0"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 440, y: G, w: 200, h: 48 },
+        { x: 790, y: G, w: 200, h: 48 },
+        { x: 1140, y: G, w: 210, h: 48 },
+        { x: 1500, y: G, w: 210, h: 48 },
+        { x: 1850, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [
+        { x: 470, minX: 460, maxX: 560, speed: 50 },
+        { x: 820, minX: 810, maxX: 910, speed: 52 },
+        { x: 1180, minX: 1170, maxX: 1270, speed: 54 },
+        { x: 1540, minX: 1530, maxX: 1630, speed: 54 }
+      ],
+      flagX: 2020
+    },
+    {
+      name: "Last Hills",
+      sky: ["#9eb0d6", "#f7d7b0"],
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 510, y: G, w: 240, h: 48 },
+        { x: 870, y: 280, w: 160, h: 32 },
+        { x: 1520, y: G, w: 340, h: 48 },
+        { x: 1920, y: 310, w: 150, h: 30 },
+        { x: 2140, y: 200, w: 250, h: 34 }
+      ],
+      movers: [{ x: 1100, y: 280, w: 140, h: 28, min: 1060, max: 1320, speed: 46 }],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1740, w: 70 }],
+      enemies: [
+        { x: 560, minX: 540, maxX: 680, speed: 56 },
+        { x: 1600, minX: 1560, maxX: 1660, speed: 56 }
+      ],
+      flagX: 2260
     },
     {
       name: "Bowser's Yard",
       sky: ["#c8f0c4", "#fff6d8"],
       bowser: true,
+      bowserHome: 980,
+      bowserMin: 880,
+      bowserMax: 1120,
       platforms: [
-        { x: 0, y: G, w: 1320, h: 48 },
-        { x: 140, y: 246, w: 150, h: 34 },
-        { x: 1080, y: 246, w: 160, h: 34 }
+        { x: 0, y: G, w: 1760, h: 48 },
+        { x: 180, y: 290, w: 140, h: 32 },
+        { x: 1380, y: 280, w: 280, h: 36 }
       ],
-      blocks: [{ x: 250, y: G - 150, w: 52, h: 48, kind: "wing" }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
       pickups: [],
-      flagX: 980,
-      bowserHome: 640
+      hazards: [{ x: 700, w: 60 }],
+      enemies: [
+        { x: 360, minX: 320, maxX: 500, speed: 40 },
+        { x: 600, minX: 560, maxX: 640, speed: 42 }
+      ],
+      flagX: 1520
     }
   ];
 
@@ -148,11 +412,60 @@
   let toastText = "";
   let toastLife = 0;
   let flagPop = 0;
+  let stomped = 0;
   let autoTimer = 0;
   let particles = [];
   let audioCtx = null;
   let view = { cssW: 360, cssH: 480, dpr: 1 };
   let lastTs = 0;
+  const ART = {};
+  const ART_SRC = {
+    baby: "art/mario-baby.png",
+    kid: "art/mario-kid.png",
+    big: "art/mario-big.png",
+    wings: "art/wings.png",
+    bowser: "art/bowser.png",
+    bowserSit: "art/bowser-sit.png",
+    flag: "art/flag.png",
+    block: "art/block.png",
+    blockUsed: "art/block-used.png",
+    mushroom: "art/mushroom.png",
+    ground: "art/ground.png",
+    hill: "art/hill.png",
+    cloud: "art/cloud.png",
+    flower: "art/flower.png",
+    enemy: "art/enemy.png",
+    prickle: "art/prickle.png"
+  };
+
+  function loadArt() {
+    Object.keys(ART_SRC).forEach((key) => {
+      const img = new Image();
+      img.onload = () => { ART[key] = img; };
+      img.src = ART_SRC[key];
+    });
+  }
+
+  function drawGroundSprite(p) {
+    const img = ART.ground;
+    const sw = img.width;
+    const sh = img.height;
+    if (p.y >= G - 1) {
+      const srcY = Math.round(sh * 0.72);
+      ctx.drawImage(img, 0, srcY, sw, sh - srcY, p.x, p.y + p.h - 8, p.w, 420);
+    }
+    const capSrc = Math.max(8, Math.round(sw * 0.22));
+    const capDst = Math.min(p.w * 0.3, Math.max(10, p.h * 0.9));
+    if (p.w <= capDst * 2 + 6) {
+      ctx.drawImage(img, p.x, p.y, p.w, p.h);
+      return;
+    }
+    const midSrc = Math.max(1, sw - capSrc * 2);
+    const overlap = 8;
+    ctx.drawImage(img, capSrc, 0, midSrc, sh, p.x + capDst - overlap, p.y, p.w - (capDst - overlap) * 2, p.h);
+    ctx.drawImage(img, 0, 0, capSrc, sh, p.x, p.y, capDst, p.h);
+    ctx.drawImage(img, sw - capSrc, 0, capSrc, sh, p.x + p.w - capDst, p.y, capDst, p.h);
+  }
 
   function cloneLevel(i) {
     const src = LEVELS[i];
@@ -162,16 +475,31 @@
       sky: src.sky,
       bowser: !!src.bowser,
       bowserHome: src.bowserHome || 0,
+      bowserMin: src.bowserMin,
+      bowserMax: src.bowserMax,
       flagX: src.flagX,
       platforms: src.platforms.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h })),
       blocks: src.blocks.map((b) => ({ x: b.x, y: b.y, w: b.w, h: b.h, kind: b.kind, used: false })),
-      pickups: src.pickups.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h, got: false }))
+      pickups: src.pickups.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h, got: false })),
+      movers: (src.movers || []).map((m) => ({
+        x: m.x, y: m.y, w: m.w, h: m.h,
+        axis: m.axis || "x",
+        min: m.min, max: m.max,
+        speed: m.speed, dir: 1, mover: true, dx: 0, dy: 0
+      })),
+      enemies: (src.enemies || []).map((e) => ({
+        x: e.x, w: e.w || 40, h: e.h || 34,
+        minX: e.minX, maxX: e.maxX,
+        speed: e.speed || 40, dir: 1, y: 0, floor: G, gone: false
+      })),
+      hazards: (src.hazards || []).map((h) => ({ x: h.x, w: h.w, y: 0, h: 22 }))
     };
   }
 
   function worldWidth() {
     let right = level.flagX + 120;
     for (const p of level.platforms) right = Math.max(right, p.x + p.w + 40);
+    for (const m of level.movers) right = Math.max(right, m.max + m.w + 40);
     return right;
   }
 
@@ -206,8 +534,17 @@
     };
     spawn = { x: mario.x, y: mario.y };
     checkpoint = { x: mario.x, y: mario.y };
+    for (const e of level.enemies) {
+      const stand = platformUnderX(e.x, e.w);
+      e.floor = stand ? stand.y : G;
+      e.y = e.floor - e.h;
+    }
+    for (const h of level.hazards) {
+      const stand = platformUnderX(h.x, h.w);
+      h.y = (stand ? stand.y : G) - 16;
+    }
     const stand = platformAtFlag();
-    flag = { x: level.flagX, y: stand ? stand.y : G, on: !level.bowser };
+    flag = { x: level.flagX, y: stand ? stand.y : G, on: true };
     bowser = level.bowser
       ? {
           x: level.bowserHome,
@@ -216,8 +553,8 @@
           h: 86,
           dir: 1,
           hp: 3,
-          minX: 560,
-          maxX: 760,
+          minX: level.bowserMin != null ? level.bowserMin : level.bowserHome - 100,
+          maxX: level.bowserMax != null ? level.bowserMax : level.bowserHome + 140,
           sit: false,
           flash: 0
         }
@@ -231,6 +568,7 @@
     invuln = 0;
     growPop = 0;
     flagPop = 0;
+    stomped = 0;
     toastText = "";
     particles = [];
     levelT0 = performance.now();
@@ -240,6 +578,19 @@
     hideCard();
     say(level.bowser ? "Jump on Bowser, then touch the flag." : level.name);
     updateHud();
+  }
+
+  function platformUnderX(x, width) {
+    const cx = x + width / 2;
+    let best = null;
+    for (const p of level.platforms) {
+      if (cx >= p.x && cx <= p.x + p.w && (!best || p.y < best.y)) best = p;
+    }
+    return best;
+  }
+
+  function surfaces() {
+    return level.movers.length ? level.platforms.concat(level.movers) : level.platforms;
   }
 
   function platformAtFlag() {
@@ -299,7 +650,36 @@
     }
   }
 
+  function moveCourse(dt) {
+    for (const m of level.movers) {
+      const prevX = m.x;
+      const prevY = m.y;
+      if (m.axis === "y") {
+        m.y += m.dir * m.speed * dt;
+        if (m.y < m.min || m.y > m.max) {
+          m.dir *= -1;
+          m.y = Math.max(m.min, Math.min(m.max, m.y));
+        }
+      } else {
+        m.x += m.dir * m.speed * dt;
+        if (m.x < m.min || m.x > m.max) {
+          m.dir *= -1;
+          m.x = Math.max(m.min, Math.min(m.max, m.x));
+        }
+      }
+      m.dx = m.x - prevX;
+      m.dy = m.y - prevY;
+    }
+  }
+
   function update(dt) {
+    moveCourse(dt);
+    if (mario.ride) {
+      mario.x += mario.ride.dx;
+      mario.y = mario.ride.y - mario.h;
+      mario.ride = null;
+    }
+
     const down = held.jump || keys.jump;
     if ((down && !prevJump) || queuedEdge) jumpEdge = true;
     prevJump = down;
@@ -344,7 +724,7 @@
     const prevBottom = prevY + mario.h;
     const nowBottom = mario.y + mario.h;
     if (mario.vy >= 0) {
-      for (const p of level.platforms) {
+      for (const p of surfaces()) {
         const overlapX = Math.min(mario.x + mario.w, p.x + p.w) - Math.max(mario.x, p.x);
         if (overlapX < 10) continue;
         if (prevBottom <= p.y + 30 && nowBottom >= p.y && (!land || p.y < land.y)) land = p;
@@ -355,6 +735,7 @@
       mario.vy = 0;
       mario.grounded = true;
       mario.coyote = 0.16;
+      if (land.mover) mario.ride = land;
       if (mario.buffer > 0) {
         mario.vy = JUMP_V;
         mario.grounded = false;
@@ -418,9 +799,8 @@
           if (bowser.hp <= 0) {
             bowser.sit = true;
             bowser.y = G - 70;
-            flag.on = true;
             flagPop = 1;
-            toast("Flag!");
+            toast("To the flag!");
             blip(660, 0.15);
           }
         } else {
@@ -435,7 +815,54 @@
       }
     }
 
-    if (flag.on && reachedFlag()) finishLevel();
+    for (const e of level.enemies) {
+      if (e.gone) continue;
+      e.x += e.dir * e.speed * dt;
+      if (e.x < e.minX || e.x > e.maxX) {
+        e.dir *= -1;
+        e.x = Math.max(e.minX, Math.min(e.maxX, e.x));
+      }
+      e.y = e.floor - e.h;
+      const head = { x: e.x - 4, y: e.y - 8, w: e.w + 8, h: 20 };
+      const feet = mario.y + mario.h;
+      const onHead = mario.vy > 10 && feet < e.y + 16 && overlap(mario, head);
+      if ((onHead || overlap(mario, e)) && invuln <= 0) {
+        if (onHead) {
+          e.gone = true;
+          stomped += 1;
+          mario.vy = -340;
+          mario.y = Math.min(mario.y, e.y - mario.h);
+          burst(e.x + e.w / 2, e.y, "#e7b98a");
+          toast("Bop!");
+          blip(420, 0.08);
+        } else {
+          const back = mario.x + mario.w / 2 < e.x + e.w / 2 ? -60 : 60;
+          mario.x = Math.max(0, Math.min(worldWidth() - mario.w, mario.x + back));
+          mario.vy = -200;
+          invuln = 0.4;
+          oops = 0.5;
+          toast("Oops!");
+          blip(200, 0.08);
+        }
+      }
+    }
+
+    if (invuln <= 0) {
+      for (const h of level.hazards) {
+        if (overlap(mario, h)) {
+          respawn();
+          break;
+        }
+      }
+    }
+
+    if (flag.on && reachedFlag()) {
+      if (bowser && !bowser.sit) {
+        if (toastLife <= 0) toast("Jump on Bowser");
+      } else {
+        finishLevel();
+      }
+    }
 
     if (mode === "play" && mario.y > G + 180) respawn();
 
@@ -444,7 +871,8 @@
       if (under) {
         const inset = 14;
         const safe = mario.x > under.x + inset && mario.x + mario.w < under.x + under.w - inset;
-        if (safe) checkpoint = { x: mario.x, y: mario.y };
+        const clear = !level.hazards.some((h) => overlap(mario, { x: h.x - 8, y: mario.y, w: h.w + 16, h: mario.h }));
+        if (safe && clear) checkpoint = { x: mario.x, y: mario.y };
       }
     }
 
@@ -508,6 +936,13 @@
   }
 
   function playNote() {
+    const note = courseNote();
+    if (!stomped) return note;
+    const who = stomped === 1 ? "a little enemy" : "the little enemies";
+    return note.replace(/\.$/, ", and bounced on " + who + ".");
+  }
+
+  function courseNote() {
     const who = levelStartSize === 0 ? "Baby Mario" : "Mario";
     const place = level.name;
     if (level.bowser) {
@@ -559,7 +994,7 @@
 
   function finishLevel() {
     if (mode !== "play") return;
-    if (level.bowser && !flag.on) return;
+    if (level.bowser && bowser && !bowser.sit) return;
     if (size === 0) {
       applySize(1, true);
       grewFromFlag = true;
@@ -718,9 +1153,13 @@
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.setTransform(dpr * cam.scale, 0, 0, dpr * cam.scale, -cam.camX * cam.scale * dpr, -cam.camY * cam.scale * dpr);
+    ctx.imageSmoothingEnabled = true;
     drawHills(t, cam);
     drawPonds();
     for (let i = 0; i < level.platforms.length; i++) drawPlatform(level.platforms[i], i);
+    for (const m of level.movers) drawPlatform(m, 1);
+    for (const h of level.hazards) drawHazard(h);
+    for (const e of level.enemies) if (!e.gone) drawEnemy(e, t);
     for (const item of level.pickups) if (!item.got) drawMushroom(item.x, item.y + Math.sin(t * 3) * 2, item.w);
     for (const b of level.blocks) drawBlock(b, t);
     if (flag && flag.on) drawFlag(t);
@@ -754,18 +1193,21 @@
   function drawHills(t, cam) {
     ctx.save();
     ctx.translate(cam.camX * 0.4, 0);
-    const hills = [
-      { x: -40, c: "#d5f0c6" },
-      { x: 260, c: "#c3e7b0" },
-      { x: 620, c: "#d8f3c8" },
-      { x: 980, c: "#b7e3a4" },
-      { x: 1360, c: "#c9ebba" }
-    ];
-    for (const h of hills) {
-      ctx.fillStyle = h.c;
-      ctx.beginPath();
-      ctx.ellipse(h.x, G + 30, 220, 78, 0, 0, Math.PI * 2);
-      ctx.fill();
+    const hills = [];
+    for (let x = -40; x < worldWidth() + 80; x += 340) hills.push({ x: x, c: "#c3e7b0" });
+    if (ART.hill) {
+      for (const h of hills) {
+        const w = 300;
+        const hh = w * (ART.hill.height / ART.hill.width);
+        ctx.drawImage(ART.hill, h.x - 20, G - hh + 48, w, hh);
+      }
+    } else {
+      for (const h of hills) {
+        ctx.fillStyle = h.c;
+        ctx.beginPath();
+        ctx.ellipse(h.x, G + 30, 220, 78, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
     ctx.translate(cam.camX * 0.25, -20);
     for (let x = -80; x < worldWidth() + 200; x += 280) {
@@ -776,6 +1218,12 @@
   }
 
   function drawCloud(x, y, s) {
+    if (ART.cloud) {
+      const w = 110 * s;
+      const h = w * (ART.cloud.height / ART.cloud.width);
+      ctx.drawImage(ART.cloud, x - w / 2, y - h / 2, w, h);
+      return;
+    }
     ctx.fillStyle = "rgba(255,255,255,0.92)";
     ctx.beginPath();
     ctx.ellipse(x, y, 34 * s, 20 * s, 0, 0, Math.PI * 2);
@@ -804,6 +1252,13 @@
   }
 
   function drawPlatform(p, index) {
+    if (ART.ground) {
+      drawGroundSprite(p);
+      if (p.w > 150 && p.y === G) {
+        for (let k = 0; k < 2; k++) drawFlower(p.x + 36 + ((index * 47 + k * 80) % (p.w - 70)), p.y);
+      }
+      return;
+    }
     const r = Math.min(16, p.h / 2);
     ctx.fillStyle = "#e7b98a";
     ctx.beginPath();
@@ -822,6 +1277,12 @@
   }
 
   function drawFlower(x, y) {
+    if (ART.flower) {
+      const h = 34;
+      const w = h * (ART.flower.width / ART.flower.height);
+      ctx.drawImage(ART.flower, x - w / 2, y - h + 4, w, h);
+      return;
+    }
     ctx.fillStyle = "#7dce7a";
     ctx.fillRect(x - 1.5, y - 10, 3, 10);
     ctx.fillStyle = "#ff9bb5";
@@ -836,6 +1297,12 @@
 
   function drawBlock(b, t) {
     const y = b.y + Math.sin(t * 4 + b.x) * 2;
+    const blockArt = b.used ? ART.blockUsed : ART.block;
+    if (blockArt) {
+      const pad = 10;
+      ctx.drawImage(blockArt, b.x - pad, y - pad * 1.2, b.w + pad * 2.1, b.h + pad * 2);
+      return;
+    }
     ctx.beginPath();
     ctx.roundRect(b.x, y, b.w, b.h, 12);
     if (b.used) {
@@ -868,6 +1335,11 @@
   }
 
   function drawMushroom(x, y, w) {
+    if (ART.mushroom) {
+      const h = w * (ART.mushroom.height / ART.mushroom.width);
+      ctx.drawImage(ART.mushroom, x, y, w, h);
+      return;
+    }
     ctx.fillStyle = "#fff6ea";
     ctx.beginPath();
     ctx.roundRect(x + w * 0.28, y + w * 0.42, w * 0.44, w * 0.5, 8);
@@ -887,10 +1359,63 @@
     ctx.fill();
   }
 
+  function drawHazard(h) {
+    if (ART.prickle) {
+      const ih = 30;
+      const iw = ih * (ART.prickle.width / ART.prickle.height);
+      const step = Math.max(12, iw * 0.72);
+      for (let x = h.x; x < h.x + h.w - 6; x += step) {
+        ctx.drawImage(ART.prickle, x, h.y - 10, Math.min(iw, h.x + h.w - x), ih);
+      }
+      return;
+    }
+    ctx.fillStyle = "#7dce7a";
+    ctx.strokeStyle = "#6d5648";
+    ctx.lineWidth = 2;
+    for (let x = h.x + 8; x < h.x + h.w; x += 14) {
+      ctx.beginPath();
+      ctx.moveTo(x - 6, h.y + h.h);
+      ctx.lineTo(x, h.y);
+      ctx.lineTo(x + 6, h.y + h.h);
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+
+  function drawEnemy(e, t) {
+    const bob = Math.sin(t * 8 + e.x) * 1.5;
+    if (ART.enemy) {
+      const h = e.h + 10;
+      const w = h * (ART.enemy.width / ART.enemy.height);
+      ctx.save();
+      ctx.translate(e.x + e.w / 2, e.y + e.h + bob);
+      if (e.dir < 0) ctx.scale(-1, 1);
+      ctx.drawImage(ART.enemy, -w / 2, -h, w, h);
+      ctx.restore();
+      return;
+    }
+    ctx.fillStyle = "#c48a52";
+    ctx.beginPath();
+    ctx.ellipse(e.x + e.w / 2, e.y + e.h / 2 + bob, e.w / 2, e.h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
   function drawFlag(t) {
     const rise = flagPop > 0 ? (flagPop / 1) * 30 : 0;
     const x = flag.x;
     const y = flag.y + rise;
+    if (ART.flag) {
+      const h = 228;
+      const w = h * (ART.flag.width / ART.flag.height);
+      const wave = 1 + Math.sin(t * 4) * 0.03;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(wave, 1);
+      ctx.drawImage(ART.flag, -w * 0.14, -h, w, h);
+      ctx.restore();
+      if (grewFromFlag && mode !== "play") drawMushroom(x + 16, y - 210, 36);
+      return;
+    }
     ctx.strokeStyle = "#f7f1e4";
     ctx.lineWidth = 6;
     ctx.lineCap = "round";
@@ -921,6 +1446,30 @@
 
   function drawBowser(t) {
     const b = bowser;
+    const art = b.sit ? (ART.bowserSit || ART.bowser) : ART.bowser;
+    if (art) {
+      const h = b.sit ? 132 : 118;
+      const w = h * (art.width / art.height);
+      ctx.save();
+      ctx.translate(b.x + b.w / 2, G + 4);
+      if (b.dir < 0) ctx.scale(-1, 1);
+      if (!b.sit && b.flash > 0 && Math.floor(b.flash * 12) % 2 === 0) ctx.globalAlpha = 0.55;
+      ctx.drawImage(art, -w / 2, -h, w, h);
+      ctx.restore();
+      if (!b.sit) {
+        for (let i = 0; i < 3; i++) {
+          ctx.beginPath();
+          ctx.arc(b.x + 20 + i * 16, b.y - 18, 6, 0, Math.PI * 2);
+          ctx.fillStyle = i < b.hp ? "#ff9b8a" : "#f3e6cf";
+          ctx.fill();
+          ctx.strokeStyle = "#6d5648";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+      void t;
+      return;
+    }
     const sit = b.sit ? 16 : 0;
     const x = b.x;
     const y = b.y + sit;
@@ -999,10 +1548,47 @@
     void t;
   }
 
+  function drawMarioSprite(t, sprite) {
+    const m = mario;
+    const pop = 1 + Math.max(0, growPop) * 0.18;
+    const bob = mode !== "play" ? Math.sin(t * 3) * 2 : 0;
+    const cx = m.x + m.w / 2;
+    const foot = m.y + m.h + bob;
+    const h = m.h * 1.12;
+    const w = h * (sprite.width / sprite.height);
+    ctx.save();
+    ctx.translate(cx, foot);
+    ctx.scale(pop, pop);
+    if (oops > 0.6) ctx.rotate(-0.08);
+    ctx.fillStyle = "rgba(109, 86, 72, 0.18)";
+    ctx.beginPath();
+    ctx.ellipse(0, 2, m.w * 0.42, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    if (m.facing < 0) ctx.scale(-1, 1);
+    if (m.wings && ART.wings) {
+      const flap = 1 + Math.sin(t * 14) * 0.08;
+      const ww = Math.max(m.w * 2.5, h * 1.15);
+      const wh = ww * (ART.wings.height / ART.wings.width);
+      ctx.save();
+      ctx.translate(0, -h * 0.62);
+      ctx.scale(1, flap);
+      ctx.drawImage(ART.wings, -ww / 2, -wh / 2, ww, wh);
+      ctx.restore();
+    }
+    const step = Math.abs(m.vx) > 8 ? Math.sin(t * 12) * 1.5 : 0;
+    ctx.drawImage(sprite, -w / 2, -h + step, w, h);
+    ctx.restore();
+  }
+
   function drawMario(t) {
     const m = mario;
     const blink = invuln > 0 && Math.floor(t * 12) % 2 === 0;
     if (blink) return;
+    const sprite = m.size >= 2 ? ART.big : m.size === 1 ? ART.kid : ART.baby;
+    if (sprite) {
+      drawMarioSprite(t, sprite);
+      return;
+    }
     const pop = 1 + Math.max(0, growPop) * 0.18;
     const bob = mode !== "play" ? Math.sin(t * 3) * 2 : 0;
     const cx = m.x + m.w / 2;
@@ -1144,10 +1730,14 @@
   function frame(ts) {
     const dt = Math.min(0.033, lastTs ? (ts - lastTs) / 1000 : 0.016);
     lastTs = ts;
-    if (mode === "play") update(dt);
-    updateParticles(dt);
-    if (level && mario) draw();
-    updateHud();
+    try {
+      if (mode === "play") update(dt);
+      updateParticles(dt);
+      if (level && mario) draw();
+      updateHud();
+    } catch (err) {
+      window.__mswError = String(err && err.stack || err);
+    }
     requestAnimationFrame(frame);
   }
 
@@ -1192,6 +1782,7 @@
   }
 
   function boot() {
+    loadArt();
     resize();
     window.addEventListener("resize", resize);
     if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
@@ -1223,6 +1814,9 @@
         platforms: level ? level.platforms.map((p) => ({ x: p.x, y: p.y, w: p.w, h: p.h })) : [],
         blocks: level ? level.blocks.map((b) => ({ x: b.x, y: b.y, used: b.used })) : [],
         bowser: bowser ? { x: bowser.x, y: bowser.y, w: bowser.w, h: bowser.h, hp: bowser.hp, sit: bowser.sit } : null,
+        levelCount: LEVELS.length,
+        stomped,
+        enemies: level ? level.enemies.filter((e) => !e.gone).map((e) => ({ x: Math.round(e.x), y: Math.round(e.y) })) : [],
         flag: flag ? { x: flag.x, y: flag.y, on: flag.on } : null,
         layout: LEVELS.map((L) => L.platforms.map((p) => [p.x, p.y, p.w, p.h]))
       };
@@ -1235,7 +1829,11 @@
     },
     start: onGo,
     next: nextLevel,
-    note: playNote
+    note: playNote,
+    goto(index) {
+      levelIndex = Math.max(0, Math.min(LEVELS.length - 1, index | 0));
+      beginLevel();
+    }
   };
 
   boot();
