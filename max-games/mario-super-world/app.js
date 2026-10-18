@@ -1,7 +1,9 @@
 /* Mario Super World
-   Twenty fixed levels for Max. Baby Mario, blue overalls and a red cap, grows up.
+   Fifty fixed levels for Max. Baby Mario, blue overalls and a red cap, grows up.
    A shiny gold block with ! gives wings. A miss puts him back a little.
-   Little enemies wait on later courses. Jump on them. Prickles send him back a little.
+   Little enemies and prickles show up more as the courses get harder.
+   Bowser waits at the last castle. Only a jump on his head hurts him. His spikes hurt back.
+   The health bar shrinks by a share of what is left, and it never runs out.
 */
 (function () {
   "use strict";
@@ -348,12 +350,8 @@
       flagX: 2260
     },
     {
-      name: "Bowser's Yard",
+      name: "The Yard",
       sky: ["#c8f0c4", "#fff6d8"],
-      bowser: true,
-      bowserHome: 980,
-      bowserMin: 880,
-      bowserMax: 1120,
       platforms: [
         { x: 0, y: G, w: 1760, h: 48 },
         { x: 180, y: 290, w: 140, h: 32 },
@@ -367,6 +365,652 @@
         { x: 600, minX: 560, maxX: 640, speed: 42 }
       ],
       flagX: 1520
+    },
+    {
+      name: "Meadow Miles",
+      sky: ["#c8f0c4", "#fff6d8"],
+      platforms: [
+        { x: 0, y: G, w: 360, h: 48 },
+        { x: 520, y: G, w: 280, h: 48 },
+        { x: 960, y: G, w: 260, h: 48 },
+        { x: 1360, y: G, w: 240, h: 48 },
+        { x: 1740, y: G, w: 300, h: 48 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1420, w: 60 }],
+      enemies: [
+        { x: 580, minX: 560, maxX: 720, speed: 50 },
+        { x: 1020, minX: 1000, maxX: 1140, speed: 52 }
+      ],
+      flagX: 1920
+    },
+    {
+      name: "Double Log",
+      sky: ["#d4e9ff", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 980, y: G, w: 300, h: 48 },
+        { x: 1420, y: G, w: 280, h: 48 }
+      ],
+      movers: [
+        { x: 420, y: G, w: 140, h: 30, min: 380, max: 640, speed: 44 },
+        { x: 720, y: 330, w: 140, h: 30, min: 680, max: 900, speed: 40 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1500, w: 50 }],
+      enemies: [{ x: 1040, minX: 1020, maxX: 1200, speed: 50 }],
+      flagX: 1580
+    },
+    {
+      name: "Burr Garden",
+      sky: ["#c8f0c4", "#ffe7c8"],
+      platforms: [
+        { x: 0, y: G, w: 1760, h: 48 },
+        { x: 1520, y: 280, w: 260, h: 36 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 320, w: 70 },
+        { x: 560, w: 70 },
+        { x: 820, w: 80 },
+        { x: 1100, w: 70 },
+        { x: 1340, w: 70 }
+      ],
+      enemies: [
+        { x: 440, minX: 420, maxX: 500, speed: 48 },
+        { x: 700, minX: 680, maxX: 760, speed: 52 },
+        { x: 980, minX: 960, maxX: 1040, speed: 54 }
+      ],
+      flagX: 1660
+    },
+    {
+      name: "The Lifts",
+      sky: ["#b7e4fb", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 520, y: 300, w: 180, h: 32 },
+        { x: 780, y: 300, w: 160, h: 32 },
+        { x: 1020, y: 220, w: 150, h: 30 },
+        { x: 1240, y: 140, w: 240, h: 34 }
+      ],
+      movers: [{ x: 340, y: G, w: 140, h: 30, axis: "y", min: 300, max: G, speed: 38 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [{ x: 560, minX: 540, maxX: 640, speed: 50 }],
+      flagX: 1360
+    },
+    {
+      name: "Tiny Isles",
+      sky: ["#e7d4ff", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 260, h: 48 },
+        { x: 420, y: G, w: 180, h: 48 },
+        { x: 760, y: G, w: 180, h: 48 },
+        { x: 1100, y: G, w: 180, h: 48 },
+        { x: 1440, y: G, w: 180, h: 48 },
+        { x: 1780, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [{ x: 820, y: G - 38, w: 38, h: 38 }],
+      hazards: [{ x: 1500, w: 50 }],
+      enemies: [
+        { x: 460, minX: 440, maxX: 540, speed: 52 },
+        { x: 800, minX: 780, maxX: 880, speed: 54 },
+        { x: 1140, minX: 1120, maxX: 1220, speed: 56 }
+      ],
+      flagX: 1940
+    },
+    {
+      name: "Steep Street",
+      sky: ["#f7d7b0", "#fff0c8"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 360, y: 330, w: 140, h: 30 },
+        { x: 560, y: 250, w: 140, h: 30 },
+        { x: 760, y: 170, w: 150, h: 30 },
+        { x: 1020, y: G, w: 240, h: 48 },
+        { x: 1360, y: 310, w: 150, h: 30 },
+        { x: 1580, y: 200, w: 250, h: 34 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1400, w: 50 }],
+      enemies: [{ x: 1080, minX: 1060, maxX: 1180, speed: 54 }],
+      flagX: 1700
+    },
+    {
+      name: "Ferry Chain",
+      sky: ["#b7e4fb", "#d8f3c8"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 1180, y: G, w: 420, h: 48 },
+        { x: 1460, y: 280, w: 240, h: 34 }
+      ],
+      movers: [
+        { x: 360, y: G, w: 130, h: 32, min: 340, max: 560, speed: 50 },
+        { x: 680, y: G, w: 130, h: 32, min: 640, max: 860, speed: 46 },
+        { x: 980, y: 340, w: 140, h: 32, min: 940, max: 1120, speed: 40 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [{ x: 1240, minX: 1220, maxX: 1320, speed: 54 }],
+      flagX: 1580
+    },
+    {
+      name: "Busy Garden",
+      sky: ["#c8f0c4", "#fff6d8"],
+      platforms: [
+        { x: 0, y: G, w: 1980, h: 48 },
+        { x: 1760, y: 270, w: 260, h: 36 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 300, w: 70 },
+        { x: 560, w: 70 },
+        { x: 840, w: 80 },
+        { x: 1140, w: 70 },
+        { x: 1440, w: 70 }
+      ],
+      enemies: [
+        { x: 420, minX: 400, maxX: 500, speed: 52 },
+        { x: 700, minX: 680, maxX: 780, speed: 56 },
+        { x: 1000, minX: 980, maxX: 1080, speed: 58 }
+      ],
+      flagX: 1900
+    },
+    {
+      name: "Sky Bridge",
+      sky: ["#c5ebff", "#ffe8f2"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 420, y: 290, w: 180, h: 32 },
+        { x: 1120, y: 290, w: 180, h: 32 },
+        { x: 1380, y: 190, w: 160, h: 32 },
+        { x: 1620, y: G, w: 260, h: 48 },
+        { x: 1940, y: 300, w: 150, h: 30 },
+        { x: 2160, y: 190, w: 240, h: 34 }
+      ],
+      movers: [{ x: 680, y: 290, w: 140, h: 28, min: 640, max: 940, speed: 48 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1160, w: 50 }],
+      enemies: [
+        { x: 460, minX: 440, maxX: 540, speed: 50 },
+        { x: 1700, minX: 1660, maxX: 1800, speed: 56 }
+      ],
+      flagX: 2280
+    },
+    {
+      name: "Night Islands",
+      sky: ["#7f93c4", "#f3d2b4"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 450, y: G, w: 200, h: 48 },
+        { x: 810, y: G, w: 200, h: 48 },
+        { x: 1160, y: G, w: 200, h: 48 },
+        { x: 1510, y: G, w: 200, h: 48 },
+        { x: 1860, y: G, w: 300, h: 48 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 880, w: 50 },
+        { x: 1580, w: 50 }
+      ],
+      enemies: [
+        { x: 490, minX: 470, maxX: 590, speed: 56 },
+        { x: 1200, minX: 1180, maxX: 1300, speed: 58 },
+        { x: 1900, minX: 1880, maxX: 2060, speed: 58 }
+      ],
+      flagX: 2040
+    },
+    {
+      name: "Switch Lifts",
+      sky: ["#f0c9b0", "#ffe7c8"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 860, y: 300, w: 180, h: 32 },
+        { x: 1280, y: 220, w: 160, h: 30 },
+        { x: 1520, y: 220, w: 250, h: 34 }
+      ],
+      movers: [
+        { x: 400, y: 300, w: 140, h: 28, min: 360, max: 680, speed: 52 },
+        { x: 1100, y: G, w: 130, h: 30, axis: "y", min: 220, max: G, speed: 40 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1320, w: 50 }],
+      enemies: [{ x: 900, minX: 880, maxX: 980, speed: 54 }],
+      flagX: 1640
+    },
+    {
+      name: "Long Steps",
+      sky: ["#f7c9a2", "#fff0c8"],
+      platforms: [
+        { x: 0, y: G, w: 240, h: 48 },
+        { x: 340, y: 330, w: 130, h: 30 },
+        { x: 520, y: 250, w: 130, h: 30 },
+        { x: 700, y: 170, w: 140, h: 30 },
+        { x: 940, y: G, w: 220, h: 48 },
+        { x: 1280, y: 310, w: 140, h: 30 },
+        { x: 1500, y: 220, w: 140, h: 30 },
+        { x: 1720, y: 140, w: 250, h: 34 }
+      ],
+      blocks: [{ x: 130, y: G - 150, ...WING }],
+      pickups: [{ x: 740, y: 132, w: 38, h: 38 }],
+      enemies: [{ x: 1000, minX: 980, maxX: 1100, speed: 56 }],
+      flagX: 1840
+    },
+    {
+      name: "Thick Garden",
+      sky: ["#d8f3c8", "#fff1d0"],
+      platforms: [
+        { x: 0, y: G, w: 2100, h: 48 },
+        { x: 1880, y: 270, w: 280, h: 36 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 280, w: 70 },
+        { x: 520, w: 80 },
+        { x: 820, w: 70 },
+        { x: 1100, w: 80 },
+        { x: 1400, w: 70 },
+        { x: 1680, w: 70 }
+      ],
+      enemies: [
+        { x: 400, minX: 380, maxX: 460, speed: 54 },
+        { x: 680, minX: 660, maxX: 760, speed: 58 },
+        { x: 960, minX: 940, maxX: 1040, speed: 60 },
+        { x: 1260, minX: 1240, maxX: 1340, speed: 60 }
+      ],
+      flagX: 2040
+    },
+    {
+      name: "Wide Hops",
+      sky: ["#b7e4fb", "#e7f6ff"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 450, y: G, w: 190, h: 48 },
+        { x: 810, y: G, w: 190, h: 48 },
+        { x: 1170, y: G, w: 190, h: 48 },
+        { x: 1530, y: G, w: 190, h: 48 },
+        { x: 1890, y: G, w: 300, h: 48 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1230, w: 50 }],
+      enemies: [
+        { x: 490, minX: 470, maxX: 580, speed: 58 },
+        { x: 850, minX: 830, maxX: 940, speed: 60 },
+        { x: 1570, minX: 1550, maxX: 1660, speed: 60 }
+      ],
+      flagX: 2060
+    },
+    {
+      name: "Upper Path",
+      sky: ["#d4e9ff", "#ffe8f2"],
+      platforms: [
+        { x: 0, y: G, w: 320, h: 48 },
+        { x: 440, y: 270, w: 200, h: 32 },
+        { x: 740, y: 270, w: 200, h: 32 },
+        { x: 1040, y: 270, w: 200, h: 32 },
+        { x: 1340, y: G, w: 280, h: 48 },
+        { x: 1700, y: 300, w: 150, h: 30 },
+        { x: 1920, y: 190, w: 250, h: 34 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1460, w: 70 }],
+      enemies: [
+        { x: 480, minX: 460, maxX: 580, speed: 54 },
+        { x: 1400, minX: 1360, maxX: 1420, speed: 58 }
+      ],
+      flagX: 2040
+    },
+    {
+      name: "Fast Friends",
+      sky: ["#f7d7b0", "#fff0c8"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 460, y: G, w: 220, h: 48 },
+        { x: 840, y: G, w: 220, h: 48 },
+        { x: 1220, y: G, w: 220, h: 48 },
+        { x: 1600, y: G, w: 220, h: 48 },
+        { x: 1980, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [
+        { x: 500, minX: 480, maxX: 620, speed: 60 },
+        { x: 880, minX: 860, maxX: 1000, speed: 62 },
+        { x: 1260, minX: 1240, maxX: 1380, speed: 64 },
+        { x: 1640, minX: 1620, maxX: 1760, speed: 64 }
+      ],
+      flagX: 2140
+    },
+    {
+      name: "Burr Log",
+      sky: ["#c5ebff", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 900, y: G, w: 260, h: 48 },
+        { x: 1680, y: 280, w: 260, h: 36 }
+      ],
+      movers: [
+        { x: 460, y: G, w: 150, h: 30, min: 420, max: 700, speed: 52 },
+        { x: 1240, y: 330, w: 140, h: 28, min: 1200, max: 1480, speed: 46 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 960, w: 60 }],
+      enemies: [{ x: 1080, minX: 1060, maxX: 1100, speed: 58 }],
+      flagX: 1820
+    },
+    {
+      name: "Three Stories",
+      sky: ["#e7d4ff", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 400, y: 300, w: 160, h: 32 },
+        { x: 640, y: 190, w: 160, h: 32 },
+        { x: 880, y: 300, w: 160, h: 32 },
+        { x: 1140, y: G, w: 280, h: 48 },
+        { x: 1500, y: 290, w: 150, h: 30 },
+        { x: 1720, y: 180, w: 260, h: 34 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 920, w: 50 }],
+      enemies: [
+        { x: 440, minX: 420, maxX: 500, speed: 56 },
+        { x: 1200, minX: 1180, maxX: 1340, speed: 60 }
+      ],
+      flagX: 1860
+    },
+    {
+      name: "Evening Ferry",
+      sky: ["#7f93c4", "#f3d2b4"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 640, y: 260, w: 200, h: 32 },
+        { x: 1360, y: G, w: 460, h: 48 },
+        { x: 1680, y: 270, w: 260, h: 34 }
+      ],
+      movers: [
+        { x: 380, y: G, w: 140, h: 30, axis: "y", min: 260, max: G, speed: 42 },
+        { x: 920, y: 260, w: 140, h: 28, min: 880, max: 1160, speed: 50 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1420, w: 60 }],
+      enemies: [
+        { x: 680, minX: 660, maxX: 780, speed: 56 },
+        { x: 1520, minX: 1500, maxX: 1600, speed: 60 }
+      ],
+      flagX: 1820
+    },
+    {
+      name: "Castle Steps",
+      sky: ["#f0b090", "#ffe0c0"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 460, y: G, w: 200, h: 48 },
+        { x: 740, y: 290, w: 150, h: 32 },
+        { x: 960, y: 190, w: 160, h: 32 },
+        { x: 1620, y: 190, w: 180, h: 32 },
+        { x: 1880, y: 300, w: 160, h: 32 },
+        { x: 2120, y: G, w: 320, h: 48 },
+        { x: 2500, y: 280, w: 260, h: 36 }
+      ],
+      movers: [{ x: 1200, y: 190, w: 130, h: 28, min: 1160, max: 1440, speed: 50 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 500, w: 60 }],
+      enemies: [
+        { x: 780, minX: 760, maxX: 840, speed: 56 },
+        { x: 1660, minX: 1640, maxX: 1740, speed: 60 },
+        { x: 2200, minX: 2160, maxX: 2340, speed: 62 }
+      ],
+      flagX: 2640
+    },
+    {
+      name: "Spiky Miles",
+      sky: ["#d8f3c8", "#fff1d0"],
+      platforms: [
+        { x: 0, y: G, w: 320, h: 48 },
+        { x: 480, y: G, w: 190, h: 48 },
+        { x: 830, y: G, w: 190, h: 48 },
+        { x: 1180, y: G, w: 190, h: 48 },
+        { x: 1530, y: G, w: 190, h: 48 },
+        { x: 1880, y: G, w: 190, h: 48 },
+        { x: 2230, y: G, w: 300, h: 48 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 540, w: 50 },
+        { x: 890, w: 50 },
+        { x: 1240, w: 50 },
+        { x: 1590, w: 50 },
+        { x: 1940, w: 50 }
+      ],
+      enemies: [
+        { x: 860, minX: 850, maxX: 900, speed: 58 },
+        { x: 1910, minX: 1900, maxX: 1960, speed: 62 }
+      ],
+      flagX: 2400
+    },
+    {
+      name: "The Parade",
+      sky: ["#e7d4ff", "#f7d7b0"],
+      platforms: [
+        { x: 0, y: G, w: 260, h: 48 },
+        { x: 420, y: G, w: 220, h: 48 },
+        { x: 780, y: G, w: 220, h: 48 },
+        { x: 1140, y: G, w: 220, h: 48 },
+        { x: 1500, y: G, w: 220, h: 48 },
+        { x: 1860, y: G, w: 220, h: 48 },
+        { x: 2220, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 130, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [
+        { x: 460, minX: 440, maxX: 580, speed: 56 },
+        { x: 820, minX: 800, maxX: 940, speed: 58 },
+        { x: 1180, minX: 1160, maxX: 1300, speed: 60 },
+        { x: 1540, minX: 1520, maxX: 1660, speed: 62 },
+        { x: 1900, minX: 1880, maxX: 2020, speed: 64 }
+      ],
+      flagX: 2380
+    },
+    {
+      name: "Moving Stairs",
+      sky: ["#f7c9a2", "#fff0c8"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 720, y: 310, w: 150, h: 30 },
+        { x: 1320, y: 220, w: 150, h: 30 },
+        { x: 1920, y: 220, w: 260, h: 34 }
+      ],
+      movers: [
+        { x: 360, y: G, w: 130, h: 28, min: 320, max: 560, speed: 48 },
+        { x: 940, y: 310, w: 130, h: 28, min: 900, max: 1140, speed: 44 },
+        { x: 1560, y: 220, w: 130, h: 28, min: 1520, max: 1740, speed: 42 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      enemies: [
+        { x: 760, minX: 740, maxX: 820, speed: 54 },
+        { x: 1360, minX: 1340, maxX: 1420, speed: 58 }
+      ],
+      flagX: 2060
+    },
+    {
+      name: "Narrow Night",
+      sky: ["#6f86b8", "#f3d2b4"],
+      platforms: [
+        { x: 0, y: G, w: 240, h: 48 },
+        { x: 405, y: G, w: 160, h: 48 },
+        { x: 730, y: G, w: 160, h: 48 },
+        { x: 1055, y: G, w: 160, h: 48 },
+        { x: 1380, y: G, w: 160, h: 48 },
+        { x: 1705, y: G, w: 160, h: 48 },
+        { x: 2030, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 120, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1105, w: 50 }],
+      enemies: [
+        { x: 445, minX: 425, maxX: 505, speed: 62 },
+        { x: 770, minX: 750, maxX: 830, speed: 64 },
+        { x: 1420, minX: 1400, maxX: 1480, speed: 66 },
+        { x: 1745, minX: 1725, maxX: 1805, speed: 66 }
+      ],
+      flagX: 2180
+    },
+    {
+      name: "Lift Yard",
+      sky: ["#b7e4fb", "#fff1d6"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 620, y: 280, w: 170, h: 32 },
+        { x: 1120, y: 180, w: 260, h: 34 }
+      ],
+      movers: [
+        { x: 380, y: G, w: 140, h: 30, axis: "y", min: 280, max: G, speed: 36 },
+        { x: 880, y: G, w: 140, h: 30, axis: "y", min: 180, max: G, speed: 34 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [{ x: 220, y: G - 38, w: 38, h: 38 }],
+      enemies: [{ x: 660, minX: 640, maxX: 730, speed: 58 }],
+      flagX: 1260
+    },
+    {
+      name: "Deep Garden",
+      sky: ["#9eb0d6", "#f7d7b0"],
+      platforms: [
+        { x: 0, y: G, w: 2280, h: 48 },
+        { x: 2060, y: 270, w: 280, h: 36 }
+      ],
+      blocks: [{ x: 150, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 340, w: 80 },
+        { x: 620, w: 80 },
+        { x: 920, w: 80 },
+        { x: 1220, w: 80 },
+        { x: 1520, w: 80 },
+        { x: 1820, w: 70 }
+      ],
+      enemies: [
+        { x: 480, minX: 460, maxX: 540, speed: 60 },
+        { x: 780, minX: 760, maxX: 840, speed: 62 },
+        { x: 1080, minX: 1060, maxX: 1140, speed: 64 },
+        { x: 1380, minX: 1360, maxX: 1440, speed: 66 }
+      ],
+      flagX: 2220
+    },
+    {
+      name: "Rush Isles",
+      sky: ["#f0c9b0", "#ffe7c8"],
+      platforms: [
+        { x: 0, y: G, w: 260, h: 48 },
+        { x: 425, y: G, w: 180, h: 48 },
+        { x: 770, y: G, w: 180, h: 48 },
+        { x: 1115, y: G, w: 180, h: 48 },
+        { x: 1460, y: G, w: 180, h: 48 },
+        { x: 1805, y: G, w: 180, h: 48 },
+        { x: 2150, y: G, w: 280, h: 48 }
+      ],
+      blocks: [{ x: 130, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [
+        { x: 830, w: 50 },
+        { x: 1520, w: 50 }
+      ],
+      enemies: [
+        { x: 465, minX: 445, maxX: 545, speed: 64 },
+        { x: 1155, minX: 1135, maxX: 1235, speed: 66 },
+        { x: 1845, minX: 1825, maxX: 1925, speed: 68 }
+      ],
+      flagX: 2300
+    },
+    {
+      name: "High Switch",
+      sky: ["#d4e9ff", "#f3d2b4"],
+      platforms: [
+        { x: 0, y: G, w: 280, h: 48 },
+        { x: 400, y: 270, w: 160, h: 32 },
+        { x: 1080, y: 270, w: 160, h: 32 },
+        { x: 1320, y: 170, w: 150, h: 30 },
+        { x: 1560, y: 270, w: 160, h: 32 },
+        { x: 1800, y: G, w: 240, h: 48 },
+        { x: 2120, y: 300, w: 150, h: 30 },
+        { x: 2340, y: 190, w: 260, h: 34 }
+      ],
+      movers: [{ x: 640, y: 270, w: 130, h: 28, min: 600, max: 900, speed: 56 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1880, w: 60 }],
+      enemies: [
+        { x: 1120, minX: 1100, maxX: 1180, speed: 60 },
+        { x: 1860, minX: 1820, maxX: 1860, speed: 62 }
+      ],
+      flagX: 2480
+    },
+    {
+      name: "Castle Road",
+      sky: ["#d98b7a", "#ffd8a8"],
+      platforms: [
+        { x: 0, y: G, w: 300, h: 48 },
+        { x: 460, y: G, w: 200, h: 48 },
+        { x: 740, y: 290, w: 160, h: 32 },
+        { x: 1400, y: G, w: 280, h: 48 },
+        { x: 1760, y: 300, w: 150, h: 30 },
+        { x: 1980, y: 190, w: 160, h: 32 },
+        { x: 2400, y: 190, w: 260, h: 34 }
+      ],
+      movers: [
+        { x: 980, y: 290, w: 140, h: 28, min: 940, max: 1200, speed: 54 },
+        { x: 2200, y: G, w: 130, h: 30, axis: "y", min: 190, max: G, speed: 40 }
+      ],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [{ x: 520, y: G - 38, w: 38, h: 38 }],
+      hazards: [{ x: 1460, w: 60 }],
+      enemies: [
+        { x: 500, minX: 480, maxX: 600, speed: 62 },
+        { x: 1560, minX: 1540, maxX: 1620, speed: 66 }
+      ],
+      flagX: 2540
+    },
+    {
+      name: "Bowser's Castle",
+      sky: ["#e07a62", "#ffd0a8"],
+      bowser: true,
+      bowserHome: 1900,
+      bowserMin: 1720,
+      bowserMax: 2100,
+      platforms: [
+        { x: 0, y: G, w: 340, h: 48 },
+        { x: 500, y: G, w: 220, h: 48 },
+        { x: 800, y: 300, w: 160, h: 32 },
+        { x: 1440, y: G, w: 1200, h: 48 },
+        { x: 2320, y: 270, w: 300, h: 36 }
+      ],
+      movers: [{ x: 1040, y: 300, w: 140, h: 28, min: 1000, max: 1240, speed: 46 }],
+      blocks: [{ x: 140, y: G - 150, ...WING }],
+      pickups: [],
+      hazards: [{ x: 1520, w: 70 }],
+      enemies: [
+        { x: 540, minX: 520, maxX: 660, speed: 56 },
+        { x: 840, minX: 820, maxX: 900, speed: 52 }
+      ],
+      flagX: 2480
     }
   ];
 
@@ -379,6 +1023,8 @@
   const goBtn = document.getElementById("go");
   const goldDemo = document.querySelector(".gold-demo");
   const levelNameEl = document.getElementById("level-name");
+  const healthEl = document.getElementById("health");
+  const healthFill = document.getElementById("health-fill");
   const sizePill = document.getElementById("size-pill");
   const wingPill = document.getElementById("wing-pill");
   const jumpBtn = document.getElementById("jump");
@@ -413,9 +1059,20 @@
   let toastLife = 0;
   let flagPop = 0;
   let stomped = 0;
+  let health = 1;
+  let healthFlash = 0;
   let autoTimer = 0;
   let particles = [];
   let audioCtx = null;
+  const MUSIC_URL = "audio/super-world.m4a";
+  const MUSIC_OVERLAP = 2.75;
+  let musicRaw = null;
+  let musicBuffer = null;
+  let musicBus = null;
+  let musicMeter = null;
+  let musicWanted = false;
+  let musicNextAt = 0;
+  let musicArmed = false;
   let view = { cssW: 360, cssH: 480, dpr: 1 };
   let lastTs = 0;
   const ART = {};
@@ -423,6 +1080,9 @@
     baby: "art/mario-baby.png",
     kid: "art/mario-kid.png",
     big: "art/mario-big.png",
+    babyRun: "art/mario-baby-run.png",
+    kidRun: "art/mario-kid-run.png",
+    bigRun: "art/mario-big-run.png",
     wings: "art/wings.png",
     bowser: "art/bowser.png",
     bowserSit: "art/bowser-sit.png",
@@ -576,7 +1236,7 @@
     blip(480, 0.05);
     document.body.dataset.mode = "play";
     hideCard();
-    say(level.bowser ? "Jump on Bowser, then touch the flag." : level.name);
+    say(level.bowser ? "Jump on his head, then touch the flag." : level.name);
     updateHud();
   }
 
@@ -616,11 +1276,106 @@
     live.textContent = text;
   }
 
+  function audio() {
+    if (!audioCtx) audioCtx = new AudioContext();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function loadMusic() {
+    fetch(MUSIC_URL)
+      .then((res) => res.arrayBuffer())
+      .then((buf) => {
+        musicRaw = buf;
+        if (audioCtx) decodeMusic();
+      })
+      .catch(() => {});
+  }
+
+  function decodeMusic() {
+    if (!musicRaw || musicBuffer) return;
+    const raw = musicRaw;
+    audio().decodeAudioData(raw.slice(0)).then((decoded) => {
+      musicBuffer = decoded;
+      if (musicWanted) pumpMusic();
+    }).catch(() => {});
+  }
+
+  function startMusic() {
+    musicWanted = true;
+    try { audio(); } catch (err) { return; }
+    if (!musicBuffer) decodeMusic();
+    pumpMusic();
+  }
+
+  function fadeCurve(rising) {
+    const steps = 64;
+    const values = new Float32Array(steps);
+    for (let i = 0; i < steps; i++) {
+      const angle = (i / (steps - 1)) * Math.PI / 2;
+      values[i] = rising ? Math.sin(angle) : Math.cos(angle);
+    }
+    values[0] = Math.max(values[0], 0.0001);
+    values[steps - 1] = Math.max(values[steps - 1], 0.0001);
+    return values;
+  }
+
+  function cueMusic(when, fadeIn) {
+    const ctx = audioCtx;
+    const src = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    src.buffer = musicBuffer;
+    src.connect(gain);
+    gain.connect(musicBus);
+    const dur = musicBuffer.duration;
+    const overlap = Math.min(MUSIC_OVERLAP, dur / 3);
+    const open = fadeIn ? overlap : 0.35;
+    const fadeAt = when + dur - overlap;
+    gain.gain.setValueCurveAtTime(fadeCurve(true), when, open);
+    gain.gain.setValueCurveAtTime(fadeCurve(false), fadeAt, overlap);
+    src.start(when);
+    src.stop(fadeAt + overlap + 0.05);
+    src.onended = () => {
+      if (!musicWanted || !musicBuffer) return;
+      const step = musicBuffer.duration - overlap;
+      const next = when + step * 2;
+      if (next > audioCtx.currentTime) cueMusic(next, true);
+    };
+  }
+
+  function pumpMusic() {
+    if (!musicWanted || !musicBuffer || !audioCtx || musicArmed) return;
+    const ctx = audioCtx;
+    if (!musicBus) {
+      musicBus = ctx.createGain();
+      musicBus.gain.value = 0.5;
+      musicMeter = ctx.createAnalyser();
+      musicMeter.fftSize = 256;
+      musicBus.connect(musicMeter);
+      musicMeter.connect(ctx.destination);
+    }
+    const dur = musicBuffer.duration;
+    const overlap = Math.min(MUSIC_OVERLAP, dur / 3);
+    const when = ctx.currentTime + 0.05;
+    cueMusic(when, false);
+    cueMusic(when + dur - overlap, true);
+    musicNextAt = when + dur - overlap;
+    musicArmed = true;
+  }
+
+  function musicLevel() {
+    if (!musicMeter) return 0;
+    const bins = new Uint8Array(musicMeter.frequencyBinCount);
+    musicMeter.getByteFrequencyData(bins);
+    let sum = 0;
+    for (let i = 0; i < bins.length; i++) sum += bins[i];
+    return sum / bins.length;
+  }
+
   function blip(freq, dur) {
     try {
-      if (!audioCtx) audioCtx = new AudioContext();
-      if (audioCtx.state === "suspended") audioCtx.resume();
-      const t = audioCtx.currentTime;
+      const ctx = audio();
+      const t = ctx.currentTime;
       const o = audioCtx.createOscillator();
       const g = audioCtx.createGain();
       o.type = "sine";
@@ -628,7 +1383,7 @@
       g.gain.setValueAtTime(0.04, t);
       g.gain.exponentialRampToValueAtTime(0.001, t + dur);
       o.connect(g);
-      g.connect(audioCtx.destination);
+      g.connect(ctx.destination);
       o.start(t);
       o.stop(t + dur);
     } catch (err) {
@@ -785,16 +1540,24 @@
       }
       bowser.y = G - bowser.h;
       if (bowser.flash > 0) bowser.flash -= dt;
-      const head = { x: bowser.x - 18, y: bowser.y - 28, w: bowser.w + 36, h: 78 };
+      const parts = bowserParts();
       const feet = mario.y + mario.h;
-      const onHead = mario.vy > 20 && feet < bowser.y + 52 && overlap(mario, head);
-      if ((onHead || overlap(mario, bowser)) && bowser.flash <= 0 && invuln <= 0) {
+      let onHead = mario.vy > 20 && feet < parts.head.y + parts.head.h * 0.8 && overlap(mario, parts.head);
+      let onSpikes = mario.vy > 10 && feet < parts.spikes.y + parts.spikes.h * 0.85 && overlap(mario, parts.spikes);
+      if (onHead && onSpikes) {
+        const mx = mario.x + mario.w / 2;
+        const headMid = parts.head.x + parts.head.w / 2;
+        const spikeMid = parts.spikes.x + parts.spikes.w / 2;
+        if (Math.abs(mx - spikeMid) + 8 < Math.abs(mx - headMid)) onHead = false;
+        else onSpikes = false;
+      }
+      if ((onHead || onSpikes || overlap(mario, parts.body)) && bowser.flash <= 0 && invuln <= 0) {
         if (onHead) {
           bowser.hp -= 1;
           bowser.flash = 0.4;
           mario.vy = -340;
-          mario.y = Math.min(mario.y, bowser.y - mario.h);
-          burst(bowser.x + bowser.w / 2, bowser.y + 8, "#ffe08a");
+          mario.y = Math.min(mario.y, parts.head.y - mario.h);
+          burst(parts.head.x + parts.head.w / 2, parts.head.y, "#ffe08a");
           blip(180, 0.1);
           if (bowser.hp <= 0) {
             bowser.sit = true;
@@ -803,7 +1566,18 @@
             toast("To the flag!");
             blip(660, 0.15);
           }
+        } else if (onSpikes) {
+          takeDamage();
+          mario.vy = -320;
+          mario.y = Math.min(mario.y, parts.spikes.y - mario.h - 4);
+          const back = mario.x + mario.w / 2 < bowser.x + bowser.w / 2 ? -76 : 76;
+          mario.x = Math.max(0, Math.min(worldWidth() - mario.w, mario.x + back));
+          invuln = 0.55;
+          oops = 0.7;
+          toast("Ow!");
+          blip(160, 0.12);
         } else {
+          takeDamage();
           const back = mario.x + mario.w / 2 < bowser.x + bowser.w / 2 ? -70 : 70;
           mario.x = Math.max(0, Math.min(worldWidth() - mario.w, mario.x + back));
           mario.vy = -220;
@@ -839,6 +1613,7 @@
           const back = mario.x + mario.w / 2 < e.x + e.w / 2 ? -60 : 60;
           mario.x = Math.max(0, Math.min(worldWidth() - mario.w, mario.x + back));
           mario.vy = -200;
+          takeDamage();
           invuln = 0.4;
           oops = 0.5;
           toast("Oops!");
@@ -858,7 +1633,7 @@
 
     if (flag.on && reachedFlag()) {
       if (bowser && !bowser.sit) {
-        if (toastLife <= 0) toast("Jump on Bowser");
+        if (toastLife <= 0) toast("Jump on his head");
       } else {
         finishLevel();
       }
@@ -878,6 +1653,7 @@
 
     if (oops > 0) oops -= dt;
     if (invuln > 0) invuln -= dt;
+    if (healthFlash > 0) healthFlash -= dt;
     if (growPop > 0) growPop -= dt;
     if (flagPop > 0) flagPop -= dt;
     if (toastLife > 0) toastLife -= dt;
@@ -908,7 +1684,37 @@
     toast("Wings!");
   }
 
+  function takeDamage() {
+    if (invuln > 0) return;
+    health *= 0.7;
+    healthFlash = 0.45;
+  }
+
+  function bowserParts() {
+    const art = ART.bowser;
+    const h = 118;
+    const w = art ? h * (art.width / art.height) : bowser.w;
+    const cx = bowser.x + bowser.w / 2;
+    const rect = { x: cx - w / 2, y: G + 4 - h, w: w, h: h };
+    function part(x0, x1, y0, y1) {
+      const left = bowser.dir < 0 ? 1 - x1 : x0;
+      const right = bowser.dir < 0 ? 1 - x0 : x1;
+      return {
+        x: rect.x + left * rect.w,
+        y: rect.y + y0 * rect.h,
+        w: (right - left) * rect.w,
+        h: (y1 - y0) * rect.h
+      };
+    }
+    return {
+      body: rect,
+      head: part(0.58, 0.98, 0.02, 0.5),
+      spikes: part(0.1, 0.58, 0, 0.36)
+    };
+  }
+
   function respawn() {
+    takeDamage();
     mario.vx = 0;
     mario.vy = 0;
     mario.x = checkpoint.x;
@@ -946,10 +1752,11 @@
     const who = levelStartSize === 0 ? "Baby Mario" : "Mario";
     const place = level.name;
     if (level.bowser) {
-      if (falls && gotWings) return who + " used the gold wings, got set back a little, bounced on Bowser until he sat down, and touched the last flag.";
-      if (falls) return who + " got set back a little, bounced on Bowser until he sat down, and touched the last flag.";
-      if (gotWings) return who + " flew in with gold wings, bounced on Bowser until he sat down, and touched the last flag.";
-      return who + " bounced on Bowser until he sat down, and touched the last flag.";
+      const end = levelIndex === LEVELS.length - 1 ? "the last flag" : "the flag";
+      if (falls && gotWings) return who + " used the gold wings, got set back a little, bounced on Bowser until he sat down, and touched " + end + ".";
+      if (falls) return who + " got set back a little, bounced on Bowser until he sat down, and touched " + end + ".";
+      if (gotWings) return who + " flew in with gold wings, bounced on Bowser until he sat down, and touched " + end + ".";
+      return who + " bounced on Bowser until he sat down, and touched " + end + ".";
     }
     if (gotWings && falls && grewFromFlag) {
       return who + " got wings from the gold block, came back a little after a miss, touched the flag at " + place + ", and grew from its mushroom.";
@@ -1077,14 +1884,17 @@
     levelIndex = 0;
     size = 0;
     cleared = 0;
+    health = 1;
     beginLevel();
   }
 
   function onGo() {
+    startMusic();
     if (mode === "title") {
       levelIndex = 0;
       size = 0;
       cleared = 0;
+      health = 1;
       beginLevel();
     } else if (mode === "cheer") nextLevel();
     else if (mode === "win") again();
@@ -1101,6 +1911,12 @@
     wingPill.hidden = !flying;
     jumpBtn.classList.toggle("is-fly", !!flying);
     jumpBtn.setAttribute("aria-label", flying ? "Fly" : "Jump");
+    const shown = Math.max(health, 0.08);
+    healthFill.style.width = (shown * 100) + "%";
+    healthEl.classList.toggle("is-mid", health <= 0.55 && health > 0.22);
+    healthEl.classList.toggle("is-low", health <= 0.22);
+    healthEl.classList.toggle("is-hit", healthFlash > 0);
+    healthEl.setAttribute("aria-valuenow", String(Math.max(1, Math.round(health * 100))));
   }
 
   function updateParticles(dt) {
@@ -1186,7 +2002,7 @@
       ctx.fillStyle = "#5c4636";
       ctx.font = "700 20px Trebuchet MS, Segoe UI, sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Jump on Bowser", 640, 150);
+      ctx.fillText("Jump on his head", 640, 150);
     }
   }
 
@@ -1548,14 +2364,23 @@
     void t;
   }
 
-  function drawMarioSprite(t, sprite) {
+  function heroFrame(t) {
+    const running = mode === "play" && mario.grounded && Math.abs(mario.vx) > 8;
+    if (mode === "play" && !mario.grounded) return 6;
+    if (!running) return 0;
+    return Math.floor(t * 10) % 16;
+  }
+
+  function drawMarioSprite(t, sprite, sheet) {
     const m = mario;
     const pop = 1 + Math.max(0, growPop) * 0.18;
     const bob = mode !== "play" ? Math.sin(t * 3) * 2 : 0;
     const cx = m.x + m.w / 2;
     const foot = m.y + m.h + bob;
-    const h = m.h * 1.12;
-    const w = h * (sprite.width / sprite.height);
+    const frameH = sheet ? sheet.height / 4 : sprite.height;
+    const frameW = sheet ? sheet.width / 4 : sprite.width;
+    const h = m.h * 1.16;
+    const w = h * (frameW / frameH);
     ctx.save();
     ctx.translate(cx, foot);
     ctx.scale(pop, pop);
@@ -1575,8 +2400,15 @@
       ctx.drawImage(ART.wings, -ww / 2, -wh / 2, ww, wh);
       ctx.restore();
     }
-    const step = Math.abs(m.vx) > 8 ? Math.sin(t * 12) * 1.5 : 0;
-    ctx.drawImage(sprite, -w / 2, -h + step, w, h);
+    if (sheet) {
+      const frame = heroFrame(t);
+      const sx = (frame % 4) * frameW;
+      const sy = Math.floor(frame / 4) * frameH;
+      ctx.drawImage(sheet, sx, sy, frameW, frameH, -w / 2, -h, w, h);
+    } else {
+      const step = Math.abs(m.vx) > 8 ? Math.sin(t * 12) * 1.5 : 0;
+      ctx.drawImage(sprite, -w / 2, -h + step, w, h);
+    }
     ctx.restore();
   }
 
@@ -1584,9 +2416,10 @@
     const m = mario;
     const blink = invuln > 0 && Math.floor(t * 12) % 2 === 0;
     if (blink) return;
+    const sheet = m.size >= 2 ? ART.bigRun : m.size === 1 ? ART.kidRun : ART.babyRun;
     const sprite = m.size >= 2 ? ART.big : m.size === 1 ? ART.kid : ART.baby;
-    if (sprite) {
-      drawMarioSprite(t, sprite);
+    if (sheet || sprite) {
+      drawMarioSprite(t, sprite, sheet);
       return;
     }
     const pop = 1 + Math.max(0, growPop) * 0.18;
@@ -1732,6 +2565,7 @@
     lastTs = ts;
     try {
       if (mode === "play") update(dt);
+      pumpMusic();
       updateParticles(dt);
       if (level && mario) draw();
       updateHud();
@@ -1783,6 +2617,7 @@
 
   function boot() {
     loadArt();
+    loadMusic();
     resize();
     window.addEventListener("resize", resize);
     if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
@@ -1815,6 +2650,15 @@
         blocks: level ? level.blocks.map((b) => ({ x: b.x, y: b.y, used: b.used })) : [],
         bowser: bowser ? { x: bowser.x, y: bowser.y, w: bowser.w, h: bowser.h, hp: bowser.hp, sit: bowser.sit } : null,
         levelCount: LEVELS.length,
+        health,
+        music: {
+          ready: !!musicBuffer,
+          duration: musicBuffer ? Math.round(musicBuffer.duration * 100) / 100 : 0,
+          nextAt: Math.round(musicNextAt * 100) / 100,
+          time: audioCtx ? Math.round(audioCtx.currentTime * 100) / 100 : 0,
+          state: audioCtx ? audioCtx.state : "none",
+          level: Math.round(musicLevel())
+        },
         stomped,
         enemies: level ? level.enemies.filter((e) => !e.gone).map((e) => ({ x: Math.round(e.x), y: Math.round(e.y) })) : [],
         flag: flag ? { x: flag.x, y: flag.y, on: flag.on } : null,
@@ -1830,6 +2674,12 @@
     start: onGo,
     next: nextLevel,
     note: playNote,
+    hurt() {
+      invuln = 0;
+      takeDamage();
+      updateHud();
+      return health;
+    },
     goto(index) {
       levelIndex = Math.max(0, Math.min(LEVELS.length - 1, index | 0));
       beginLevel();
