@@ -267,6 +267,25 @@ test("pounds does not start with o or ow", async () => {
   assert.doesNotMatch(result.body.say, /\bpounds\b/i);
 });
 
+test("pounds stays pounds when the model answers with only the letter o", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({
+      saw: "the word pounds",
+      say: "The word pounds starts with the letter O.",
+      answer: "O",
+      kind: "word"
+    }),
+    body: { kid: "max", imageBase64: image, question: "what is this word" }
+  });
+  assert.match(result.body.say, /starts with the letter p/i);
+  assert.match(result.body.say, /in the middle/i);
+  assert.match(result.body.say, /\/ow\//);
+  assert.doesNotMatch(result.body.say, /starts with the letter o/i);
+  assert.doesNotMatch(result.body.say, /\bpounds\b/i);
+});
+
 test("Joyce agrees when the child says the word", async () => {
   const store = memoryStore();
   const first = await handleTabletRequest({

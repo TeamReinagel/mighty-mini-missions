@@ -31,7 +31,7 @@ For a word, follow this routine. One step per turn.
 
 How to choose the hardest spelling:
 - Two letters that make one sound, such as sh, ch, or th: "S and h together say /sh/. Say /sh/."
-- A vowel team in the middle: "O and u are in the middle, not at the beginning. They say /ow/. Say /ow/." O and u usually say /ow/ here. /oh/ is a different sound. Do not praise /oh/ for that spelling. Do not say the word starts with o or /ow/.
+- A vowel team in the middle: "The word starts with the letter p. O and u are in the middle. They say /ow/. Say /ow/." Use the real first letter of this word, not p, when the word is different. O and u usually say /ow/ here. /oh/ is a different sound. Do not praise /oh/ for that spelling.
 - A letter with more than one sound: say how many, and which sound this word uses. "A can say 3 sounds. In this one it says /ah/. Say /ah/."
 - A silent e only when this word really ends in a silent e: "That e at the end is silent. It makes the vowel say its name. Say that sound."
 - Sight words and irregular words, including a word they called a sight word: do not use phonics that are not in the word. Teach the parts that follow the rules. For the part that does not, say "This part says /e/ in this word. Say /e/."
@@ -48,7 +48,7 @@ Rules for "say":
 - If the close-up is unreadable, ask them to point closer. Do not guess a specific answer.
 
 Rules for "saw": a short noun phrase a parent can read later, starting with "the" or "a", naming the word, letter, or problem if you can see it. This is for the parent, not spoken to the child. Include the app name only if it is visible.
-Rules for "answer": the real answer in a few words (the sight word, the letter, or the number). Used so a later turn can say it, and to check that this turn did not leak it. Never shown to the child on this turn.
+Rules for "answer": every letter of the marked word, in order. The whole word, such as pounds, not the hard spelling by itself and not one letter from the middle. A single letter only when the close-up is a single letter. Used so a later turn can say it, and to check that this turn did not leak it. Never shown to the child on this turn.
 Rules for "kind": "word", "math", or "other".
 
 Reply with JSON only: {"saw":"", "say":"", "answer":"", "kind":"word|math|other"}`;
@@ -193,12 +193,21 @@ function vowelSounds(text) {
 
 function focusWord(say, answer) {
   const text = String(say || "");
-  const skip = new Set(["you", "is", "marked", "this", "that", "they", "your", "with", "letter", "word"]);
+  const skip = new Set(["you", "is", "marked", "this", "that", "they", "your", "with", "letter", "word", "starts", "begins"]);
   const named = text.match(/\bthe word (?:is\s+)?([a-z]{3,})\b/i);
   if (named && !skip.has(named[1].toLowerCase())) return named[1].toLowerCase();
   const leading = text.match(/\b([a-z]{4,})\s+(?:starts|begins)\b/i);
   if (leading && !skip.has(leading[1].toLowerCase())) return leading[1].toLowerCase();
   return wordOf(answer);
+}
+
+// The picture model often puts only the hard spelling in "answer" ("o")
+// while the sentence names the real word ("pounds").
+function readingWord(saw, say, answer) {
+  const fromAnswer = wordOf(answer);
+  const named = [focusWord(saw, ""), focusWord(say, "")].filter((word) => word && word !== fromAnswer);
+  const longer = named.find((word) => word.length >= 4 && word.length > fromAnswer.length && (fromAnswer.length <= 2 || word.includes(fromAnswer)));
+  return longer || fromAnswer || named[0] || "";
 }
 
 function claimedStartLetter(say) {
@@ -302,17 +311,17 @@ function scrubStart(say, answer, name) {
   return `${name}, the word starts with the letter ${word[0]}.`;
 }
 
-function spokenHint(raw, answer, kind, name, earlier = [], question = "") {
-  const correction = teamCorrection(question, answer, name);
+function spokenHint(raw, answer, kind, name, earlier = [], question = "", saw = "") {
+  const say = clip(raw, 320);
+  const word = readingWord(saw, say, answer);
+  const correction = teamCorrection(question, word, name);
   if (correction) return correction;
-  const word = wordOf(answer);
   const team = vowelTeam(word);
   if (team && team.place !== "at the beginning" && !earlier.join(" ").toLowerCase().includes(`letter ${word[0]}`)) {
     return anchoredTeamLine(word, team, name);
   }
-  const say = clip(raw, 320);
-  if (hintFits(say, answer, kind)) return scrubStart(say, answer, name);
-  return scrubStart(concreteHint(answer, kind, name, earlier), answer, name);
+  if (hintFits(say, word, kind)) return scrubStart(say, word, name);
+  return scrubStart(concreteHint(word, kind, name, earlier), word, name);
 }
 
 function revealLine(raw, answer, kind, name) {
@@ -610,9 +619,12 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     const kind = ["word", "math", "other"].includes(out.kind) ? out.kind : "other";
     if (!saw) saw = clip(out.saw, 300) || "something on the screen";
     const seen = clip(out.answer, 48);
-    if (pointer?.answer && wordOf(pointer.answer)) answer = pointer.answer;
+    const heard = readingWord(out.saw, out.say, seen);
+    if (pointer?.answer && wordOf(pointer.answer).length >= 4) answer = pointer.answer;
+    else if (heard) answer = heard;
+    else if (pointer?.answer && wordOf(pointer.answer)) answer = pointer.answer;
     else if (seen) answer = seen;
-    say = spokenHint(out.say, answer, kind, kid.name, earlier, question);
+    say = spokenHint(out.say, answer, kind, kid.name, earlier, question, out.saw);
     savedKind = pointer?.kind || kind;
   } catch {
     say = "Joyce couldn't see that clearly. Point a little closer and try again.";
