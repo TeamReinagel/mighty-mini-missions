@@ -17,7 +17,7 @@ export const DATA_SOURCES = {
   progress: "game practice since the last report: skills, accuracy, newly mastered, tricky items, missions done",
   activity: "day-by-day game practice for the last 7 days (which games and skills, tries, first-try accuracy) and when each child last played",
   gameChoices: "which games each child played over the last 4 weeks, by how many days they came back to each",
-  observations: "things the family noticed at home since the last report",
+  observations: "things the family noticed at home since the last report, including moments a child asked Joyce for help on the Android tablet (what they pointed at, the hint, and whether they got it)",
   milestones: "how many milestones each child has met and their next unmet milestones from the monthly spreadsheet",
   lastReport: "the text of the last weekly report"
 };
@@ -66,7 +66,7 @@ export const BUILTIN_SKILLS = [
     when: "Someone asks what the kids did, practiced, or played on a particular day or period (today, yesterday, this week), whether they used Mighty Mini Missions, or asks for the specifics behind a check-in (how many they got right, which words or items, how many tries). Not for general \"how is she doing?\" questions. This looks back; it never suggests activities.",
     instructions: [
       "Answer the question about what already happened, using only the activity and observations data. Do not suggest activities or next steps unless asked.",
-      "For the day or period asked about (today if not said), for each child asked about (all children if no one is named): say whether they played, which games and skills, roughly how many tries, and how it went (first-try right, and any item that was tricky). Mention observations from that period too.",
+      "For the day or period asked about (today if not said), for each child asked about (all children if no one is named): say whether they played, which games and skills, roughly how many tries, and how it went (first-try right, and any item that was tricky). Mention observations from that period too. A tablet help note means they worked on that item in another app, even when Mighty Mini Missions shows no play.",
       "If a child didn't play in that period, say so plainly in one line, with when they last played. No judgment.",
       "If nobody played, say that in one or two lines, and add that tablets sync when they're online, so play on an offline tablet shows up later.",
       "Format: one short paragraph or a few bullets per child, *Name* first. No greeting."

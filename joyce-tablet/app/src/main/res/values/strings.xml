@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Joyce</string>
+    <string name="ask_joyce">Ask Joyce</string>
+    <string name="got_it">I got it</string>
+    <string name="still_stuck">Still stuck</string>
+</resources>

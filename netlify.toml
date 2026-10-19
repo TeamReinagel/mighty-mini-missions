@@ -8,9 +8,20 @@
 [functions]
   directory = "netlify/functions"
 
+# Vision plus an optional transcription can outlast the default 10s limit.
+[functions."joyce-tablet"]
+  timeout = 26
+
 # Function source sits inside the publish folder; don't serve it as static files.
 [[redirects]]
   from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# The Android project ships with the site folder; it isn't a page.
+[[redirects]]
+  from = "/joyce-tablet/*"
   to = "/404.html"
   status = 404
   force = true

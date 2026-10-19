@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cream"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Joyce"
+            android:textColor="@color/ink"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="She floats over other apps. A child taps her, points at a word or circles a problem, and she gives a hint."
+            android:textColor="@color/ink"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Who is this tablet for?"
+            android:textColor="@color/ink"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/kidMax"
+            style="@style/JoyceKidButton"
+            android:tag="max"
+            android:text="Max" />
+
+        <Button
+            android:id="@+id/kidGabi"
+            style="@style/JoyceKidButton"
+            android:tag="gabi"
+            android:text="Gabi" />
+
+        <Button
+            android:id="@+id/kidConnor"
+            style="@style/JoyceKidButton"
+            android:tag="connor"
+            android:text="Connor" />
+
+        <Button
+            android:id="@+id/kidEthan"
+            style="@style/JoyceKidButton"
+            android:tag="ethan"
+            android:text="Ethan" />
+
+        <Button
+            android:id="@+id/power"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:minHeight="64dp"
+            android:text="Turn Joyce on"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/ink"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Grown-up setup"
+            android:textColor="@color/ink"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/site"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="https://your-site.netlify.app"
+            android:importantForAutofill="no"
+            android:inputType="textUri"
+            android:minHeight="56dp"
+            android:textColor="@color/ink"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/key"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tablet key"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
+            android:minHeight="56dp"
+            android:textColor="@color/ink"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/test"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="56dp"
+            android:text="Test the key" />
+    </LinearLayout>
+</ScrollView>

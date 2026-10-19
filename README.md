@@ -94,6 +94,7 @@ What the report counts as:
    - `OPENAI_API_KEY`: your OpenAI key
    - `REPORT_SECRET`: any long password you make up (protects the preview link)
    - `JOYCE_APPROVERS`: your Slack member ID (Slack → your profile → ⋮ → Copy member ID), so only you can approve what Joyce learns. Separate several with commas.
+   - `JOYCE_TABLET_KEY`: a long password you make up. The Android app sends it with each help request. It is separate from `REPORT_SECRET`.
    - `CURSOR_API_KEY`: for code changes only. Create one at [cursor.com/dashboard](https://cursor.com/dashboard) → API Keys, and connect GitHub in Cursor so its agents can open pull requests on this repo.
    - Optional: `OPENAI_MODEL` (default `gpt-4o-mini`), `REPORT_TIMEZONE` (default `America/Chicago`), `REPORT_HOUR` (default `15`), `JOYCE_MORNING_HOUR` (default `7`), `JOYCE_REPO_URL` / `JOYCE_REPO_BRANCH` (default this repo's `main`), `CURSOR_MODEL`
 6. Redeploy in Netlify (Deploys → Trigger deploy) so the functions pick up the variables.
@@ -101,6 +102,20 @@ What the report counts as:
 8. Test Joyce: post "Max tested Joyce" in the channel (she should reply in a thread), then message her "what should we do today?".
 
 If you created the Slack app from an older manifest, update it from the manifest again (with the same `YOUR-SITE` replacement), then click **Reinstall to Workspace**. Newer versions add **Interactivity** (for the Approve buttons) and the `users:read` permission (so Joyce knows who's talking).
+
+### Joyce on the Android tablets
+
+A round picture of Joyce floats over other apps (Reading.com, Adapted Mind, and the rest). The child taps her, the screen freezes, and they tap a word or draw around a problem. They can talk at the same time. She answers out loud with a hint and does not say the answer. Each moment is saved as an observation Friday's report already reads: what they pointed at, the hint, and whether they tapped **I got it** or **Still stuck**. The screenshot itself is not stored.
+
+The app is `joyce-tablet/`. Install `joyce-tablet/app/build/outputs/apk/debug/app-debug.apk` on each Onn tablet (Files or Chrome → allow install from that app). Android 8 or newer.
+
+On the tablet, a grown-up:
+
+1. Opens **Joyce**, taps the child's name, and enters the site address and `JOYCE_TABLET_KEY`. **Test the key** should say the key works. Redeploy the site after adding the key.
+2. Taps **Turn Joyce on** and allows Joyce to show over other apps. Allow notifications too, so the tablet can show that the screen is shared.
+3. The first time a child taps her picture, Android asks to share the whole screen. Leave that on for the learning block. Turn Joyce off, or tap **Stop sharing**, when the block is done. The prompt comes back after a restart.
+
+Then the child taps her picture, points, and taps **Ask Joyce**. **Still stuck** gets one more hint, then she asks them to get a grown-up. Connor's iPad can't run this. The same app works on his Android tablet later: pick his name on that device.
 
 ### Preview or send a report any time
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`

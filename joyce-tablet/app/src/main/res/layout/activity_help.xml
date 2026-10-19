@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111111"
+    android:keepScreenOn="true"
+    android:orientation="vertical">
+
+    <family.reinagel.joyce.MarkView
+        android:id="@+id/mark"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#111111" />
+
+    <LinearLayout
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/cream"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/heard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap the word, or draw around the problem."
+            android:textColor="@color/ink"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/ink"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/ask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/ask_joyce"
+            android:minHeight="72dp"
+            android:text="@string/ask_joyce"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:id="@+id/outcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/gotIt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/got_it"
+                android:minHeight="72dp"
+                android:text="@string/got_it"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/stuck"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/still_stuck"
+                android:minHeight="72dp"
+                android:text="@string/still_stuck"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
