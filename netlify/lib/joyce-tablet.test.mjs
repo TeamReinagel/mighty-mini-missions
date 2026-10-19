@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { checkKey, handleTabletRequest, helpNote } from "./joyce-tablet.mjs";
+import { HINT_SYSTEM, REVEAL_SYSTEM, checkKey, handleTabletRequest, helpNote } from "./joyce-tablet.mjs";
 
 const KEY = "family-tablet-key";
 const env = { JOYCE_TABLET_KEY: KEY, OPENAI_API_KEY: "test-key", OPENAI_MODEL: "gpt-4o-mini" };
@@ -28,6 +28,9 @@ function fetchImpl(reply) {
   return async (url) => {
     const href = String(url);
     if (href.includes("/audio/transcriptions")) return jsonResponse({ text: "what is this word" });
+    if (href.includes("/audio/speech")) {
+      return { ok: true, status: 200, async arrayBuffer() { return new Uint8Array(40).buffer; } };
+    }
     if (href.includes("/chat/completions")) return jsonResponse({ choices: [{ message: { content: JSON.stringify(reply) } }] });
     throw new Error(`unexpected ${href}`);
   };
@@ -63,7 +66,8 @@ test("a leaked answer is replaced with a hint", async () => {
   });
   assert.equal(result.status, 200);
   assert.doesNotMatch(result.body.say, /\bship\b/i);
-  assert.match(result.body.say, /first sound/);
+  assert.match(result.body.say, /letter s/i);
+  assert.ok(result.body.audioBase64);
   const saved = [...store.data.values()].find((v) => v.kind === "tablet-help");
   assert.equal(saved.kids[0], "max");
   assert.equal(saved.imageBase64, undefined);
@@ -94,17 +98,18 @@ test("a clean hint is saved and an outcome updates the same note", async () => {
   assert.equal([...store.data.keys()].filter((k) => k.startsWith("observations/")).length, 1);
 });
 
-test("a second hint is different and a third asks for a grown-up", async () => {
+test("a second hint still withholds the answer and a third says it", async () => {
   const store = memoryStore();
   let n = 0;
   const replies = [
     { saw: "the problem 14 minus 6", say: "Start at 14.", answer: "8", kind: "math" },
-    { saw: "the problem 14 minus 6", say: "Count back six from 14.", answer: "8", kind: "math" }
+    { saw: "the problem 14 minus 6", say: "Count back six from 14.", answer: "8", kind: "math" },
+    { saw: "the problem 14 minus 6", say: "Look at it again.", answer: "8", kind: "math" }
   ];
   const impl = fetchImpl(null);
   const fetchStep = async (url, opts) => {
     if (String(url).includes("/chat/completions")) {
-      return jsonResponse({ choices: [{ message: { content: JSON.stringify(replies[n++] || replies[1]) } }] });
+      return jsonResponse({ choices: [{ message: { content: JSON.stringify(replies[n++] || replies[2]) } }] });
     }
     return impl(url, opts);
   };
@@ -117,17 +122,39 @@ test("a second hint is different and a third asks for a grown-up", async () => {
     body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId }
   });
   assert.equal(second.body.hintsUsed, 2);
+  assert.equal(second.body.revealed, undefined);
   assert.match(second.body.say, /Count back/);
+  assert.doesNotMatch(second.body.say, /\b8\b/);
   const third = await handleTabletRequest({
     store, env, fetchImpl: fetchStep,
-    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId }
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "what is this" }
   });
-  assert.equal(third.body.done, true);
-  assert.match(third.body.say, /grown-up/);
+  assert.equal(third.body.done, false);
+  assert.equal(third.body.revealed, true);
+  assert.match(third.body.say, /the answer is 8/i);
   const saved = [...store.data.values()].find((v) => v.kind === "tablet-help");
-  assert.equal(saved.outcome, "still-stuck");
+  assert.equal(saved.outcome, null);
   assert.match(saved.text, /1\)/);
-  assert.match(saved.text, /still stuck/);
+  assert.match(saved.text, /gave the answer/);
+  assert.match(saved.text, /the answer is 8/i);
+});
+
+test("a generic sound-it-out hint is replaced with the first letter", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word friends", say: "What sounds do you hear at the beginning?", answer: "friends", kind: "word" }),
+    body: { kid: "max", imageBase64: image, question: "what is this sight word" }
+  });
+  assert.match(result.body.say, /letter f/i);
+  assert.doesNotMatch(result.body.say, /sounds/i);
+  assert.doesNotMatch(result.body.say, /\bfriends\b/i);
+});
+
+test("sight-word help does not tell the child to sound the word out", () => {
+  assert.match(HINT_SYSTEM, /sight word/i);
+  assert.match(HINT_SYSTEM, /do not use phonics/i);
+  assert.match(REVEAL_SYSTEM, /Say the actual answer/);
 });
 
 test("audio is transcribed when the child didn't get on-device speech", async () => {

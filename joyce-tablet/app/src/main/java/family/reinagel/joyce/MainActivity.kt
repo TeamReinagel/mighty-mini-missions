@@ -21,8 +21,13 @@ class MainActivity : AppCompatActivity() {
     private var selectedKid = ""
 
     private val notifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) startJoyce()
+        if (granted) startJoyce(askMic = false)
         else status("Joyce needs notifications on so the tablet can show that the screen is shared.")
+    }
+
+    private val microphone = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (!granted) status("Joyce can't hear yet. A child can still point, and she can still help.")
+        startJoyce(askMic = false)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun startJoyce() {
+    private fun startJoyce(askMic: Boolean = true) {
         val site = Prefs.cleanSite(binding.site.text.toString())
         val key = binding.key.text.toString().trim()
         if (selectedKid.isEmpty()) {
@@ -73,6 +78,10 @@ class MainActivity : AppCompatActivity() {
         if (!Settings.canDrawOverlays(this)) {
             status("Allow Joyce to show over other apps, then come back and turn her on.")
             startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+            return
+        }
+        if (askMic && ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            microphone.launch(Manifest.permission.RECORD_AUDIO)
             return
         }
         if (Build.VERSION.SDK_INT >= 33 &&

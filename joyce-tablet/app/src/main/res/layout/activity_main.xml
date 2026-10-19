@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="She floats over other apps. A child taps her, points at a word or circles a problem, and she gives a hint."
+            android:text="She floats over other apps. A child taps her, points at a word or circles a problem, and she hints. If they are still stuck, she tells them the answer."
             android:textColor="@color/ink"
             android:textSize="16sp" />
 

@@ -1,6 +1,7 @@
 // Help a child asks for from the Android overlay: one screenshot, a point or circle,
-// an optional spoken question. Joyce hints and never gives the answer. The moment
-// is saved as an observation Friday's report already reads.
+// an optional spoken question. Joyce hints about the marked spot, then says the
+// answer. The spoken line is also returned as natural speech. The moment is saved
+// as an observation Friday's report already reads.
 
 import { timingSafeEqual } from "node:crypto";
 import { chatVisionJSON } from "./ai.mjs";
@@ -12,28 +13,45 @@ const HINT_LIMIT = 2;
 
 const SETUP = "A grown-up still needs to finish Joyce's setup on the website.";
 const KEY_NO = "That key didn't work. A grown-up can fix it in the Joyce app.";
-const GROWNUP = "Ask a grown-up to sit with you for this one.";
-
 const FALLBACK = {
-  word: "Look at the part you marked. Say the first sound, then the next one.",
+  word: "Look at the whole word you marked. Do you know a part of it?",
   math: "Look at the numbers you marked. Try the first small step.",
   other: "Look at the part you marked and tell me what you notice."
 };
 
-const HINT_SYSTEM = `You help a young child who is stuck on a tablet app during homeschool. You are Joyce, a warm teacher. You never give the answer.
+export const HINT_SYSTEM = `You help a young child who is stuck on a tablet app during homeschool. You are Joyce, a warm teacher. On this turn you give a hint. You do not give the answer yet.
 
 They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark.
 
 Rules for "say":
-- One or two short sentences they can hear out loud. One sentence for age 3 or 4.
-- Hint at the next step only: a sound to try, which part to look at, or one thing to count.
-- Do not say the word they are stuck on, do not name the correct letter if that is the whole task, and do not say the number that belongs in the blank.
+- One or two short sentences they can hear out loud. One sentence for age 3 or 4. Start with their name once.
+- Talk about the exact letters, numbers, or picture in the close-up. Name what you see.
+- Good: "Max, the word you marked starts with the letter f." or "Max, I see 14 and then minus 6."
+- Never ask a question that could fit any word. Do not say "what sounds do you hear", "sound it out", or "look at the beginning and the middle".
+- Sight words and irregular words (friends, said, the, was, because, and words they called a sight word): do not use phonics. Point at letters that are on the screen.
+- Do not say the whole answer word yet, and do not say the number that belongs in the blank.
 - Do not tell them which button to tap as the correct choice.
+- Do not repeat a hint you already gave.
 - If the close-up is unreadable, ask them to point closer. Do not guess a specific answer.
-- Start with their name once.
 
 Rules for "saw": a short noun phrase a parent can read later, starting with "the" or "a", naming the word, letter, or problem if you can see it. This is for the parent, not spoken to the child. Include the app name only if it is visible.
-Rules for "answer": the withheld answer in a few words, or "" if there isn't one. Used only to check that "say" did not leak it. Never shown to the child.
+Rules for "answer": the real answer in a few words (the sight word, the letter, or the number). Used so a later turn can say it, and to check that this turn did not leak it. Never shown to the child on this turn.
+Rules for "kind": "word", "math", or "other".
+
+Reply with JSON only: {"saw":"", "say":"", "answer":"", "kind":"word|math|other"}`;
+
+export const REVEAL_SYSTEM = `You help a young child who is stuck on a tablet app during homeschool. You are Joyce, a warm teacher. You already gave hints. Now tell them the answer.
+
+They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark.
+
+Rules for "say":
+- One short sentence they can hear out loud, starting with their name.
+- Say the actual answer plainly. Example: "Max, the word is friends." or "Max, 14 minus 6 is 8."
+- Do not give another hint. Do not tell them to sound it out.
+- If you truly cannot see an answer, ask them to point closer. Do not tell them to get a grown-up.
+
+Rules for "saw": a short noun phrase a parent can read later, naming the word, letter, or problem.
+Rules for "answer": the same answer you spoke, in a few words.
 Rules for "kind": "word", "math", or "other".
 
 Reply with JSON only: {"saw":"", "say":"", "answer":"", "kind":"word|math|other"}`;
@@ -70,20 +88,97 @@ function leaked(say, answer) {
   return new RegExp(`(?:^|[^A-Za-z0-9])${escaped}(?:[^A-Za-z0-9]|$)`, "i").test(say);
 }
 
-function spokenHint(raw, answer, kind) {
-  const say = clip(raw, 320);
-  const fallback = FALLBACK[kind] || FALLBACK.other;
-  if (!say || leaked(say, answer)) return fallback;
-  return say;
+const GENERIC_HINT = /what sounds? do you hear|sound (it|this|the word) out|beginning\/middle|at the beginning|in the middle|say the first sound/i;
+
+function concreteHint(answer, kind, name) {
+  const secret = clip(answer, 48).replace(/[^A-Za-z0-9]/g, "");
+  const first = secret[0];
+  if (kind === "word" && first && /[A-Za-z]/.test(first)) {
+    return `${name}, the word you marked starts with the letter ${first.toLowerCase()}.`;
+  }
+  if (kind === "math" && first) return `${name}, look at the numbers you marked and try the first small step.`;
+  return FALLBACK[kind] || FALLBACK.other;
 }
 
-export function helpNote({ name, saw, question, hints, outcome }) {
+function spokenHint(raw, answer, kind, name) {
+  const say = clip(raw, 320);
+  if (say && !leaked(say, answer) && !GENERIC_HINT.test(say)) return say;
+  return concreteHint(answer, kind, name);
+}
+
+function revealLine(raw, answer, kind, name) {
+  const secret = clip(answer, 48);
+  const spoken = clip(raw, 320);
+  if (secret && spoken && spoken.toLowerCase().includes(secret.toLowerCase())) return spoken;
+  if (secret) {
+    if (kind === "math") return `${name}, the answer is ${secret}.`;
+    if (kind === "word") return `${name}, the word is ${secret}.`;
+    return `${name}, it is ${secret}.`;
+  }
+  return spoken || `${name}, point a little closer to the word.`;
+}
+
+async function speakAudio(text, env, fetchImpl) {
+  const line = clip(text, 320);
+  if (!line || !env.OPENAI_API_KEY) return "";
+  const voice = env.JOYCE_TABLET_VOICE || "coral";
+  const attempts = [
+    {
+      model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts",
+      voice,
+      instructions: "You are Joyce, a warm playful teacher sitting beside a young child. Sound like a real person, kind and unhurried. Clear words. No announcer voice and no robot voice."
+    },
+    { model: "tts-1-hd", voice: "shimmer" }
+  ];
+  for (const attempt of attempts) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 8000);
+    try {
+      const res = await fetchImpl("https://api.openai.com/v1/audio/speech", {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${env.OPENAI_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: attempt.model,
+          voice: attempt.voice,
+          input: line,
+          response_format: "mp3",
+          ...(attempt.instructions ? { instructions: attempt.instructions } : {})
+        })
+      });
+      if (!res.ok || typeof res.arrayBuffer !== "function") continue;
+      const bytes = Buffer.from(await res.arrayBuffer());
+      if (bytes.length < 20 || bytes.length > 800_000) continue;
+      return bytes.toString("base64");
+    } catch {
+      continue;
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  return "";
+}
+
+export function helpNote({ name, saw, question, hints, outcome, revealed }) {
   const target = clip(saw, 300) || "something on the screen";
   const asked = clip(question, 300) ? ` and asked "${clip(question, 300)}"` : "";
   const list = (hints || []).map((h) => clip(h, 400)).filter(Boolean);
   let hint = "";
-  if (list.length === 1) hint = ` Joyce hinted, without giving the answer: "${list[0]}"`;
-  if (list.length > 1) hint = ` Joyce hinted, without giving the answer: ${list.map((h, i) => `${i + 1}) "${h}"`).join(" ")}`;
+  if (revealed && list.length) {
+    const answer = list[list.length - 1];
+    const earlier = list.slice(0, -1);
+    const hintsText = earlier.length
+      ? ` Joyce hinted: ${earlier.map((h, i) => `${i + 1}) "${h}"`).join(" ")}`
+      : "";
+    hint = `${hintsText} Joyce then gave the answer: "${answer}"`;
+  } else if (list.length === 1) {
+    hint = ` Joyce hinted, without giving the answer: "${list[0]}"`;
+  } else if (list.length > 1) {
+    hint = ` Joyce hinted, without giving the answer: ${list.map((h, i) => `${i + 1}) "${h}"`).join(" ")}`;
+  }
   const ending = {
     "got-it": " The child tapped that they got it.",
     "still-stuck": " The child was still stuck.",
@@ -128,7 +223,7 @@ async function transcribe({ audioBase64, audioType, env, fetchImpl }) {
   }
 }
 
-function recordOf({ id, t, kid, saw, question, hints, outcome }) {
+function recordOf({ id, t, kid, saw, question, hints, outcome, revealed }) {
   const name = kidById(kid).name;
   return {
     id,
@@ -139,8 +234,62 @@ function recordOf({ id, t, kid, saw, question, hints, outcome }) {
     saw,
     question,
     hints,
+    revealed: Boolean(revealed),
     outcome: outcome || null,
-    text: helpNote({ name, saw, question, hints, outcome })
+    text: helpNote({ name, saw, question, hints, outcome, revealed })
+  };
+}
+
+async function revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, question }) {
+  const asked = question || pointer.question || "";
+  const earlier = pointer.hints || [];
+  const userText = [
+    `Child: ${kid.name}, age ${kid.age}.`,
+    asked ? `What they asked: "${asked}"` : "What they asked: (they only pointed)",
+    pointer.saw ? `What they pointed at: ${pointer.saw}` : "",
+    earlier.length ? `Hints you already gave: ${earlier.map((h) => `"${h}"`).join(" ")}` : "",
+    "Now tell them the answer."
+  ].filter(Boolean).join("\n");
+  let saw = pointer.saw || "";
+  let say = `${kid.name}, point a little closer to the word.`;
+  try {
+    const out = await chatVisionJSON({
+      env,
+      fetchImpl,
+      timeoutMs: 14000,
+      temperature: 0.2,
+      system: REVEAL_SYSTEM,
+      text: userText,
+      images: [
+        { base64: image, detail: "low" },
+        crop ? { base64: crop, detail: "high" } : null
+      ].filter(Boolean)
+    });
+    const kind = ["word", "math", "other"].includes(out.kind) ? out.kind : "other";
+    if (!saw) saw = clip(out.saw, 300) || "something on the screen";
+    say = revealLine(out.say, out.answer, kind, kid.name);
+  } catch {
+    say = `${kid.name}, point a little closer to the word.`;
+  }
+  const hints = [...earlier, say];
+  const next = {
+    ...pointer,
+    saw,
+    question: asked,
+    hints,
+    revealed: true,
+    outcome: null
+  };
+  let saved = true;
+  try {
+    await writeSession(store, next);
+  } catch {
+    saved = false;
+  }
+  const audioBase64 = await speakAudio(say, env, fetchImpl);
+  return {
+    status: 200,
+    body: { say, sessionId: pointer.id, hintsUsed: hints.length, done: false, revealed: true, saved, audioBase64 }
   };
 }
 
@@ -150,11 +299,17 @@ async function loadPointer(store, sessionId) {
 
 export async function handleTabletRequest({ store, env = process.env, fetchImpl = fetch, body }) {
   if (!env.OPENAI_API_KEY) return fail(503, SETUP, "OPENAI_API_KEY is not set on the site.");
-  const action = body?.action === "outcome" ? "outcome" : "help";
+  const action = body?.action === "outcome" || body?.action === "speak" ? body.action : "help";
   const sessionId = clip(body?.sessionId, 80);
   if (sessionId && !/^[A-Za-z0-9-]{8,80}$/.test(sessionId)) return fail(400, "Joyce couldn't save that. Try again.");
 
   if (action === "outcome") return recordOutcome({ store, sessionId, outcome: body?.outcome });
+  if (action === "speak") {
+    const text = clip(body?.text, 320);
+    if (!text) return fail(400, "Joyce couldn't say that.");
+    const audioBase64 = await speakAudio(text, env, fetchImpl);
+    return { status: 200, body: { say: text, audioBase64 } };
+  }
 
   const kid = kidById(clip(body?.kid, 32));
   if (!kid) return fail(400, "A grown-up needs to pick whose tablet this is.");
@@ -162,22 +317,26 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
   const crop = cleanB64(body?.cropBase64, MAX_IMAGE);
   if (!image) return fail(400, "Joyce couldn't see the screen. Try again.");
 
+  let question = clip(body?.question, 300);
+  const audio = cleanB64(body?.audioBase64, MAX_AUDIO);
+  if (!question && audio) {
+    question = await transcribe({ audioBase64: audio, audioType: body?.audioType, env, fetchImpl });
+  }
+
   const followUp = Boolean(body?.followUp);
   let pointer = null;
   if (followUp) {
     if (!sessionId) return fail(400, "Joyce couldn't save that. Try again.");
     pointer = await loadPointer(store, sessionId);
     if (!pointer || pointer.kid !== kid.id) return fail(404, "Joyce couldn't find that question. Point again.");
-    if ((pointer.hints || []).length >= HINT_LIMIT) {
-      await writeSession(store, { ...pointer, outcome: "still-stuck" });
-      return { status: 200, body: { say: GROWNUP, sessionId, hintsUsed: HINT_LIMIT, done: true, saved: true } };
+    if (pointer.revealed) {
+      const last = (pointer.hints || []).slice(-1)[0] || `${kid.name}, point a little closer to the word.`;
+      const audioBase64 = await speakAudio(last, env, fetchImpl);
+      return { status: 200, body: { say: last, sessionId, hintsUsed: (pointer.hints || []).length, done: false, revealed: true, saved: true, audioBase64 } };
     }
-  }
-
-  let question = clip(body?.question, 300);
-  const audio = cleanB64(body?.audioBase64, MAX_AUDIO);
-  if (!question && audio) {
-    question = await transcribe({ audioBase64: audio, audioType: body?.audioType, env, fetchImpl });
+    if ((pointer.hints || []).length >= HINT_LIMIT) {
+      return revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, question });
+    }
   }
 
   const earlier = pointer?.hints || [];
@@ -186,8 +345,9 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     kid.where ? `Where they are: ${kid.where}` : "",
     kid.note ? `Note: ${kid.note}` : "",
     question ? `What they said: "${question}"` : "What they said: (they didn't say anything; they only pointed)",
-    `This is hint ${earlier.length + 1} of ${HINT_LIMIT}.`,
-    earlier.length ? `You already told them: ${earlier.map((h) => `"${h}"`).join(" ")} Give a different hint.` : ""
+    `This is hint ${earlier.length + 1} of ${HINT_LIMIT}. Name a letter, number, or picture you can see in the close-up. Do not give the whole answer yet.`,
+    /sight word/i.test(question) ? "They called this a sight word. Do not tell them to sound it out." : "",
+    earlier.length ? `You already told them: ${earlier.map((h) => `"${h}"`).join(" ")} Give a different hint. Do not give the answer yet.` : ""
   ].filter(Boolean).join("\n");
 
   let saw = pointer?.saw || "";
@@ -207,7 +367,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     });
     const kind = ["word", "math", "other"].includes(out.kind) ? out.kind : "other";
     if (!saw) saw = clip(out.saw, 300) || "something on the screen";
-    say = spokenHint(out.say, out.answer, kind);
+    say = spokenHint(out.say, out.answer, kind, kid.name);
   } catch {
     say = "Joyce couldn't see that clearly. Point a little closer and try again.";
     if (!saw) saw = "something on the screen";
@@ -226,9 +386,10 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
   } catch {
     saved = false;
   }
+  const audioBase64 = await speakAudio(say, env, fetchImpl);
   return {
     status: 200,
-    body: { say, sessionId: id, hintsUsed: hints.length, done: false, saved }
+    body: { say, sessionId: id, hintsUsed: hints.length, done: false, saved, audioBase64 }
   };
 }
 
@@ -248,7 +409,7 @@ async function recordOutcome({ store, sessionId, outcome }) {
   } catch {
     return fail(502, "Joyce couldn't save that. Try again.");
   }
-  const say = outcome === "got-it" ? `${kidById(pointer.kid).name}, you did it.` : outcome === "still-stuck" ? GROWNUP : "";
+  const say = outcome === "got-it" ? `${kidById(pointer.kid).name}, you did it.` : "";
   return { status: 200, body: { ok: true, say, sessionId, done: true, saved: true } };
 }
 

@@ -35,20 +35,11 @@
         </activity>
 
         <activity
-            android:name=".HelpActivity"
+            android:name=".CaptureConsentActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTop"
-            android:taskAffinity=""
-            android:theme="@style/Theme.Joyce.Transparent" />
-
-        <activity
-            android:name=".CaptureConsentActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:noHistory="true"
             android:theme="@style/Theme.Joyce.Transparent" />
 
         <service

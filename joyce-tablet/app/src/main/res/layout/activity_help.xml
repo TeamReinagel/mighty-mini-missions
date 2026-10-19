@@ -44,10 +44,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:backgroundTint="@color/teal"
             android:contentDescription="@string/ask_joyce"
-            android:minHeight="72dp"
+            android:minHeight="76dp"
             android:text="@string/ask_joyce"
-            android:textSize="20sp" />
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/outcome"
@@ -63,20 +67,41 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/teal"
                 android:contentDescription="@string/got_it"
-                android:minHeight="72dp"
+                android:minHeight="76dp"
                 android:text="@string/got_it"
-                android:textSize="18sp" />
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/stuck"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@color/teal"
                 android:contentDescription="@string/still_stuck"
-                android:minHeight="72dp"
+                android:minHeight="76dp"
                 android:text="@string/still_stuck"
-                android:textSize="18sp" />
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/sand"
+            android:contentDescription="@string/back_to_app"
+            android:minHeight="56dp"
+            android:text="@string/back_to_app"
+            android:textAllCaps="false"
+            android:textColor="@color/ink"
+            android:textSize="18sp" />
     </LinearLayout>
 </LinearLayout>

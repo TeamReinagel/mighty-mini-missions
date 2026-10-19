@@ -11,7 +11,10 @@ import android.content.pm.ServiceInfo
 import android.graphics.Outline
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.widget.Toast
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -22,9 +25,12 @@ import androidx.core.app.NotificationCompat
 import kotlin.math.abs
 
 class BubbleService : Service() {
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var windowManager: WindowManager
     private var bubble: ImageView? = null
     private var params: WindowManager.LayoutParams? = null
+    private var panel: HelpPanel? = null
+    private var captureBusy = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -47,6 +53,8 @@ class BubbleService : Service() {
     }
 
     override fun onDestroy() {
+        panel?.dismiss(sendLeft = true)
+        panel = null
         bubble?.let {
             try {
                 windowManager.removeView(it)
@@ -63,15 +71,41 @@ class BubbleService : Service() {
         bubble?.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
+    fun showHelp(bitmap: android.graphics.Bitmap) {
+        captureBusy = false
+        if (panel?.isShowing == true) {
+            bitmap.recycle()
+            return
+        }
+        val help = HelpPanel(this) {
+            panel = null
+            setBubbleVisible(true)
+        }
+        panel = help
+        help.show(bitmap)
+        if (help.isShowing) setBubbleVisible(false)
+    }
+
     private fun onBubbleTap() {
-        if (HelpSession.open) return
-        setBubbleVisible(false)
+        if (panel?.isShowing == true || captureBusy) return
         val capture = CaptureService.instance
-        if (capture?.isReady == true) capture.grab { HelpSession.deliver(it) }
-        val intent = Intent(this, HelpActivity::class.java).addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        )
+        if (capture?.isReady == true) {
+            captureBusy = true
+            handler.postDelayed({
+                capture.grab { bitmap ->
+                    captureBusy = false
+                    if (bitmap == null) {
+                        setBubbleVisible(true)
+                        Toast.makeText(this, "Joyce couldn't see the screen. Try again.", Toast.LENGTH_LONG).show()
+                    } else {
+                        showHelp(bitmap)
+                    }
+                }
+            }, 200)
+            return
+        }
         try {
+            val intent = Intent(this, CaptureConsentActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             val options = ActivityOptions.makeCustomAnimation(this, 0, 0)
             if (Build.VERSION.SDK_INT >= 34) {
                 options.pendingIntentBackgroundActivityStartMode =
@@ -79,7 +113,7 @@ class BubbleService : Service() {
             }
             startActivity(intent, options.toBundle())
         } catch (_: Exception) {
-            setBubbleVisible(true)
+            Toast.makeText(this, "Ask a grown-up to open Joyce.", Toast.LENGTH_LONG).show()
         }
     }
 

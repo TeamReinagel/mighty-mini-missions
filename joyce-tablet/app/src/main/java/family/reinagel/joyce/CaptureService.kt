@@ -74,7 +74,7 @@ class CaptureService : Service() {
 
     private fun startProjection(intent: Intent) {
         if (isReady) {
-            if (intent.getBooleanExtra(EXTRA_THEN_HELP, false)) grabThenHelp()
+            fireReady()
             return
         }
         val code = intent.getIntExtra(EXTRA_RESULT_CODE, Activity.RESULT_CANCELED)
@@ -106,11 +106,6 @@ class CaptureService : Service() {
             fireFailed()
             return
         }
-        if (intent.getBooleanExtra(EXTRA_THEN_HELP, false)) grabThenHelp()
-    }
-
-    private fun grabThenHelp() {
-        handler.postDelayed({ grabOnMain { bitmap -> HelpOpener.open(this, bitmap) } }, 1000)
     }
 
     private fun grabOnMain(onResult: (Bitmap?) -> Unit) {
@@ -257,7 +252,6 @@ class CaptureService : Service() {
         const val ACTION_STOP = "family.reinagel.joyce.CAPTURE_STOP"
         const val EXTRA_RESULT_CODE = "resultCode"
         const val EXTRA_DATA = "data"
-        const val EXTRA_THEN_HELP = "thenHelp"
         var instance: CaptureService? = null
         var running = false
         var whenReady: (() -> Unit)? = null

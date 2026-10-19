@@ -11,6 +11,8 @@ object JoyceClient {
         val sessionId: String = "",
         val hintsUsed: Int = 0,
         val done: Boolean = false,
+        val revealed: Boolean = false,
+        val audioBase64: String = "",
         val error: String? = null
     )
 
@@ -49,6 +51,15 @@ object JoyceClient {
         return post(site, key, json)
     }
 
+    fun speak(site: String, key: String, text: String): String {
+        return try {
+            val (code, body) = request(site, key, "POST", JSONObject().put("action", "speak").put("text", text))
+            if (code !in 200..299) "" else body.optString("audioBase64")
+        } catch (_: Exception) {
+            ""
+        }
+    }
+
     fun outcome(site: String, key: String, sessionId: String, outcome: String) {
         val json = JSONObject()
             .put("action", "outcome")
@@ -68,7 +79,9 @@ object JoyceClient {
                 say = body.optString("say"),
                 sessionId = body.optString("sessionId"),
                 hintsUsed = body.optInt("hintsUsed"),
-                done = body.optBoolean("done")
+                done = body.optBoolean("done"),
+                revealed = body.optBoolean("revealed"),
+                audioBase64 = body.optString("audioBase64")
             )
         } catch (_: IOException) {
             HintResult(error = "Joyce needs the wifi.")
