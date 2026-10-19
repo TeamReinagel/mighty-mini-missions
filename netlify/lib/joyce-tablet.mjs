@@ -26,12 +26,15 @@ They marked one spot on the screen (a red circle or oval on the first image). Th
 Rules for "say":
 - One or two short sentences they can hear out loud. One sentence for age 3 or 4. Start with their name once, then stop using it every turn.
 - Respond to what they just said. If they got a piece right, say yes and ask the next piece. If they guessed wrong, correct that piece kindly.
-- Use the pattern that is actually in this word:
-  - A letter with more than one sound: say how many, and which sound this word uses. Example: "A can say 3 sounds. In this one it says /ah/."
-  - A silent e at the end: "That e at the end is silent. What does it do to the vowel in the word?"
+- Use a pattern that is actually in this exact word. Read the letters in the close-up. The answer is those letters, not a different word.
+  - A letter with more than one sound: say how many, and which sound this word uses. "A can say 3 sounds. In this one it says /ah/."
+  - A silent e only when this word really ends in a silent e: "That e at the end is silent. What does it do to the vowel in the word?"
+  - Two letters that make one sound, such as sh, ch, or th: name those letters and the sound, then ask about the rest.
+- Do not mention a silent letter unless that letter is silent in this word.
 - Never ask a question that could fit any word. Do not say "what sounds do you hear", "sound it out", or "look at the beginning and the middle".
-- Sight words and irregular words (friends, said, the, was, because, and words they called a sight word): do not use phonics that are not in the word. Notice a part they can see.
+- Sight words and irregular words, including a word they called a sight word: do not use phonics that are not in the word. Notice a part they can see.
 - Do not say the whole answer word yet, and do not say the number that belongs in the blank.
+- Never say a sample word from these instructions unless those exact letters are in the close-up.
 - Do not tell them which button to tap as the correct choice.
 - Do not repeat a hint you already gave.
 - If the close-up is unreadable, ask them to point closer. Do not guess a specific answer.
@@ -47,9 +50,9 @@ export const REVEAL_SYSTEM = `You help a young child who is stuck on a tablet ap
 They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark.
 
 Rules for "say":
-- One or two short sentences. Respond to what they just said, then say the answer.
-- Example: "Yes. That e makes the a say its name. The word is cake." or "Max, the word is friends."
+- One or two short sentences. Respond to what they just said, then say the answer that is in the picture.
 - Say the actual answer. Do not ask another question. Do not tell them to sound it out or to get a grown-up.
+- Do not name any word except the one in the close-up. Do not invent a silent letter on the way to the answer.
 - If you truly cannot see an answer, ask them to point closer.
 
 Rules for "saw": a short noun phrase a parent can read later, naming the word, letter, or problem.
@@ -92,11 +95,59 @@ function leaked(say, answer) {
 
 const GENERIC_HINT = /what sounds? do you hear|sound (it|this|the word) out|beginning\/middle|at the beginning|in the middle|say the first sound/i;
 
-function concreteHint(answer, kind, name) {
-  const word = (clip(answer, 48).toLowerCase().match(/[a-z]+/) || [""])[0];
-  if (kind === "word" && word.length >= 4 && /[aeiou][^aeiou]+e$/.test(word) && !/(ee|le)$/.test(word)) {
+function wordOf(answer) {
+  return (clip(answer, 48).toLowerCase().match(/[a-z]+/) || [""])[0];
+}
+
+function magicE(word) {
+  return word.length >= 4 && /[aeiou][^aeiou]+e$/.test(word) && !/(ee|le)$/.test(word);
+}
+
+function allowsSilent(word) {
+  if (!word) return false;
+  if (magicE(word)) return true;
+  if (/^(kn|wr|gn)/.test(word)) return true;
+  if (/(?:mb|mn|gn)$/.test(word)) return true;
+  if (/gh/.test(word)) return true;
+  return false;
+}
+
+const DIGRAPHS = [
+  ["sh", "s and h", "/sh/"],
+  ["ch", "c and h", "/ch/"],
+  ["th", "t and h", "/th/"],
+  ["wh", "w and h", "/w/"],
+  ["ck", "c and k", "/k/"],
+  ["ph", "p and h", "/f/"]
+];
+
+function hintFits(say, answer, kind) {
+  const word = wordOf(answer);
+  if (!say || leaked(say, answer) || GENERIC_HINT.test(say)) return false;
+  if (kind !== "word" || !word) return true;
+  if (/silent/i.test(say) && !allowsSilent(word)) return false;
+  const named = say.match(/\b(?:word|answer) is\s+([a-z]+)/i);
+  if (named && named[1].toLowerCase() !== word) return false;
+  const letters = [...say.matchAll(/\bletter(?:\s+is)?(?:\s+the)?\s+([a-z])\b/gi)].map((match) => match[1].toLowerCase());
+  return letters.every((letter) => word.includes(letter));
+}
+
+function concreteHint(answer, kind, name, earlier = []) {
+  const word = wordOf(answer);
+  const said = earlier.join(" ").toLowerCase();
+  if (kind === "word" && magicE(word) && !/silent/.test(said)) {
     const vowel = word.match(/[aeiou]/)[0];
     return `${name}, that e at the end is silent. What does it do to the ${vowel}?`;
+  }
+  const digraph = kind === "word" ? DIGRAPHS.find(([letters]) => word.includes(letters)) : null;
+  if (digraph && !said.includes(digraph[2])) {
+    const rest = word.replace(digraph[0], "");
+    if (rest.length === 1) return `${name}, ${digraph[1]} together say ${digraph[2]}. What does the ${rest} say?`;
+    return `${name}, ${digraph[1]} together say ${digraph[2]}. What does the rest of the word say?`;
+  }
+  if (digraph) {
+    const rest = word.replace(digraph[0], "");
+    if (rest.length === 1) return `${name}, the ${rest} says its name. Put that with ${digraph[2]}.`;
   }
   const first = word[0];
   if (kind === "word" && first) {
@@ -115,16 +166,20 @@ function agreeLine(name, answer, kind) {
   return `${name}, yes. The word is ${answer}.`;
 }
 
-function spokenHint(raw, answer, kind, name) {
+function spokenHint(raw, answer, kind, name, earlier = []) {
   const say = clip(raw, 320);
-  if (say && !leaked(say, answer) && !GENERIC_HINT.test(say)) return say;
-  return concreteHint(answer, kind, name);
+  if (hintFits(say, answer, kind)) return say;
+  return concreteHint(answer, kind, name, earlier);
 }
 
 function revealLine(raw, answer, kind, name) {
   const secret = clip(answer, 48);
+  const word = wordOf(secret);
   const spoken = clip(raw, 320);
-  if (secret && spoken && spoken.toLowerCase().includes(secret.toLowerCase())) return spoken;
+  const named = spoken.match(/\b(?:word|answer) is\s+([a-z]+)/i);
+  const wrongWord = Boolean(word && named && named[1].toLowerCase() !== word);
+  const falseSilent = Boolean(word && /silent/i.test(spoken) && !allowsSilent(word));
+  if (!wrongWord && !falseSilent && secret && spoken && spoken.toLowerCase().includes(secret.toLowerCase())) return spoken;
   if (secret) {
     if (kind === "math") return `${name}, the answer is ${secret}.`;
     if (kind === "word") return `${name}, the word is ${secret}.`;
@@ -280,10 +335,11 @@ async function revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, 
     asked ? `They just said: "${asked}"` : "They just said: (nothing this turn)",
     pointer.saw ? `What they pointed at: ${pointer.saw}` : "",
     earlier.length ? `The conversation so far, from you: ${earlier.map((h) => `"${h}"`).join(" ")}` : "",
-    "Answer them, then say the word or the number."
+    pointer.answer ? `The answer in the picture is "${pointer.answer}". Say that. Do not name any other word.` : "Answer them, then say the word or the number."
   ].filter(Boolean).join("\n");
   let saw = pointer.saw || "";
   let say = `${kid.name}, point a little closer to the word.`;
+  const answer = clip(pointer.answer, 48);
   try {
     const out = await chatVisionJSON({
       env,
@@ -297,9 +353,9 @@ async function revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, 
         crop ? { base64: crop, detail: "high" } : null
       ].filter(Boolean)
     });
-    const kind = ["word", "math", "other"].includes(out.kind) ? out.kind : "other";
+    const kind = pointer.kind || (["word", "math", "other"].includes(out.kind) ? out.kind : "other");
     if (!saw) saw = clip(out.saw, 300) || "something on the screen";
-    say = revealLine(out.say, out.answer || pointer.answer, kind, kid.name);
+    say = revealLine(out.say, answer || out.answer, kind, kid.name);
   } catch {
     say = `${kid.name}, point a little closer to the word.`;
   }
@@ -380,7 +436,8 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     kid.where ? `Where they are: ${kid.where}` : "",
     kid.note ? `Note: ${kid.note}` : "",
     question ? `They just said: "${question}"` : "They just said: (nothing yet; they only pointed)",
-    `This is turn ${earlier.length + 1} of the conversation. Respond to what they just said. One pattern in this word, then a question. Do not say the whole answer yet.`,
+    pointer?.answer ? `The marked answer is "${pointer.answer}". Teach only that. Do not name a different word.` : "",
+    `This is turn ${earlier.length + 1} of the conversation. Respond to what they just said. One pattern that is really in this word, then a question. Do not say the whole answer yet.`,
     /sight word/i.test(question) ? "They called this a sight word. Do not use phonics that are not in the word." : "",
     earlier.length ? `You already said: ${earlier.map((h) => `"${h}"`).join(" ")} Continue from their answer. Do not repeat yourself.` : ""
   ].filter(Boolean).join("\n");
@@ -404,9 +461,11 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     });
     const kind = ["word", "math", "other"].includes(out.kind) ? out.kind : "other";
     if (!saw) saw = clip(out.saw, 300) || "something on the screen";
-    if (clip(out.answer, 48)) answer = clip(out.answer, 48);
-    say = spokenHint(out.say, out.answer, kind, kid.name);
-    savedKind = kind;
+    const seen = clip(out.answer, 48);
+    if (pointer?.answer && wordOf(pointer.answer)) answer = pointer.answer;
+    else if (seen) answer = seen;
+    say = spokenHint(out.say, answer, kind, kid.name, earlier);
+    savedKind = pointer?.kind || kind;
   } catch {
     say = "Joyce couldn't see that clearly. Point a little closer and try again.";
     if (!saw) saw = "something on the screen";

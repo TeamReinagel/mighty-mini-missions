@@ -88,6 +88,33 @@ class BubbleService : Service() {
 
     private fun onBubbleTap() {
         if (panel?.isShowing == true || captureBusy) return
+        val eyes = JoyceAccessibilityService.instance
+        if (eyes != null) {
+            if (CaptureService.running) {
+                startService(Intent(this, CaptureService::class.java).setAction(CaptureService.ACTION_STOP))
+            }
+            captureBusy = true
+            setBubbleVisible(false)
+            handler.postDelayed({
+                val service = JoyceAccessibilityService.instance
+                if (service == null) {
+                    captureBusy = false
+                    setBubbleVisible(true)
+                    askToShare()
+                    return@postDelayed
+                }
+                service.capture { bitmap ->
+                    captureBusy = false
+                    if (bitmap == null) {
+                        setBubbleVisible(true)
+                        Toast.makeText(this, "Joyce couldn't see the screen. Try again.", Toast.LENGTH_LONG).show()
+                    } else {
+                        showHelp(bitmap)
+                    }
+                }
+            }, 150)
+            return
+        }
         val capture = CaptureService.instance
         if (capture?.isReady == true) {
             captureBusy = true
@@ -104,6 +131,10 @@ class BubbleService : Service() {
             }, 200)
             return
         }
+        askToShare()
+    }
+
+    private fun askToShare() {
         try {
             val intent = Intent(this, CaptureConsentActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             val options = ActivityOptions.makeCustomAnimation(this, 0, 0)

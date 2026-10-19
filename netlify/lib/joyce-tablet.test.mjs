@@ -66,7 +66,7 @@ test("a leaked answer is replaced with a hint", async () => {
   });
   assert.equal(result.status, 200);
   assert.doesNotMatch(result.body.say, /\bship\b/i);
-  assert.match(result.body.say, /letter s/i);
+  assert.match(result.body.say, /s and h together say \/sh\//i);
   assert.ok(result.body.audioBase64);
   const saved = [...store.data.values()].find((v) => v.kind === "tablet-help");
   assert.equal(saved.kids[0], "max");
@@ -169,6 +169,44 @@ test("a silent e word gets that hint instead of a generic one", async () => {
   assert.match(result.body.say, /e at the end is silent/i);
   assert.match(result.body.say, /vowel|a\?/);
   assert.doesNotMatch(result.body.say, /\bcake\b/i);
+});
+
+test("she stays she, with the sh sound, and is not renamed friends", async () => {
+  const store = memoryStore();
+  let n = 0;
+  const replies = [
+    { saw: "the word she", say: "That word has a silent letter. Can you find it?", answer: "she", kind: "word" },
+    { saw: "the word she", say: "The silent letter is at the end. Can you find it?", answer: "she", kind: "word" },
+    { saw: "the word friends", say: "The silent letter is the D. The word is friends.", answer: "friends", kind: "word" }
+  ];
+  const impl = fetchImpl(null);
+  const fetchStep = async (url, opts) => {
+    if (String(url).includes("/chat/completions")) {
+      return jsonResponse({ choices: [{ message: { content: JSON.stringify(replies[n++] || replies[2]) } }] });
+    }
+    return impl(url, opts);
+  };
+  const first = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, cropBase64: image, question: "I need help with this word." }
+  });
+  assert.match(first.body.say, /s and h together say \/sh\//i);
+  assert.doesNotMatch(first.body.say, /silent/i);
+  assert.doesNotMatch(first.body.say, /\bfriends\b/i);
+  const second = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "Is it the H?" }
+  });
+  assert.doesNotMatch(second.body.say, /silent/i);
+  assert.doesNotMatch(second.body.say, /\bfriends\b/i);
+  const third = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "No" }
+  });
+  assert.equal(third.body.revealed, true);
+  assert.match(third.body.say, /the word is she/i);
+  assert.doesNotMatch(third.body.say, /\bfriends\b/i);
+  assert.doesNotMatch(third.body.say, /\bD\b/);
 });
 
 test("Joyce agrees when the child says the word", async () => {

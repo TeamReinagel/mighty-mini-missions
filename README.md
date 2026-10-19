@@ -112,8 +112,8 @@ The app is `joyce-tablet/`. Install `joyce-tablet/app/build/outputs/apk/debug/ap
 On the tablet, a grown-up:
 
 1. Opens **Joyce**, taps the child's name, and enters the site address and `JOYCE_TABLET_KEY`. **Test the key** should say the key works. Redeploy the site after adding the key.
-2. Taps **Turn Joyce on** and allows Joyce to show over other apps. Allow notifications too, so the tablet can show that the screen is shared.
-3. The first time a child taps her picture, Android asks to share the whole screen. Leave that on for the learning block. Turn Joyce off, or tap **Stop sharing**, when the block is done. The prompt comes back after a restart.
+2. Taps **Turn Joyce on** and allows Joyce to show over other apps.
+3. Taps **Allow screen pictures**. That opens Accessibility. Turn Joyce on there once. If the switch is gray, open Apps, tap the three dots on Joyce, and allow restricted settings. Family Link may ask for a parent. After that, a child can tap her without the share button. Until that switch is on, the first tap in a learning block still asks Android to share the screen.
 
 Then the child taps her picture, points, and talks. Joyce answers when they pause. They keep talking until they reach the word. **I got it** closes the talk. Connor's iPad can't run this. The same app works on his Android tablet later: pick his name on that device.
 

@@ -47,12 +47,14 @@ class MainActivity : AppCompatActivity() {
         }
         binding.test.setOnClickListener { testKey() }
         binding.update.setOnClickListener { updateJoyce() }
+        binding.screen.setOnClickListener { allowScreenPictures() }
     }
 
     override fun onResume() {
         super.onResume()
         binding.power.text = if (BubbleService.running) "Turn Joyce off" else "Turn Joyce on"
         if (BubbleService.running) BubbleService.instance?.setBubbleVisible(true)
+        refreshScreenButton()
         lookForUpdate(quiet = true)
     }
 
@@ -94,7 +96,26 @@ class MainActivity : AppCompatActivity() {
         }
         ContextCompat.startForegroundService(this, Intent(this, BubbleService::class.java))
         binding.power.text = "Turn Joyce off"
-        status("Joyce is on. The first tap asks Android to share the whole screen. Leave that on for the learning block.")
+        status(
+            if (JoyceAccessibilityService.enabled(this)) {
+                "Joyce is on. A child can tap her without the share button."
+            } else {
+                "Joyce is on. Tap Allow screen pictures once so the kids skip the share button."
+            }
+        )
+    }
+
+    private fun refreshScreenButton() {
+        binding.screen.text = if (JoyceAccessibilityService.enabled(this)) "Screen pictures are on" else "Allow screen pictures"
+    }
+
+    private fun allowScreenPictures() {
+        if (JoyceAccessibilityService.enabled(this)) {
+            status("Screen pictures are on. The kids can tap Joyce without the share button.")
+            return
+        }
+        status("Turn Joyce on. If the switch is gray, open Apps, tap the three dots on Joyce, and allow restricted settings. Family Link may ask for a parent.")
+        JoyceAccessibilityService.openSettings(this)
     }
 
     private fun stopJoyce() {
