@@ -60,50 +60,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:visibility="gone">
+            android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/gotIt"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="88dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/teal"
+                android:background="@color/teal"
                 android:contentDescription="@string/got_it"
-                android:minHeight="76dp"
-                android:text="@string/got_it"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:padding="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_got_it"
+                android:tint="@android:color/white"
+                android:visibility="gone" />
 
-            <Button
-                android:id="@+id/stuck"
+            <ImageButton
+                android:id="@+id/back"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="88dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/teal"
-                android:contentDescription="@string/still_stuck"
-                android:minHeight="76dp"
-                android:text="@string/still_stuck"
-                android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:background="@color/sand"
+                android:contentDescription="@string/back_to_app"
+                android:padding="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_back"
+                android:tint="@color/ink" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/back"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/sand"
-            android:contentDescription="@string/back_to_app"
-            android:minHeight="56dp"
-            android:text="@string/back_to_app"
-            android:textAllCaps="false"
-            android:textColor="@color/ink"
-            android:textSize="18sp" />
     </LinearLayout>
 </LinearLayout>

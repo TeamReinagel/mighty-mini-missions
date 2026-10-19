@@ -45,6 +45,10 @@ class HelpPanel(
     private var audioFile: File? = null
     private var heard = ""
     private val transcript = StringBuilder()
+    private var noise = 600
+    private var heardSpeech = false
+    private var speechStarted = 0L
+    private var quietStarted = 0L
     private var listen = false
     private var sessionId: String? = null
     private var hintsUsed = 0
@@ -61,17 +65,13 @@ class HelpPanel(
         bitmap = image
         showing = true
         paint(binding.ask)
-        paint(binding.gotIt)
-        paint(binding.stuck)
-        binding.back.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E4DDD0"))
-        binding.back.setTextColor(Color.parseColor("#243036"))
         liftAboveSystemBars()
         binding.hint.movementMethod = ScrollingMovementMethod.getInstance()
-        binding.mark.onMarked = { binding.ask.isEnabled = true }
+        binding.mark.onMarked = { if (!canHear()) binding.ask.isEnabled = true }
         binding.ask.isEnabled = false
+        if (canHear()) binding.ask.visibility = android.view.View.GONE
         binding.ask.setOnClickListener { ask(followUp = !sessionId.isNullOrBlank()) }
         binding.gotIt.setOnClickListener { finishOutcome("got-it") }
-        binding.stuck.visibility = android.view.View.GONE
         binding.back.setOnClickListener { dismiss(sendLeft = true) }
         binding.mark.image = image
         try {
@@ -170,9 +170,15 @@ class HelpPanel(
         binding.ask.isEnabled = false
         binding.ask.text = "Joyce is thinking"
         binding.heard.text = "Joyce is thinking"
-        binding.outcome.visibility = android.view.View.GONE
+        binding.gotIt.visibility = android.view.View.GONE
         val question = heard.trim()
         val audio = if (question.isEmpty()) readAudio() else null
+        if (canHear() && question.isEmpty() && audio == null) {
+            sending = false
+            binding.mark.locked = false
+            beginListening()
+            return
+        }
         val marked = Pictures.marked(picture, mark)
         val crop = Pictures.crop(picture, mark)
         val imageB64 = Pictures.jpeg(marked, 1280, 60)
@@ -206,16 +212,19 @@ class HelpPanel(
             binding.mark.locked = false
             speak(result.error, null)
             if (sessionId.isNullOrBlank()) {
-                binding.ask.visibility = android.view.View.VISIBLE
-                binding.ask.isEnabled = binding.mark.mark != null
-                binding.ask.text = context.getString(R.string.ask_joyce)
-                binding.outcome.visibility = android.view.View.GONE
+                if (!canHear()) {
+                    binding.ask.visibility = android.view.View.VISIBLE
+                    binding.ask.isEnabled = binding.mark.mark != null
+                    binding.ask.text = context.getString(R.string.ask_joyce)
+                }
+                binding.gotIt.visibility = android.view.View.GONE
             } else {
-                binding.ask.visibility = android.view.View.VISIBLE
-                binding.ask.isEnabled = true
-                binding.ask.text = context.getString(R.string.tell_joyce)
-                binding.outcome.visibility = android.view.View.VISIBLE
-                beginListening()
+                binding.gotIt.visibility = android.view.View.VISIBLE
+                if (canHear()) beginListening() else {
+                    binding.ask.visibility = android.view.View.VISIBLE
+                    binding.ask.isEnabled = true
+                    binding.ask.text = context.getString(R.string.ask_joyce)
+                }
             }
             return
         }
@@ -225,18 +234,18 @@ class HelpPanel(
         if (result.question.isNotBlank()) addLine("You", result.question)
         addLine("Joyce", result.say)
         binding.heard.visibility = android.view.View.VISIBLE
-        binding.outcome.visibility = android.view.View.VISIBLE
-        binding.stuck.visibility = android.view.View.GONE
+        binding.gotIt.visibility = android.view.View.VISIBLE
+        binding.ask.visibility = if (canHear()) android.view.View.GONE else android.view.View.VISIBLE
         if (result.revealed) {
-            binding.ask.visibility = android.view.View.GONE
             binding.mark.locked = true
             binding.heard.text = "You got there."
         } else {
             binding.mark.locked = false
-            binding.ask.visibility = android.view.View.VISIBLE
-            binding.ask.isEnabled = true
-            binding.ask.text = context.getString(R.string.tell_joyce)
-            binding.heard.text = "Your turn. Say what you think, then tap Tell Joyce."
+            if (!canHear()) {
+                binding.ask.isEnabled = true
+                binding.ask.text = context.getString(R.string.ask_joyce)
+            }
+            binding.heard.text = if (canHear()) "Joyce is listening." else "Tap Ask Joyce when you are ready."
         }
         if (result.audioBase64.isBlank()) {
             if (!result.revealed) beginListening()
@@ -285,6 +294,7 @@ class HelpPanel(
 
     private fun stopListening() {
         listen = false
+        handler.removeCallbacks(listenPoll)
         val rec = recorder
         recorder = null
         if (rec != null) {
@@ -325,13 +335,58 @@ class HelpPanel(
         }
     }
 
+    private fun canHear() = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+
+    private val listenPoll = Runnable { pollSound() }
+
     private fun beginListening() {
-        if (closed || revealed) return
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) return
+        if (closed || revealed || sending) return
+        if (!canHear()) return
         stopListening()
         audioFile?.delete()
+        noise = 600
+        heardSpeech = false
+        speechStarted = 0L
+        quietStarted = 0L
         listen = true
         startRecorder()
+        binding.heard.text = if (binding.mark.mark == null) "Tap the word, then just tell Joyce." else "Joyce is listening."
+        handler.postDelayed(listenPoll, 160)
+    }
+
+    private fun pollSound() {
+        if (!listen || closed || sending || revealed) return
+        val amp = try {
+            recorder?.maxAmplitude ?: 0
+        } catch (_: Exception) {
+            0
+        }
+        val now = android.os.SystemClock.uptimeMillis()
+        val loud = amp > max(noise * 3, 1200)
+        if (!heardSpeech) {
+            if (loud) {
+                heardSpeech = true
+                speechStarted = now
+                quietStarted = 0L
+                binding.heard.text = "Joyce hears you."
+            } else if (amp in 1..4999) {
+                noise = ((noise * 7 + amp) / 8).coerceAtLeast(300)
+            }
+        } else if (!loud) {
+            if (quietStarted == 0L) quietStarted = now
+            if (now - quietStarted > 900 && now - speechStarted > 450) {
+                if (binding.mark.mark == null) {
+                    binding.heard.text = "Tap the word, then just tell Joyce."
+                    beginListening()
+                } else {
+                    ask(followUp = !sessionId.isNullOrBlank())
+                }
+                return
+            }
+        } else {
+            quietStarted = 0L
+        }
+        handler.postDelayed(listenPoll, 120)
     }
 
     private fun speak(text: String, audioBase64: String?) {

@@ -117,5 +117,14 @@
             android:layout_marginTop="8dp"
             android:minHeight="56dp"
             android:text="Test the key" />
+
+        <Button
+            android:id="@+id/update"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:minHeight="56dp"
+            android:text="Get the newest Joyce" />
     </LinearLayout>
 </ScrollView>

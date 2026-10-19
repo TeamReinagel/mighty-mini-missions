@@ -115,7 +115,9 @@ On the tablet, a grown-up:
 2. Taps **Turn Joyce on** and allows Joyce to show over other apps. Allow notifications too, so the tablet can show that the screen is shared.
 3. The first time a child taps her picture, Android asks to share the whole screen. Leave that on for the learning block. Turn Joyce off, or tap **Stop sharing**, when the block is done. The prompt comes back after a restart.
 
-Then the child taps her picture, points, and taps **Ask Joyce**. They answer out loud and tap **Tell Joyce**. She keeps going until they reach the word. **I got it** closes the talk. Connor's iPad can't run this. The same app works on his Android tablet later: pick his name on that device.
+Then the child taps her picture, points, and talks. Joyce answers when they pause. They keep talking until they reach the word. **I got it** closes the talk. Connor's iPad can't run this. The same app works on his Android tablet later: pick his name on that device.
+
+**Get the newest Joyce**, on the grown-up screen, reads `joyce-latest.json` on the site. That file names the version and a download link. The link can be a Google Drive share link (set sharing to anyone with the link) or `/downloads/joyce.apk` on this site. If the version is newer, the tablet downloads it and Android asks to install. Allow Joyce to install unknown apps when the tablet asks. Family Link may still ask a parent for that one setting.
 
 ### Preview or send a report any time
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`

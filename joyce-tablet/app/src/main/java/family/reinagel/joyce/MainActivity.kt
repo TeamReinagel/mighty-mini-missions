@@ -46,12 +46,14 @@ class MainActivity : AppCompatActivity() {
             if (BubbleService.running) stopJoyce() else startJoyce()
         }
         binding.test.setOnClickListener { testKey() }
+        binding.update.setOnClickListener { updateJoyce() }
     }
 
     override fun onResume() {
         super.onResume()
         binding.power.text = if (BubbleService.running) "Turn Joyce off" else "Turn Joyce on"
         if (BubbleService.running) BubbleService.instance?.setBubbleVisible(true)
+        lookForUpdate(quiet = true)
     }
 
     private fun select(id: String, kids: List<Button>) {
@@ -116,6 +118,84 @@ class MainActivity : AppCompatActivity() {
         thread {
             val message = JoyceClient.ping(site, key)
             runOnUiThread { status(message) }
+        }
+    }
+
+    private fun lookForUpdate(quiet: Boolean) {
+        val site = Prefs.cleanSite(binding.site.text.toString())
+        if (!Prefs.siteOk(site)) return
+        thread {
+            val offer = try {
+                Updater.look(site)
+            } catch (_: Exception) {
+                null
+            }
+            if (isFinishing) return@thread
+            val installed = Updater.installedCode(this)
+            runOnUiThread {
+                if (isFinishing) return@runOnUiThread
+                if (offer != null && offer.versionCode > installed) {
+                    binding.update.text = "Install Joyce ${offer.versionName}"
+                    if (!quiet) status("A newer Joyce is ready.")
+                } else if (!quiet) {
+                    binding.update.text = "Get the newest Joyce"
+                    status(if (offer == null) "Joyce couldn't find an update." else "Joyce is already the newest one.")
+                }
+            }
+        }
+    }
+
+    private fun updateJoyce() {
+        val site = Prefs.cleanSite(binding.site.text.toString())
+        val key = binding.key.text.toString().trim()
+        Prefs.save(this, selectedKid, site, key)
+        if (!Prefs.siteOk(site)) {
+            status("Add the site address first.")
+            return
+        }
+        if (Build.VERSION.SDK_INT >= 26 && !packageManager.canRequestPackageInstalls()) {
+            status("Allow Joyce to install updates, then tap the button again.")
+            startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+            return
+        }
+        status("Looking for a newer Joyce...")
+        binding.update.isEnabled = false
+        thread {
+            val offer = try {
+                Updater.look(site)
+            } catch (_: Exception) {
+                null
+            }
+            val installed = Updater.installedCode(this)
+            if (offer == null || offer.versionCode <= installed) {
+                runOnUiThread {
+                    if (isFinishing) return@runOnUiThread
+                    binding.update.isEnabled = true
+                    binding.update.text = "Get the newest Joyce"
+                    status(if (offer == null) "Joyce couldn't find an update." else "Joyce is already the newest one.")
+                }
+                return@thread
+            }
+            runOnUiThread { if (!isFinishing) status("Downloading Joyce ${offer.versionName}...") }
+            val file = try {
+                Updater.download(applicationContext, offer.url)
+            } catch (_: Exception) {
+                null
+            }
+            runOnUiThread {
+                if (isFinishing) return@runOnUiThread
+                binding.update.isEnabled = true
+                if (file == null) {
+                    status("The download didn't work. If the file is on Google Drive, share it so anyone with the link can view it.")
+                } else {
+                    status("Tap Install on the next screen.")
+                    try {
+                        Updater.install(this, file)
+                    } catch (_: Exception) {
+                        status("Joyce downloaded, but the tablet wouldn't open the installer.")
+                    }
+                }
+            }
         }
     }
 
