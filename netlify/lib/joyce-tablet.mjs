@@ -19,21 +19,29 @@ const FALLBACK = {
   other: "Look at the part you marked and tell me what you notice."
 };
 
-export const HINT_SYSTEM = `You help a young child who is stuck on a tablet app during homeschool. You are Joyce, a warm teacher sitting beside them. This is a conversation. On this turn you say one teaching move, then wait for their answer. You do not give the whole answer yet.
+export const HINT_SYSTEM = `You are Joyce, an early-elementary teacher trained in structured literacy. A child in kindergarten, first grade, or second grade is stuck on one marked spot. You teach that spot the way you would beside them at the table. One move this turn, then wait. You do not give the whole answer yet.
 
-They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark.
+They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark. Read those letters. Teach only that word or problem.
+
+For a word, follow this routine. One step per turn.
+1. Tell the hardest spelling in this word and the sound it uses here. Then ask the child to say only that sound. You tell the sound. Do not ask them to discover it.
+2. If they say that sound, say yes and ask for the next sound, from left to right.
+3. If they say a different sound, say the sound this word uses and ask them to repeat it. Do not say yes, great, or that's right. Do not move to another letter.
+4. When the sounds are known, ask them to put the sounds together. Still do not say the whole word.
+
+How to choose the hardest spelling:
+- Two letters that make one sound, such as sh, ch, or th: "S and h together say /sh/. Say /sh/."
+- A vowel team: "O and u say /ow/ in this word. Say /ow/." O and u usually say /ow/ here. /oh/ is a different sound. Do not praise /oh/ for that spelling.
+- A letter with more than one sound: say how many, and which sound this word uses. "A can say 3 sounds. In this one it says /ah/. Say /ah/."
+- A silent e only when this word really ends in a silent e: "That e at the end is silent. It makes the vowel say its name. Say that sound."
+- Sight words and irregular words, including a word they called a sight word: do not use phonics that are not in the word. Teach the parts that follow the rules. For the part that does not, say "This part says /e/ in this word. Say /e/."
+
+For a math problem, use the same shape. Tell the first small step, ask them to do it, correct a wrong step, then take the next step. Do not say the number that belongs in the blank.
 
 Rules for "say":
 - One or two short sentences they can hear out loud. One sentence for age 3 or 4. Start with their name once, then stop using it every turn.
-- Respond to what they just said. If they got a piece right, say yes and ask the next piece. If they guessed wrong, correct that piece kindly.
-- Use a pattern that is actually in this exact word. Read the letters in the close-up. The answer is those letters, not a different word.
-  - A letter with more than one sound: say how many, and which sound this word uses. "A can say 3 sounds. In this one it says /ah/."
-  - A silent e only when this word really ends in a silent e: "That e at the end is silent. What does it do to the vowel in the word?"
-  - Two letters that make one sound, such as sh, ch, or th: name those letters and the sound, then ask about the rest.
-- Do not mention a silent letter unless that letter is silent in this word.
 - Never ask a question that could fit any word. Do not say "what sounds do you hear", "sound it out", or "look at the beginning and the middle".
-- Sight words and irregular words, including a word they called a sight word: do not use phonics that are not in the word. Notice a part they can see.
-- Do not say the whole answer word yet, and do not say the number that belongs in the blank.
+- Do not mention a silent letter unless that letter is silent in this word.
 - Never say a sample word from these instructions unless those exact letters are in the close-up.
 - Do not tell them which button to tap as the correct choice.
 - Do not repeat a hint you already gave.
@@ -45,12 +53,12 @@ Rules for "kind": "word", "math", or "other".
 
 Reply with JSON only: {"saw":"", "say":"", "answer":"", "kind":"word|math|other"}`;
 
-export const REVEAL_SYSTEM = `You help a young child who is stuck on a tablet app during homeschool. You are Joyce, a warm teacher. You have been talking this through together. Now bring them to the answer in the same conversation.
+export const REVEAL_SYSTEM = `You are Joyce, an early-elementary teacher. You have been teaching one word or problem, one sound or step at a time. Now say the answer.
 
 They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark.
 
 Rules for "say":
-- One or two short sentences. Respond to what they just said, then say the answer that is in the picture.
+- One or two short sentences. If they just said the right sound, say yes, put the sounds together, and say the actual answer.
 - Say the actual answer. Do not ask another question. Do not tell them to sound it out or to get a grown-up.
 - Do not name any word except the one in the close-up. Do not invent a silent letter on the way to the answer.
 - If you truly cannot see an answer, ask them to point closer.
@@ -121,6 +129,51 @@ const DIGRAPHS = [
   ["ph", "p and h", "/f/"]
 ];
 
+const VOWEL_SOUNDS = {
+  oh: "/oh/",
+  ow: "/ow/",
+  oo: "/oo/",
+  ah: "/ah/",
+  ay: "/ay/",
+  ee: "/ee/",
+  eye: "/eye/",
+  aw: "/aw/",
+  uh: "/uh/"
+};
+
+function vowelTeam(word) {
+  if (!word) return null;
+  if (/ou[bcdfmnpqrstvwxyz]/.test(word) && !/^(group|soup|you|youth|young|cousin|wound|through)$/.test(word)) {
+    return { names: "o and u", sound: "/ow/" };
+  }
+  if (/oa/.test(word)) return { names: "o and a", sound: "/oh/" };
+  if (/ai/.test(word) && !/air/.test(word)) return { names: "a and i", sound: "/ay/" };
+  if (/ee/.test(word)) return { names: "e and e", sound: "/ee/" };
+  if (/igh/.test(word)) return { names: "i, g, and h", sound: "/eye/" };
+  return null;
+}
+
+function vowelSounds(text) {
+  const raw = String(text || "").toLowerCase();
+  const found = [];
+  for (const match of raw.matchAll(/\/([^/\s]+)\//g)) {
+    const sound = VOWEL_SOUNDS[match[1]];
+    if (sound) found.push(sound);
+  }
+  for (const token of raw.split(/[^a-z]+/)) {
+    if (VOWEL_SOUNDS[token]) found.push(VOWEL_SOUNDS[token]);
+  }
+  return found;
+}
+
+function teamCorrection(question, answer, name) {
+  const team = vowelTeam(wordOf(answer));
+  if (!team) return "";
+  const said = vowelSounds(question);
+  if (!said.length || said.includes(team.sound)) return "";
+  return `${name}, ${team.names} can say ${said[0]}. In this word they say ${team.sound}.`;
+}
+
 function hintFits(say, answer, kind) {
   const word = wordOf(answer);
   if (!say || leaked(say, answer) || GENERIC_HINT.test(say)) return false;
@@ -137,17 +190,19 @@ function concreteHint(answer, kind, name, earlier = []) {
   const said = earlier.join(" ").toLowerCase();
   if (kind === "word" && magicE(word) && !/silent/.test(said)) {
     const vowel = word.match(/[aeiou]/)[0];
-    return `${name}, that e at the end is silent. What does it do to the ${vowel}?`;
+    return `${name}, that e at the end is silent. It makes the vowel ${vowel} say its name. Say that sound.`;
   }
   const digraph = kind === "word" ? DIGRAPHS.find(([letters]) => word.includes(letters)) : null;
   if (digraph && !said.includes(digraph[2])) {
-    const rest = word.replace(digraph[0], "");
-    if (rest.length === 1) return `${name}, ${digraph[1]} together say ${digraph[2]}. What does the ${rest} say?`;
-    return `${name}, ${digraph[1]} together say ${digraph[2]}. What does the rest of the word say?`;
+    return `${name}, ${digraph[1]} together say ${digraph[2]}. Say ${digraph[2]}.`;
   }
   if (digraph) {
     const rest = word.replace(digraph[0], "");
-    if (rest.length === 1) return `${name}, the ${rest} says its name. Put that with ${digraph[2]}.`;
+    if (rest.length === 1) return `${name}, the ${rest} says its name. Say that sound.`;
+  }
+  const team = kind === "word" ? vowelTeam(word) : null;
+  if (team && !said.includes(team.sound)) {
+    return `${name}, ${team.names} together say ${team.sound} in this word. Say ${team.sound}.`;
   }
   const first = word[0];
   if (kind === "word" && first) {
@@ -166,7 +221,19 @@ function agreeLine(name, answer, kind) {
   return `${name}, yes. The word is ${answer}.`;
 }
 
-function spokenHint(raw, answer, kind, name, earlier = []) {
+function routineCue(earlier, question, answer) {
+  if (teamCorrection(question, answer, "Child")) {
+    return "Their sound does not match this word. Tell them the sound this spelling uses here, and ask them to say it. Do not praise the sound they said. Do not switch letters. Do not say the word.";
+  }
+  if (!earlier.length) {
+    return "First move. Tell the sound of the hardest spelling in this word, then ask them to say only that sound. Do not ask them to discover the sound. Do not say the word.";
+  }
+  return "Next move. If the sound they just said matches this word, say yes and ask for the next sound from left to right. If the sounds are known, ask them to put the sounds together. Do not say the whole word yet.";
+}
+
+function spokenHint(raw, answer, kind, name, earlier = [], question = "") {
+  const correction = teamCorrection(question, answer, name);
+  if (correction) return correction;
   const say = clip(raw, 320);
   if (hintFits(say, answer, kind)) return say;
   return concreteHint(answer, kind, name, earlier);
@@ -425,7 +492,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     if (childSaidIt(question, pointer.answer)) {
       return agreeAnswer({ store, env, fetchImpl, pointer, kid, question });
     }
-    if ((pointer.hints || []).length >= HINT_LIMIT) {
+    if ((pointer.hints || []).length >= HINT_LIMIT && !teamCorrection(question, pointer.answer, kid.name)) {
       return revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, question });
     }
   }
@@ -437,7 +504,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     kid.note ? `Note: ${kid.note}` : "",
     question ? `They just said: "${question}"` : "They just said: (nothing yet; they only pointed)",
     pointer?.answer ? `The marked answer is "${pointer.answer}". Teach only that. Do not name a different word.` : "",
-    `This is turn ${earlier.length + 1} of the conversation. Respond to what they just said. One pattern that is really in this word, then a question. Do not say the whole answer yet.`,
+    routineCue(earlier, question, pointer?.answer || ""),
     /sight word/i.test(question) ? "They called this a sight word. Do not use phonics that are not in the word." : "",
     earlier.length ? `You already said: ${earlier.map((h) => `"${h}"`).join(" ")} Continue from their answer. Do not repeat yourself.` : ""
   ].filter(Boolean).join("\n");
@@ -464,7 +531,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     const seen = clip(out.answer, 48);
     if (pointer?.answer && wordOf(pointer.answer)) answer = pointer.answer;
     else if (seen) answer = seen;
-    say = spokenHint(out.say, answer, kind, kid.name, earlier);
+    say = spokenHint(out.say, answer, kind, kid.name, earlier, question);
     savedKind = pointer?.kind || kind;
   } catch {
     say = "Joyce couldn't see that clearly. Point a little closer and try again.";

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Outline
 import android.graphics.PixelFormat
 import android.media.MediaRecorder
 import android.media.MediaPlayer
@@ -14,9 +15,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Base64
 import android.text.method.ScrollingMovementMethod
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewOutlineProvider
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.media.AudioAttributes
@@ -50,6 +54,8 @@ class HelpPanel(
     private var speechStarted = 0L
     private var quietStarted = 0L
     private var listen = false
+    private var earPulse: ObjectAnimator? = null
+    private var thinkStep = 0
     private var sessionId: String? = null
     private var hintsUsed = 0
     private var revealed = false
@@ -73,6 +79,12 @@ class HelpPanel(
         binding.ask.setOnClickListener { ask(followUp = !sessionId.isNullOrBlank()) }
         binding.gotIt.setOnClickListener { finishOutcome("got-it") }
         binding.back.setOnClickListener { dismiss(sendLeft = true) }
+        binding.face.outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                outline.setOval(0, 0, view.width, view.height)
+            }
+        }
+        binding.face.clipToOutline = true
         binding.mark.image = image
         try {
             windowManager.addView(binding.root, layoutParams())
@@ -179,6 +191,7 @@ class HelpPanel(
             beginListening()
             return
         }
+        showThinking()
         val marked = Pictures.marked(picture, mark)
         val crop = Pictures.crop(picture, mark)
         val imageB64 = Pictures.jpeg(marked, 1280, 60)
@@ -206,6 +219,7 @@ class HelpPanel(
     }
 
     private fun showHint(result: JoyceClient.HintResult) {
+        hideThinking()
         binding.hint.visibility = android.view.View.VISIBLE
         if (result.error != null) {
             binding.hint.text = result.error
@@ -294,6 +308,8 @@ class HelpPanel(
 
     private fun stopListening() {
         listen = false
+        hideListening()
+        hideThinking()
         handler.removeCallbacks(listenPoll)
         val rec = recorder
         recorder = null
@@ -350,8 +366,67 @@ class HelpPanel(
         quietStarted = 0L
         listen = true
         startRecorder()
+        if (recorder == null) {
+            listen = false
+            return
+        }
+        showListening(hearing = false)
         binding.heard.text = if (binding.mark.mark == null) "Tap the word, then just tell Joyce." else "Joyce is listening."
         handler.postDelayed(listenPoll, 160)
+    }
+
+    private val thinkTick: Runnable = Runnable {
+        val dots = listOf(binding.dot1, binding.dot2, binding.dot3)
+        dots.forEachIndexed { index, dot ->
+            dot.alpha = if (index == thinkStep) 1f else 0.25f
+        }
+        thinkStep = (thinkStep + 1) % dots.size
+        handler.postDelayed(thinkTick, 350)
+    }
+
+    private fun showThinking() {
+        earPulse?.cancel()
+        binding.ear.visibility = View.GONE
+        binding.status.visibility = View.VISIBLE
+        binding.thinking.visibility = View.VISIBLE
+        handler.removeCallbacks(thinkTick)
+        thinkStep = 0
+        handler.post(thinkTick)
+    }
+
+    private fun hideThinking() {
+        handler.removeCallbacks(thinkTick)
+        binding.thinking.visibility = View.GONE
+        if (binding.ear.visibility != View.VISIBLE) binding.status.visibility = View.GONE
+    }
+
+    private fun showListening(hearing: Boolean) {
+        hideThinking()
+        binding.status.visibility = View.VISIBLE
+        binding.ear.visibility = View.VISIBLE
+        binding.ear.setImageResource(if (hearing) R.drawable.ic_ear_waves else R.drawable.ic_ear)
+        binding.ear.contentDescription = if (hearing) "Joyce hears you" else context.getString(R.string.listening)
+        if (hearing) {
+            earPulse?.cancel()
+            binding.ear.alpha = 1f
+            return
+        }
+        if (earPulse?.isRunning == true) return
+        binding.ear.alpha = 1f
+        earPulse = ObjectAnimator.ofFloat(binding.ear, View.ALPHA, 1f, 0.35f).apply {
+            duration = 650
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+            start()
+        }
+    }
+
+    private fun hideListening() {
+        earPulse?.cancel()
+        earPulse = null
+        binding.ear.alpha = 1f
+        binding.ear.visibility = View.GONE
+        if (binding.thinking.visibility != View.VISIBLE) binding.status.visibility = View.GONE
     }
 
     private fun pollSound() {
@@ -368,6 +443,7 @@ class HelpPanel(
                 heardSpeech = true
                 speechStarted = now
                 quietStarted = 0L
+                showListening(hearing = true)
                 binding.heard.text = "Joyce hears you."
             } else if (amp in 1..4999) {
                 noise = ((noise * 7 + amp) / 8).coerceAtLeast(300)
@@ -411,6 +487,7 @@ class HelpPanel(
     }
 
     private fun play(audioBase64: String, thenClose: Boolean, thenListen: Boolean) {
+        hideThinking()
         stopListening()
         try {
             val file = File(context.cacheDir, "joyce-say.mp3")

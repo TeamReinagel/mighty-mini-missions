@@ -21,6 +21,62 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <FrameLayout
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/ear"
+                android:layout_width="140dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/listening"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_ear" />
+
+            <LinearLayout
+                android:id="@+id/thinking"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:contentDescription="@string/thinking"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/face"
+                    android:layout_width="84dp"
+                    android:layout_height="84dp"
+                    android:contentDescription="@string/thinking"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/joyce_avatar" />
+
+                <ImageView
+                    android:id="@+id/dot1"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="14dp"
+                    android:src="@drawable/ic_dot" />
+
+                <ImageView
+                    android:id="@+id/dot2"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_dot" />
+
+                <ImageView
+                    android:id="@+id/dot3"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_dot" />
+            </LinearLayout>
+        </FrameLayout>
+
         <TextView
             android:id="@+id/heard"
             android:layout_width="match_parent"

@@ -156,6 +156,8 @@ test("sight-word help does not tell the child to sound the word out", () => {
   assert.match(HINT_SYSTEM, /do not use phonics/i);
   assert.match(HINT_SYSTEM, /3 sounds/);
   assert.match(HINT_SYSTEM, /e at the end is silent/);
+  assert.match(HINT_SYSTEM, /structured literacy/i);
+  assert.match(HINT_SYSTEM, /Say only that sound|say only that sound/);
   assert.match(REVEAL_SYSTEM, /Say the actual answer/);
 });
 
@@ -207,6 +209,42 @@ test("she stays she, with the sh sound, and is not renamed friends", async () =>
   assert.match(third.body.say, /the word is she/i);
   assert.doesNotMatch(third.body.say, /\bfriends\b/i);
   assert.doesNotMatch(third.body.say, /\bD\b/);
+});
+
+test("ou in pounds says ow, so oh is corrected instead of praised", async () => {
+  const store = memoryStore();
+  let n = 0;
+  const replies = [
+    { saw: "the word pounds", say: "Do you see the letters ou? What sound do they make together?", answer: "pounds", kind: "word" },
+    { saw: "the word pounds", say: "Great! Now, what does the letter p make?", answer: "pounds", kind: "word" },
+    { saw: "the word pounds", say: "That's right. The word is pounds.", answer: "pounds", kind: "word" }
+  ];
+  const impl = fetchImpl(null);
+  const fetchStep = async (url, opts) => {
+    if (String(url).includes("/chat/completions")) {
+      return jsonResponse({ choices: [{ message: { content: JSON.stringify(replies[n++] || replies[2]) } }] });
+    }
+    return impl(url, opts);
+  };
+  const first = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, cropBase64: image, question: "I need help with this word." }
+  });
+  const second = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
+  });
+  assert.equal(second.body.revealed, undefined);
+  assert.match(second.body.say, /in this word they say \/ow\//i);
+  assert.doesNotMatch(second.body.say, /great|that's right/i);
+  assert.doesNotMatch(second.body.say, /\bpounds\b/i);
+  const third = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
+  });
+  assert.notEqual(third.body.revealed, true);
+  assert.match(third.body.say, /\/ow\//i);
+  assert.doesNotMatch(third.body.say, /\bpounds\b/i);
 });
 
 test("Joyce agrees when the child says the word", async () => {

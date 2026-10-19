@@ -3,6 +3,8 @@
     <string name="app_name">Joyce</string>
     <string name="accessibility_description">Joyce takes one picture when a child taps her for help. She does not watch the screen the rest of the time.</string>
     <string name="ask_joyce">Ask Joyce</string>
+    <string name="listening">Joyce is listening</string>
+    <string name="thinking">Joyce is thinking</string>
     <string name="got_it">I got it</string>
     <string name="still_stuck">Still stuck</string>
     <string name="tell_me">Tell me</string>
