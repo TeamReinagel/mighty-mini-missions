@@ -235,7 +235,8 @@ test("ou in pounds says ow, so oh is corrected instead of praised", async () => 
     body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
   });
   assert.equal(second.body.revealed, undefined);
-  assert.match(second.body.say, /in this word they say \/ow\//i);
+  assert.match(second.body.say, /starts with the letter p/i);
+  assert.match(second.body.say, /\/ow\//i);
   assert.doesNotMatch(second.body.say, /great|that's right/i);
   assert.doesNotMatch(second.body.say, /\bpounds\b/i);
   const third = await handleTabletRequest({
@@ -259,7 +260,8 @@ test("pounds does not start with o or ow", async () => {
     }),
     body: { kid: "max", imageBase64: image, question: "what is this word" }
   });
-  assert.match(result.body.say, /in the middle, not at the beginning/i);
+  assert.match(result.body.say, /starts with the letter p/i);
+  assert.match(result.body.say, /in the middle/i);
   assert.match(result.body.say, /\/ow\//);
   assert.doesNotMatch(result.body.say, /starts with the letter o/i);
   assert.doesNotMatch(result.body.say, /\bpounds\b/i);

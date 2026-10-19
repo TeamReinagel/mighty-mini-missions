@@ -191,13 +191,48 @@ function vowelSounds(text) {
   return found;
 }
 
+function focusWord(say, answer) {
+  const text = String(say || "");
+  const skip = new Set(["you", "is", "marked", "this", "that", "they", "your", "with", "letter", "word"]);
+  const named = text.match(/\bthe word (?:is\s+)?([a-z]{3,})\b/i);
+  if (named && !skip.has(named[1].toLowerCase())) return named[1].toLowerCase();
+  const leading = text.match(/\b([a-z]{4,})\s+(?:starts|begins)\b/i);
+  if (leading && !skip.has(leading[1].toLowerCase())) return leading[1].toLowerCase();
+  return wordOf(answer);
+}
+
+function claimedStartLetter(say) {
+  const text = String(say || "").toLowerCase();
+  const patterns = [
+    /(?:starts|begins|starting|beginning) with(?: the)? letter ([a-z])\b/,
+    /(?:starts|begins) with (?!the\b|a\b|an\b)([a-z])\b/,
+    /first letter(?: is|,)? ([a-z])\b/,
+    /starting letter(?: is)? ([a-z])\b/,
+    /letter ([a-z]) (?:starts|begins|comes first|is first|is the first)/,
+    /\b([a-z]) (?:is|comes) first\b/
+  ];
+  for (const pattern of patterns) {
+    const match = text.match(pattern);
+    if (match) return match[1];
+  }
+  return "";
+}
+
+function anchoredTeamLine(word, team, name) {
+  const head = team.names.charAt(0).toUpperCase() + team.names.slice(1);
+  if (team.place === "at the beginning") {
+    return `${name}, ${team.names} are at the beginning. They say ${team.sound}. Say ${team.sound}.`;
+  }
+  return `${name}, the word starts with the letter ${word[0]}. ${head} are ${team.place}. They say ${team.sound}. Say ${team.sound}.`;
+}
+
 function teamCorrection(question, answer, name) {
-  const team = vowelTeam(wordOf(answer));
+  const word = wordOf(answer);
+  const team = vowelTeam(word);
   if (!team) return "";
   const said = vowelSounds(question);
   if (!said.length || said.includes(team.sound)) return "";
-  const where = team.place === "at the beginning" ? "" : ` They are ${team.place}, not at the beginning.`;
-  return `${name}, ${team.names} can say ${said[0]}.${where} In this word they say ${team.sound}.`;
+  return anchoredTeamLine(word, team, name);
 }
 
 function hintFits(say, answer, kind) {
@@ -209,10 +244,9 @@ function hintFits(say, answer, kind) {
   if (named && named[1].toLowerCase() !== word) return false;
   const letters = [...say.matchAll(/\bletter(?:\s+is)?(?:\s+the)?\s+([a-z])\b/gi)].map((match) => match[1].toLowerCase());
   if (!letters.every((letter) => word.includes(letter))) return false;
-  return ![...say.matchAll(/\b(?:starts|begins) with\b([^.]*)|\bfirst (?:letter|sound) is\b([^.]*)/gi)].some((match) => {
-    const chunk = `${match[1] || ""}${match[2] || ""}`.toLowerCase();
-    return chunk && !chunk.includes(word[0]);
-  });
+  const claimed = claimedStartLetter(say);
+  const focus = focusWord(say, word);
+  return !claimed || claimed === focus[0];
 }
 
 function concreteHint(answer, kind, name, earlier = []) {
@@ -231,10 +265,7 @@ function concreteHint(answer, kind, name, earlier = []) {
     if (rest.length === 1) return `${name}, the ${rest} says its name. Say that sound.`;
   }
   const team = kind === "word" ? vowelTeam(word) : null;
-  if (team && !said.includes(team.sound)) {
-    const where = team.place === "at the beginning" ? "at the beginning" : `${team.place}, not at the beginning`;
-    return `${name}, ${team.names} are ${where}. They say ${team.sound}. Say ${team.sound}.`;
-  }
+  if (team && !said.includes(team.sound)) return anchoredTeamLine(word, team, name);
   const first = word[0];
   if (kind === "word" && first) {
     return `${name}, the word you marked starts with the letter ${first}.`;
@@ -262,12 +293,26 @@ function routineCue(earlier, question, answer) {
   return "Next move. If the sound they just said is not the first letter, go back to the first letter. Tell them the word starts with that letter and ask for its sound. If the sounds are known, put them together from the first letter. Do not say the whole word yet.";
 }
 
+function scrubStart(say, answer, name) {
+  const word = focusWord(say, answer);
+  const claimed = claimedStartLetter(say);
+  if (!word || !claimed || claimed === word[0]) return say;
+  const team = vowelTeam(word);
+  if (team) return anchoredTeamLine(word, team, name);
+  return `${name}, the word starts with the letter ${word[0]}.`;
+}
+
 function spokenHint(raw, answer, kind, name, earlier = [], question = "") {
   const correction = teamCorrection(question, answer, name);
   if (correction) return correction;
+  const word = wordOf(answer);
+  const team = vowelTeam(word);
+  if (team && team.place !== "at the beginning" && !earlier.join(" ").toLowerCase().includes(`letter ${word[0]}`)) {
+    return anchoredTeamLine(word, team, name);
+  }
   const say = clip(raw, 320);
-  if (hintFits(say, answer, kind)) return say;
-  return concreteHint(answer, kind, name, earlier);
+  if (hintFits(say, answer, kind)) return scrubStart(say, answer, name);
+  return scrubStart(concreteHint(answer, kind, name, earlier), answer, name);
 }
 
 function revealLine(raw, answer, kind, name) {
@@ -277,6 +322,11 @@ function revealLine(raw, answer, kind, name) {
   const named = spoken.match(/\b(?:word|answer) is\s+([a-z]+)/i);
   const wrongWord = Boolean(word && named && named[1].toLowerCase() !== word);
   const falseSilent = Boolean(word && /silent/i.test(spoken) && !allowsSilent(word));
+  const claimed = claimedStartLetter(spoken);
+  const focus = focusWord(spoken, word);
+  if (focus && claimed && claimed !== focus[0]) {
+    return `${name}, the word starts with the letter ${focus[0]}. The word is ${focus}.`;
+  }
   if (!wrongWord && !falseSilent && secret && spoken && spoken.toLowerCase().includes(secret.toLowerCase())) return spoken;
   if (secret) {
     if (kind === "math") return `${name}, the answer is ${secret}.`;
