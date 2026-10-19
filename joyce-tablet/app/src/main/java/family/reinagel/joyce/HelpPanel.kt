@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Base64
+import android.text.method.ScrollingMovementMethod
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +44,7 @@ class HelpPanel(
     private var recorder: MediaRecorder? = null
     private var audioFile: File? = null
     private var heard = ""
+    private val transcript = StringBuilder()
     private var listen = false
     private var sessionId: String? = null
     private var hintsUsed = 0
@@ -64,11 +66,12 @@ class HelpPanel(
         binding.back.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E4DDD0"))
         binding.back.setTextColor(Color.parseColor("#243036"))
         liftAboveSystemBars()
+        binding.hint.movementMethod = ScrollingMovementMethod.getInstance()
         binding.mark.onMarked = { binding.ask.isEnabled = true }
         binding.ask.isEnabled = false
-        binding.ask.setOnClickListener { ask(followUp = false) }
+        binding.ask.setOnClickListener { ask(followUp = !sessionId.isNullOrBlank()) }
         binding.gotIt.setOnClickListener { finishOutcome("got-it") }
-        binding.stuck.setOnClickListener { onStuck() }
+        binding.stuck.visibility = android.view.View.GONE
         binding.back.setOnClickListener { dismiss(sendLeft = true) }
         binding.mark.image = image
         try {
@@ -197,7 +200,6 @@ class HelpPanel(
     }
 
     private fun showHint(result: JoyceClient.HintResult) {
-        binding.ask.visibility = android.view.View.GONE
         binding.hint.visibility = android.view.View.VISIBLE
         if (result.error != null) {
             binding.hint.text = result.error
@@ -209,29 +211,38 @@ class HelpPanel(
                 binding.ask.text = context.getString(R.string.ask_joyce)
                 binding.outcome.visibility = android.view.View.GONE
             } else {
+                binding.ask.visibility = android.view.View.VISIBLE
+                binding.ask.isEnabled = true
+                binding.ask.text = context.getString(R.string.tell_joyce)
                 binding.outcome.visibility = android.view.View.VISIBLE
+                beginListening()
             }
             return
         }
         sessionId = result.sessionId
         hintsUsed = result.hintsUsed
         revealed = result.revealed
-        binding.hint.text = result.say
-        binding.heard.visibility = android.view.View.GONE
+        if (result.question.isNotBlank()) addLine("You", result.question)
+        addLine("Joyce", result.say)
+        binding.heard.visibility = android.view.View.VISIBLE
         binding.outcome.visibility = android.view.View.VISIBLE
+        binding.stuck.visibility = android.view.View.GONE
         if (result.revealed) {
-            binding.stuck.visibility = android.view.View.GONE
+            binding.ask.visibility = android.view.View.GONE
             binding.mark.locked = true
+            binding.heard.text = "You got there."
         } else {
             binding.mark.locked = false
-            if (hintsUsed >= 2) binding.stuck.text = context.getString(R.string.tell_me)
+            binding.ask.visibility = android.view.View.VISIBLE
+            binding.ask.isEnabled = true
+            binding.ask.text = context.getString(R.string.tell_joyce)
+            binding.heard.text = "Your turn. Say what you think, then tap Tell Joyce."
         }
-        speak(result.say, result.audioBase64)
-    }
-
-    private fun onStuck() {
-        if (revealed) return
-        ask(followUp = true)
+        if (result.audioBase64.isBlank()) {
+            if (!result.revealed) beginListening()
+        } else {
+            play(result.audioBase64, thenClose = false, thenListen = !result.revealed)
+        }
     }
 
     private fun finishOutcome(outcome: String) {
@@ -296,23 +307,36 @@ class HelpPanel(
         binding.heard.text = if (heard.isBlank()) "Tap the word, or draw around the problem." else heard
     }
 
+    private fun addLine(who: String, text: String) {
+        if (transcript.isNotEmpty()) transcript.append("\n\n")
+        transcript.append(who).append(": ").append(text)
+        binding.hint.text = transcript.toString()
+    }
+
     private fun startVoice() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            listen = true
-            startRecorder()
-            binding.heard.text = "Joyce is listening. Tap the word, then tap Ask Joyce."
-        }
         val site = Prefs.site(context)
         val key = Prefs.key(context)
         thread {
-            val audio = JoyceClient.speak(site, key, "Tap the word, or draw around the problem. Then tell me what you need.")
-            handler.post { if (!closed) speak("", audio) }
+            val audio = JoyceClient.speak(site, key, "Tap the word, then tell me what you see.")
+            handler.post {
+                if (closed) return@post
+                if (audio.isBlank()) beginListening() else play(audio, thenClose = false, thenListen = true)
+            }
         }
+    }
+
+    private fun beginListening() {
+        if (closed || revealed) return
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) return
+        stopListening()
+        audioFile?.delete()
+        listen = true
+        startRecorder()
     }
 
     private fun speak(text: String, audioBase64: String?) {
         if (audioBase64.isNullOrBlank()) return
-        play(audioBase64, thenClose = false)
+        play(audioBase64, thenClose = false, thenListen = false)
     }
 
     private fun speakThenClose(line: String) {
@@ -325,13 +349,14 @@ class HelpPanel(
                 if (audio.isBlank()) {
                     handler.postDelayed({ if (!closed) dismiss(sendLeft = false) }, 1600)
                 } else {
-                    play(audio, thenClose = true)
+                    play(audio, thenClose = true, thenListen = false)
                 }
             }
         }
     }
 
-    private fun play(audioBase64: String, thenClose: Boolean) {
+    private fun play(audioBase64: String, thenClose: Boolean, thenListen: Boolean) {
+        stopListening()
         try {
             val file = File(context.cacheDir, "joyce-say.mp3")
             file.writeBytes(Base64.decode(audioBase64, Base64.DEFAULT))
@@ -345,9 +370,11 @@ class HelpPanel(
             )
             mp.setDataSource(file.absolutePath)
             mp.setOnCompletionListener {
+                if (thenListen) handler.postDelayed({ beginListening() }, 300)
                 if (thenClose && !closed) dismiss(sendLeft = false)
             }
             mp.setOnErrorListener { _, _, _ ->
+                if (thenListen) beginListening()
                 if (thenClose && !closed) handler.post { if (!closed) dismiss(sendLeft = false) }
                 true
             }
@@ -355,6 +382,7 @@ class HelpPanel(
             mp.setOnPreparedListener { if (!closed) it.start() }
             player = mp
         } catch (_: Exception) {
+            if (thenListen) beginListening()
             if (thenClose && !closed) dismiss(sendLeft = false)
         }
     }

@@ -154,7 +154,40 @@ test("a generic sound-it-out hint is replaced with the first letter", async () =
 test("sight-word help does not tell the child to sound the word out", () => {
   assert.match(HINT_SYSTEM, /sight word/i);
   assert.match(HINT_SYSTEM, /do not use phonics/i);
+  assert.match(HINT_SYSTEM, /3 sounds/);
+  assert.match(HINT_SYSTEM, /e at the end is silent/);
   assert.match(REVEAL_SYSTEM, /Say the actual answer/);
+});
+
+test("a silent e word gets that hint instead of a generic one", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word cake", say: "What sounds do you hear?", answer: "cake", kind: "word" }),
+    body: { kid: "gabi", imageBase64: image, question: "help" }
+  });
+  assert.match(result.body.say, /e at the end is silent/i);
+  assert.match(result.body.say, /vowel|a\?/);
+  assert.doesNotMatch(result.body.say, /\bcake\b/i);
+});
+
+test("Joyce agrees when the child says the word", async () => {
+  const store = memoryStore();
+  const first = await handleTabletRequest({
+    store,
+    env,
+    fetchImpl: fetchImpl({ saw: "the word cake", say: "That e at the end is silent. What does it do to the a?", answer: "cake", kind: "word" }),
+    body: { kid: "max", imageBase64: image, question: "what is this word" }
+  });
+  const second = await handleTabletRequest({
+    store,
+    env,
+    fetchImpl: fetchImpl({}),
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "cake" }
+  });
+  assert.equal(second.body.revealed, true);
+  assert.match(second.body.say, /yes/i);
+  assert.match(second.body.say, /cake/i);
 });
 
 test("audio is transcribed when the child didn't get on-device speech", async () => {

@@ -5,5 +5,6 @@
     <string name="got_it">I got it</string>
     <string name="still_stuck">Still stuck</string>
     <string name="tell_me">Tell me</string>
+    <string name="tell_joyce">Tell Joyce</string>
     <string name="back_to_app">Back to the app</string>
 </resources>

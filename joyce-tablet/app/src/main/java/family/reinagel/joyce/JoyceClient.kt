@@ -13,6 +13,7 @@ object JoyceClient {
         val done: Boolean = false,
         val revealed: Boolean = false,
         val audioBase64: String = "",
+        val question: String = "",
         val error: String? = null
     )
 
@@ -81,7 +82,8 @@ object JoyceClient {
                 hintsUsed = body.optInt("hintsUsed"),
                 done = body.optBoolean("done"),
                 revealed = body.optBoolean("revealed"),
-                audioBase64 = body.optString("audioBase64")
+                audioBase64 = body.optString("audioBase64"),
+                question = body.optString("question")
             )
         } catch (_: IOException) {
             HintResult(error = "Joyce needs the wifi.")
