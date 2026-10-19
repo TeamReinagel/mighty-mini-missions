@@ -247,6 +247,24 @@ test("ou in pounds says ow, so oh is corrected instead of praised", async () => 
   assert.doesNotMatch(third.body.say, /\bpounds\b/i);
 });
 
+test("pounds does not start with o or ow", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({
+      saw: "the word pounds",
+      say: "The word starts with the letter o and the sound /ow/.",
+      answer: "pounds",
+      kind: "word"
+    }),
+    body: { kid: "max", imageBase64: image, question: "what is this word" }
+  });
+  assert.match(result.body.say, /in the middle, not at the beginning/i);
+  assert.match(result.body.say, /\/ow\//);
+  assert.doesNotMatch(result.body.say, /starts with the letter o/i);
+  assert.doesNotMatch(result.body.say, /\bpounds\b/i);
+});
+
 test("Joyce agrees when the child says the word", async () => {
   const store = memoryStore();
   const first = await handleTabletRequest({

@@ -24,14 +24,14 @@ export const HINT_SYSTEM = `You are Joyce, an early-elementary teacher trained i
 They marked one spot on the screen (a red circle or oval on the first image). The second image is a close-up of that spot, without the red mark. Read those letters. Teach only that word or problem.
 
 For a word, follow this routine. One step per turn.
-1. Tell the hardest spelling in this word and the sound it uses here. Then ask the child to say only that sound. You tell the sound. Do not ask them to discover it.
-2. If they say that sound, say yes and ask for the next sound, from left to right.
+1. Tell the hardest spelling in this word and the sound it uses here. Then ask the child to say only that sound. You tell the sound. Do not ask them to discover it. If that spelling is not the first letter, say it is in the middle or at the end. The word starts with its first letter. Never say it starts with the hard spelling.
+2. If they say that sound, say yes. If the hard spelling was not first, go back to the first letter and ask for that sound. The word starts with the first letter.
 3. If they say a different sound, say the sound this word uses and ask them to repeat it. Do not say yes, great, or that's right. Do not move to another letter.
-4. When the sounds are known, ask them to put the sounds together. Still do not say the whole word.
+4. When the sounds are known, ask them to put the sounds together from the first letter. Still do not say the whole word.
 
 How to choose the hardest spelling:
 - Two letters that make one sound, such as sh, ch, or th: "S and h together say /sh/. Say /sh/."
-- A vowel team: "O and u say /ow/ in this word. Say /ow/." O and u usually say /ow/ here. /oh/ is a different sound. Do not praise /oh/ for that spelling.
+- A vowel team in the middle: "O and u are in the middle, not at the beginning. They say /ow/. Say /ow/." O and u usually say /ow/ here. /oh/ is a different sound. Do not praise /oh/ for that spelling. Do not say the word starts with o or /ow/.
 - A letter with more than one sound: say how many, and which sound this word uses. "A can say 3 sounds. In this one it says /ah/. Say /ah/."
 - A silent e only when this word really ends in a silent e: "That e at the end is silent. It makes the vowel say its name. Say that sound."
 - Sight words and irregular words, including a word they called a sight word: do not use phonics that are not in the word. Teach the parts that follow the rules. For the part that does not, say "This part says /e/ in this word. Say /e/."
@@ -141,16 +141,41 @@ const VOWEL_SOUNDS = {
   uh: "/uh/"
 };
 
+function placeOf(word, letters) {
+  const at = word.indexOf(letters);
+  if (at <= 0) return "at the beginning";
+  if (at >= word.length - letters.length) return "at the end";
+  return "in the middle";
+}
+
 function vowelTeam(word) {
   if (!word) return null;
+  let letters = "";
+  let names = "";
+  let sound = "";
   if (/ou[bcdfmnpqrstvwxyz]/.test(word) && !/^(group|soup|you|youth|young|cousin|wound|through)$/.test(word)) {
-    return { names: "o and u", sound: "/ow/" };
+    letters = "ou";
+    names = "o and u";
+    sound = "/ow/";
+  } else if (/oa/.test(word)) {
+    letters = "oa";
+    names = "o and a";
+    sound = "/oh/";
+  } else if (/ai/.test(word) && !/air/.test(word)) {
+    letters = "ai";
+    names = "a and i";
+    sound = "/ay/";
+  } else if (/ee/.test(word)) {
+    letters = "ee";
+    names = "e and e";
+    sound = "/ee/";
+  } else if (/igh/.test(word)) {
+    letters = "igh";
+    names = "i, g, and h";
+    sound = "/eye/";
   }
-  if (/oa/.test(word)) return { names: "o and a", sound: "/oh/" };
-  if (/ai/.test(word) && !/air/.test(word)) return { names: "a and i", sound: "/ay/" };
-  if (/ee/.test(word)) return { names: "e and e", sound: "/ee/" };
-  if (/igh/.test(word)) return { names: "i, g, and h", sound: "/eye/" };
-  return null;
+  if (!letters) return null;
+  return { letters, names, sound, place: placeOf(word, letters) };
 }
 
 function vowelSounds(text) {
@@ -171,7 +196,8 @@ function teamCorrection(question, answer, name) {
   if (!team) return "";
   const said = vowelSounds(question);
   if (!said.length || said.includes(team.sound)) return "";
-  return `${name}, ${team.names} can say ${said[0]}. In this word they say ${team.sound}.`;
+  const where = team.place === "at the beginning" ? "" : ` They are ${team.place}, not at the beginning.`;
+  return `${name}, ${team.names} can say ${said[0]}.${where} In this word they say ${team.sound}.`;
 }
 
 function hintFits(say, answer, kind) {
@@ -182,7 +208,11 @@ function hintFits(say, answer, kind) {
   const named = say.match(/\b(?:word|answer) is\s+([a-z]+)/i);
   if (named && named[1].toLowerCase() !== word) return false;
   const letters = [...say.matchAll(/\bletter(?:\s+is)?(?:\s+the)?\s+([a-z])\b/gi)].map((match) => match[1].toLowerCase());
-  return letters.every((letter) => word.includes(letter));
+  if (!letters.every((letter) => word.includes(letter))) return false;
+  return ![...say.matchAll(/\b(?:starts|begins) with\b([^.]*)|\bfirst (?:letter|sound) is\b([^.]*)/gi)].some((match) => {
+    const chunk = `${match[1] || ""}${match[2] || ""}`.toLowerCase();
+    return chunk && !chunk.includes(word[0]);
+  });
 }
 
 function concreteHint(answer, kind, name, earlier = []) {
@@ -202,7 +232,8 @@ function concreteHint(answer, kind, name, earlier = []) {
   }
   const team = kind === "word" ? vowelTeam(word) : null;
   if (team && !said.includes(team.sound)) {
-    return `${name}, ${team.names} together say ${team.sound} in this word. Say ${team.sound}.`;
+    const where = team.place === "at the beginning" ? "at the beginning" : `${team.place}, not at the beginning`;
+    return `${name}, ${team.names} are ${where}. They say ${team.sound}. Say ${team.sound}.`;
   }
   const first = word[0];
   if (kind === "word" && first) {
@@ -226,9 +257,9 @@ function routineCue(earlier, question, answer) {
     return "Their sound does not match this word. Tell them the sound this spelling uses here, and ask them to say it. Do not praise the sound they said. Do not switch letters. Do not say the word.";
   }
   if (!earlier.length) {
-    return "First move. Tell the sound of the hardest spelling in this word, then ask them to say only that sound. Do not ask them to discover the sound. Do not say the word.";
+    return "First move. Tell the sound of the hardest spelling in this word, then ask them to say only that sound. If that spelling is not the first letter, say it is in the middle or at the end. Do not say the word starts there. Do not say the word.";
   }
-  return "Next move. If the sound they just said matches this word, say yes and ask for the next sound from left to right. If the sounds are known, ask them to put the sounds together. Do not say the whole word yet.";
+  return "Next move. If the sound they just said is not the first letter, go back to the first letter. Tell them the word starts with that letter and ask for its sound. If the sounds are known, put them together from the first letter. Do not say the whole word yet.";
 }
 
 function spokenHint(raw, answer, kind, name, earlier = [], question = "") {
