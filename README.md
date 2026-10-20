@@ -105,6 +105,8 @@ If you created the Slack app from an older manifest, update it from the manifest
 
 ### Joyce on the Android tablets
 
+For local development in Codex, Cursor, or a terminal, see [the Android build and test guide](joyce-tablet/README.md).
+
 A round picture of Joyce floats over other apps (Reading.com, Adapted Mind, and the rest). The child taps her, the screen freezes, and they tap a word or draw around a problem. They can talk at the same time. She talks it through in a natural voice. A letter with more than one sound, or a silent e, becomes the hint. The child answers, and she continues until they reach the word together. Each moment is saved as an observation Friday's report already reads: what they pointed at, the hints, whether she said the answer, and whether they tapped **I got it**. The screenshot itself is not stored.
 
 The app is `joyce-tablet/`. Install `joyce-tablet/app/build/outputs/apk/debug/app-debug.apk` on each Onn tablet (Files or Chrome → allow install from that app). Android 8 or newer.
@@ -115,7 +117,7 @@ On the tablet, a grown-up:
 2. Taps **Turn Joyce on** and allows Joyce to show over other apps.
 3. Taps **Allow screen pictures**. That opens Accessibility. Turn Joyce on there once. If the switch is gray, open Apps, tap the three dots on Joyce, and allow restricted settings. Family Link may ask for a parent. After that, a child can tap her without the share button. Until that switch is on, the first tap in a learning block still asks Android to share the screen.
 
-Then the child taps her picture, points, and talks. Joyce answers when they pause. They keep talking until they reach the word. **I got it** closes the talk. Connor's iPad can't run this. The same app works on his Android tablet later: pick his name on that device.
+Then the child taps her picture, points, and talks, or taps **Ask Joyce** without speaking. Joyce answers when they pause. The play button repeats her hint. A new mark starts a new question, and the check button (**I got it**) returns immediately to the learning app. If the microphone is busy or permission is off, tapping still works. Connor's iPad can't run this. The same app works on his Android tablet later: pick his name on that device.
 
 **Get the newest Joyce**, on the grown-up screen, reads `joyce-latest.json` on the site. That file names the version and a download link. The link can be a Google Drive share link (set sharing to anyone with the link) or `/downloads/joyce.apk` on this site. If the version is newer, the tablet downloads it and Android asks to install. Allow Joyce to install unknown apps when the tablet asks. Family Link may still ask a parent for that one setting.
 

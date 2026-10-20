@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#111111"
@@ -21,16 +22,23 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <ScrollView
+            android:id="@+id/conversation"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="false">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
         <FrameLayout
             android:id="@+id/status"
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="48dp"
             android:visibility="gone">
 
             <ImageView
                 android:id="@+id/ear"
-                android:layout_width="140dp"
-                android:layout_height="96dp"
+                android:layout_width="70dp"
+                android:layout_height="48dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/listening"
                 android:scaleType="fitCenter"
@@ -48,14 +56,15 @@
 
                 <ImageView
                     android:id="@+id/face"
-                    android:layout_width="84dp"
-                    android:layout_height="84dp"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
                     android:contentDescription="@string/thinking"
                     android:scaleType="centerCrop"
                     android:src="@drawable/joyce_avatar" />
 
                 <ImageView
                     android:id="@+id/dot1"
+                    android:importantForAccessibility="no"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginStart="14dp"
@@ -63,6 +72,7 @@
 
                 <ImageView
                     android:id="@+id/dot2"
+                    android:importantForAccessibility="no"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginStart="8dp"
@@ -70,6 +80,7 @@
 
                 <ImageView
                     android:id="@+id/dot3"
+                    android:importantForAccessibility="no"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
                     android:layout_marginStart="8dp"
@@ -97,14 +108,16 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
+        </LinearLayout>
+        </ScrollView>
         <Button
             android:id="@+id/ask"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:backgroundTint="@color/teal"
             android:contentDescription="@string/ask_joyce"
-            android:minHeight="76dp"
+            android:minHeight="56dp"
             android:text="@string/ask_joyce"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
@@ -115,13 +128,13 @@
             android:id="@+id/outcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:orientation="horizontal">
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/gotIt"
                 android:layout_width="0dp"
-                android:layout_height="88dp"
+                android:layout_height="64dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
                 android:background="@color/teal"
@@ -129,20 +142,34 @@
                 android:padding="18dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_got_it"
-                android:tint="@android:color/white"
+                app:tint="@android:color/white"
                 android:visibility="gone" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/replay"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:background="@color/sand"
+                android:contentDescription="@string/hear_again"
+                android:padding="18dp"
+                android:scaleType="fitCenter"
+                android:src="@android:drawable/ic_media_play"
+                app:tint="@color/ink"
+                android:visibility="gone" />
+
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/back"
                 android:layout_width="0dp"
-                android:layout_height="88dp"
+                android:layout_height="64dp"
                 android:layout_weight="1"
                 android:background="@color/sand"
                 android:contentDescription="@string/back_to_app"
                 android:padding="18dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_back"
-                android:tint="@color/ink" />
+                app:tint="@color/ink" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

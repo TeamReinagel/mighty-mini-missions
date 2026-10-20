@@ -26,6 +26,12 @@ import android.view.WindowManager
 import android.media.AudioAttributes
 import android.widget.Button
 import android.widget.Toast
+import android.widget.LinearLayout
+import android.media.AudioManager
+import android.media.AudioFocusRequest
+import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import java.util.Locale
 import androidx.core.content.ContextCompat
 import family.reinagel.joyce.databinding.ActivityHelpBinding
 import java.io.File
@@ -63,6 +69,16 @@ class HelpPanel(
     private var sending = false
     private var showing = false
     private var closed = false
+    private var recordingStarted = 0L
+    private var voiceGeneration = 0
+    private var lastSay = ""
+    private var lastAudio = ""
+    private var speech: TextToSpeech? = null
+    private var speechReady = false
+    private var speechDone: (() -> Unit)? = null
+    private var playbackFile: File? = null
+    private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    private var focusRequest: AudioFocusRequest? = null
 
     val isShowing: Boolean get() = showing
 
@@ -73,12 +89,47 @@ class HelpPanel(
         paint(binding.ask)
         liftAboveSystemBars()
         binding.hint.movementMethod = ScrollingMovementMethod.getInstance()
-        binding.mark.onMarked = { if (!canHear()) binding.ask.isEnabled = true }
+        binding.mark.onMarked = {
+            // A new mark means a new question, even on the same frozen screen.
+            voiceGeneration++
+            stopListening()
+            releasePlayer()
+            speech?.stop()
+            speechDone = null
+            if (!sessionId.isNullOrBlank() && !outcomeSent) {
+                val oldId = sessionId!!
+                thread { JoyceClient.outcome(Prefs.site(context), Prefs.key(context), oldId, "left") }
+            }
+            sessionId = null
+            revealed = false
+            outcomeSent = false
+            hintsUsed = 0
+            heard = ""
+            transcript.clear()
+            lastSay = ""
+            lastAudio = ""
+            binding.hint.visibility = View.GONE
+            binding.gotIt.visibility = View.GONE
+            binding.replay.visibility = View.GONE
+            binding.ask.isEnabled = true
+            binding.ask.text = context.getString(R.string.ask_joyce)
+            beginListening()
+        }
         binding.ask.isEnabled = false
-        if (canHear()) binding.ask.visibility = android.view.View.GONE
+        binding.ask.visibility = View.VISIBLE
         binding.ask.setOnClickListener { ask(followUp = !sessionId.isNullOrBlank()) }
         binding.gotIt.setOnClickListener { finishOutcome("got-it") }
         binding.back.setOnClickListener { dismiss(sendLeft = true) }
+        binding.replay.setOnClickListener {
+            voiceGeneration++
+            stopListening()
+            speakLine(lastSay, lastAudio, thenListen = !revealed)
+        }
+        binding.root.addOnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) fitPanel(right - left, bottom - top)
+        }
+        initSpeech()
+        requestAudioFocus()
         binding.face.outlineProvider = object : ViewOutlineProvider() {
             override fun getOutline(view: View, outline: Outline) {
                 outline.setOval(0, 0, view.width, view.height)
@@ -99,7 +150,7 @@ class HelpPanel(
             image.recycle()
             bitmap = null
             Toast.makeText(context, "Ask a grown-up to open Joyce.", Toast.LENGTH_LONG).show()
-            onClosed()
+            dismiss(sendLeft = false)
             return
         }
         startVoice()
@@ -116,9 +167,16 @@ class HelpPanel(
             val key = Prefs.key(context)
             thread { JoyceClient.outcome(site, key, id, "left") }
         }
+        voiceGeneration++
         listen = false
         stopListening()
         releasePlayer()
+        speech?.stop()
+        speech?.shutdown()
+        speech = null
+        audioFile?.delete()
+        handler.removeCallbacksAndMessages(null)
+        focusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
         binding.mark.image = null
         val shown = bitmap
         bitmap = null
@@ -148,9 +206,9 @@ class HelpPanel(
     }
 
     private fun liftAboveSystemBars() {
-        val bottom = max(systemInset(bottom = true), (72 * context.resources.displayMetrics.density).toInt())
+        val bottom = max(systemInset(bottom = true), (8 * context.resources.displayMetrics.density).toInt())
         val top = systemInset(bottom = false)
-        val side = (16 * context.resources.displayMetrics.density).toInt()
+        val side = (8 * context.resources.displayMetrics.density).toInt()
         binding.bar.setPadding(side, side, side, side + bottom)
         binding.mark.setPadding(0, top, 0, 0)
     }
@@ -175,7 +233,11 @@ class HelpPanel(
         if (sending || revealed) return
         val picture = bitmap ?: return
         val mark = binding.mark.mark ?: return
+        voiceGeneration++
+        releasePlayer()
+        speech?.stop()
         sending = true
+        binding.replay.isEnabled = false
         binding.mark.locked = true
         listen = false
         stopListening()
@@ -184,13 +246,7 @@ class HelpPanel(
         binding.heard.text = "Joyce is thinking"
         binding.gotIt.visibility = android.view.View.GONE
         val question = heard.trim()
-        val audio = if (question.isEmpty()) readAudio() else null
-        if (canHear() && question.isEmpty() && audio == null) {
-            sending = false
-            binding.mark.locked = false
-            beginListening()
-            return
-        }
+        val audio = if (question.isEmpty() && heardSpeech) readAudio() else null
         showThinking()
         val marked = Pictures.marked(picture, mark)
         val crop = Pictures.crop(picture, mark)
@@ -220,89 +276,73 @@ class HelpPanel(
 
     private fun showHint(result: JoyceClient.HintResult) {
         hideThinking()
-        binding.hint.visibility = android.view.View.VISIBLE
+        binding.mark.locked = false
+        binding.ask.visibility = View.VISIBLE
+        binding.replay.isEnabled = true
+        binding.hint.visibility = View.VISIBLE
         if (result.error != null) {
             binding.hint.text = result.error
-            binding.mark.locked = false
-            speak(result.error, null)
-            if (sessionId.isNullOrBlank()) {
-                if (!canHear()) {
-                    binding.ask.visibility = android.view.View.VISIBLE
-                    binding.ask.isEnabled = binding.mark.mark != null
-                    binding.ask.text = context.getString(R.string.ask_joyce)
-                }
-                binding.gotIt.visibility = android.view.View.GONE
-            } else {
-                binding.gotIt.visibility = android.view.View.VISIBLE
-                if (canHear()) beginListening() else {
-                    binding.ask.visibility = android.view.View.VISIBLE
-                    binding.ask.isEnabled = true
-                    binding.ask.text = context.getString(R.string.ask_joyce)
-                }
-            }
+            binding.ask.text = "Try again"
+            binding.ask.isEnabled = binding.mark.mark != null
+            binding.heard.text = "You can tap Ask Joyce or tell me again."
+            if (result.resetSession) sessionId = null
+            speakLine(result.error, "", thenListen = true)
             return
         }
-        sessionId = result.sessionId
+        sessionId = result.sessionId.takeIf { result.saved && it.isNotBlank() }
         hintsUsed = result.hintsUsed
         revealed = result.revealed
+        lastSay = result.spokenText.ifBlank { result.say }
+        lastAudio = result.audioBase64
         if (result.question.isNotBlank()) addLine("You", result.question)
         addLine("Joyce", result.say)
-        binding.heard.visibility = android.view.View.VISIBLE
-        binding.gotIt.visibility = android.view.View.VISIBLE
-        binding.ask.visibility = if (canHear()) android.view.View.GONE else android.view.View.VISIBLE
-        if (result.revealed) {
-            binding.mark.locked = true
-            binding.heard.text = "You got there."
-        } else {
-            binding.mark.locked = false
-            if (!canHear()) {
-                binding.ask.isEnabled = true
-                binding.ask.text = context.getString(R.string.ask_joyce)
-            }
-            binding.heard.text = if (canHear()) "Joyce is listening." else "Tap Ask Joyce when you are ready."
-        }
-        if (result.audioBase64.isBlank()) {
-            if (!result.revealed) beginListening()
-        } else {
-            play(result.audioBase64, thenClose = false, thenListen = !result.revealed)
-        }
+        binding.gotIt.visibility = View.VISIBLE
+        binding.replay.visibility = View.VISIBLE
+        binding.ask.isEnabled = !revealed
+        binding.ask.text = context.getString(R.string.ask_joyce)
+        binding.heard.text = if (revealed) "Tap the check to go back, or mark a new question." else "Your turn. Talk or tap Ask Joyce."
+        speakLine(lastSay, result.audioBase64, thenListen = !revealed)
     }
 
     private fun finishOutcome(outcome: String) {
-        if (outcomeSent) {
-            dismiss(sendLeft = false)
-            return
+        if (!outcomeSent) {
+            outcomeSent = true
+            val id = sessionId
+            if (!id.isNullOrBlank()) {
+                val site = Prefs.site(context)
+                val key = Prefs.key(context)
+                thread { JoyceClient.outcome(site, key, id, outcome) }
+            }
         }
-        outcomeSent = true
-        val id = sessionId
-        if (!id.isNullOrBlank()) {
-            val site = Prefs.site(context)
-            val key = Prefs.key(context)
-            thread { JoyceClient.outcome(site, key, id, outcome) }
-        }
-        val line = when (outcome) {
-            "got-it" -> "You did it."
-            else -> ""
-        }
-        if (line.isEmpty()) dismiss(sendLeft = false) else speakThenClose(line)
+        // Returning to the learning app must not wait for a network speech request.
+        dismiss(sendLeft = false)
     }
 
     private fun startRecorder() {
         if (recorder != null || !listen || closed) return
-        val file = File(context.cacheDir, "joyce-question.m4a")
+        audioFile?.delete()
+        val file = File.createTempFile("joyce-question-", ".m4a", context.cacheDir)
         audioFile = file
+        @Suppress("DEPRECATION")
+        val rec = MediaRecorder()
         try {
-            @Suppress("DEPRECATION")
-            val rec = MediaRecorder()
             rec.setAudioSource(MediaRecorder.AudioSource.MIC)
             rec.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             rec.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            rec.setAudioSamplingRate(16000)
+            rec.setAudioEncodingBitRate(64000)
+            rec.setMaxDuration(20000)
+            rec.setOnInfoListener { _, what, _ ->
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) handler.post { endListeningWindow() }
+            }
             rec.setOutputFile(file.absolutePath)
             rec.prepare()
             rec.start()
             recorder = rec
         } catch (_: Exception) {
+            try { rec.release() } catch (_: Exception) {}
             recorder = null
+            file.delete()
         }
     }
 
@@ -324,7 +364,7 @@ class HelpPanel(
 
     private fun readAudio(): String? {
         val file = audioFile ?: return null
-        if (!file.exists() || file.length() < 2000) return null
+        if (!file.exists() || file.length() < 2000 || file.length() > 1_400_000) return null
         return Base64.encodeToString(file.readBytes(), Base64.NO_WRAP)
     }
 
@@ -340,15 +380,8 @@ class HelpPanel(
     }
 
     private fun startVoice() {
-        val site = Prefs.site(context)
-        val key = Prefs.key(context)
-        thread {
-            val audio = JoyceClient.speak(site, key, "Tap the word, then tell me what you see.")
-            handler.post {
-                if (closed) return@post
-                if (audio.isBlank()) beginListening() else play(audio, thenClose = false, thenListen = true)
-            }
-        }
+        // A local greeting avoids making every help session wait on the network.
+        speakLine("Tap a word or circle a problem. Then talk, or tap Ask Joyce.", "", thenListen = true)
     }
 
     private fun canHear() = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
@@ -357,7 +390,12 @@ class HelpPanel(
 
     private fun beginListening() {
         if (closed || revealed || sending) return
-        if (!canHear()) return
+        binding.ask.isEnabled = binding.mark.mark != null
+        binding.ask.text = context.getString(R.string.ask_joyce)
+        if (!canHear()) {
+            binding.heard.text = "Mark your question, then tap Ask Joyce."
+            return
+        }
         stopListening()
         audioFile?.delete()
         noise = 600
@@ -365,9 +403,11 @@ class HelpPanel(
         speechStarted = 0L
         quietStarted = 0L
         listen = true
+        recordingStarted = android.os.SystemClock.uptimeMillis()
         startRecorder()
         if (recorder == null) {
             listen = false
+            binding.heard.text = "Tap Ask Joyce. The microphone is busy."
             return
         }
         showListening(hearing = false)
@@ -437,6 +477,10 @@ class HelpPanel(
             0
         }
         val now = android.os.SystemClock.uptimeMillis()
+        if (now - recordingStarted >= 20000) {
+            endListeningWindow()
+            return
+        }
         val loud = amp > max(noise * 3, 1200)
         if (!heardSpeech) {
             if (loud) {
@@ -450,7 +494,7 @@ class HelpPanel(
             }
         } else if (!loud) {
             if (quietStarted == 0L) quietStarted = now
-            if (now - quietStarted > 900 && now - speechStarted > 450) {
+            if (now - quietStarted > 1500 && now - speechStarted > 450) {
                 if (binding.mark.mark == null) {
                     binding.heard.text = "Tap the word, then just tell Joyce."
                     beginListening()
@@ -465,34 +509,79 @@ class HelpPanel(
         handler.postDelayed(listenPoll, 120)
     }
 
-    private fun speak(text: String, audioBase64: String?) {
-        if (audioBase64.isNullOrBlank()) return
-        play(audioBase64, thenClose = false, thenListen = false)
-    }
-
-    private fun speakThenClose(line: String) {
-        val site = Prefs.site(context)
-        val key = Prefs.key(context)
-        thread {
-            val audio = JoyceClient.speak(site, key, line)
-            handler.post {
-                if (closed) return@post
-                if (audio.isBlank()) {
-                    handler.postDelayed({ if (!closed) dismiss(sendLeft = false) }, 1600)
-                } else {
-                    play(audio, thenClose = true, thenListen = false)
-                }
-            }
+    private fun endListeningWindow() {
+        if (!listen || closed || sending) return
+        if (heardSpeech && binding.mark.mark != null) ask(followUp = !sessionId.isNullOrBlank())
+        else {
+            stopListening()
+            audioFile?.delete()
+            binding.heard.text = "Take your time. Tap Ask Joyce when you are ready."
+            binding.ask.isEnabled = binding.mark.mark != null
         }
     }
 
-    private fun play(audioBase64: String, thenClose: Boolean, thenListen: Boolean) {
+    private fun requestAudioFocus() {
+        val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+            .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_ACCESSIBILITY).setContentType(AudioAttributes.CONTENT_TYPE_SPEECH).build())
+            .setOnAudioFocusChangeListener { change ->
+                if (change < 0 && !closed) {
+                    stopListening()
+                    releasePlayer()
+                    speech?.stop()
+                    binding.heard.text = "Tap Ask Joyce when you are ready."
+                }
+            }.build()
+        focusRequest = request
+        audioManager.requestAudioFocus(request)
+    }
+
+    private fun initSpeech() {
+        speech = TextToSpeech(context) { status ->
+            handler.post {
+                if (closed) return@post
+                speechReady = status == TextToSpeech.SUCCESS
+                if (speechReady) {
+                    speech?.language = Locale.US
+                    // Initialization is asynchronous. Speak the directions once ready,
+                    // unless the child has already started their question.
+                    if (voiceGeneration == 0 && binding.mark.mark == null && !sending) startVoice()
+                }
+            }
+        }
+        speech?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+            override fun onStart(id: String?) {}
+            override fun onDone(id: String?) { handler.post { if (!closed && id == voiceGeneration.toString()) { val done = speechDone; speechDone = null; done?.invoke() } } }
+            @Deprecated("Legacy callback")
+            override fun onError(id: String?) = onDone(id)
+        })
+    }
+
+    private fun speakLine(text: String, audio: String, thenListen: Boolean) {
+        if (closed) return
+        stopListening()
+        if (audio.isNotBlank()) { play(audio, text, thenListen); return }
+        if (speechReady && text.isNotBlank()) {
+            speechDone = { if (thenListen) beginListening() }
+            val result = speech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, voiceGeneration.toString())
+            if (result == TextToSpeech.SUCCESS) return
+        }
+        if (thenListen) beginListening()
+    }
+
+    private fun play(audioBase64: String, fallbackText: String, thenListen: Boolean) {
         hideThinking()
         stopListening()
-        try {
-            val file = File(context.cacheDir, "joyce-say.mp3")
-            file.writeBytes(Base64.decode(audioBase64, Base64.DEFAULT))
+        val generation = voiceGeneration
+        fun fallback() {
+            if (generation != voiceGeneration || closed) return
             releasePlayer()
+            speakLine(fallbackText, "", thenListen)
+        }
+        try {
+            releasePlayer()
+            val file = File.createTempFile("joyce-say-", ".mp3", context.cacheDir)
+            playbackFile = file
+            file.writeBytes(Base64.decode(audioBase64, Base64.DEFAULT))
             val mp = MediaPlayer()
             mp.setAudioAttributes(
                 AudioAttributes.Builder()
@@ -502,20 +591,17 @@ class HelpPanel(
             )
             mp.setDataSource(file.absolutePath)
             mp.setOnCompletionListener {
-                if (thenListen) handler.postDelayed({ beginListening() }, 300)
-                if (thenClose && !closed) dismiss(sendLeft = false)
+                if (thenListen) handler.postDelayed({ if (generation == voiceGeneration && !closed) beginListening() }, 300)
             }
             mp.setOnErrorListener { _, _, _ ->
-                if (thenListen) beginListening()
-                if (thenClose && !closed) handler.post { if (!closed) dismiss(sendLeft = false) }
+                fallback()
                 true
             }
-            mp.prepareAsync()
-            mp.setOnPreparedListener { if (!closed) it.start() }
+            mp.setOnPreparedListener { if (!closed && generation == voiceGeneration) it.start() }
             player = mp
+            mp.prepareAsync()
         } catch (_: Exception) {
-            if (thenListen) beginListening()
-            if (thenClose && !closed) dismiss(sendLeft = false)
+            fallback()
         }
     }
 
@@ -525,17 +611,22 @@ class HelpPanel(
         } catch (_: Exception) {
         }
         player = null
+        playbackFile?.delete()
+        playbackFile = null
+    }
+
+    private fun fitPanel(width: Int, height: Int) {
+        val landscape = width > height
+        binding.root.orientation = if (landscape) LinearLayout.HORIZONTAL else LinearLayout.VERTICAL
+        binding.mark.layoutParams = LinearLayout.LayoutParams(if (landscape) 0 else -1, if (landscape) -1 else 0, 1f)
+        val density = context.resources.displayMetrics.density
+        val panelWidth = minOf((width * 0.43f).toInt(), (360 * density).toInt())
+        val panelHeight = minOf((height * 0.48f).toInt(), (320 * density).toInt())
+        binding.bar.layoutParams = LinearLayout.LayoutParams(if (landscape) panelWidth else -1, if (landscape) -1 else panelHeight)
+        liftAboveSystemBars()
     }
 
     private fun restoreAfterSystemClose() {
-        closed = true
-        showing = false
-        listen = false
-        stopListening()
-        releasePlayer()
-        val shown = bitmap
-        bitmap = null
-        if (shown != null && !shown.isRecycled) shown.recycle()
-        onClosed()
+        dismiss(sendLeft = true)
     }
 }

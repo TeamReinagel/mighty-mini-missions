@@ -30,7 +30,9 @@ object Pictures {
 
     fun crop(src: Bitmap, mark: MarkView.Mark): Bitmap {
         val rect = cropRect(mark, src)
-        return Bitmap.createBitmap(src, rect.left, rect.top, rect.width(), rect.height())
+        val result = Bitmap.createBitmap(src, rect.left, rect.top, rect.width(), rect.height())
+        // Android may return src for a full-image crop; callers own and recycle the crop.
+        return if (result === src) src.copy(Bitmap.Config.ARGB_8888, false) else result
     }
 
     fun jpeg(bitmap: Bitmap, maxEdge: Int, quality: Int): String {

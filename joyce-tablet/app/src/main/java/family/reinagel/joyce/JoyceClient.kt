@@ -14,7 +14,10 @@ object JoyceClient {
         val revealed: Boolean = false,
         val audioBase64: String = "",
         val question: String = "",
-        val error: String? = null
+        val error: String? = null,
+        val saved: Boolean = true,
+        val spokenText: String = "",
+        val resetSession: Boolean = false
     )
 
     fun ping(site: String, key: String): String {
@@ -83,7 +86,9 @@ object JoyceClient {
                 done = body.optBoolean("done"),
                 revealed = body.optBoolean("revealed"),
                 audioBase64 = body.optString("audioBase64"),
-                question = body.optString("question")
+                question = body.optString("question"),
+                saved = body.optBoolean("saved", true),
+                spokenText = body.optString("spokenText")
             )
         } catch (_: IOException) {
             HintResult(error = "Joyce needs the wifi.")
@@ -97,7 +102,7 @@ object JoyceClient {
             if (code == 401) "That key didn't work. A grown-up can fix it in the Joyce app."
             else "Joyce couldn't answer. Try again."
         }
-        return HintResult(error = spoken)
+        return HintResult(error = spoken, resetSession = code == 404)
     }
 
     private fun request(site: String, key: String, method: String, json: JSONObject?): Pair<Int, JSONObject> {

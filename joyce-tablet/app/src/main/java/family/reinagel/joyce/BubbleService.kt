@@ -1,5 +1,9 @@
 package family.reinagel.joyce
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import androidx.core.content.ContextCompat
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -31,6 +35,7 @@ class BubbleService : Service() {
     private var params: WindowManager.LayoutParams? = null
     private var panel: HelpPanel? = null
     private var captureBusy = false
+    private var destroyed = false
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -53,6 +58,8 @@ class BubbleService : Service() {
     }
 
     override fun onDestroy() {
+        destroyed = true
+        handler.removeCallbacksAndMessages(null)
         panel?.dismiss(sendLeft = true)
         panel = null
         bubble?.let {
@@ -68,10 +75,11 @@ class BubbleService : Service() {
     }
 
     fun setBubbleVisible(visible: Boolean) {
-        bubble?.visibility = if (visible) View.VISIBLE else View.GONE
+        bubble?.visibility = if (visible && panel?.isShowing != true && !destroyed) View.VISIBLE else View.GONE
     }
 
     fun showHelp(bitmap: android.graphics.Bitmap) {
+        if (destroyed) { bitmap.recycle(); return }
         captureBusy = false
         if (panel?.isShowing == true) {
             bitmap.recycle()
@@ -89,7 +97,7 @@ class BubbleService : Service() {
     private fun onBubbleTap() {
         if (panel?.isShowing == true || captureBusy) return
         val eyes = JoyceAccessibilityService.instance
-        if (eyes != null) {
+        if (eyes != null && Build.VERSION.SDK_INT >= 30) {
             if (CaptureService.running) {
                 startService(Intent(this, CaptureService::class.java).setAction(CaptureService.ACTION_STOP))
             }
@@ -118,6 +126,7 @@ class BubbleService : Service() {
         val capture = CaptureService.instance
         if (capture?.isReady == true) {
             captureBusy = true
+            setBubbleVisible(false)
             handler.postDelayed({
                 capture.grab { bitmap ->
                     captureBusy = false
@@ -155,7 +164,9 @@ class BubbleService : Service() {
             return
         }
         val size = (80 * resources.displayMetrics.density).toInt()
-        val view = ImageView(this).apply {
+        val view = object : androidx.appcompat.widget.AppCompatImageView(this) {
+            override fun performClick(): Boolean { super.performClick(); return true }
+        }.apply {
             setImageResource(R.drawable.joyce_avatar)
             scaleType = ImageView.ScaleType.FIT_CENTER
             contentDescription = "Ask Joyce"
@@ -180,6 +191,8 @@ class BubbleService : Service() {
             x = if (savedX == Int.MIN_VALUE) resources.displayMetrics.widthPixels - size - 24 else savedX
             y = if (savedY == Int.MIN_VALUE) resources.displayMetrics.heightPixels / 2 else savedY
         }
+        clampBubble(layout)
+        view.setOnClickListener { onBubbleTap() }
         view.setOnTouchListener(dragListener(layout, view))
         try {
             windowManager.addView(view, layout)
@@ -214,6 +227,7 @@ class BubbleService : Service() {
                     if (abs(dx) > slop || abs(dy) > slop) moved = true
                     layout.x = startX + dx
                     layout.y = startY + dy
+                    clampBubble(layout)
                     try {
                         windowManager.updateViewLayout(view, layout)
                     } catch (_: Exception) {
@@ -221,7 +235,7 @@ class BubbleService : Service() {
                     true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (moved) Prefs.saveBubble(this, layout.x, layout.y) else onBubbleTap()
+                    if (moved) Prefs.saveBubble(this, layout.x, layout.y) else view.performClick()
                     true
                 }
                 else -> false
@@ -250,11 +264,31 @@ class BubbleService : Service() {
             .setContentIntent(open)
             .setOngoing(true)
             .build()
-        if (Build.VERSION.SDK_INT >= 34) {
-            startForeground(21, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        if (Build.VERSION.SDK_INT >= 30) {
+            val base = if (Build.VERSION.SDK_INT >= 34) ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE else 0
+            val mic = if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE else 0
+            try {
+                startForeground(21, notification, base or mic)
+            } catch (_: SecurityException) {
+                // A system restart may not have while-in-use microphone access.
+                startForeground(21, notification, base)
+            }
         } else {
             startForeground(21, notification)
         }
+    }
+
+    private fun clampBubble(layout: WindowManager.LayoutParams) {
+        val metrics = resources.displayMetrics
+        layout.x = layout.x.coerceIn(0, (metrics.widthPixels - layout.width).coerceAtLeast(0))
+        layout.y = layout.y.coerceIn(0, (metrics.heightPixels - layout.height - (48 * metrics.density).toInt()).coerceAtLeast(0))
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        val layout = params ?: return
+        clampBubble(layout)
+        bubble?.let { try { windowManager.updateViewLayout(it, layout) } catch (_: Exception) {} }
     }
 
     companion object {

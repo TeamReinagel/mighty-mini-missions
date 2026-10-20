@@ -114,7 +114,6 @@ class CaptureService : Service() {
             onResult(null)
             return
         }
-        releaseDisplay()
         val bounds = screenSize()
         val width = bounds.width() - bounds.width() % 2
         val height = bounds.height() - bounds.height() % 2
@@ -125,13 +124,18 @@ class CaptureService : Service() {
         val reader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)
         var delivered = false
         fun finish(bitmap: Bitmap?) {
-            if (delivered) return
+            if (delivered) { bitmap?.recycle(); return }
             delivered = true
-            releaseDisplay()
+            // Keep the one permitted virtual display, but detach its surface between requests.
+            try { virtualDisplay?.surface = null } catch (_: Exception) {}
+            try { reader.setOnImageAvailableListener(null, null) } catch (_: Exception) {}
+            try { reader.close() } catch (_: Exception) {}
+            if (imageReader === reader) imageReader = null
             onResult(bitmap)
         }
         reader.setOnImageAvailableListener({ source ->
-            val image = source.acquireLatestImage() ?: return@setOnImageAvailableListener
+            val image = try { source.acquireLatestImage() } catch (_: Exception) { null }
+                ?: return@setOnImageAvailableListener
             val bitmap = try {
                 imageToBitmap(image)
             } catch (_: Exception) {
@@ -147,7 +151,12 @@ class CaptureService : Service() {
             handler.post { finish(bitmap) }
         }, readerHandler)
         try {
-            virtualDisplay = proj.createVirtualDisplay(
+            imageReader = reader
+            val existing = virtualDisplay
+            if (existing != null) {
+                existing.resize(width, height, resources.displayMetrics.densityDpi)
+                existing.surface = reader.surface
+            } else virtualDisplay = proj.createVirtualDisplay(
                 "joyce-help",
                 width,
                 height,
@@ -157,8 +166,8 @@ class CaptureService : Service() {
                 null,
                 readerHandler
             )
-            imageReader = reader
         } catch (_: Exception) {
+            isReady = false
             finish(null)
             return
         }

@@ -24,6 +24,8 @@ class MarkView @JvmOverloads constructor(
     var image: Bitmap? = null
         set(value) {
             field = value
+            mark = null
+            dragging = false
             compute()
             invalidate()
         }
@@ -43,6 +45,8 @@ class MarkView @JvmOverloads constructor(
     }
     private var start = PointF()
     private var dragging = false
+    private var bounds = RectF()
+    private var previousMark: Mark? = null
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -53,9 +57,11 @@ class MarkView @JvmOverloads constructor(
     private fun compute() {
         val bmp = image ?: return
         if (width == 0 || height == 0) return
-        val scale = min(width / bmp.width.toFloat(), height / bmp.height.toFloat())
-        val dx = (width - bmp.width * scale) / 2f
-        val dy = (height - bmp.height * scale) / 2f
+        val usableWidth = (width - paddingLeft - paddingRight).coerceAtLeast(1)
+        val usableHeight = (height - paddingTop - paddingBottom).coerceAtLeast(1)
+        val scale = min(usableWidth / bmp.width.toFloat(), usableHeight / bmp.height.toFloat())
+        val dx = paddingLeft + (usableWidth - bmp.width * scale) / 2f
+        val dy = paddingTop + (usableHeight - bmp.height * scale) / 2f
         matrix.setScale(scale, scale)
         matrix.postTranslate(dx, dy)
         matrix.invert(inverse)
@@ -85,11 +91,19 @@ class MarkView @JvmOverloads constructor(
         return PointF(pts[0], pts[1])
     }
 
+    override fun performClick(): Boolean {
+        super.performClick()
+        mark?.let { onMarked?.invoke(it) }
+        return true
+    }
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (locked || image == null) return false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
+                previousMark = mark
                 start = toBitmap(event)
+                bounds = RectF(start.x, start.y, start.x, start.y)
                 dragging = true
                 mark = Mark(start.x, start.y, start.x, start.y, true)
                 invalidate()
@@ -100,22 +114,29 @@ class MarkView @JvmOverloads constructor(
                 val now = toBitmap(event)
                 val bmp = image ?: return true
                 val slop = bmp.width * 0.035f
-                val point = abs(now.x - start.x) < slop && abs(now.y - start.y) < slop
+                bounds.left = min(bounds.left, now.x)
+                bounds.top = min(bounds.top, now.y)
+                bounds.right = max(bounds.right, now.x)
+                bounds.bottom = max(bounds.bottom, now.y)
+                val point = bounds.width() < slop && bounds.height() < slop
                 mark = if (point) {
                     Mark(start.x, start.y, start.x, start.y, true)
                 } else {
                     Mark(
-                        min(start.x, now.x),
-                        min(start.y, now.y),
-                        max(start.x, now.x),
-                        max(start.y, now.y),
+                        bounds.left, bounds.top, bounds.right, bounds.bottom,
                         false
                     )
                 }
                 if (event.actionMasked == MotionEvent.ACTION_UP) {
                     dragging = false
-                    mark?.let { onMarked?.invoke(it) }
+                    performClick()
                 }
+                invalidate()
+                return true
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                dragging = false
+                mark = previousMark
                 invalidate()
                 return true
             }
