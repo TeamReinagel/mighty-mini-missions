@@ -19,34 +19,41 @@
       </div>
 
       <div class="header-actions">
-        <button class="profile-indicator" id="profileIndicator" type="button" aria-label="Switch profile" title="Switch profile">
-          <span class="profile-avatar" id="profileAvatar">🚀</span>
-          <span class="profile-name" id="profileName">Max</span>
+        <button class="profile-indicator hidden" id="profileIndicator" type="button" aria-label="Switch player" title="Switch player">
+          <span class="profile-avatar" id="profileAvatar"></span>
+          <span class="profile-name" id="profileName"></span>
         </button>
-        <a class="link-button" href="#print" id="printLink" title="Printable mission deck">Print</a>
-        <button class="icon-button" id="settingsButton" type="button" title="Settings" aria-label="Settings">
+        <button class="icon-button" id="settingsButton" type="button" title="Grown-ups: settings" aria-label="Grown-ups: settings">
           ⚙
         </button>
       </div>
     </header>
 
     <main class="app">
-      <section class="panel" id="profilePickerPanel" aria-label="Choose who's playing">
+      <section class="panel panel-bare" id="profilePickerPanel" aria-label="Choose who's playing">
         <div class="profile-picker">
-          <h2>Who's playing?</h2>
+          <h1>Who's playing?</h1>
           <div class="profile-cards" id="profileCards"></div>
-          <div class="profile-picker-footer">
-            <button class="secondary" id="viewBadgesButton" type="button">View badges</button>
-            <button class="ghost" id="manageProfilesButton" type="button">Manage profiles</button>
-          </div>
         </div>
       </section>
 
-      <section class="panel hidden" id="hubPanel" aria-label="Choose a game">
-        <div class="hub">
-          <h1 id="hubHeading">Pick a game</h1>
-          <p class="lede">Tap a picture to play.</p>
+      <section class="panel panel-bare hidden" id="hubPanel" aria-label="Choose a game">
+        <div class="hub" id="hub">
+          <div class="hub-hello">
+            <span class="hub-avatar" id="hubAvatar"></span>
+            <div class="hub-hello-text">
+              <h1 id="hubHeading">Hi!</h1>
+              <p class="lede">What do you want to play?</p>
+            </div>
+          </div>
           <div class="hub-grid" id="hubGrid"></div>
+          <div class="hub-more" id="hubMore">
+            <button class="hub-more-toggle" id="moreGamesButton" type="button" aria-expanded="false" aria-controls="moreGrid">
+              <span>More games</span><span class="hub-more-chevron" aria-hidden="true">▾</span>
+            </button>
+            <div class="hub-grid hub-grid-more hidden" id="moreGrid"></div>
+          </div>
+          <button class="ghost small hub-badges hidden" id="viewBadgesButton" type="button">🏅 My badges</button>
         </div>
       </section>
 
@@ -209,9 +216,17 @@
           </div>
 
           <div class="setting">
-            <div class="setting-label">Profiles</div>
-            <button class="secondary" id="manageProfilesSettingsButton" type="button">Manage profiles</button>
-            <div class="muted small">Add, edit, or remove kid profiles. Each profile has its own favorites and mission log.</div>
+            <div class="setting-label">Kids and home screens</div>
+            <button class="secondary" id="manageProfilesSettingsButton" type="button">Manage kids</button>
+            <div class="muted small">
+              Set each child's level and what they're practicing. Their home screen shows the games that fit; the rest stay
+              under “More games.” Each child also has their own favorites and mission log.
+            </div>
+          </div>
+
+          <div class="setting">
+            <div class="setting-label">Print</div>
+            <a class="secondary" href="#print">Printable mission deck</a>
           </div>
 
           <div class="setting">
@@ -251,12 +266,15 @@
 
       <section class="panel hidden" id="manageProfilesPanel" aria-label="Manage profiles">
         <div class="panel-header">
-          <h2>Manage Profiles</h2>
+          <h2>Kids</h2>
           <button class="icon-button" id="closeManageProfilesButton" type="button" aria-label="Close">✕</button>
+        </div>
+        <div class="muted small">
+          A game goes on a child's home screen when it practices something they're working on and suits their level.
         </div>
         <div class="manage-profiles-list" id="manageProfilesList"></div>
         <div class="panel-footer">
-          <button class="secondary" id="addProfileButton" type="button">Add profile</button>
+          <button class="secondary" id="addProfileButton" type="button">Add a child</button>
         </div>
       </section>
 

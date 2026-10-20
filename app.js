@@ -13,26 +13,54 @@ const DEFAULT_LEVELS = {
   responsibility: "any"
 };
 
+// `stage` and `practicing` choose the games on each child's home screen (see games.js).
+// `levels` filters missions by category.
 const DEFAULT_PROFILES = [
   {
     id: "max",
     name: "Max",
     avatar: "rocket",
+    picture: "./avatars/max.jpg",
+    color: "#4fa3ff",
+    stage: "1st",
+    practicing: ["sight-words", "rhyming", "money", "math-facts", "missions", "game-design"],
     levels: { build: "any", phonics: "1st", math: "1st", nature: "any", social: "any", responsibility: "any" }
   },
   {
     id: "gabi",
     name: "Gabi",
     avatar: "star",
+    picture: "./avatars/gabi.jpg",
+    color: "#e27bd0",
+    stage: "prek",
+    practicing: ["letters", "letter-sounds", "blending", "counting", "feelings", "missions"],
     levels: { build: "prek", phonics: "prek", math: "prek", nature: "prek", social: "prek", responsibility: "prek" }
   },
   {
     id: "connor",
     name: "Connor",
     avatar: "bear",
+    picture: "./avatars/connor.jpg",
+    color: "#ff9f1c",
+    stage: "prek",
+    practicing: ["counting", "letters", "colors-shapes"],
+    levels: { build: "toddler", phonics: "toddler", math: "toddler", nature: "toddler", social: "toddler", responsibility: "toddler" }
+  },
+  {
+    id: "ethan",
+    name: "Ethan",
+    avatar: "sun",
+    picture: "./avatars/ethan.jpg",
+    color: "#2fbf8f",
+    stage: "toddler",
+    practicing: ["colors-shapes"],
     levels: { build: "toddler", phonics: "toddler", math: "toddler", nature: "toddler", social: "toddler", responsibility: "toddler" }
   }
 ];
+// Kids every device already had before `seededKids` was saved. Newer defaults (Ethan) are added
+// once to existing devices; a child removed later is not added back.
+const LEGACY_SEEDED_KIDS = ["max", "gabi", "connor"];
+const NEW_PROFILE_COLORS = ["#a78bfa", "#f472b6", "#38bdf8", "#facc15", "#fb7185"];
 
 /** @typedef {{id:string, category:string, difficulty:'easy'|'medium'|'hard'|'any', minutes?:string, title:string, prompt:string, materials:string[], steps:string[], siblingStation?:string}} Mission */
 
@@ -100,19 +128,82 @@ function safeJsonParse(text, fallback) {
   }
 }
 
+function copyProfile(p) {
+  return JSON.parse(JSON.stringify(p));
+}
+
+/** Fill in fields added after a profile was saved, without overwriting a parent's edits. */
+function withKidDefaults(p) {
+  const d = DEFAULT_PROFILES.find((k) => k.id === p.id);
+  if (!d) return p;
+  return {
+    ...p,
+    picture: p.picture ?? d.picture,
+    color: p.color ?? d.color,
+    stage: p.stage ?? d.stage,
+    practicing: Array.isArray(p.practicing) ? p.practicing : [...d.practicing]
+  };
+}
+
 function loadProfiles() {
-  const raw = localStorage.getItem(PROFILES_STORAGE_KEY);
-  const data = safeJsonParse(raw ?? "{}", {});
-  let profiles = Array.isArray(data.profiles) && data.profiles.length > 0 ? data.profiles : DEFAULT_PROFILES;
-  const activeId = data.activeProfileId ?? profiles[0]?.id ?? "max";
-  if (!raw || !Array.isArray(safeJsonParse(raw, {}).profiles) || safeJsonParse(raw, {}).profiles.length === 0) {
-    localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({ profiles, activeProfileId: activeId }));
+  const data = safeJsonParse(localStorage.getItem(PROFILES_STORAGE_KEY) ?? "{}", {}) ?? {};
+  let profiles;
+  if (Array.isArray(data.profiles) && data.profiles.length > 0) {
+    const seeded = new Set(Array.isArray(data.seededKids) ? data.seededKids : LEGACY_SEEDED_KIDS);
+    profiles = data.profiles.map(withKidDefaults);
+    for (const d of DEFAULT_PROFILES) {
+      if (!seeded.has(d.id) && !profiles.some((p) => p.id === d.id)) profiles.push(copyProfile(d));
+    }
+  } else {
+    profiles = DEFAULT_PROFILES.map(copyProfile);
   }
-  return { profiles, activeProfileId: activeId };
+  const activeProfileId = profiles.some((p) => p.id === data.activeProfileId) ? data.activeProfileId : profiles[0]?.id;
+  saveProfiles(profiles, activeProfileId);
+  return { profiles, activeProfileId };
 }
 
 function saveProfiles(profiles, activeProfileId) {
-  localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({ profiles, activeProfileId }));
+  const seededKids = DEFAULT_PROFILES.map((p) => p.id);
+  localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify({ profiles, activeProfileId, seededKids }));
+}
+
+function avatarHtml(profile, className = "") {
+  if (profile?.picture) {
+    return `<img class="avatar ${className}" src="${escapeHtml(profile.picture)}" alt="" draggable="false" />`;
+  }
+  return `<span class="avatar avatar-emoji ${className}">${AVATAR_EMOJI[profile?.avatar] ?? "👤"}</span>`;
+}
+
+function profileAllowsGame(profile, game) {
+  return !Array.isArray(game.profiles) || Boolean(profile && game.profiles.includes(profile.id));
+}
+
+/**
+ * Split a child's games into the home screen and "More games". A game goes home when it
+ * practices something on the child's list and suits their stage (games without `levels` suit
+ * every stage). Profiles without a practicing list, or whose list matches nothing, see everything.
+ */
+function gamesForProfile(profile) {
+  const all = (Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : []).filter((g) => profileAllowsGame(profile, g));
+  if (!profile || !Array.isArray(profile.practicing)) return { home: all, more: [] };
+  const practicing = new Set(profile.practicing);
+  const fits = (g) =>
+    (g.practices ?? []).some((s) => practicing.has(s)) &&
+    (!Array.isArray(g.levels) || !profile.stage || g.levels.includes(profile.stage));
+  const home = all.filter(fits);
+  if (!home.length) return { home: all, more: [] };
+  return { home, more: all.filter((g) => !home.includes(g)) };
+}
+
+function skillById(id) {
+  return (window.MIGHTY_SKILLS ?? []).find((s) => s.id === id);
+}
+
+/** The first skill on a game that this child is practicing, as the short label kids see. */
+function practiceTag(profile, game) {
+  const practicing = new Set(profile?.practicing ?? []);
+  const id = (game.practices ?? []).find((s) => practicing.has(s));
+  return id ? skillById(id)?.kid ?? "" : "";
 }
 
 function loadProfileSettings(profileId) {
@@ -531,14 +622,18 @@ async function main() {
   const choicesCategoryPill = $("choicesCategoryPill");
 
   const backToGamesButton = $("backToGamesButton");
+  const hub = $("hub");
+  const hubAvatar = $("hubAvatar");
   const hubHeading = $("hubHeading");
   const hubGrid = $("hubGrid");
+  const hubMore = $("hubMore");
+  const moreGamesButton = $("moreGamesButton");
+  const moreGrid = $("moreGrid");
   const profileIndicator = $("profileIndicator");
   const profileAvatar = $("profileAvatar");
   const profileName = $("profileName");
   const headerSubtitle = document.getElementById("headerSubtitle");
   const profileCards = $("profileCards");
-  const manageProfilesButton = $("manageProfilesButton");
   const manageProfilesSettingsButton = document.getElementById("manageProfilesSettingsButton");
   const manageProfilesPanel = $("manageProfilesPanel");
   const manageProfilesList = $("manageProfilesList");
@@ -613,13 +708,16 @@ async function main() {
 
   function syncChrome() {
     const onMissions = activePanel === "mainPanel";
+    document.body.classList.toggle("on-missions", onMissions);
     resetFiltersButton.classList.toggle("hidden", !onMissions);
+    profileIndicator.classList.toggle("hidden", activePanel === "profilePickerPanel");
     const p = getActiveProfile();
+    document.body.style.setProperty("--kid", activePanel === "profilePickerPanel" ? "" : p?.color ?? "");
     if (!headerSubtitle) return;
     if (activePanel === "profilePickerPanel") {
-      headerSubtitle.textContent = "Tap → choose → go play";
+      headerSubtitle.textContent = "Tap your picture";
     } else if (activePanel === "hubPanel" && p) {
-      headerSubtitle.textContent = `${p.name}, pick a game`;
+      headerSubtitle.textContent = `${p.name}'s games`;
     } else if (onMissions && p) {
       headerSubtitle.textContent = `${p.name}'s missions`;
     }
@@ -628,49 +726,89 @@ async function main() {
   function updateProfileHeader() {
     const p = getActiveProfile();
     if (p) {
-      profileAvatar.textContent = AVATAR_EMOJI[p.avatar] ?? "👤";
+      profileAvatar.innerHTML = avatarHtml(p);
       profileName.textContent = p.name;
     }
     syncChrome();
   }
 
+  function hubTile(activity, tag) {
+    const frame = document.createElement("span");
+    frame.className = "hub-icon-frame";
+    const icon = document.createElement("img");
+    icon.className = "hub-icon";
+    icon.src = activity.icon || "";
+    icon.alt = "";
+    icon.draggable = false;
+    if (activity.iconScale) icon.style.transform = `scale(${Number(activity.iconScale)})`;
+    frame.appendChild(icon);
+
+    const label = document.createElement("span");
+    label.className = "hub-label";
+    label.textContent = activity.title || "Game";
+
+    const parts = [frame, label];
+    if (tag) {
+      const pill = document.createElement("span");
+      pill.className = "hub-tag";
+      pill.textContent = tag;
+      parts.push(pill);
+    }
+
+    if (activity.kind === "missions") {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "hub-tile";
+      button.append(...parts);
+      button.addEventListener("click", openMissions);
+      return button;
+    }
+    if (!activity.href) return null;
+    const link = document.createElement("a");
+    link.className = "hub-tile";
+    link.href = activity.href;
+    link.append(...parts);
+    return link;
+  }
+
+  function setMoreOpen(open) {
+    moreGrid.classList.toggle("hidden", !open);
+    moreGamesButton.setAttribute("aria-expanded", String(open));
+    hubMore.classList.toggle("open", open);
+  }
+
   function renderHub() {
     const p = getActiveProfile();
-    hubHeading.textContent = p ? `${p.name}, pick a game` : "Pick a game";
+    const { home, more } = gamesForProfile(p);
+    hub.dataset.stage = p?.stage ?? "";
+    hubAvatar.innerHTML = avatarHtml(p);
+    hubHeading.textContent = p ? `Hi, ${p.name}!` : "Pick a game";
+    // Tags help readers see what a game practices; younger kids just get bigger pictures.
+    const showTags = p && !["toddler", "prek"].includes(p.stage);
+
     hubGrid.innerHTML = "";
-    const activities = Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : [];
-    for (const activity of activities) {
-      if (Array.isArray(activity.profiles) && (!p || !activity.profiles.includes(p.id))) continue;
-      const frame = document.createElement("span");
-      frame.className = "hub-icon-frame";
-      const icon = document.createElement("img");
-      icon.className = "hub-icon";
-      icon.src = activity.icon || "";
-      icon.alt = "";
-      icon.draggable = false;
-      if (activity.iconScale) icon.style.transform = `scale(${Number(activity.iconScale)})`;
-      frame.appendChild(icon);
-
-      const label = document.createElement("span");
-      label.className = "hub-label";
-      label.textContent = activity.title || "Game";
-
-      if (activity.kind === "missions") {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "hub-tile";
-        button.append(frame, label);
-        button.addEventListener("click", openMissions);
-        hubGrid.appendChild(button);
-      } else if (activity.href) {
-        const link = document.createElement("a");
-        link.className = "hub-tile";
-        link.href = activity.href;
-        link.append(frame, label);
-        hubGrid.appendChild(link);
-      }
+    for (const activity of home) {
+      const tile = hubTile(activity, showTags ? practiceTag(p, activity) : "");
+      if (tile) hubGrid.appendChild(tile);
     }
+    hubGrid.dataset.count = String(hubGrid.children.length);
+
+    moreGrid.innerHTML = "";
+    for (const activity of more) {
+      const tile = hubTile(activity, "");
+      if (tile) moreGrid.appendChild(tile);
+    }
+    hubMore.classList.toggle("hidden", moreGrid.children.length === 0);
+    setMoreOpen(false);
+
+    viewBadgesButton.classList.toggle("hidden", !p || loadCompletions(p.id).length === 0);
   }
+
+  moreGamesButton.addEventListener("click", () => {
+    const open = moreGrid.classList.contains("hidden");
+    setMoreOpen(open);
+    if (open) moreGamesButton.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
   function openHub() {
     renderHub();
@@ -691,14 +829,13 @@ async function main() {
   function renderProfileCards() {
     profileCards.innerHTML = "";
     for (const p of state.profiles) {
-      const count = loadCompletions(p.id).length;
       const card = document.createElement("button");
       card.className = "profile-card";
       card.type = "button";
+      if (p.color) card.style.setProperty("--kid", p.color);
       card.innerHTML = `
-        <span class="profile-card-avatar">${AVATAR_EMOJI[p.avatar] ?? "👤"}</span>
+        <span class="profile-card-avatar">${avatarHtml(p)}</span>
         <span class="profile-card-name">${escapeHtml(p.name)}</span>
-        ${count > 0 ? `<span class="profile-card-badges">${count} completed</span>` : ""}
       `;
       card.addEventListener("click", () => selectProfile(p.id));
       profileCards.appendChild(card);
@@ -956,40 +1093,94 @@ async function main() {
   function renderManageProfilesList() {
     const LEVEL_LABELS = { toddler: "Toddler", prek: "Pre-K", kinder: "K", "1st": "1st", any: "Any" };
     const categories = ["build", "phonics", "math", "nature", "social", "responsibility"];
+    const stages = window.MIGHTY_STAGES ?? [];
+    const skills = window.MIGHTY_SKILLS ?? [];
+    const homePreview = (p) => {
+      const { home } = gamesForProfile(p);
+      return home.map((g) => escapeHtml(g.title)).join(", ") || "Every game";
+    };
     manageProfilesList.innerHTML = "";
     for (const p of state.profiles) {
       const levels = { ...DEFAULT_LEVELS, ...(p.levels || {}) };
+      const pid = escapeHtml(p.id);
       const item = document.createElement("div");
       item.className = "manage-profile-item";
       const levelsHtml = categories
         .map(
           (cat) =>
             `<label class="muted small">${CATEGORY_LABELS[cat] ?? cat}
-              <select data-profile-id="${escapeHtml(p.id)}" data-category="${escapeHtml(cat)}">
+              <select data-profile-id="${pid}" data-category="${escapeHtml(cat)}">
                 ${LEVEL_ORDER.map((l) => `<option value="${l}" ${l === levels[cat] ? "selected" : ""}>${LEVEL_LABELS[l] ?? l}</option>`).join("")}
               </select>
             </label>`
         )
         .join("");
+      const practicing = new Set(p.practicing ?? []);
+      const skillsHtml = skills
+        .map(
+          (s) =>
+            `<label class="skill-chip">
+              <input type="checkbox" data-profile-id="${pid}" data-skill="${escapeHtml(s.id)}" ${practicing.has(s.id) ? "checked" : ""} />
+              <span>${escapeHtml(s.label)}</span>
+            </label>`
+        )
+        .join("");
       item.innerHTML = `
         <div class="manage-profile-item-header">
-          <span class="manage-profile-item-name">${AVATAR_EMOJI[p.avatar] ?? "👤"} ${escapeHtml(p.name)}</span>
-          ${state.profiles.length > 1 ? `<button class="ghost small" data-remove-profile="${escapeHtml(p.id)}" type="button">Remove</button>` : ""}
+          <span class="manage-profile-item-name">${avatarHtml(p, "avatar-sm")} ${escapeHtml(p.name)}</span>
+          ${state.profiles.length > 1 ? `<button class="ghost small" data-remove-profile="${pid}" type="button">Remove</button>` : ""}
         </div>
-        <div class="manage-profile-levels">${levelsHtml}</div>
+        <label class="muted small manage-stage">Level
+          <select data-profile-id="${pid}" data-stage>
+            <option value="" ${p.stage ? "" : "selected"}>Any</option>
+            ${stages.map((s) => `<option value="${s.id}" ${s.id === p.stage ? "selected" : ""}>${escapeHtml(s.label)}</option>`).join("")}
+          </select>
+        </label>
+        <div class="setting-label small">Practicing now</div>
+        <div class="skill-chips">${skillsHtml}</div>
+        <div class="muted small manage-home-preview">On the home screen: <span data-home-preview="${pid}">${homePreview(p)}</span></div>
+        <details class="manage-mission-levels">
+          <summary class="muted small">Mission levels</summary>
+          <div class="manage-profile-levels">${levelsHtml}</div>
+        </details>
       `;
       manageProfilesList.appendChild(item);
     }
-    manageProfilesList.querySelectorAll("select").forEach((sel) => {
+    const refreshPreview = (profile) => {
+      const el = manageProfilesList.querySelector(`[data-home-preview="${CSS.escape(profile.id)}"]`);
+      if (el) el.innerHTML = homePreview(profile);
+    };
+    manageProfilesList.querySelectorAll("select[data-category]").forEach((sel) => {
       sel.addEventListener("change", (e) => {
         const t = e.target;
         const pid = t.getAttribute("data-profile-id");
         const cat = t.getAttribute("data-category");
         const profile = state.profiles.find((pr) => pr.id === pid);
-        if (profile && profile.levels) {
-          profile.levels[cat] = t.value;
+        if (profile) {
+          profile.levels = { ...DEFAULT_LEVELS, ...(profile.levels || {}), [cat]: t.value };
           persistProfiles();
         }
+      });
+    });
+    manageProfilesList.querySelectorAll("select[data-stage]").forEach((sel) => {
+      sel.addEventListener("change", () => {
+        const profile = state.profiles.find((pr) => pr.id === sel.getAttribute("data-profile-id"));
+        if (!profile) return;
+        profile.stage = sel.value || undefined;
+        persistProfiles();
+        refreshPreview(profile);
+      });
+    });
+    manageProfilesList.querySelectorAll("input[data-skill]").forEach((box) => {
+      box.addEventListener("change", () => {
+        const profile = state.profiles.find((pr) => pr.id === box.getAttribute("data-profile-id"));
+        if (!profile) return;
+        const next = new Set(profile.practicing ?? []);
+        if (box.checked) next.add(box.getAttribute("data-skill"));
+        else next.delete(box.getAttribute("data-skill"));
+        profile.practicing = skills.map((s) => s.id).filter((id) => next.has(id));
+        persistProfiles();
+        refreshPreview(profile);
       });
     });
     manageProfilesList.querySelectorAll("[data-remove-profile]").forEach((btn) => {
@@ -1348,12 +1539,13 @@ async function main() {
   });
 
   viewBadgesButton.addEventListener("click", () => {
+    badgesSelectedProfileId = state.activeProfileId;
     renderBadgesGrid();
     showOnly("badgesPanel", ids);
   });
 
   closeBadgesButton.addEventListener("click", () => {
-    ensureProfilePickerPanel();
+    returnFromOverlay();
   });
 
   let badgesSelectedProfileId = null;
@@ -1370,7 +1562,7 @@ async function main() {
         byMission[c.missionId] = (byMission[c.missionId] || 0) + 1;
       }
       const badgeCount = Object.keys(byMission).length;
-      tab.innerHTML = `${AVATAR_EMOJI[p.avatar] ?? "👤"} ${escapeHtml(p.name)}${badgeCount ? ` (${badgeCount})` : ""}`;
+      tab.innerHTML = `${avatarHtml(p, "avatar-xs")} ${escapeHtml(p.name)}${badgeCount ? ` (${badgeCount})` : ""}`;
       tab.addEventListener("click", () => {
         badgesSelectedProfileId = p.id;
         renderBadgesGrid();
@@ -1422,7 +1614,7 @@ async function main() {
       tab.className = "mission-log-tab" + (p.id === missionLogSelectedProfileId ? " selected" : "");
       tab.type = "button";
       const count = loadCompletions(p.id).length;
-      tab.innerHTML = `${AVATAR_EMOJI[p.avatar] ?? "👤"} ${escapeHtml(p.name)}${count ? ` (${count})` : ""}`;
+      tab.innerHTML = `${avatarHtml(p, "avatar-xs")} ${escapeHtml(p.name)}${count ? ` (${count})` : ""}`;
       tab.addEventListener("click", () => {
         missionLogSelectedProfileId = p.id;
         renderMissionLog();
@@ -1485,10 +1677,6 @@ async function main() {
     ensureProfilePickerPanel();
   });
 
-  manageProfilesButton.addEventListener("click", () => {
-    ensureManageProfilesPanel();
-  });
-
   if (manageProfilesSettingsButton) {
     manageProfilesSettingsButton.addEventListener("click", () => {
       ensureManageProfilesPanel();
@@ -1507,6 +1695,8 @@ async function main() {
       id,
       name: name.trim() || "New Kid",
       avatar: "heart",
+      color: NEW_PROFILE_COLORS[state.profiles.length % NEW_PROFILE_COLORS.length],
+      practicing: [],
       levels: { ...DEFAULT_LEVELS }
     };
     state.profiles.push(newProfile);

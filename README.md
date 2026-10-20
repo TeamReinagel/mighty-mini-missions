@@ -182,6 +182,13 @@ Then open:
 You can double-click `index.html`. If your browser blocks loading `missions.json` under `file://`, the app will automatically fall back to the built-in `missions-data.js`.
 
 ## How to use
+
+### Each child's home screen
+- **Who's playing?** shows each child's avatar (`avatars/`). Tapping it opens that child's games.
+- The home screen only shows games that practice something the child is working on and suit their level. Everything else is one tap away under **More games**.
+- To change it, tap ⚙ → **Manage kids**: set the child's **Level** and check what they're **Practicing now**. The panel previews which games will be on the home screen. Game skills and levels live in `games.js`.
+
+### Missions
 - **Mission now**: picks one mission immediately.
 - **Give me 2 choices**: shows two options so Max can choose (bounded choice).
 - **Quick picks**: jump straight to a category.
