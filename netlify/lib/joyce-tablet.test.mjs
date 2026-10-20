@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { HINT_SYSTEM, REVEAL_SYSTEM, checkKey, handleTabletRequest, helpNote } from "./joyce-tablet.mjs";
+import { HINT_SYSTEM, REVEAL_SYSTEM, checkKey, handleTabletRequest, helpNote, speakable } from "./joyce-tablet.mjs";
 
 const KEY = "family-tablet-key";
 const env = { JOYCE_TABLET_KEY: KEY, OPENAI_API_KEY: "test-key", OPENAI_MODEL: "gpt-4o-mini" };
@@ -335,4 +335,33 @@ test("an unknown child is refused", async () => {
     body: { kid: "nobody", imageBase64: image }
   });
   assert.equal(result.status, 400);
+});
+
+test("sounds are spoken as sounds, so pounds is not heard as ponds", () => {
+  const blend = speakable("Yes, /p/ /ow/ /n/ /d/ /s/. The word is pounds.");
+  assert.doesNotMatch(blend, /\//);
+  assert.match(blend, /puh\.\.\. ow\.\.\. nnn\.\.\. duh\.\.\. sss\.\.\./);
+  assert.match(blend, /The word is pounds\.$/);
+  const one = speakable("O and u are in the middle. They say /ow/. Say /ow/.");
+  assert.match(one, /They say ow, like in cow\. Say ow, like in cow\./);
+});
+
+test("a made-up letter pair is replaced", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word friends", say: "The letters r and i together say /r/. Say /r/.", answer: "friends", kind: "word" }),
+    body: { kid: "max", imageBase64: image, question: "I need help with it." }
+  });
+  assert.doesNotMatch(result.body.say, /r and i together/i);
+});
+
+test("could keeps its own ou sound", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word could", say: "O and u together say /oo/ here. Say /oo/.", answer: "could", kind: "word" }),
+    body: { kid: "max", imageBase64: image, question: "what is this word" }
+  });
+  assert.doesNotMatch(result.body.say, /\/ow\//);
 });

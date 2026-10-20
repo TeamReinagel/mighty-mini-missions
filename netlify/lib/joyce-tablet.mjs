@@ -129,6 +129,12 @@ const DIGRAPHS = [
   ["ph", "p and h", "/f/"]
 ];
 
+const TEAMS = new Set([
+  "sh", "ch", "th", "wh", "ck", "ph", "ng", "qu", "kn", "wr", "tch", "dge",
+  "ou", "ow", "oa", "ai", "ay", "ee", "ea", "oo", "oi", "oy", "au", "aw", "ew", "ie", "igh",
+  "ar", "er", "ir", "or", "ur"
+]);
+
 const VOWEL_SOUNDS = {
   oh: "/oh/",
   ow: "/ow/",
@@ -153,7 +159,7 @@ function vowelTeam(word) {
   let letters = "";
   let names = "";
   let sound = "";
-  if (/ou[bcdfmnpqrstvwxyz]/.test(word) && !/^(group|soup|you|youth|young|cousin|wound|through)$/.test(word)) {
+  if (/ou[bcdfmnpqrstvwxyz]/.test(word) && !/^(group|soup|you|your|youth|young|cousin|wound|through|could|would|should|touch|four|pour|court)$/.test(word)) {
     letters = "ou";
     names = "o and u";
     sound = "/ow/";
@@ -253,6 +259,10 @@ function hintFits(say, answer, kind) {
   if (named && named[1].toLowerCase() !== word) return false;
   const letters = [...say.matchAll(/\bletter(?:\s+is)?(?:\s+the)?\s+([a-z])\b/gi)].map((match) => match[1].toLowerCase());
   if (!letters.every((letter) => word.includes(letter))) return false;
+  for (const pair of say.toLowerCase().matchAll(/\b([a-z]{1,2}),? and ([a-z]{1,2}) together\b/g)) {
+    const joined = pair[1] + pair[2];
+    if (!TEAMS.has(joined) || !word.includes(joined)) return false;
+  }
   const claimed = claimedStartLetter(say);
   const focus = focusWord(say, word);
   return !claimed || claimed === focus[0];
@@ -345,15 +355,44 @@ function revealLine(raw, answer, kind, name) {
   return spoken || `${name}, point a little closer to the word.`;
 }
 
+// The voice reads "/ow/" as letters or as the "oh" in low. Spoken copy uses
+// spellings it says as one sound; the screen and the report keep the slashes.
+const SPOKEN_SOUNDS = {
+  ow: "ow", oh: "oh", oo: "oo", ah: "ahh", ay: "ay", ee: "ee", eye: "eye", aw: "aww", uh: "uh",
+  a: "aah", e: "eh", i: "ih", o: "ahh", u: "uh",
+  p: "puh", b: "buh", t: "tuh", d: "duh", k: "kuh", c: "kuh", g: "guh", j: "juh", ch: "chuh",
+  h: "huh", w: "wuh", y: "yuh", qu: "kwuh", x: "ks",
+  m: "mmm", n: "nnn", s: "sss", z: "zzz", f: "fff", v: "vvv", l: "lll", r: "rrr", sh: "shh", th: "thh", ng: "ng"
+};
+
+const KEY_WORDS = { ow: "cow", oh: "boat", oo: "moon", ay: "rain", ee: "feet", eye: "night", aw: "saw" };
+
+export function speakable(text) {
+  const line = String(text || "");
+  const sounds = [...line.matchAll(/\/([a-z]{1,3})\//gi)];
+  const blending = sounds.length >= 3;
+  return line
+    .replace(/\/([a-z]{1,3})\/(\s*[.,!?]?)/gi, (whole, raw, after) => {
+      const key = raw.toLowerCase();
+      const say = SPOKEN_SOUNDS[key];
+      if (!say) return whole;
+      if (blending) return `${say}... `;
+      const like = KEY_WORDS[key] ? `, like in ${KEY_WORDS[key]}` : "";
+      return `${say}${like}${after}`;
+    })
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 async function speakAudio(text, env, fetchImpl) {
-  const line = clip(text, 320);
+  const line = clip(speakable(text), 360);
   if (!line || !env.OPENAI_API_KEY) return "";
   const voice = env.JOYCE_TABLET_VOICE || "coral";
   const attempts = [
     {
       model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts",
       voice,
-      instructions: "You are Joyce, a warm playful teacher sitting beside a young child. Sound like a real person, kind and unhurried. Clear words. No announcer voice and no robot voice."
+      instructions: "You are Joyce, a warm playful teacher sitting beside a young child. Sound like a real person, kind and unhurried. Clear words. No announcer voice and no robot voice. When you say a single sound such as ow, puh, or sss, say only that sound, never letter names. Ow rhymes with cow."
     },
     { model: "tts-1-hd", voice: "shimmer" }
   ];
