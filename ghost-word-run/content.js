@@ -179,6 +179,7 @@
   ];
 
   window.GHOST_RUN_CONTENT = {
+    sightWords: SIGHT_WORDS_300,
     soundAlikeGroups: SOUND_ALIKE_GROUPS,
     rhymeFamilies: RHYME_FAMILIES,
     nearRhymes: NEAR_RHYMES,

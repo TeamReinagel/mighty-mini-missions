@@ -36,7 +36,7 @@ How to choose the hardest spelling:
 - A vowel team in the middle: "The word starts with the letter p. O and u are in the middle. They say /ow/. Say /ow/." Use the real first letter of this word, not p, when the word is different. O and u usually say /ow/ here. /oh/ is a different sound. Do not praise /oh/ for that spelling.
 - A letter with more than one sound: say how many, and which sound this word uses. "A can say 3 sounds. In this one it says /ah/. Say /ah/."
 - A silent e only when this word really ends in a silent e: "That e at the end is silent. It makes the vowel say its name. Say that sound."
-- Sight words and irregular words, including a word they called a sight word: do not use phonics that are not in the word. Teach the parts that follow the rules. For the part that does not, say "This part says /e/ in this word. Say /e/."
+- Sight words and irregular words, including a word they called a sight word: do not explain the letters. Their spellings do not follow the rules, so a letter rule here would mislead the child. Say the whole word and ask them to say it.
 
 For a math problem, use the same shape. Tell the first small step, ask them to do it, correct a wrong step, then take the next step. Do not say the number that belongs in the blank.
 
@@ -47,6 +47,8 @@ Rules for "say":
 - Never say a sample word from these instructions unless those exact letters are in the close-up.
 - Do not tell them which button to tap as the correct choice.
 - Do not repeat a hint you already gave.
+- Do not say "hardest spelling" or "hardest part" out loud. Just name the letters and their sound.
+- If the child already knows letter sounds, skip single consonants and the first letter. Teach only the tricky part, then ask them to read the whole word.
 - If the close-up is unreadable, ask them to point closer. Do not guess a specific answer.
 
 Rules for "saw": a short noun phrase a parent can read later, starting with "the" or "a", naming the word, letter, or problem if you can see it. This is for the parent, not spoken to the child. Include the app name only if it is visible.
@@ -160,12 +162,33 @@ function placeOf(word, letters) {
   return "in the middle";
 }
 
+// Sight words: their spellings do not follow decoding rules, so Joyce says the
+// whole word instead of explaining letters.
+const SIGHT_WORDS = new Set([
+  "would", "could", "should", "said", "again", "was", "what", "of", "the", "to", "do", "who",
+  "you", "your", "are", "were", "have", "give", "live", "come", "some", "done", "does", "one",
+  "two", "they", "there", "where", "friend", "friends", "eight", "any", "many", "been", "people", "laugh"
+]);
+
+function sightLine(word, name) {
+  if (!SIGHT_WORDS.has(word)) return "";
+  return `${name}, this is a sight word. It says ${word}. Say ${word}.`;
+}
+
 function vowelTeam(word) {
   if (!word) return null;
   let letters = "";
   let names = "";
   let sound = "";
-  if (/ou[bcdfmnpqrstvwxyz]/.test(word) && !/^(group|soup|you|young|cousin|wound|through|could|would|should|touch|four|pour|court|countr|coupl|doubl|troubl|rough|tough|enough|though|dough|bought|thought|fought|sought|jour)|ous$/.test(word)) {
+  if (/eigh/.test(word)) {
+    letters = "eigh";
+    names = "e, i, g, and h";
+    sound = "/ay/";
+  } else if (/ear(?:th|n|l|ch|d)/.test(word) && !/beard|heard?t/.test(word)) {
+    letters = "ear";
+    names = "e, a, and r";
+    sound = "/er/";
+  } else if (/ou[bcdfmnpqrstvwxyz]/.test(word) && !/^(group|soup|you|young|cousin|wound|through|could|would|should|touch|four|pour|court|countr|coupl|doubl|troubl|rough|tough|enough|though|dough|bought|thought|fought|sought|jour)|ous$/.test(word)) {
     letters = "ou";
     names = "o and u";
     sound = "/ow/";
@@ -250,24 +273,31 @@ function claimedStartLetter(say) {
   return "";
 }
 
-function anchoredTeamLine(word, team, name) {
+function anchoredTeamLine(word, team, name, knows = false) {
   const head = team.names.charAt(0).toUpperCase() + team.names.slice(1);
   if (team.place === "at the beginning") {
-    return `${name}, ${team.names} are at the beginning. They say ${team.sound}. Say ${team.sound}.`;
+    return `${name}, ${team.names} are at the beginning. In this word they say ${team.sound}. Say ${team.sound}.`;
   }
-  return `${name}, the word starts with the letter ${word[0]}. ${head} are ${team.place}. They say ${team.sound}. Say ${team.sound}.`;
+  if (knows) return `${name}, in this word, ${team.names} ${team.place} say ${team.sound}. Say ${team.sound}.`;
+  return `${name}, the word starts with the letter ${word[0]}. ${head} are ${team.place}. In this word they say ${team.sound}. Say ${team.sound}.`;
 }
 
-function teamCorrection(question, answer, name) {
+function teamCorrection(question, answer, name, knows = false) {
   const word = wordOf(answer);
   const team = vowelTeam(word);
   if (!team) return "";
   const said = vowelSounds(question);
   if (!said.length || said.includes(team.sound)) return "";
-  return anchoredTeamLine(word, team, name);
+  return anchoredTeamLine(word, team, name, knows);
 }
 
-function hintFits(say, answer, kind) {
+const CONSONANT = "[b-df-hj-np-tv-z]";
+const PLAIN_LETTER_DRILL = new RegExp(
+  `what sound does (?:the letter )?${CONSONANT} make|say the sound for (?:the letter )?${CONSONANT}\\b|letter ${CONSONANT}(?: in this word)? says \\/${CONSONANT}\\/|say \\/${CONSONANT}\\/\\.?$`,
+  "i"
+);
+
+function hintFits(say, answer, kind, knows = false) {
   const word = wordOf(answer);
   if (!say || leaked(say, answer) || GENERIC_HINT.test(say)) return false;
   if (kind !== "word" || !word) return true;
@@ -276,7 +306,9 @@ function hintFits(say, answer, kind) {
   if (named && named[1].toLowerCase() !== word) return false;
   const letters = [...say.matchAll(/\bletter(?:\s+is)?(?:\s+the)?\s+([a-z])\b/gi)].map((match) => match[1].toLowerCase());
   if (!letters.every((letter) => word.includes(letter))) return false;
-  for (const pair of say.toLowerCase().matchAll(/\b([a-z]{1,2}),? and ([a-z]{1,2}) together\b/g)) {
+  if (knows && PLAIN_LETTER_DRILL.test(say) && !/\/(?:sh|ch|th|wh|ck|ph|ng|qu)\//i.test(say)) return false;
+  if (/hardest (?:spelling|part)/i.test(say)) return false;
+  for (const pair of say.toLowerCase().replace(/['"‘’“”]/g, "").matchAll(/\b([a-z]{1,2}),? and ([a-z]{1,2}) together\b/g)) {
     const joined = pair[1] + pair[2];
     if (!TEAMS.has(joined) || !word.includes(joined)) return false;
   }
@@ -285,7 +317,7 @@ function hintFits(say, answer, kind) {
   return !claimed || claimed === focus[0];
 }
 
-function concreteHint(answer, kind, name, earlier = []) {
+function concreteHint(answer, kind, name, earlier = [], knows = false) {
   const word = wordOf(answer);
   const said = earlier.join(" ").toLowerCase();
   if (kind === "word" && magicE(word) && !/silent/.test(said)) {
@@ -301,8 +333,10 @@ function concreteHint(answer, kind, name, earlier = []) {
     if (rest.length === 1) return `${name}, the ${rest} says its name. Say that sound.`;
   }
   const team = kind === "word" ? vowelTeam(word) : null;
-  if (team && !said.includes(team.sound)) return anchoredTeamLine(word, team, name);
+  if (team && !said.includes(team.sound)) return anchoredTeamLine(word, team, name, knows);
   const first = word[0];
+  if (kind === "word" && knows && earlier.length) return `${name}, yes. Now read the whole word.`;
+  if (kind === "word" && knows && word) return `${name}, this one says ${word}. Say ${word}.`;
   if (kind === "word" && first) {
     return `${name}, the word you marked starts with the letter ${first}.`;
   }
@@ -356,11 +390,16 @@ function agreeLine(name, answer, kind) {
   return `${name}, yes. The word is ${answer}.`;
 }
 
-function routineCue(earlier, question, answer, kind) {
+function routineCue(earlier, question, answer, kind, knows = false) {
   if (kind === "math") return "Continue the marked math problem one small step at a time. Respond to the child's attempted step. Use counting, objects, or place value as appropriate. Do not give the final answer yet.";
   if (!kind || kind === "other") return "Identify whether the marked spot is reading or math, then offer one concrete teaching step appropriate to it. Do not guess if the image is unclear.";
   if (teamCorrection(question, answer, "Child")) {
     return "Their sound does not match this word. Tell them the sound this spelling uses here, and ask them to say it. Do not praise the sound they said. Do not switch letters. Do not say the word.";
+  }
+  if (knows) {
+    return earlier.length
+      ? "This child already knows single letter sounds. Do not teach or ask for a single consonant. If they said the tricky sound right, say yes and ask them to read the whole word. Do not say the whole word yet."
+      : "This child already knows single letter sounds. Teach only the tricky part of this word: the spelling and the sound it makes here. Do not teach the first letter or any single consonant. Do not say the word.";
   }
   if (!earlier.length) {
     return "First move. Tell the sound of the hardest spelling in this word, then ask them to say only that sound. If that spelling is not the first letter, say it is in the middle or at the end. Do not say the word starts there. Do not say the word.";
@@ -377,7 +416,7 @@ function scrubStart(say, answer, name) {
   return `${name}, the word starts with the letter ${word[0]}.`;
 }
 
-function spokenHint(raw, answer, kind, name, earlier = [], question = "", saw = "") {
+function spokenHint(raw, answer, kind, name, earlier = [], question = "", saw = "", knows = false) {
   const say = clip(raw, 320);
   if (kind !== "word") {
     const numeric = numberAnswer(answer);
@@ -393,14 +432,15 @@ function spokenHint(raw, answer, kind, name, earlier = [], question = "", saw = 
     return FALLBACK[kind] || FALLBACK.other;
   }
   const word = wordOf(answer);
-  const correction = teamCorrection(question, word, name);
+  const correction = teamCorrection(question, word, name, knows);
   if (correction) return correction;
   const team = vowelTeam(word);
-  if (team && team.place !== "at the beginning" && !earlier.join(" ").toLowerCase().includes(`letter ${word[0]}`)) {
-    return anchoredTeamLine(word, team, name);
+  const needsTeam = knows ? !earlier.length : team?.place !== "at the beginning" && !earlier.join(" ").toLowerCase().includes(`letter ${word[0]}`);
+  if (team && needsTeam) {
+    return anchoredTeamLine(word, team, name, knows);
   }
-  if (hintFits(say, word, kind)) return scrubStart(say, word, name);
-  return scrubStart(concreteHint(word, kind, name, earlier), word, name);
+  if (hintFits(say, word, kind, knows)) return scrubStart(say, word, name);
+  return scrubStart(concreteHint(word, kind, name, earlier, knows), word, name);
 }
 
 function revealLine(raw, answer, kind, name) {
@@ -558,7 +598,7 @@ async function transcribe({ audioBase64, audioType, env, fetchImpl }) {
   }
 }
 
-function recordOf({ id, t, kid, saw, question, hints, outcome, revealed }) {
+function recordOf({ id, t, kid, saw, answer, kind, question, hints, outcome, revealed }) {
   const name = kidById(kid).name;
   return {
     id,
@@ -567,6 +607,7 @@ function recordOf({ id, t, kid, saw, question, hints, outcome, revealed }) {
     from: "tablet",
     kind: "tablet-help",
     saw,
+    word: kind === "word" ? wordOf(answer) : "",
     question,
     hints,
     revealed: Boolean(revealed),
@@ -612,8 +653,8 @@ async function revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, 
       timeoutMs: 10000,
       temperature: 0.2,
       system: REVEAL_SYSTEM,
-      text: userText,
-      images: [
+      text: answer ? `${userText}\nThere is no picture this turn.` : userText,
+      images: answer ? [] : [
         { base64: image, detail: "high" },
         crop ? { base64: crop, detail: "high" } : null
       ].filter(Boolean)
@@ -688,6 +729,11 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     try { pointer = await loadPointer(store, sessionId); }
     catch { return fail(503, "Joyce needs a moment. Tap Ask Joyce to try again."); }
     if (!pointer || pointer.kid !== kid.id) return fail(404, "Joyce couldn't find that question. Point again.");
+    if (pointer.revealed && childSaidIt(question, pointer.answer, pointer.kind)) {
+      const praise = `Yes, ${kid.name}. You read ${clip(pointer.answer, 48)}.`;
+      const audioBase64 = await speakAudio(praise, env, fetchImpl);
+      return { status: 200, body: { say: praise, spokenText: speakable(praise), question, sessionId, hintsUsed: (pointer.hints || []).length, done: false, revealed: true, saved: true, audioBase64 } };
+    }
     if (pointer.revealed) {
       const last = (pointer.hints || []).slice(-1)[0] || `${kid.name}, point a little closer to the word.`;
       const audioBase64 = await speakAudio(last, env, fetchImpl);
@@ -702,14 +748,17 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
   }
 
   const earlier = pointer?.hints || [];
+  const knows = Boolean(kid.knowsLetterSounds);
+  const known = Boolean(pointer?.answer);
   const userText = [
     `Child: ${kid.name}, age ${kid.age}.`,
     kid.where ? `Where they are: ${kid.where}` : "",
     kid.note ? `Note: ${kid.note}` : "",
     question ? `They just said: "${question}"` : "They just said: (nothing yet; they only pointed)",
     pointer?.answer ? `The marked answer is "${pointer.answer}". Teach only that. Do not name a different word.` : "",
-    routineCue(earlier, question, pointer?.answer || "", pointer?.kind),
-    /sight word/i.test(question) ? "They called this a sight word. Do not use phonics that are not in the word." : "",
+    known ? `You already read the marked spot: ${pointer.saw || pointer.answer}. There is no picture this turn.` : "",
+    routineCue(earlier, question, pointer?.answer || "", pointer?.kind, knows),
+    /sight word/i.test(question) ? "They called this a sight word. Do not explain its letters. Say the whole word and ask them to say it back." : "",
     earlier.length ? `You already said: ${earlier.map((h) => `"${h}"`).join(" ")} Continue from their answer. Do not repeat yourself.` : ""
   ].filter(Boolean).join("\n");
 
@@ -717,6 +766,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
   let answer = pointer?.answer || "";
   let savedKind = pointer?.kind || "word";
   let say = FALLBACK.other;
+  let revealed = false;
   try {
     const out = await chatVisionJSON({
       env,
@@ -725,7 +775,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
       temperature: 0.3,
       system: HINT_SYSTEM,
       text: userText,
-      images: [
+      images: known ? [] : [
         { base64: image, detail: "high" },
         crop ? { base64: crop, detail: "high" } : null
       ].filter(Boolean)
@@ -739,8 +789,15 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
     // Validate after recovery: a missing model field is not evidence of a bad
     // screenshot. A known target can also use our safe hint when "say" is empty.
     if (!answer) return fail(422, "I can’t see that clearly. Tap the word or circle the whole problem again.");
-    say = spokenHint(out.say, answer, kind, kid.name, earlier, question, pointer?.saw || out.saw);
     savedKind = pointer?.kind || kind;
+    const heart = !earlier.length && savedKind === "word" ? sightLine(wordOf(answer), kid.name) : "";
+    if (heart) {
+      say = heart;
+      revealed = true;
+    } else {
+      say = spokenHint(out.say, answer, kind, kid.name, earlier, question, pointer?.saw || out.saw, knows);
+      revealed = knows && savedKind === "word" && leaked(say, answer);
+    }
   } catch {
     return fail(503, "Joyce couldn’t connect. Tap Ask Joyce to try again.");
   }
@@ -751,7 +808,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
   const now = Date.now();
   const day = t.slice(0, 10);
   const obsKey = pointer?.obsKey || `observations/${day}/${now}-tablet-${id}`;
-  const next = { id, t, kid: kid.id, saw, answer, kind: savedKind, question: question || pointer?.question || "", hints, outcome: null, obsKey };
+  const next = { id, t, kid: kid.id, saw, answer, kind: savedKind, question: question || pointer?.question || "", hints, outcome: null, obsKey, revealed };
   let saved = true;
   try {
     await writeSession(store, next);

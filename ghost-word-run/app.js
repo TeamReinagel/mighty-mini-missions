@@ -252,6 +252,61 @@
     if (bigBucketFront) bigBucketFront.innerHTML = candies.getPumpkinBucketFrontSVG(154);
   }
 
+  // Tricky Words: words this child asked Joyce about on the tablet, then words they
+  // missed here, topped up to TRICKY_MIN with the next sight words not yet mastered.
+  const TRICKY_MIN = 30;
+  const trickyKid = window.MightyProgress?.currentKid?.().id || "unknown";
+  const TRICKY_STORE_KEY = `mightyMini.ghostWordRun.tricky.${trickyKid}`;
+  const sightSpelling = new Map((content.sightWords || []).map((word) => [word.toLowerCase(), word]));
+
+  function trickyWords(data) {
+    const words = [];
+    const seen = new Set();
+    const add = (raw) => {
+      const key = String(raw || "").trim().toLowerCase();
+      if (!key || seen.has(key)) return;
+      seen.add(key);
+      words.push(sightSpelling.get(key) || key);
+    };
+    (data?.trouble || []).forEach((entry) => add(entry?.word ?? entry));
+    (data?.practice || []).forEach(add);
+    const mastered = new Set((data?.mastered || []).map((word) => String(word).toLowerCase()));
+    for (const word of content.sightWords || []) {
+      if (words.length >= TRICKY_MIN) break;
+      if (!mastered.has(word.toLowerCase())) add(word);
+    }
+    return words;
+  }
+
+  function savedTricky() {
+    try { return JSON.parse(localStorage.getItem(TRICKY_STORE_KEY)); } catch (_) { return null; }
+  }
+
+  const trickyLevel = {
+    id: "tricky-words",
+    name: "Tricky Words",
+    description: "Words to practice - up to 3 paths",
+    minChoices: 2,
+    maxChoices: 3,
+    words: trickyWords(savedTricky())
+  };
+  category.levels.push(trickyLevel);
+
+  async function refreshTricky() {
+    if (trickyKid === "unknown" || !/^https?:$/.test(location.protocol)) return;
+    try {
+      const res = await fetch(`/api/trouble-words/${encodeURIComponent(trickyKid)}`, { cache: "no-store" });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!Array.isArray(data?.trouble)) return;
+      localStorage.setItem(TRICKY_STORE_KEY, JSON.stringify(data));
+      trickyLevel.words = trickyWords(data);
+    } catch (_) {
+      // Offline: keep the last list this tablet saw.
+    }
+  }
+  refreshTricky();
+
   category.levels.forEach((level) => {
     const option = document.createElement("option");
     option.value = level.id;

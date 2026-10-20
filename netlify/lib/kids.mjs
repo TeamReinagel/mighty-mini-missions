@@ -10,6 +10,8 @@ export const KIDS = [
     name: "Max",
     age: 5,
     where: "Reading.com lesson 94 of 120; wrapping up 1st-grade math, moving into 2nd. Known gaps: coins, regrouping. Handwriting is well behind reading.",
+    // The tablet helper skips single-letter sounds for a reader at this level.
+    knowsLetterSounds: true,
     guides: [
       { grade: "Second Grade", areas: ["Math"] },
       { grade: "First Grade", areas: ["ELA", "Science", "Social Studies", "Bible/Character"] },

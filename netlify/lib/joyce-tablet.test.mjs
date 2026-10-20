@@ -143,17 +143,18 @@ test("a generic sound-it-out hint is replaced with the first letter", async () =
   const result = await handleTabletRequest({
     store: memoryStore(),
     env,
-    fetchImpl: fetchImpl({ saw: "the word friends", say: "What sounds do you hear at the beginning?", answer: "friends", kind: "word" }),
-    body: { kid: "max", imageBase64: image, question: "what is this sight word" }
+    fetchImpl: fetchImpl({ saw: "the word frog", say: "What sounds do you hear at the beginning?", answer: "frog", kind: "word" }),
+    body: { kid: "gabi", imageBase64: image, question: "what is this word" }
   });
   assert.match(result.body.say, /letter f/i);
   assert.doesNotMatch(result.body.say, /sounds/i);
-  assert.doesNotMatch(result.body.say, /\bfriends\b/i);
+  assert.doesNotMatch(result.body.say, /\bfrog\b/i);
 });
 
 test("sight-word help does not tell the child to sound the word out", () => {
   assert.match(HINT_SYSTEM, /sight word/i);
-  assert.match(HINT_SYSTEM, /do not use phonics/i);
+  assert.match(HINT_SYSTEM, /do not explain the letters/i);
+  assert.match(HINT_SYSTEM, /Say the whole word and ask them to say it/);
   assert.match(HINT_SYSTEM, /3 sounds/);
   assert.match(HINT_SYSTEM, /e at the end is silent/);
   assert.match(HINT_SYSTEM, /structured literacy/i);
@@ -228,11 +229,11 @@ test("ou in pounds says ow, so oh is corrected instead of praised", async () => 
   };
   const first = await handleTabletRequest({
     store, env, fetchImpl: fetchStep,
-    body: { kid: "max", imageBase64: image, cropBase64: image, question: "I need help with this word." }
+    body: { kid: "gabi", imageBase64: image, cropBase64: image, question: "I need help with this word." }
   });
   const second = await handleTabletRequest({
     store, env, fetchImpl: fetchStep,
-    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
+    body: { kid: "gabi", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
   });
   assert.equal(second.body.revealed, undefined);
   assert.match(second.body.say, /starts with the letter p/i);
@@ -241,7 +242,7 @@ test("ou in pounds says ow, so oh is corrected instead of praised", async () => 
   assert.doesNotMatch(second.body.say, /\bpounds\b/i);
   const third = await handleTabletRequest({
     store, env, fetchImpl: fetchStep,
-    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
+    body: { kid: "gabi", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/oh/" }
   });
   assert.notEqual(third.body.revealed, true);
   assert.match(third.body.say, /\/ow\//i);
@@ -258,7 +259,7 @@ test("pounds does not start with o or ow", async () => {
       answer: "pounds",
       kind: "word"
     }),
-    body: { kid: "max", imageBase64: image, question: "what is this word" }
+    body: { kid: "gabi", imageBase64: image, question: "what is this word" }
   });
   assert.match(result.body.say, /starts with the letter p/i);
   assert.match(result.body.say, /in the middle/i);
@@ -277,7 +278,7 @@ test("pounds stays pounds when the model answers with only the letter o", async 
       answer: "O",
       kind: "word"
     }),
-    body: { kid: "max", imageBase64: image, question: "what is this word" }
+    body: { kid: "gabi", imageBase64: image, question: "what is this word" }
   });
   assert.match(result.body.say, /starts with the letter p/i);
   assert.match(result.body.say, /in the middle/i);
@@ -364,4 +365,83 @@ test("could keeps its own ou sound", async () => {
     body: { kid: "max", imageBase64: image, question: "what is this word" }
   });
   assert.doesNotMatch(result.body.say, /\/ow\//);
+});
+
+test("would is taught as a whole sight word in one turn, with no letter rule", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word would", say: "The word starts with the letter w. What sound does w make?", answer: "would", kind: "word" }),
+    body: { kid: "max", imageBase64: image, cropBase64: image, question: "what is this word" }
+  });
+  assert.notEqual(result.body.revealed, true);
+  assert.match(result.body.say, /sight word\. It says would\. Say would\./i);
+  assert.doesNotMatch(result.body.say, /\/oo\/|quiet/i);
+  assert.doesNotMatch(result.body.say, /sound does w make|letter w/i);
+});
+
+test("eight is said as a whole sight word", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word eight", say: "I, g, and h say /eye/.", answer: "eight", kind: "word" }),
+    body: { kid: "max", imageBase64: image, question: "help" }
+  });
+  assert.match(result.body.say, /It says eight\. Say eight\./i);
+  assert.doesNotMatch(result.body.say, /\/eye\/|\/ay\//);
+});
+
+test("Max gets the tricky part, then is asked to read the word, without single-letter drills", async () => {
+  const store = memoryStore();
+  const requests = [];
+  let n = 0;
+  const replies = [
+    { saw: "the word pounds", say: "O and u say /ow/.", answer: "pounds", kind: "word" },
+    { saw: "the word pounds", say: "Yes! Now what sound does p make?", answer: "pounds", kind: "word" }
+  ];
+  const impl = fetchImpl(null);
+  const fetchStep = async (url, opts) => {
+    if (String(url).includes("/chat/completions")) {
+      requests.push(JSON.parse(opts.body));
+      return jsonResponse({ choices: [{ message: { content: JSON.stringify(replies[n++] || replies[1]) } }] });
+    }
+    return impl(url, opts);
+  };
+  const first = await handleTabletRequest({ store, env, fetchImpl: fetchStep, body: { kid: "max", imageBase64: image, cropBase64: image, question: "help" } });
+  assert.match(first.body.say, /in this word, o and u in the middle say \/ow\//i);
+  assert.doesNotMatch(first.body.say, /letter p/i);
+  const second = await handleTabletRequest({ store, env, fetchImpl: fetchStep, body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "/ow/" } });
+  assert.doesNotMatch(second.body.say, /sound does p make/i);
+  assert.match(second.body.say, /read the whole word/i);
+  const followUpPictures = requests[1].messages[1].content.filter((part) => part.type === "image_url");
+  assert.equal(followUpPictures.length, 0);
+});
+
+test("a single consonant drill from the model is replaced for Max", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word wants", say: "The letter n in this word says /n/. Say /n/.", answer: "wants", kind: "word" }),
+    body: { kid: "max", imageBase64: image, question: "help" }
+  });
+  assert.doesNotMatch(result.body.say, /letter n/i);
+});
+
+test("a quoted made-up pair is still caught", async () => {
+  const result = await handleTabletRequest({
+    store: memoryStore(),
+    env,
+    fetchImpl: fetchImpl({ saw: "the word has", say: "'H' and 'a' together say /h/. Say /h/.", answer: "has", kind: "word" }),
+    body: { kid: "gabi", imageBase64: image, question: "help" }
+  });
+  assert.doesNotMatch(result.body.say, /h and a together|'h' and 'a'/i);
+});
+
+test("after a sight word, saying it gets praise and ends the turn", async () => {
+  const store = memoryStore();
+  const reply = { saw: "the word would", say: "What sound does w make?", answer: "would", kind: "word" };
+  const first = await handleTabletRequest({ store, env, fetchImpl: fetchImpl(reply), body: { kid: "max", imageBase64: image, question: "help" } });
+  const second = await handleTabletRequest({ store, env, fetchImpl: fetchImpl(reply), body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "Would." } });
+  assert.equal(second.body.revealed, true);
+  assert.match(second.body.say, /Yes, Max\. You read would/);
 });
