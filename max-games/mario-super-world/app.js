@@ -1940,11 +1940,14 @@
   }
 
   function camera() {
-    const viewW = 360;
+    const column = 360;
     if (view.cssW < 2 || view.cssH < 2) {
-      return { camX: 0, camY: 0, scale: 1, viewW, viewH: 480 };
+      return { camX: 0, camY: 0, scale: 1, viewW: column, viewH: 480 };
     }
-    const scale = view.cssW / viewW;
+    // A tall screen fills its width with one column of the course.
+    // A wide screen keeps that same size and shows more of the course across.
+    const scale = Math.min(view.cssW, view.cssH) / column;
+    const viewW = view.cssW / scale;
     const viewH = view.cssH / scale;
     let camX = mario.x - viewW * 0.34;
     const maxX = Math.max(0, worldWidth() - viewW);
