@@ -253,11 +253,14 @@
   }
 
   // Tricky Words: words this child asked Joyce about on the tablet, then words they
-  // missed here, topped up to TRICKY_MIN with the next sight words not yet mastered.
+  // missed here, topped up to TRICKY_MIN with Reading.com words from lesson 97 back.
   const TRICKY_MIN = 30;
   const trickyKid = window.MightyProgress?.currentKid?.().id || "unknown";
   const TRICKY_STORE_KEY = `mightyMini.ghostWordRun.tricky.${trickyKid}`;
-  const sightSpelling = new Map((content.sightWords || []).map((word) => [word.toLowerCase(), word]));
+  const trickyFill = content.trickyFillWords || [];
+  const wordSpelling = new Map(
+    [...(content.sightWords || []), ...trickyFill].map((word) => [word.toLowerCase(), word])
+  );
 
   function trickyWords(data) {
     const words = [];
@@ -266,12 +269,12 @@
       const key = String(raw || "").trim().toLowerCase();
       if (!key || seen.has(key)) return;
       seen.add(key);
-      words.push(sightSpelling.get(key) || key);
+      words.push(wordSpelling.get(key) || key);
     };
     (data?.trouble || []).forEach((entry) => add(entry?.word ?? entry));
     (data?.practice || []).forEach(add);
     const mastered = new Set((data?.mastered || []).map((word) => String(word).toLowerCase()));
-    for (const word of content.sightWords || []) {
+    for (const word of trickyFill) {
       if (words.length >= TRICKY_MIN) break;
       if (!mastered.has(word.toLowerCase())) add(word);
     }

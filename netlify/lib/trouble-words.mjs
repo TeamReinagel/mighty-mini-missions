@@ -2,7 +2,7 @@
 // A word joins when the child asks Joyce about it on the tablet, and leaves once
 // they pick it right on the first try 3 times in a row in Ghost Word Run after
 // their last ask. Missed game words fill in behind those. The game tops the trail
-// up to 30 with the next sight words the child has not mastered.
+// up to 30 with Reading.com words from lesson 97 back (see ghost-word-run/content.js).
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const LOOKBACK_DAYS = 21;

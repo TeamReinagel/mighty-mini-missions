@@ -43,6 +43,20 @@
 
   const wordsInRange = (from, to) => SIGHT_WORDS_300.slice(from - 1, to);
 
+  // Ghost Word Run "Tricky Words" fill: Reading.com Parent Scope & Sequence words
+  // introduced in lessons 97 back through 94 (most recent first), capped at 30.
+  // Source: https://www.reading.com/uploads/parent_scope_and_sequence.pdf
+  const TRICKY_FILL_WORDS = [
+    // Lesson 97 (Al)
+    "calls", "small", "real", "throws", "always", "almost", "baseball", "zero", "wall",
+    // Lesson 96 (Review)
+    "round", "clock", "scores", "would", "should", "base", "prize",
+    // Lesson 95 (Soft c)
+    "race", "fence", "twice", "place", "danced", "chance", "their", "our", "lace",
+    // Lesson 94 (Review) — first 5 to reach 30
+    "slip", "frown", "brown", "skates", "how"
+  ];
+
   // Words that sound alike can't share a row: the child picks by ear, so both would be "right".
   const SOUND_ALIKE_GROUPS = [
     ["to", "two", "too"],
@@ -180,6 +194,7 @@
 
   window.GHOST_RUN_CONTENT = {
     sightWords: SIGHT_WORDS_300,
+    trickyFillWords: TRICKY_FILL_WORDS,
     soundAlikeGroups: SOUND_ALIKE_GROUPS,
     rhymeFamilies: RHYME_FAMILIES,
     nearRhymes: NEAR_RHYMES,
