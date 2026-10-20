@@ -1,6 +1,6 @@
 # Joyce overnight review — October 19–20, 2026
 
-Joyce **2.3 (version code 14)** is built and passed the available local checks. Publication verification is recorded below. The user authorized iterative review, fixes, testing, and committing/pushing the finished Joyce work. Starting commit: `461df60`.
+**Complete:** Joyce **2.3 (version code 14)** passed the available local checks, was committed and pushed to `main`, and its published download was verified. The user authorized iterative review, fixes, testing, and committing/pushing the finished Joyce work. Starting commit: `461df60`.
 
 ## Morning outline
 
@@ -58,7 +58,7 @@ Test sources are in `netlify/lib/joyce-tablet*.test.mjs` and `app/src/test/java/
 
 Robolectric simulates Android behavior. The media-projection test includes a custom shadow enforcing the documented one-display-creation rule; it does not exercise actual system screen-sharing consent. Real microphone permissions, audio focus in the learning apps, screen rotation, and update installation still need a tablet check.
 
-Once publication is verified, open Joyce's parent setup and use **Get the newest Joyce**. Then try:
+Open Joyce's parent setup and use **Get the newest Joyce**. Then try:
 
 1. Open Reading.com, tap Joyce, tap one word, and try both speech and Ask Joyce.
 2. Replay a hint, mark a second word, and use the check button to return.
@@ -67,4 +67,12 @@ Once publication is verified, open Joyce's parent setup and use **Get the newest
 
 ## Commit and deployment
 
-The release includes the matching `downloads/joyce.apk` and `joyce-latest.json`. Before publication, the public update metadata still reported 2.2 / 13. The final commit, push, and public deployment checks will be recorded here after they complete.
+- Release commit: [`1c720f2`](https://github.com/TeamReinagel/mighty-mini-missions/commit/1c720f2), **Improve Joyce overlay usability and tutoring reliability**.
+- Packaging correction: [`1c71b6c`](https://github.com/TeamReinagel/mighty-mini-missions/commit/1c71b6c), **Keep Joyce endpoint tests outside deployable functions**. The backend suite was rerun after moving the test: all 89 passed.
+- Both pushes to `origin/main` succeeded. This completed report is saved in a subsequent documentation commit.
+- The public [update metadata](https://mighty-mini-missions.netlify.app/joyce-latest.json) changed from 2.2 / 13 to **2.3 / 14**.
+- Downloaded the [public APK](https://mighty-mini-missions.netlify.app/downloads/joyce.apk); its SHA-256 matches the value above, and a byte-for-byte comparison with the local tested APK passed.
+- The public `package.json` matches the local version, confirming publication of the packaging correction as well as the APK.
+- An unauthenticated request to `/api/joyce-tablet` returned **401** with the expected key message. This verifies endpoint reachability and authentication rejection, not authenticated tutoring or live inference.
+- GitHub's public status/check APIs returned no build records. Deployment confirmation here comes from the public metadata, package file, APK comparison, and API response, not Netlify dashboard access.
+- The one-night `joyce-overnight-review` heartbeat was **paused** after completion.
