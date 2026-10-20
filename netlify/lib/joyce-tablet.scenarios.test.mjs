@@ -72,6 +72,47 @@ test('an empty vision result is retryable, not an invented tutoring turn', async
   assert.equal(result.status, 422);
   assert.equal(storage.data.size, 0);
 });
+for (const extra of [{}, { answer: '' }]) {
+  test(`a recognized word survives an ${'answer' in extra ? 'empty' : 'omitted'} answer field`, async () => {
+    const { result, storage } = await first({ saw: 'the word ship', say: 'S and h together say /sh/. Say /sh/.', kind: 'word', ...extra });
+    assert.equal(result.status, 200);
+    assert.equal(storage.data.get(`tablet-sessions/${result.body.sessionId}`).answer, 'ship');
+    assert.doesNotMatch(result.body.say, /can't see|can’t see|\bship\b/i);
+  });
+}
+test('a quoted recognized word survives an empty answer field', async () => {
+  const { result, storage } = await first({ saw: 'the word “ship” in the reading lesson', say: 'Say /sh/.', answer: '', kind: 'word' });
+  assert.equal(result.status, 200);
+  assert.equal(storage.data.get(`tablet-sessions/${result.body.sessionId}`).answer, 'ship');
+});
+test('a recognized answer with no spoken hint gets a safe teaching step', async () => {
+  const { result } = await first({ saw: 'the word ship', say: '', answer: 'ship', kind: 'word' });
+  assert.equal(result.status, 200);
+  assert.match(result.body.say, /\/sh\//);
+  assert.doesNotMatch(result.body.say, /\bship\b/i);
+});
+for (const [kind, answer, saw] of [['word', 'ship', 'the word ship'], ['math', '8', 'the problem 14 minus 6']]) {
+  test(`a ${kind} follow-up can use the already-recognized answer when a model field is missing`, async () => {
+    const { result, storage } = await first({ saw, answer, kind, say: 'Try the first part.' });
+    const next = await handleTabletRequest({ store: storage, env, fetchImpl: model({ saw, kind, say: kind === 'math' ? 'Count back six.' : 'Say /sh/.' }), body: { ...body, followUp: true, sessionId: result.body.sessionId, question: 'help' } });
+    assert.equal(next.status, 200);
+    assert.equal(storage.data.get(`tablet-sessions/${result.body.sessionId}`).answer, answer);
+  });
+}
+for (const saw of ['the word is not clear', 'the word is blurry', 'the word on the screen']) {
+  test(`an unreadable description "${saw}" does not become an invented word`, async () => {
+    const { result, storage } = await first({ saw, say: 'Point a little closer.', answer: '', kind: 'word' });
+    assert.equal(result.status, 422);
+    assert.equal(storage.data.size, 0);
+  });
+}
+test('the marked screenshot stays high detail when identifying the first target', async () => {
+  const requests = [];
+  await handleTabletRequest({ store: store(), env, fetchImpl: model({ saw: 'the word ship', answer: 'ship', say: 'Say /sh/.', kind: 'word' }, requests), body: { ...body, cropBase64: image } });
+  const pictures = requests[0].messages[1].content.filter(part => part.type === 'image_url');
+  assert.equal(pictures.length, 2);
+  assert.ok(pictures.every(part => part.image_url.detail === 'high'));
+});
 test('unheard speech asks for repetition without advancing the lesson', async () => {
   const { result, storage } = await first({ answer: 'cat', kind: 'word', say: 'The c says /k/.' }, store(), { audioBase64: Buffer.from('silence').toString('base64') });
   assert.equal(result.status, 422);

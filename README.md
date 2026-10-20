@@ -121,6 +121,8 @@ Then the child taps her picture, points, and talks, or taps **Ask Joyce** withou
 
 **Get the newest Joyce**, on the grown-up screen, reads `joyce-latest.json` on the site. That file names the version and a download link. The link can be a Google Drive share link (set sharing to anyone with the link) or `/downloads/joyce.apk` on this site. If the version is newer, the tablet downloads it and Android asks to install. Allow Joyce to install unknown apps when the tablet asks. Family Link may still ask a parent for that one setting.
 
+Tutoring and picture-interpretation fixes on the website take effect on the next request without an APK download. Updates to the Android overlay itself still use **Get the newest Joyce**.
+
 ### Preview or send a report any time
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`
 - Send now: add `&send=1`. It appears in Slack within a minute or two, followed by Joyce's weekly look-back. This also starts a new report week, so Friday's report covers only what happens after.
@@ -231,4 +233,3 @@ These pull from `templateVariables` at the bottom of `missions.json`.
 ## Design constraints (on purpose)
 - No streaks, no leaderboards, no “you missed a day” vibes.
 - The goal metric is **time spent off-screen** and **willing re-tries**.
-

@@ -51,6 +51,7 @@ Rules for "say":
 
 Rules for "saw": a short noun phrase a parent can read later, starting with "the" or "a", naming the word, letter, or problem if you can see it. This is for the parent, not spoken to the child. Include the app name only if it is visible.
 Rules for "answer": for math, the final number or short answer to the marked question, including zero. For reading, every letter of the marked word, in order. The whole word, such as pounds, not the hard spelling by itself and not one letter from the middle. A single letter only when the close-up is a single letter. Used so a later turn can say it, and to check that this turn did not leak it. Never shown to the child on this turn.
+Always fill "answer" when you can identify the target. Keeping the answer out of "say" does not mean leaving "answer" blank: it is private application data, not spoken to the child. Leave it empty only when the target cannot be identified.
 Rules for "kind": "word", "math", or "other".
 
 Reply with JSON only: {"saw":"", "say":"", "answer":"", "kind":"word|math|other"}`;
@@ -219,6 +220,17 @@ function readingWord(saw, say, answer) {
   const named = [focusWord(saw, ""), focusWord(say, "")].filter((word) => word && word !== fromAnswer);
   const longer = named.find((word) => word.length >= 4 && word.length > fromAnswer.length && (fromAnswer.length <= 2 || word.includes(fromAnswer)));
   return longer || fromAnswer || named[0] || "";
+}
+
+// Recover only a clearly named visual target, not prose such as "the word is
+// blurry". The model sometimes names the word here but omits its private answer.
+function namedReadingTarget(saw) {
+  const text = clip(saw, 300);
+  const quoted = text.match(/^the (?:marked )?(?:word|letter)\s+["'“‘]([a-z]+)["'”’](?=$|[\s.,;])/i);
+  if (quoted) return quoted[1].toLowerCase();
+  const named = text.match(/^the (?:marked )?word\s+([a-z]{3,})(?=$|[.,;]|\s+(?:in|on|from)\b)/i);
+  const word = named?.[1].toLowerCase() || "";
+  return /^(unknown|unreadable|unclear|blurry|blurred|illegible|marked|this|that)$/.test(word) ? "" : word;
 }
 
 function claimedStartLetter(say) {
@@ -602,7 +614,7 @@ async function revealAnswer({ store, env, fetchImpl, pointer, kid, image, crop, 
       system: REVEAL_SYSTEM,
       text: userText,
       images: [
-        { base64: image, detail: "low" },
+        { base64: image, detail: "high" },
         crop ? { base64: crop, detail: "high" } : null
       ].filter(Boolean)
     });
@@ -714,15 +726,19 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
       system: HINT_SYSTEM,
       text: userText,
       images: [
-        { base64: image, detail: "low" },
+        { base64: image, detail: "high" },
         crop ? { base64: crop, detail: "high" } : null
       ].filter(Boolean)
     });
-    if (!out || !clip(out.say, 320) || !clip(out.answer, 48)) return fail(422, "I can’t see that clearly. Tap the word or circle the whole problem again.");
-    const kind = pointer?.kind || (["word", "math", "other"].includes(out.kind) ? out.kind : "other");
+    if (!out || typeof out !== "object" || Array.isArray(out)) return fail(422, "I can’t see that clearly. Tap the word or circle the whole problem again.");
+    const named = namedReadingTarget(out.saw);
+    const kind = pointer?.kind || (["word", "math", "other"].includes(out.kind) ? out.kind : named ? "word" : "other");
     if (!saw) saw = clip(out.saw, 300) || "something on the screen";
     const seen = clip(out.answer, 48);
-    answer = pointer?.answer || (kind === "word" ? readingWord(out.saw, out.say, seen) : seen);
+    answer = pointer?.answer || (kind === "word" ? (seen ? readingWord(out.saw, out.say, seen) : named) : seen);
+    // Validate after recovery: a missing model field is not evidence of a bad
+    // screenshot. A known target can also use our safe hint when "say" is empty.
+    if (!answer) return fail(422, "I can’t see that clearly. Tap the word or circle the whole problem again.");
     say = spokenHint(out.say, answer, kind, kid.name, earlier, question, pointer?.saw || out.saw);
     savedKind = pointer?.kind || kind;
   } catch {

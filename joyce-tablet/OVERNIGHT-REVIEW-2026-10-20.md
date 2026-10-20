@@ -76,3 +76,11 @@ Open Joyce's parent setup and use **Get the newest Joyce**. Then try:
 - An unauthenticated request to `/api/joyce-tablet` returned **401** with the expected key message. This verifies endpoint reachability and authentication rejection, not authenticated tutoring or live inference.
 - GitHub's public status/check APIs returned no build records. Deployment confirmation here comes from the public metadata, package file, APK comparison, and API response, not Netlify dashboard access.
 - The one-night `joyce-overnight-review` heartbeat was **paused** after completion.
+
+## Morning follow-up: first-request visibility error
+
+Stephanie reported that Joyce repeatedly says “I can’t see that clearly” on the first request. Reviewing the exact error path found an overly strict check introduced overnight: it rejected missing `answer` or `say` fields before attempting to recover a clearly named word or use an existing session answer. The earlier mocked tests did not cover those partial model responses.
+
+Added ten tests; seven failed before the correction. The backend now validates after recovering an explicitly recognized target, can produce a safe hint for a known target when the spoken field is empty, and retains the error for genuinely unidentified targets. It requests high detail for the marked full screenshot as well as the crop and makes clear in the prompt that the hidden answer field must be filled even though the answer is not yet spoken.
+
+All **99 backend tests pass** after the correction. This is a server-only change; the APK remains 2.3 / 14. The first-request regression is reproduced in tests, but the exact response from the family's tablet has not been captured, so a successful live retry is still needed to establish that this resolves the reported case.
