@@ -41,7 +41,7 @@ The final APK SHA-256 is:
 efad4b1b7cd3426166396a3980699030352b756cbf0f27cf6fcfdc226cec5332
 ```
 
-Test sources are in `netlify/lib/joyce-tablet*.test.mjs`, `netlify/functions/joyce-tablet.test.mjs`, and `app/src/test/java/family/reinagel/joyce/OverlayInteractionTest.kt`. Gradle generates the test/lint reports and synthetic layout PNGs under `app/build/reports/`; those generated files are not committed.
+Test sources are in `netlify/lib/joyce-tablet*.test.mjs` and `app/src/test/java/family/reinagel/joyce/OverlayInteractionTest.kt`. Gradle generates the test/lint reports and synthetic layout PNGs under `app/build/reports/`; those generated files are not committed. The endpoint test lives outside the functions directory so Netlify cannot treat it as a production function; see [Netlify's directory configuration](https://docs.netlify.com/build/functions/configuration/#directory).
 
 ## Reliability details
 

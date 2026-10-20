@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import handler from './joyce-tablet.mjs';
+import handler from '../functions/joyce-tablet.mjs';
 
 const url = 'https://example.test/api/joyce-tablet';
 const key = 'unit-test-tablet-key';
