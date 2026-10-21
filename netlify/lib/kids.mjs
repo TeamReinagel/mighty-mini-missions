@@ -9,7 +9,7 @@ export const KIDS = [
     id: "max",
     name: "Max",
     age: 5,
-    where: "Reading.com lesson 94 of 120; wrapping up 1st-grade math, moving into 2nd. Known gaps: coins, regrouping. Handwriting is well behind reading.",
+    where: "Reading.com lesson 94 of 120, finished from Today with Joyce; AdaptedMind on smart practice. Joyce teaches regrouping. Coins stay in Coin Record Run. Known gaps: coins, regrouping. Handwriting is well behind reading.",
     // The tablet helper skips single-letter sounds for a reader at this level.
     knowsLetterSounds: true,
     guides: [
@@ -22,14 +22,14 @@ export const KIDS = [
     id: "gabi",
     name: "Gabi",
     age: 4,
-    where: "Reading.com around lesson 25, blending simple words; pre-K math. Relational, story-loving, tactile learner.",
+    where: "Today with Joyce leads reading, starting with letter sounds and short-vowel words (about where Reading.com lesson 25 left off), then digraphs, blends, sight words, and short stories. Joyce also leads pre-K math: counting, more and fewer, patterns, adding within 5. Reading.com and AdaptedMind stay installed and are not her daily apps.",
     guides: [{ grade: "Kindergarten" }]
   },
   {
     id: "connor",
     name: "Connor",
     age: 3,
-    where: "Pre-reading (letter play and songs). Counts objects well; counts to 50 on the abacus with prompting. Next: counting past 10, more/fewer, simple patterns, letter names and sounds through play.",
+    where: "Today with Joyce leads letter names and sounds, and counting to 10 then 20, more and fewer, and patterns. Preschool Prep and Duck Duck Moose stay available and are not the daily assignment. Counts objects well; counts to 50 on the abacus with prompting.",
     note: "Kindergarten milestones are a far horizon for Connor. Suggest only the earliest, playful ones.",
     guides: [{ grade: "Kindergarten", areas: ["Reading", "Math", "Physical Fitness and Gross Motor Skills", "Life Skills", "Social-Emotional Development", "Practical Arts and Creativity"] }]
   },
@@ -37,7 +37,7 @@ export const KIDS = [
     id: "ethan",
     name: "Ethan",
     age: 2,
-    where: "Toddler; starting to recognize shapes and colors. Plays Train Set.",
+    where: "Toddler. Today with Joyce offers a short colors or counting card plus Train Set.",
     // Only gets a report section in weeks with app activity or observations.
     quiet: true,
     guides: []

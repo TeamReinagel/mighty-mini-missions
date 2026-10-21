@@ -3,6 +3,7 @@ import { KIDS, findKidsIn } from "./kids.mjs";
 import {
   BUILTIN_SKILLS, DATA_SOURCES, SCHEDULES, cleanSkill, lessonsText, loadLog, loadMemory, logTurn, newId, saveMemory
 } from "./joyce-memory.mjs";
+import { decidePlan, postConference } from "./classroom.mjs";
 import { buildKidContext, runWeeklyReport } from "./report.mjs";
 import { post, respond, slackGet } from "./slack.mjs";
 
@@ -21,7 +22,7 @@ When the family asks about a child's learning, talk the way a teacher talks with
 
 // What Joyce knows about herself, so she can answer "how do you work?" honestly and specifically.
 const ABOUT_JOYCE = `How you work (answer questions about yourself from this; don't invent beyond it):
-- What you do: every Friday at 3pm Central you post a learning report per child (progress, what's tricky, what to try next). Family members tell you things they notice in everyday life ("Max counted coins on his own") and you save them for the report. You tell the family how each child is doing, suggest activities for today, and recap what they practiced, on request. You learn lessons, new abilities, and code changes, but only after Stephanie clicks Approve.
+- What you do: every Friday at 3pm Central you post a learning report per child (progress, what's tricky, what to try next), then a short parent-teacher conference with Approve buttons for any big change. During the school block the kids open Today with Joyce on Mighty Mini Missions. You assign the day's cards, teach the lesson, and send a cheer to the grown-up's phone for a real win or a child who is truly stuck. Family members tell you things they notice in everyday life ("Max counted coins on his own") and you save them for the report. You tell the family how each child is doing, suggest activities for today, and recap what they practiced, on request. You learn lessons, new abilities, and code changes, but only after Stephanie clicks Approve. You move to the next lesson inside an approved path on your own. Starting a brand-new strand, slowing down, shortening the day, and Max's reading after Reading.com wait for Approve.
 - How you know what the kids did: each child plays Mighty Mini Missions on their own tablet, picked on the home screen. The games (Ghost Word Run for sight words and rhyming, Monster Hunt for letters and sounds, Coin Record Run for money, Monster Maker for early math and reading, Train Set for colors and shapes, Hatch Match for matching big and little letters (items like "Bb"), Otter Slide for blending three-letter CVC words (items like "cat"), plus off-screen Missions) log every answer: which child, which skill, which item, and whether it was right on the first try. The tablets sync that to you when online. You also use the observations people tell you, and a Kindergarten to 2nd-grade monthly milestones spreadsheet for what comes next. On the Android tablets, a Joyce button can float over other apps. When a child taps it, you see one screenshot, they point at a word or circle a problem, and you give a short hint out loud. Sight words are not sounded out. If they are still stuck after two hints, you say the answer. That moment is saved as an observation (what they pointed at, the hints, whether you told them the answer, and whether they got it). You don't watch the screen the rest of the time. Off the app and off those help moments, you only know what someone tells you.
 - Mastery: an item is mastered when it's right on the first try the last 3 times and 75%+ overall.
 - Tech stack: a static HTML/CSS/JavaScript site (no framework) hosted on Netlify, with Netlify Functions (Node.js) for your logic and Netlify Blobs for storage. You're a Slack app (Events API plus interactive buttons; slow work runs in Netlify background functions). Your writing comes from OpenAI (gpt-4o-mini by default). Code changes go to a Cursor cloud agent that opens a pull request on GitHub (TeamReinagel/mighty-mini-missions) for Stephanie to review; that needs a Cursor API key in Netlify. The code was written with Cursor.
@@ -175,11 +176,17 @@ export async function handleAction({ store, env = process.env, fetchImpl = fetch
   const action = payload.actions?.[0];
   const user = payload.user?.id;
   const reply = (body) => respond(payload.response_url, body, fetchImpl);
-  if (!action || !["joyce_approve", "joyce_decline"].includes(action.action_id)) return;
+  if (!action || !["joyce_approve", "joyce_decline", "joyce_plan_yes", "joyce_plan_no"].includes(action.action_id)) return;
 
   const approvers = String(env.JOYCE_APPROVERS || "").split(/[\s,]+/).filter(Boolean);
   if (approvers.length && !approvers.includes(user)) {
     return reply({ response_type: "ephemeral", replace_original: false, text: "Only Stephanie can approve what I learn. :slightly_smiling_face:" });
+  }
+
+  if (action.action_id === "joyce_plan_yes" || action.action_id === "joyce_plan_no") {
+    const result = await decidePlan({ store, id: action.value, yes: action.action_id === "joyce_plan_yes", user });
+    if (result.error) return reply({ response_type: "ephemeral", replace_original: false, text: result.error });
+    return reply({ response_type: "ephemeral", replace_original: false, text: result.line });
   }
 
   const mem = await loadMemory(store);
@@ -548,6 +555,11 @@ export async function runWeekly({ store, env = process.env, fetchImpl = fetch, f
   const mem = await loadMemory(store);
   const result = await runWeeklyReport({ store, env, fetchImpl, send: true, lessons: lessonsText(mem) });
   console.log(`Weekly report sent: ${result.events} events, AI=${result.usedAI}`);
+  try {
+    await postConference({ store, env, fetchImpl });
+  } catch (err) {
+    console.error("Parent-teacher conference failed:", err);
+  }
   await runScheduledSkills({ store, env, fetchImpl, schedule: "friday", mem });
   try {
     await reflect({ store, env, fetchImpl, mem });

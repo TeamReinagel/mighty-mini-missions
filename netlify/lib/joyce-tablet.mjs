@@ -5,6 +5,7 @@
 
 import { timingSafeEqual } from "node:crypto";
 import { chatVisionJSON } from "./ai.mjs";
+import { notifyStuck } from "./classroom.mjs";
 import { KIDS, kidById } from "./kids.mjs";
 
 const MAX_IMAGE = 1_800_000;
@@ -698,7 +699,7 @@ export async function handleTabletRequest({ store, env = process.env, fetchImpl 
   if (sessionId && !/^[A-Za-z0-9-]{8,80}$/.test(sessionId)) return fail(400, "Joyce couldn't save that. Try again.");
 
   if (action === "outcome") {
-    try { return await recordOutcome({ store, sessionId, outcome: body?.outcome }); }
+    try { return await recordOutcome({ store, env, fetchImpl, sessionId, outcome: body?.outcome }); }
     catch { return fail(503, "Joyce couldn't save that yet. Try again."); }
   }
   if (!env.OPENAI_API_KEY) return fail(503, SETUP, "OPENAI_API_KEY is not set on the site.");
@@ -828,7 +829,7 @@ async function writeSession(store, session) {
   await store.setJSON(`tablet-sessions/${session.id}`, session);
 }
 
-async function recordOutcome({ store, sessionId, outcome }) {
+async function recordOutcome({ store, env, fetchImpl, sessionId, outcome }) {
   if (!sessionId) return fail(400, "Joyce couldn't save that. Try again.");
   if (!["got-it", "still-stuck", "left"].includes(outcome)) return fail(400, "Joyce couldn't save that. Try again.");
   const pointer = await loadPointer(store, sessionId);
@@ -837,6 +838,20 @@ async function recordOutcome({ store, sessionId, outcome }) {
     await writeSession(store, { ...pointer, outcome });
   } catch {
     return fail(502, "Joyce couldn't save that. Try again.");
+  }
+  if (outcome === "still-stuck") {
+    try {
+      const name = kidById(pointer.kid)?.name || "A child";
+      await notifyStuck({
+        store,
+        env,
+        fetchImpl,
+        kidId: pointer.kid,
+        text: `${name} is still stuck on ${pointer.saw || "a problem"} in another app and could use you.`
+      });
+    } catch (err) {
+      console.error("Cheer for a stuck moment failed:", err);
+    }
   }
   const say = outcome === "got-it" ? `${kidById(pointer.kid).name}, you did it.` : "";
   return { status: 200, body: { ok: true, say, sessionId, done: true, saved: true } };

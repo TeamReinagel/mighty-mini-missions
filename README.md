@@ -123,6 +123,32 @@ Then the child taps her picture, points, and talks, or taps **Ask Joyce** withou
 
 Tutoring and picture-interpretation fixes on the website take effect on the next request without an APK download. Updates to the Android overlay itself still use **Get the newest Joyce**.
 
+### Today with Joyce
+
+Joyce leads the Learning Land block. Each child opens **Today with Joyce** at the top of their Mighty Mini Missions home screen. Joyce greets them and shows the day's cards: a lesson she teaches, a game, a short movement mission, and, for Max, Reading.com and AdaptedMind.
+
+- **Max** keeps finishing Reading.com. After the lesson, Joyce asks which number he finished. Lesson 120 is a celebration, and Friday's conference asks you about his next reading lane before anything replaces it. AdaptedMind stays on smart practice. Joyce teaches regrouping, and Coin Record Run covers coins.
+- **Gabi's** daily reading and math are Joyce's, starting where Reading.com lesson 25 left off: letter sounds, short-vowel words, sh/ch/th, blends, sight words, then short stories. Math is counting, numbers, more and fewer, patterns, and adding within 5 with pictures. Reading.com and AdaptedMind stay installed.
+- **Connor's** daily work is letter names and sounds, then counting, more and fewer, and patterns. His other apps stay available.
+- **Ethan** gets one short colors or counting card and Train Set.
+- **Ask Joyce** is a live conversation, capped at 5 minutes, with a daily limit (default 10 minutes, `JOYCE_LIVE_MINUTES_PER_DAY`). Lessons themselves stay turn-based so a noisy room and the bill stay manageable. If her recorded voice isn't available, the tablet speaks instead.
+
+A wrong answer gets another try. **I need help** gets a second explanation, then a wiggle break, and only then a note to you. **Something else** leaves the card with no penalty. Gabi can switch. Joyce never says you are making them do it.
+
+Cheers go only to `JOYCE_CHEER_CHANNEL` (a Slack channel id), at most a few per child per day, plus Reading.com milestones 100, 110, and 120. Each one names something specific to celebrate, or says a child is truly stuck. The floating Joyce button's "still stuck" moment uses that same channel. Nothing is posted until the channel and bot token are set, and cheers never fall back to the family report channel.
+
+Friday's report is followed by a **parent-teacher conference**. Joyce says what each child finished and what they're on now, and puts big decisions on their own Approve / Not now buttons: a long struggle, a brand-new strand, a shorter day, and Max finishing Reading.com. She keeps moving through the path you already approved. **Not now** is what puts a hold on the next step. Reply in the thread to adjust ("slow Gabi down on blends", "more Pokémon for Max").
+
+One-time setup, on top of the Slack app you already have:
+
+1. Create a channel such as `#joyce-cheers`, invite Joyce with `/invite @Joyce`, and on your phone set that channel to notify you for every message.
+2. In Netlify, set `JOYCE_CHEER_CHANNEL` to that channel's id. Optional: `JOYCE_LIVE_MINUTES_PER_DAY` (default 10). Redeploy.
+3. In OpenAI billing, set a monthly spending limit.
+4. Headsets with microphones help when several kids can hear Joyce at once.
+5. On each tablet, open the site, tap the child, tap **Today with Joyce**, and allow the microphone once.
+
+The classroom is a web page, so this does not require a new APK. App links for Reading.com and AdaptedMind live in `netlify/lib/classroom.mjs` (`APPS`) if the tablets open them a different way.
+
 ### Preview or send a report any time
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`
 - Send now: add `&send=1`. It appears in Slack within a minute or two, followed by Joyce's weekly look-back. This also starts a new report week, so Friday's report covers only what happens after.

@@ -185,13 +185,15 @@ function profileAllowsGame(profile, game) {
  */
 function gamesForProfile(profile) {
   const all = (Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : []).filter((g) => profileAllowsGame(profile, g));
-  if (!profile || !Array.isArray(profile.practicing)) return { home: all, more: [] };
+  const sortHome = (list) => [...list].sort((a, b) => Number(Boolean(b.alwaysHome)) - Number(Boolean(a.alwaysHome)));
+  if (!profile || !Array.isArray(profile.practicing)) return { home: sortHome(all), more: [] };
   const practicing = new Set(profile.practicing);
   const fits = (g) =>
-    (g.practices ?? []).some((s) => practicing.has(s)) &&
-    (!Array.isArray(g.levels) || !profile.stage || g.levels.includes(profile.stage));
-  const home = all.filter(fits);
-  if (!home.length) return { home: all, more: [] };
+    g.alwaysHome ||
+    ((g.practices ?? []).some((s) => practicing.has(s)) &&
+    (!Array.isArray(g.levels) || !profile.stage || g.levels.includes(profile.stage)));
+  const home = sortHome(all.filter(fits));
+  if (!home.length) return { home: sortHome(all), more: [] };
   return { home, more: all.filter((g) => !home.includes(g)) };
 }
 
@@ -765,8 +767,10 @@ async function main() {
     }
     if (!activity.href) return null;
     const link = document.createElement("a");
-    link.className = "hub-tile";
-    link.href = activity.href;
+    link.className = activity.alwaysHome ? "hub-tile hub-tile-feature" : "hub-tile";
+    link.href = activity.id === "today-with-joyce"
+      ? `./classroom/?kid=${encodeURIComponent(getActiveProfile()?.id || "")}`
+      : activity.href;
     link.append(...parts);
     return link;
   }

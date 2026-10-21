@@ -12,6 +12,10 @@
 [functions."joyce-tablet"]
   timeout = 26
 
+# A live talk or a first-time voice line can outlast the default limit.
+[functions."classroom"]
+  timeout = 26
+
 # Function source sits inside the publish folder; don't serve it as static files.
 [[redirects]]
   from = "/netlify/*"

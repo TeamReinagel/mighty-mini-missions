@@ -31,6 +31,13 @@ window.MIGHTY_STAGES = [
 
 window.MIGHTY_GAMES = [
   {
+    id: "today-with-joyce",
+    title: "Today with Joyce",
+    icon: "./classroom/joyce.png",
+    href: "./classroom/",
+    alwaysHome: true
+  },
+  {
     id: "missions",
     title: "Missions",
     kind: "missions",

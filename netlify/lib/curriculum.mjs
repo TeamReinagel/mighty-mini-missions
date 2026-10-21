@@ -102,5 +102,6 @@ export const GAME_NAMES = {
   "train-set": "Train Set",
   "hatch-match": "Hatch Match",
   "otter-slide": "Otter Slide",
-  missions: "Missions"
+  missions: "Missions",
+  joyce: "Today with Joyce"
 };
