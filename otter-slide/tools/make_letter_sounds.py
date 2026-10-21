@@ -4,9 +4,12 @@ Usage (from otter-slide/): python3 tools/make_letter_sounds.py
 Needs `curl` and `afconvert`. Downloads are cached in tools/source/ipa/.
 
 Source: the "IPA pronunciations" recordings by ipapronunciations on Freesound, CC0 (public
-domain). Vowel files are the bare vowel. Consonant files say the consonant held on its own, then
-a vowel, then two more takes; we keep only the part before that first vowel. English has no
-held "j", so it's built from the start of [d] plus [zh] (the sound in "measure"); "x" is [k] plus [s].
+domain). Vowel files are the bare vowel. Consonant files say the consonant, then a vowel,
+then two more takes. Clips stay at the recording's own speed. Stretching the short
+consonants made them sound hollow, so nothing here is time-stretched. Vowels keep the
+first brief spoken part. Stops keep the burst and a short bit of the vowel after it.
+English has no held "j", so it's built from the start of [d] plus [zh] (the sound in
+"measure"); "x" is [k] plus [s].
 """
 import subprocess
 import sys
@@ -16,7 +19,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from make_audio import FRAME, SR, fade, frames, normalize, save, stretch  # noqa: E402
+from make_audio import FRAME, SR, fade, frames, normalize, save  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "tools" / "source" / "ipa"
@@ -32,7 +35,9 @@ IDS = {
 VOWELS = {"a": "ae", "e": "eh", "i": "ih", "o": "ah", "u": "uh"}
 HELD = {"f": "f", "l": "l", "m": "m", "n": "n", "r": "r", "s": "s", "v": "v", "z": "z"}
 STOPS = {"b": "b", "c": "k", "d": "d", "g": "g", "p": "p", "t": "t"}
-HOLD = 0.42
+# A spoken short vowel, and the longest a consonant is allowed to run.
+SPOKEN = 0.18
+CONSONANT = 0.20
 
 
 def level(x, target, peak=0.95):
@@ -71,60 +76,77 @@ def first_take(x):
     return start, held_end, release, vowel
 
 
-def held(sym):
+def cut(x, a, b):
+    a = max(0, int(a))
+    b = min(len(x), max(a + FRAME, int(b)))
+    return x[a:b]
+
+
+def cap(x, seconds):
+    n = int(SR * seconds)
+    return x[:n] if len(x) > n else x
+
+
+def vowel_clip(sym):
+    """The attack of the vowel, before the long wavering tail."""
     x = load(sym)
-    start, end, _, _ = first_take(x)
-    seg = x[(start + 1) * FRAME: (end - 1) * FRAME]
-    if len(seg) / SR < HOLD * 0.9:
-        seg = stretch(seg, HOLD)
-    return fade(seg, 0.02, 0.05)
+    rms, _ = frames(x)
+    on = np.where(rms > rms.max() * 0.35)[0]
+    if not len(on):
+        on = np.where(rms > rms.max() * 0.08)[0]
+    start = on[0] * FRAME
+    return fade(cut(x, start, start + SR * SPOKEN), 0.008, 0.035)
+
+
+def consonant(sym):
+    """The consonant itself, at the speed it was spoken, cut off before the vowel."""
+    x = load(sym)
+    start, _, _, vowel = first_take(x)
+    seg = cut(x, (start + 1) * FRAME, (vowel - 1) * FRAME)
+    return fade(cap(seg, CONSONANT), 0.01, 0.03)
 
 
 def stop(sym):
-    """Release burst and a sliver of the vowel: "b", not "buh"."""
+    """The release, plus a short voiced tail so it is a consonant and not a click."""
     x = load(sym)
     _, _, release, vowel = first_take(x)
-    end = max(release + 10, vowel + 4)
-    return fade(x[max(0, release * FRAME - FRAME // 2): end * FRAME], 0.004, 0.05)
+    return fade(cut(x, release * FRAME - FRAME // 2, (vowel + 8) * FRAME), 0.003, 0.025)
 
 
 def main():
     for letter, sym in VOWELS.items():
-        x = load(sym)
-        rms, _ = frames(x)
-        on = np.where(rms > rms.max() * 0.08)[0]
-        save(f"s_{letter}", level(fade(x[on[0] * FRAME: (on[-1] + 1) * FRAME], 0.01, 0.06), 0.17))
+        save(f"s_{letter}", level(vowel_clip(sym), 0.17))
     for letter, sym in HELD.items():
-        save(f"s_{letter}", level(held(sym), 0.14))
+        save(f"s_{letter}", level(consonant(sym), 0.14))
     for letter, sym in STOPS.items():
         save(f"s_{letter}", level(stop(sym), 0.17))
 
-    # h: the breath plus the first touch of the vowel so it can be heard.
+    # h: the end of the breath and the first touch of the vowel.
     x = load("h")
-    start, _, _, vowel = first_take(x)
-    save("s_h", level(fade(x[start * FRAME: (vowel + 3) * FRAME], 0.03, 0.05), 0.11))
+    _, _, _, vowel = first_take(x)
+    save("s_h", level(fade(cut(x, (vowel - 6) * FRAME, (vowel + 4) * FRAME), 0.02, 0.03), 0.11))
 
-    # w: the glide into the vowel, cut early.
+    # w: the glide into the vowel.
     x = load("w")
-    start, _, _, vowel = first_take(x)
-    save("s_w", level(fade(x[start * FRAME: (vowel + 2) * FRAME], 0.01, 0.05), 0.13))
+    _, _, _, vowel = first_take(x)
+    save("s_w", level(fade(cut(x, (vowel - 8) * FRAME, (vowel + 3) * FRAME), 0.01, 0.03), 0.13))
 
     # j: [d] release straight into a short [zh].
     x = load("d")
     _, _, release, _ = first_take(x)
     d = x[release * FRAME - FRAME // 2: (release + 2) * FRAME]
-    zh = held("zh")[: int(SR * 0.22)]
-    d = d * (np.abs(zh).max() * 1.3 / np.abs(d).max())
+    zh = cap(consonant("zh"), 0.12)
+    d = d * (np.abs(zh).max() * 1.3 / max(np.abs(d).max(), 1e-6))
     n = int(SR * 0.008)
     j = np.concatenate([d[:-n], d[-n:] * np.linspace(1, 0, n) + zh[:n] * np.linspace(0, 1, n), zh[n:]])
-    save("s_j", level(fade(j, 0.003, 0.05), 0.14))
+    save("s_j", level(fade(j, 0.003, 0.03), 0.14))
 
-    # x: a [k] puff then [s].
+    # x: a [k] puff then a short [s], both at the recording's own speed.
     k = load("k")
     _, _, release, vowel = first_take(k)
-    kk = fade(k[release * FRAME - FRAME // 2: vowel * FRAME], 0.003, 0.01)
-    ss = held("s")[: int(SR * 0.3)]
-    gap = np.zeros(int(SR * 0.03), np.float32)
+    kk = fade(cut(k, release * FRAME - FRAME // 2, vowel * FRAME), 0.003, 0.01)
+    ss = cap(consonant("s"), 0.14)
+    gap = np.zeros(int(SR * 0.02), np.float32)
     save("s_x", level(np.concatenate([normalize(kk, 0.6), gap, normalize(ss, 0.6)]), 0.14))
 
     for f in sorted((ROOT / "audio").glob("s_*.wav")):
