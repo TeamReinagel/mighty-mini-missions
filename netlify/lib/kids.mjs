@@ -22,7 +22,7 @@ export const KIDS = [
     id: "gabi",
     name: "Gabi",
     age: 4,
-    where: "Today with Joyce leads reading, starting with letter sounds and short-vowel words (about where Reading.com lesson 25 left off), then digraphs, blends, sight words, and short stories. Joyce also leads pre-K math: counting, more and fewer, patterns, adding within 5. Reading.com and AdaptedMind stay installed and are not her daily apps.",
+    where: "Today with Joyce leads reading from short-vowel blending (through Reading.com lesson 34: letters, capitals, and sounds are known; b/d/p/q still mix, and blending is the hard part), then digraphs, blends, sight words, and short stories. Joyce also leads pre-K math: counting, more and fewer, patterns, adding within 5. Reading.com and AdaptedMind stay installed and are not her daily apps.",
     guides: [{ grade: "Kindergarten" }]
   },
   {

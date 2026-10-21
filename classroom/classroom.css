@@ -39,13 +39,34 @@ button, a {
   margin-bottom: 12px;
 }
 
-.top img {
+.top img, .joyce-photo {
   width: 84px;
   height: 84px;
   border-radius: 50%;
   object-fit: cover;
   background: white;
   box-shadow: 0 8px 24px rgba(60, 30, 10, 0.12);
+}
+
+.joyce-photo.talking {
+  box-shadow: 0 0 0 6px var(--kid);
+  animation: joyce-talk 0.8s ease-in-out infinite;
+}
+
+@keyframes joyce-talk {
+  50% { transform: scale(1.05); }
+}
+
+.wiggle {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  padding: 24px;
+  text-align: center;
+  background: color-mix(in srgb, var(--paper) 92%, var(--kid));
 }
 
 .top h1 {

@@ -19,8 +19,14 @@ let voice = null;
 let peer = null;
 let mic = null;
 let talkStarted = 0;
-let elapsed = 0;
 let ticker = null;
+let speakToken = 0;
+let speakChain = Promise.resolve();
+let talking = false;
+let teachGen = 0;
+let sectionStarted = 0;
+let wiggleShown = false;
+let visTick = null;
 
 function storedKid() {
   try {
@@ -49,33 +55,85 @@ async function api(action, extra = {}) {
   return data;
 }
 
-function say(text) {
-  if (!text) return;
-  window.speechSynthesis?.cancel();
+function setTalking(on) {
+  talking = on;
+  document.querySelectorAll(".joyce-photo").forEach((img) => img.classList.toggle("talking", on));
+}
+
+function hush() {
+  speakToken += 1;
   if (voice) {
+    voice.onended = null;
     voice.pause();
     voice = null;
   }
-  api("speak", { text }).then((data) => {
-    if (data.audioBase64) {
-      voice = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
-      voice.play().catch(() => deviceSay(text));
-      return;
-    }
-    deviceSay(text);
-  }).catch(() => deviceSay(text));
+  window.speechSynthesis?.cancel();
+  setTalking(false);
+  speakChain = Promise.resolve();
 }
 
-function deviceSay(text) {
-  if (!window.speechSynthesis) return;
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 0.92;
-  window.speechSynthesis.speak(utter);
+function deviceSay(text, token) {
+  return new Promise((resolve) => {
+    if (!window.speechSynthesis) return resolve();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 0.92;
+    const done = () => {
+      if (token === speakToken) setTalking(false);
+      resolve();
+    };
+    utter.onend = done;
+    utter.onerror = done;
+    setTalking(true);
+    window.speechSynthesis.speak(utter);
+  });
+}
+
+function playLine(text, token) {
+  return api("speak", { text }).then((data) => new Promise((resolve) => {
+    if (token !== speakToken) return resolve();
+    const finish = () => {
+      if (token === speakToken) setTalking(false);
+      resolve();
+    };
+    if (!data.audioBase64) {
+      deviceSay(text, token).then(finish);
+      return;
+    }
+    const audio = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
+    voice = audio;
+    audio.onended = finish;
+    audio.onerror = () => { deviceSay(text, token).then(finish); };
+    setTalking(true);
+    audio.play().catch(() => { deviceSay(text, token).then(finish); });
+  })).catch(() => {
+    if (token !== speakToken) return;
+    return deviceSay(text, token);
+  });
+}
+
+function say(text) {
+  if (!text) return Promise.resolve();
+  const token = speakToken;
+  const job = speakChain.then(() => {
+    if (token !== speakToken) return;
+    return playLine(text, token);
+  });
+  speakChain = job.catch(() => {});
+  return job;
+}
+
+function replay(text) {
+  if (!text) return Promise.resolve();
+  hush();
+  const token = speakToken;
+  const job = playLine(text, token);
+  speakChain = job.catch(() => {});
+  return job;
 }
 
 function header(title, line) {
   const top = el("div", "top");
-  const photo = el("img");
+  const photo = el("img", talking ? "joyce-photo talking" : "joyce-photo");
   photo.src = "./joyce.png";
   photo.alt = "Joyce";
   const copy = el("div");
@@ -127,7 +185,9 @@ async function load() {
 }
 
 function renderBoard() {
+  teachGen += 1;
   stopTicker();
+  document.querySelector(".wiggle")?.remove();
   card = null;
   const root = header(day.name, day.greeting);
   const actions = el("div", "actions");
@@ -136,7 +196,7 @@ function renderBoard() {
   talk.addEventListener("click", () => startTalk());
   const again = el("button", "quiet", "Hear that again");
   again.type = "button";
-  again.addEventListener("click", () => say(day.greeting));
+  again.addEventListener("click", () => replay(day.greeting));
   actions.append(talk, again);
   const board = el("div", "board");
   if (day.rhythm === "weekend") {
@@ -155,45 +215,89 @@ function renderBoard() {
 
 function openCard(next) {
   if (next.done) {
-    say("You already did that one.");
+    replay("You already did that one.");
     return;
   }
+  hush();
+  teachGen += 1;
   card = next;
   index = 0;
   promptIndex = 0;
   built = [];
   helps = 0;
-  say(card.say);
-  if (card.kind === "lesson") renderItem();
+  sectionStarted = Date.now();
+  wiggleShown = false;
+  startTicker();
+  if (card.kind === "lesson" && card.beats?.length) renderTeach();
+  else if (card.kind === "lesson") renderItem();
   else renderSimple();
+}
+
+function formatClock(seconds) {
+  const whole = Math.max(0, seconds);
+  const min = Math.floor(whole / 60);
+  const sec = String(whole % 60).padStart(2, "0");
+  return `${min}:${sec}`;
+}
+
+function sectionSeconds() {
+  if (!sectionStarted) return 0;
+  return Math.floor((Date.now() - sectionStarted) / 1000);
+}
+
+function startTicker() {
+  stopTicker();
+  const tick = () => {
+    const seconds = sectionSeconds();
+    const node = document.getElementById("section-clock");
+    if (node) node.textContent = formatClock(seconds);
+    if (seconds >= 30 * 60) showWiggle();
+  };
+  visTick = tick;
+  document.addEventListener("visibilitychange", tick);
+  ticker = setInterval(tick, 1000);
+  tick();
+}
+
+function showWiggle() {
+  if (wiggleShown) return;
+  wiggleShown = true;
+  const box = el("div", "wiggle");
+  box.append(el("p", "prompt", "Wiggle break. Hop, stretch, or shake."));
+  const left = el("p", "timer", "0:30");
+  box.append(left);
+  document.body.append(box);
+  replay("Wiggle break. Hop, stretch, or shake for a little bit. Then we keep going.");
+  const until = Date.now() + 30000;
+  const id = setInterval(() => {
+    const s = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+    left.textContent = `0:${String(s).padStart(2, "0")}`;
+    if (s <= 0) {
+      clearInterval(id);
+      box.remove();
+    }
+  }, 250);
 }
 
 function shell(title) {
   const root = header(day.name, title);
+  const clock = el("p", "timer", formatClock(sectionSeconds()));
+  clock.id = "section-clock";
   const panel = el("div", "panel");
-  app.replaceChildren(root, panel);
+  app.replaceChildren(root, clock, panel);
   return panel;
 }
 
 function renderSimple() {
   const panel = shell(card.title);
   panel.append(el("p", "prompt", card.say));
+  say(card.say);
   if (card.kind === "app" || card.kind === "game") {
     const link = el("a", "go", card.kind === "app" ? "Open it" : "Play");
     link.href = card.href;
     link.target = "_blank";
     link.rel = "noopener";
     panel.append(link);
-    elapsed = 0;
-    const timer = el("p", "timer", "0:00");
-    panel.append(timer);
-    stopTicker();
-    ticker = setInterval(() => {
-      elapsed += 1;
-      const min = Math.floor(elapsed / 60);
-      const sec = String(elapsed % 60).padStart(2, "0");
-      timer.textContent = `${min}:${sec}`;
-    }, 1000);
   }
   if (card.askLesson) {
     const done = el("button", "go", "I'm done");
@@ -248,6 +352,57 @@ function currentItem() {
   return card.items[index];
 }
 
+function questionLine(item, prompt) {
+  if (item.type === "story") return (item.pages[promptIndex] || item.pages[0]).text;
+  if (item.type === "regroup") return prompt.say || item.say;
+  return item.say;
+}
+
+function renderTeach() {
+  const panel = shell(card.title);
+  const beat = el("p", "prompt", card.beats[0]);
+  panel.append(beat);
+  panel.append(el("p", "joyce-line", "Listen first. Then it's your turn."));
+  if (card.skill === "Regrouping") {
+    const blocks = el("div", "blocks");
+    blocks.append(placeValue(27), el("div", "dots", "+"), placeValue(15));
+    panel.append(blocks);
+  }
+  const go = el("button", "go", "Your turn");
+  go.type = "button";
+  go.addEventListener("click", () => {
+    teachGen += 1;
+    hush();
+    renderItem();
+  });
+  const again = el("button", "quiet", "Hear it again");
+  again.type = "button";
+  again.addEventListener("click", () => {
+    teachGen += 1;
+    replay((card.beats || []).join(" "));
+  });
+  const back = el("button", "quiet", "Back");
+  back.type = "button";
+  back.addEventListener("click", () => {
+    teachGen += 1;
+    hush();
+    renderBoard();
+  });
+  const row = el("div", "actions");
+  row.append(go, again, back);
+  panel.append(row);
+  const gen = teachGen;
+  speakBeats(beat, gen);
+}
+
+async function speakBeats(beat, gen) {
+  for (const line of card?.beats || []) {
+    if (gen !== teachGen || !card) return;
+    beat.textContent = line;
+    await say(line);
+  }
+}
+
 function renderItem() {
   const item = currentItem();
   if (!item) {
@@ -256,10 +411,9 @@ function renderItem() {
   }
   const panel = shell(`${card.title}  ${index + 1} / ${card.items.length}`);
   const prompt = item.type === "regroup" ? item.prompts[promptIndex] : item;
-  if (item.type !== "story") {
-    panel.append(el("p", "prompt", prompt.say || item.say));
-    if (index === 0 && promptIndex === 0) say(prompt.say || item.say);
-  }
+  const line = questionLine(item, prompt);
+  if (item.type !== "story") panel.append(el("p", "prompt", line));
+  say(line);
   drawItem(panel, item, prompt);
   const note = el("p", "feedback");
   note.id = "feedback";
@@ -267,13 +421,13 @@ function renderItem() {
   const help = el("button", "quiet", "I need help");
   help.type = "button";
   help.addEventListener("click", () => needHelp(item));
-  const skip = el("button", "quiet", "Something else");
-  skip.type = "button";
-  skip.addEventListener("click", () => finish("skipped"));
+  const again = el("button", "quiet", "Hear it again");
+  again.type = "button";
+  again.addEventListener("click", () => replay(line));
   const back = el("button", "quiet", "Back");
   back.type = "button";
   back.addEventListener("click", renderBoard);
-  row.append(help, skip, back);
+  row.append(help, again, back);
   panel.append(note, row);
 }
 
@@ -383,12 +537,10 @@ function drawStory(panel, item) {
   next.addEventListener("click", () => {
     if (promptIndex + 1 < item.pages.length) {
       promptIndex += 1;
-      say(item.pages[promptIndex].text);
       renderItem();
     } else submit("done");
   });
   panel.append(next);
-  say(page.text);
 }
 
 function drawCount(panel, item) {
@@ -457,7 +609,11 @@ async function submit(picked, extra = {}) {
       note.className = `feedback ${data.correct === false ? "no" : "yes"}`;
     }
     say(data.say);
-    if (data.correct === false) return;
+    if (data.correct === false) {
+      const again = item.type === "regroup" ? item.prompts[promptIndex] : item;
+      say(questionLine(item, again));
+      return;
+    }
     if (item.type === "regroup" && promptIndex + 1 < item.prompts.length) {
       promptIndex += 1;
       setTimeout(renderItem, 700);
@@ -466,13 +622,7 @@ async function submit(picked, extra = {}) {
     promptIndex = 0;
     built = [];
     index += 1;
-    setTimeout(() => {
-      const next = currentItem();
-      renderItem();
-      if (!next || next.type === "story") return;
-      const line = next.type === "regroup" ? next.prompts[promptIndex]?.say : next.say;
-      say(line);
-    }, 700);
+    setTimeout(renderItem, 700);
   } catch (err) {
     feedback(app, err.message, "no");
   } finally {
@@ -482,9 +632,21 @@ async function submit(picked, extra = {}) {
 
 async function needHelp(item) {
   helps += 1;
+  if (helps === 1) {
+    const teaching = card.replay || (card.beats || []).join(" ");
+    feedback(app, teaching, "");
+    replay(teaching);
+    return;
+  }
+  if (helps === 2) {
+    const line = "Let's take a wiggle break. Hop five times, then we can try this one again.";
+    feedback(app, line, "");
+    replay(line);
+    return;
+  }
   try {
     const data = await api("help", { stepId: card.stepId, item: item.item, tries: helps });
-    say(data.say);
+    replay(data.say);
     const note = document.querySelector("#feedback");
     if (note) {
       note.textContent = data.say;
@@ -526,6 +688,8 @@ async function finish(status) {
 function stopTicker() {
   if (ticker) clearInterval(ticker);
   ticker = null;
+  if (visTick) document.removeEventListener("visibilitychange", visTick);
+  visTick = null;
 }
 
 async function startTalk() {

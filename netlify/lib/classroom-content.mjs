@@ -203,11 +203,24 @@ function wordTiles(word, rng) {
   return shuffle(rng, [...word, ...extras.slice(0, 2)]);
 }
 
+const SOUND = {
+  a: "ah", e: "eh", i: "ih", o: "o", u: "uh",
+  b: "buh", c: "kuh", d: "duh", f: "fff", g: "guh",
+  h: "huh", j: "juh", k: "kuh", l: "lll", m: "mmm",
+  n: "nnn", p: "puh", q: "kwuh", r: "rrr", s: "sss",
+  t: "tuh", v: "vvv", w: "wuh", x: "ks", y: "yuh", z: "zzz"
+};
+
+function blendSay(word) {
+  const sounds = [...word].map((letter) => SOUND[letter] || letter).join(", ");
+  return `Say the sounds. ${sounds}. Push them together, then tap the letters.`;
+}
+
 function cvcItems(step, rng, n, prefer) {
   const words = CVC[step.vowel] || [];
   return take(rng, words, n, prefer).map((word) => ({
     type: "build",
-    say: `${word[0].toUpperCase()} is the first sound. Tap the letters to make the word.`,
+    say: blendSay(word),
     word,
     tiles: wordTiles(word, rng),
     answer: word,
@@ -428,7 +441,7 @@ export function helpLine(item, tries) {
   if (!item) return "Look again at the one we are on.";
   if (tries >= 2) return "Let's take a wiggle break. Hop five times, then we can try this one again.";
   if (item.type === "build" || item.type === "read") {
-    return `The word is ${item.word}. Say it with me, then tap the letters in order.`;
+    return "Say the sounds slowly, then push them together.";
   }
   if (item.type === "count") return `Point to each ${item.emoji} one time. There are ${item.count}.`;
   if (item.type === "compare") return "Count one side, then count the other side.";

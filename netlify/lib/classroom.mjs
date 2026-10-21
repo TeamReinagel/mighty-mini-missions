@@ -68,7 +68,7 @@ export const CHAINS = {
     {
       id: "reading",
       steps: [
-        step({ id: "gabi-sounds", title: "Letter sounds", strand: "gabi-sounds", strandName: "Letter sounds", activity: "hear-sound", skill: "Letter sounds", teach: "I'll say a sound. You tap the letter." }),
+        step({ id: "gabi-sounds", title: "Letter sounds", strand: "gabi-sounds", strandName: "Letter sounds", activity: "hear-sound", skill: "Letter sounds", teach: "I'll say a sound. You tap the letter.", placed: true }),
         vowel("a", "Short a words"),
         vowel("e", "Short e words"),
         vowel("i", "Short i words"),
@@ -290,34 +290,107 @@ function missedItems(state, stepId) {
 export function frontier(chain, state, plan) {
   const holds = plan?.holds || {};
   for (const item of chain.steps) {
-    if (isMastered(state.steps?.[item.id], item) || state.steps?.[item.id]?.mastered) continue;
+    if (item.placed || isMastered(state.steps?.[item.id], item) || state.steps?.[item.id]?.mastered) continue;
     if (holds[item.id]) {
-      const earlier = chain.steps.filter((candidate, index) => index < chain.steps.indexOf(item) && (state.steps?.[candidate.id]?.mastered || isMastered(state.steps?.[candidate.id], candidate)));
+      const earlier = chain.steps.filter((candidate, index) => index < chain.steps.indexOf(item) && !candidate.placed && (state.steps?.[candidate.id]?.mastered || isMastered(state.steps?.[candidate.id], candidate)));
       const prev = earlier.at(-1);
-      return prev ? { ...prev, review: true } : null;
+      return prev ? { ...prev, review: true } : { ...item, review: true };
     }
     return { ...item };
   }
   return null;
 }
 
-function framing(kidId, item) {
-  if (kidId === "max") return `Trainer challenge. ${item.teach}`;
-  if (kidId === "gabi") return `Here's the chapter. ${item.teach}`;
-  if (kidId === "connor") return `I'll show you, then you try. ${item.teach}`;
-  return item.teach;
+function teachingFor(item) {
+  if (item.activity === "cvc" && item.id === "gabi-cvc-a") {
+    return {
+      beats: [
+        "b and d, p and q. b has a belly in the front. d has a ball in the back. p looks down. q has a little tail.",
+        "Cat is three sounds. kuh, ah, tuh. I say them slowly. kuh. ah. tuh. Then I push them together. Cat.",
+        "Your turn. Say the sounds, then push them together."
+      ],
+      replay: "Say the sounds slowly, then push them together. Cat is kuh, ah, tuh. Cat."
+    };
+  }
+  if (item.activity === "cvc") {
+    const model = {
+      e: ["Bed", "buh, eh, duh"],
+      i: ["Sit", "sss, ih, tuh"],
+      o: ["Hop", "huh, o, puh"],
+      u: ["Cup", "kuh, uh, puh"]
+    }[item.vowel] || ["Cat", "kuh, ah, tuh"];
+    return {
+      beats: [
+        `${model[0]} is three sounds. ${model[1]}. I say them slowly, then I push them together. ${model[0]}.`,
+        "Your turn. Say the sounds, then push them together."
+      ],
+      replay: `Say the sounds slowly, then push them together. ${model[0]} is ${model[1]}. ${model[0]}.`
+    };
+  }
+  if (item.activity === "regroup") {
+    return {
+      beats: [
+        "Watch. 27 plus 15. 27 is 2 tens and 7 ones. 15 is 1 ten and 5 ones.",
+        "Ones first. 7 ones and 5 ones make 12 ones. That is more than 10, so I trade 10 ones for 1 ten. 2 ones are left.",
+        "Now the tens. 2 tens, plus 1 ten, plus the ten I traded, makes 4 tens. 4 tens and 2 ones is 42.",
+        "Your turn. Ones, then the trade, then the tens."
+      ],
+      replay: "Start with the ones. If you have 10 or more ones, trade 10 of them for a ten. Then count the tens."
+    };
+  }
+  if (item.activity === "digraph") {
+    const word = item.pattern === "ch" ? "chip" : item.pattern === "th" ? "thin" : "ship";
+    return {
+      beats: [
+        `${item.pattern[0]} and ${item.pattern[1]} together say ${item.pattern}, like in ${word}.`,
+        `I say ${item.pattern}, then the rest of the word. ${word}.`,
+        "Your turn."
+      ],
+      replay: `${item.pattern[0]} and ${item.pattern[1]} together say ${item.pattern}. Say ${item.pattern}, then the rest. ${word}.`
+    };
+  }
+  if (item.activity === "blend") {
+    return {
+      beats: [
+        "Some words start with two sounds that stay together. Stop starts with sss and tuh.",
+        "I say sss, tuh, then the rest. Stop.",
+        "Your turn. Say both starting sounds, then the word."
+      ],
+      replay: "Say the two starting sounds, then push them into the word. Stop is sss, tuh, op. Stop."
+    };
+  }
+  const scripts = {
+    "hear-name": ["I'll say a letter's name. Tap the big letter with that name.", "Listen for the letter's name, then tap that letter."],
+    "hear-sound": ["I'll say a sound. Listen for just that sound, then tap the letter that makes it.", "Listen for the sound I say, then tap the letter that makes it."],
+    sight: ["Some words we say as a whole word. Watch. The word is the. The.", "Say the whole word. Don't sound this one out."],
+    story: ["I'll read the page. Then you read the same words.", "I'll read the page again. Then you read the same words."],
+    count: ["I touch each picture once and I count. One, two, three. The last number is how many.", "Touch each picture one time. The last number you say is how many."],
+    numbers: ["I'll show a number and say its name. Then you tap it.", "Say the number's name, then tap it."],
+    compare: ["Two groups. I count the first, then the second. The bigger count is more.", "Count one side, then count the other side."],
+    pattern: ["A pattern repeats. Red, blue, red, blue. What comes next is red.", "Say the pattern out loud, then tap what comes next."],
+    add: ["I count the first group. Then I keep counting the second group. The last number is how many altogether.", "Count the first group, then keep counting the second group."],
+    color: ["I'll say a color. Tap the one that is that color.", "Tap the color I say."]
+  };
+  const pair = scripts[item.activity] || [item.teach || "Watch, then you try.", item.teach || "Watch, then you try."];
+  return {
+    beats: [pair[0], "Your turn."],
+    replay: pair[1]
+  };
 }
 
 function lessonCard(kidId, item, date, state, minutes) {
   const shorter = Boolean(state.shorter);
   const count = item.review ? Math.min(3, item.items || 3) : Math.max(item.activity === "story" ? 1 : 3, (item.items || 6) - (shorter ? 2 : 0));
   const shaped = { ...item, items: count };
+  const taught = teachingFor(item);
   return {
     id: `${date}:lesson:${item.id}${item.review ? ":review" : ""}`,
     kind: "lesson",
     title: item.review ? `Another look: ${item.title}` : item.title,
     minutes,
-    say: framing(kidId, item),
+    say: taught.beats[0],
+    beats: taught.beats,
+    replay: taught.replay,
     stepId: item.id,
     skill: item.skill,
     review: Boolean(item.review),
@@ -325,14 +398,22 @@ function lessonCard(kidId, item, date, state, minutes) {
   };
 }
 
-function gameCard(date, game, minutes) {
-  return { id: `${date}:game:${game.id}`, kind: "game", title: game.title, href: game.href, minutes, say: game.say, goal: "Play, then come back" };
+function gameCard(date, game, minutes, extra = "") {
+  return {
+    id: `${date}:game:${game.id}${extra}`,
+    kind: "game",
+    title: extra ? `${game.title} again` : game.title,
+    href: game.href,
+    minutes,
+    say: game.say,
+    goal: "Play, then come back"
+  };
 }
 
-function moveCard(kidId, date) {
+function moveCard(kidId, date, minutes = 5) {
   const list = MOVES[kidId] || MOVES.ethan;
   const move = list[hash(`${date}:${kidId}`) % list.length];
-  return { id: `${date}:move:${move.title}`, kind: "move", title: move.title, minutes: 5, say: move.say };
+  return { id: `${date}:move:${move.title}`, kind: "move", title: move.title, minutes, say: move.say };
 }
 
 function hash(text) {
@@ -342,10 +423,10 @@ function hash(text) {
 }
 
 function minutesFor(kidId, rhythm, shorter) {
-  let minutes = kidId === "connor" || kidId === "ethan" ? 6 : 12;
-  if (rhythm === "light" || rhythm === "group") minutes = Math.min(minutes, 8);
-  if (shorter) minutes = Math.max(4, minutes - 3);
-  return minutes;
+  void rhythm;
+  if (kidId === "ethan") return shorter ? 5 : 8;
+  if (shorter) return 10;
+  return 15;
 }
 
 function markDone(cards, state, date) {
@@ -357,8 +438,7 @@ function markDone(cards, state, date) {
 
 function gabiGame(state) {
   if (state.steps?.["gabi-sight-1"]?.mastered) return GAMES.ghost;
-  if (state.steps?.["gabi-sounds"]?.mastered) return GAMES.otter;
-  return GAMES.hatch;
+  return GAMES.otter;
 }
 
 function lessonFrontiers(kidId, state, plan) {
@@ -396,7 +476,7 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
 function greeting(kidId, name, rhythm, count) {
   if (rhythm === "weekend") return `Hi ${name}. No school block today. ${count} things are here if you want them.`;
   if (kidId === "max") return `Hi ${name}. Trainer day. ${count} challenges, and each one has a finish line.`;
-  if (kidId === "gabi") return `Hi ${name}. I saved a story-sized day for you. ${count} parts. You can switch any time.`;
+  if (kidId === "gabi") return `Hi ${name}. I'll teach, then you try. ${count} parts.`;
   if (kidId === "connor") return `Hi ${name}. I'll show you, then you try. ${count} little jobs.`;
   if (rhythm === "light") return `Hi ${name}. Short day. ${count} things, then you're done.`;
   return `Hi ${name}. ${count} things today.`;
@@ -404,14 +484,12 @@ function greeting(kidId, name, rhythm, count) {
 
 function pairCards({ kidId, date, state, plan, rhythm, minutes, game }) {
   const found = lessonFrontiers(kidId, state, plan);
-  const slots = rhythm === "full" || rhythm === "group" ? 2 : 1;
-  const chosen = [];
-  if (slots === 1) chosen.push(found[hash(date) % Math.max(found.length, 1)] || null);
-  else found.slice(0, 2).forEach((item) => chosen.push(item));
-  const cards = chosen.filter(Boolean).map((item) => lessonCard(kidId, item, date, state, minutes));
   if (rhythm === "weekend") return [gameCard(date, game, 10), moveCard(kidId, date)];
-  cards.push(gameCard(date, game, rhythm === "light" ? 8 : 10));
-  if (rhythm === "full") cards.push(moveCard(kidId, date));
+  const cards = found.slice(0, 2).map((item) => lessonCard(kidId, item, date, state, minutes));
+  cards.push(gameCard(date, game, 15));
+  cards.push(moveCard(kidId, date, 15));
+  if (rhythm === "light") return cards;
+  cards.push(gameCard(date, game, 15, ":again"));
   return cards;
 }
 
@@ -443,18 +521,17 @@ function mathCard(date, minutes) {
 
 function maxCards({ date, state, plan, rhythm, minutes }) {
   const lesson = state.readingLesson || READING_START;
-  const appMinutes = rhythm === "light" ? 8 : rhythm === "group" ? 12 : 15;
   const regroup = lessonFrontiers("max", state, plan)[0];
-  const readingFirst = hash(date) % 2 === 0;
   if (rhythm === "weekend") return [gameCard(date, GAMES.coins, 10), moveCard("max", date)];
-  if (rhythm === "full") {
-    return [readingCard(date, lesson, appMinutes), mathCard(date, appMinutes), ...(regroup ? [lessonCard("max", regroup, date, state, minutes)] : []), gameCard(date, GAMES.coins, 10)];
-  }
-  if (rhythm === "group") {
-    return [readingCard(date, lesson, appMinutes), ...(regroup ? [lessonCard("max", regroup, date, state, minutes)] : []), gameCard(date, GAMES.coins, 10)];
-  }
-  const focus = readingFirst || lesson >= 120 ? readingCard(date, lesson, appMinutes) : mathCard(date, appMinutes);
-  return [focus, regroup ? lessonCard("max", regroup, date, state, minutes) : gameCard(date, GAMES.coins, 8)];
+  const cards = [
+    readingCard(date, lesson, 15),
+    mathCard(date, 15),
+    ...(regroup ? [lessonCard("max", regroup, date, state, minutes)] : []),
+    gameCard(date, GAMES.coins, 15)
+  ];
+  if (rhythm === "light") return cards;
+  cards.push(moveCard("max", date, 15));
+  return cards;
 }
 
 function liveLeft(state, date, env = {}) {
@@ -780,7 +857,7 @@ export function conferencePackage({ roster, plan = emptyPlan(), date = "" }) {
       const index = chain ? chain.steps.findIndex((entry) => entry.id === item.id) : -1;
       const prev = index > 0 ? chain.steps[index - 1] : null;
       const goId = `go-${item.id}`;
-      if (prev && prev.strand !== item.strand && (state?.steps?.[prev.id]?.mastered) && !plan.noticed?.[item.id] && !plan.holds?.[item.id] && !plan.asked?.[goId]) {
+      if (prev && !prev.placed && prev.strand !== item.strand && (state?.steps?.[prev.id]?.mastered) && !plan.noticed?.[item.id] && !plan.holds?.[item.id] && !plan.asked?.[goId]) {
         decisions.push({
           id: goId,
           kid: id,
