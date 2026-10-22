@@ -340,7 +340,7 @@ test("the voice lab plays the voice that was asked for, and ignores a made-up on
   assert.equal(used.at(-1).voice, "sage");
   assert.equal(asked.body.voice, "sage");
   const fake = await handleClassroom({ store, env, fetchImpl, body: { action: "speak", kid: "gabi", voice: "darth", text: "Hi." } });
-  assert.equal(used.at(-1).voice, "coral");
+  assert.equal(used.at(-1).voice, "marin");
   assert.equal(fake.body.voice, undefined);
   const again = await handleClassroom({ store, env, fetchImpl, body: { action: "speak", kid: "gabi", voice: "sage", text: "Hi." } });
   assert.equal(again.body.audioBase64, asked.body.audioBase64);

@@ -94,12 +94,70 @@ export function voicePicker() {
   return wrap;
 }
 
-export function say(text, { force = false } = {}) {
-  if (!text) return Promise.resolve();
-  say.last = text;
+// Games speak in one of three OpenAI voices (the server caches every line, so a line costs a
+// fraction of a cent the first time any child hears it and nothing after). Open a game with
+// ?tts=marin, ?tts=coral or ?tts=ash to try another. If the voice service is down, the device's
+// own voice takes over so a game never goes silent.
+const VOICE_BY_KID = { ethan: "coral", connor: "marin", gabi: "marin", max: "ash" };
+const GAME_VOICES = ["marin", "coral", "ash"];
+
+function gameVoice() {
+  const asked = new URLSearchParams(location.search).get("tts");
+  if (GAME_VOICES.includes(asked)) return asked;
+  return VOICE_BY_KID[kid().id] || "marin";
+}
+
+const clips = new Map();
+let player = null;
+let voiceDownUntil = 0;
+let spoken = 0;
+
+function stopClip() {
+  if (!player) return;
+  player.onended = null;
+  player.onerror = null;
+  try { player.pause(); } catch { /* already stopped */ }
+  player = null;
+}
+
+async function fetchClip(text, voiceName) {
+  const key = `${voiceName}:${text}`;
+  if (clips.has(key)) return clips.get(key);
+  const control = new AbortController();
+  const timer = setTimeout(() => control.abort(), 6000);
+  try {
+    const res = await fetch("/api/classroom", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "speak", kid: kid().id, voice: voiceName, text }),
+      signal: control.signal
+    });
+    const data = res.ok ? await res.json() : null;
+    if (!data?.audioBase64) return "";
+    const src = `data:audio/mpeg;base64,${data.audioBase64}`;
+    clips.set(key, src);
+    return src;
+  } catch {
+    return "";
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function playClip(src) {
+  return new Promise((resolve) => {
+    const audio = new Audio(src);
+    player = audio;
+    const done = (ok) => () => { if (player === audio) player = null; resolve(ok); };
+    audio.onended = done(true);
+    audio.onerror = done(false);
+    audio.play().catch(done(false));
+  });
+}
+
+function deviceSay(text) {
   const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
   if (!synth) return Promise.resolve();
-  if (!tapped && !force) return Promise.resolve();
   synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   if (!voice) pickVoice();
@@ -117,6 +175,26 @@ export function say(text, { force = false } = {}) {
     synth.resume();
     synth.speak(utter);
   });
+}
+
+export async function say(text, { force = false } = {}) {
+  if (!text) return;
+  say.last = text;
+  if (!tapped && !force) return;
+  const mine = ++spoken;
+  stopClip();
+  if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
+  if (Date.now() >= voiceDownUntil) {
+    const src = await fetchClip(text, gameVoice());
+    if (mine !== spoken) return; // a newer line replaced this one while it loaded
+    if (src) {
+      if (await playClip(src)) return;
+      if (mine !== spoken) return;
+    } else {
+      voiceDownUntil = Date.now() + 60_000;
+    }
+  }
+  await deviceSay(text);
 }
 
 export function log(entry) {

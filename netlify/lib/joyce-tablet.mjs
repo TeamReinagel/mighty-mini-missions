@@ -497,7 +497,7 @@ export function speakable(text) {
 async function speakAudio(text, env, fetchImpl) {
   const line = clip(speakable(text), 360);
   if (!line || !env.OPENAI_API_KEY) return "";
-  const voice = env.JOYCE_TABLET_VOICE || "coral";
+  const voice = env.JOYCE_TABLET_VOICE || "marin";
   const attempts = [
     {
       model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts",

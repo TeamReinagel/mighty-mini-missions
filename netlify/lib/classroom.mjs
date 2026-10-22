@@ -892,7 +892,7 @@ async function synthesize(line, env, fetchImpl, chosen = "", diag = {}) {
   const attempts = chosen
     ? [{ model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts", voice: chosen, instructions }]
     : [
-      { model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts", voice: env.JOYCE_TABLET_VOICE || "coral", instructions },
+      { model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts", voice: env.JOYCE_TABLET_VOICE || "marin", instructions },
       { model: "tts-1-hd", voice: "shimmer" }
     ];
   for (const attempt of attempts) {
@@ -960,7 +960,7 @@ async function liveSession({ store, env, fetchImpl, kidId, kid, date, sdp, now }
         transcription: { model: "gpt-4o-mini-transcribe" },
         turn_detection: { type: "server_vad", threshold: 0.6, prefix_padding_ms: 300, silence_duration_ms: 900, create_response: true, interrupt_response: false }
       },
-      output: { voice: env.JOYCE_TABLET_VOICE || "coral" }
+      output: { voice: env.JOYCE_TABLET_VOICE || "marin" }
     }
   };
   const fd = new FormData();
