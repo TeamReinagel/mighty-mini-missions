@@ -13,7 +13,10 @@ export function kid() {
     const found = list.find((profile) => profile.id === (query || data.activeProfileId));
     if (found) return { id: found.id, name: found.name, color: found.color };
   } catch { /* keep going */ }
-  return { id: query || "player", name: "friend", color: "#7c6cf0" };
+  const id = query || "player";
+  const colors = { max: "#4fa3ff", gabi: "#e27bd0", connor: "#ff9f1c", ethan: "#2fbf8f" };
+  const name = id === "player" ? "friend" : id.charAt(0).toUpperCase() + id.slice(1);
+  return { id, name, color: colors[id] || "#7c6cf0" };
 }
 
 export function stepParam() {
@@ -40,21 +43,51 @@ export function markReady(flag) {
   localStorage.setItem(READY_KEY, JSON.stringify(all));
 }
 
-export function say(text) {
+// Browsers keep a page quiet until someone has tapped it, and a line spoken before that can jam
+// the speech queue. So nothing speaks until the first tap, and each new line replaces the last
+// one so the voice always matches the screen.
+let tapped = false;
+if (typeof document !== "undefined") {
+  const unlock = () => { tapped = true; };
+  document.addEventListener("pointerdown", unlock, { capture: true, once: true });
+  document.addEventListener("keydown", unlock, { capture: true, once: true });
+}
+
+let voice = null;
+function pickVoice() {
+  const synth = window.speechSynthesis;
+  if (!synth) return;
+  const list = synth.getVoices();
+  for (const name of ["Samantha", "Karen", "Moira", "Tessa", "Google US English"]) {
+    const found = list.find((entry) => entry.name.startsWith(name));
+    if (found) { voice = found; return; }
+  }
+  voice = list.find((entry) => /^en/i.test(entry.lang)) || null;
+}
+if (typeof window !== "undefined" && window.speechSynthesis) {
+  pickVoice();
+  window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+export function say(text, { force = false } = {}) {
   if (!text) return Promise.resolve();
-  const job = (say.chain || Promise.resolve()).then(() => new Promise((resolve) => {
-    const synth = window.speechSynthesis;
-    if (!synth) return resolve();
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.rate = 0.92;
-    const timer = setTimeout(resolve, Math.min(8000, 700 + text.length * 70));
+  say.last = text;
+  const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
+  if (!synth) return Promise.resolve();
+  if (!tapped && !force) return Promise.resolve();
+  synth.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  if (voice) utter.voice = voice;
+  utter.rate = 0.85;
+  utter.pitch = 1.1;
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, 1200 + text.length * 90);
     const done = () => { clearTimeout(timer); resolve(); };
     utter.onend = done;
     utter.onerror = done;
+    synth.resume();
     synth.speak(utter);
-  }));
-  say.chain = job.catch(() => {});
-  return job;
+  });
 }
 
 export function log(entry) {

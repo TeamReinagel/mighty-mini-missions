@@ -1,0 +1,168 @@
+:root {
+  --ink: #241c33;
+  --cream: #f4ead8;
+  --kid: #7c6cf0;
+  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: white;
+  background: #1b2430;
+}
+
+button, a { font: inherit; }
+
+#app { min-height: 100vh; display: flex; flex-direction: column; }
+
+.top { display: flex; align-items: center; gap: 12px; padding: 12px 14px 0; }
+
+h1 { margin: 0; flex: 1; font-size: clamp(28px, 5vw, 44px); }
+
+.home { color: white; font-weight: 800; text-decoration: none; }
+
+.who { margin: 0; opacity: .85; }
+
+.line-row { display: flex; align-items: center; gap: 10px; margin: 6px 14px 8px; }
+.line { margin: 0; flex: 1; min-height: 1.4em; font-size: 1.25rem; }
+.hear { border: 0; border-radius: 999px; padding: 8px 16px; font-weight: 800; color: var(--ink); background: var(--cream); box-shadow: 0 4px 0 rgba(36, 28, 51, .2); }
+
+.scene {
+  margin: 0 12px;
+  min-height: 64vh;
+  border-radius: 28px;
+  background: #87b86a center/cover no-repeat;
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .28);
+}
+
+.row, .track, .scoops { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: flex-end; }
+
+.pic, .go, .level {
+  border: 0;
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 22px;
+  box-shadow: 0 7px 0 rgba(36, 28, 51, .2);
+  font-weight: 800;
+}
+
+.pic { padding: 6px 6px 8px; }
+.pic img { width: 92px; height: 92px; object-fit: cover; border-radius: 16px; display: block; background: var(--cream); }
+.pic .cap, .pic .letter { display: block; text-align: center; }
+.pic .letter { font-size: 1.8rem; }
+.pic.small img { width: 64px; height: 64px; }
+
+.scene > .pic, .scene > .go { justify-self: center; }
+
+.go, .level { min-height: 58px; padding: 10px 16px; font-size: 1.15rem; }
+.go.play { background: var(--kid); color: white; font-size: 1.45rem; min-width: 180px; }
+.level.on { outline: 4px solid white; }
+
+button:disabled { opacity: .4; }
+
+.pips { display: flex; gap: 6px; }
+.pip { width: 16px; height: 16px; border-radius: 50%; background: rgba(255, 255, 255, .35); }
+.pip.on { background: #ffd15c; }
+
+.shelf { display: flex; gap: 8px; align-items: center; padding: 10px 14px 16px; overflow: auto; min-height: 74px; }
+.shelf img { width: 56px; height: 56px; border-radius: 16px; object-fit: cover; background: var(--cream); }
+
+.hero { width: min(200px, 42vw); border-radius: 24px; background: var(--cream); justify-self: center; }
+.big-num { margin: 0; text-align: center; font-size: 4.2rem; text-shadow: 0 3px 0 rgba(0, 0, 0, .25); }
+
+.mini { width: 48px; height: 48px; object-fit: cover; border-radius: 50%; background: var(--cream); }
+
+.pair { display: flex; justify-content: center; align-items: flex-end; gap: 28px; }
+.pair .hero { width: min(150px, 28vw); }
+.pair .big-num { align-self: center; }
+.counter { display: flex; justify-content: center; align-items: flex-end; min-height: 120px; }
+.sundae { position: relative; flex: none; }
+.sundae img, .pic .sundae img { position: absolute; display: block; height: auto; border-radius: 0; background: none; object-fit: contain; }
+.sundae .scoop.new { animation: plop .3s ease-out; }
+@keyframes plop {
+  from { transform: translateY(-46px) scale(.9); opacity: .25; }
+}
+.pic.scooper img { object-fit: contain; }
+
+.pen, .blanket, .crate-zone {
+  min-width: 42%;
+  min-height: 150px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .28);
+  padding: 8px;
+}
+
+.blank {
+  width: 92px;
+  height: 92px;
+  border-radius: 18px;
+  border: 3px dashed rgba(255, 255, 255, .85);
+}
+
+.lane { position: relative; height: 150px; overflow: hidden; border-radius: 20px; background: rgba(255, 255, 255, .2); }
+.drifter { position: absolute; top: 18px; }
+
+.launch { transform: translateY(-140px) scale(1.05); transition: transform .8s ease; }
+
+.bad { animation: wobble .35s; }
+@keyframes wobble {
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* Dino Picnic: the scene matches the painting, so a tap sends food down onto the painted blanket. */
+.scene.picnic {
+  display: block;
+  position: relative;
+  padding: 0;
+  min-height: 0;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  width: min(calc(100% - 24px), calc((100vh - 240px) * 16 / 9));
+  background-size: 100% 100%;
+}
+.picnic .meadow { position: absolute; left: 2%; right: 2%; top: 3%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.picnic .blanket-zone {
+  position: absolute;
+  left: 21%;
+  width: 56%;
+  top: 66%;
+  height: 28%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-content: center;
+  justify-content: center;
+  background: none;
+}
+.picnic .landed:disabled { opacity: 1; }
+
+/* Moon Crates: story cards, piles, and the rover. */
+.tale { margin: 0; justify-self: center; max-width: 34em; padding: 10px 18px; border-radius: 18px; text-align: center; font-size: 1.3rem; font-weight: 700; background: rgba(10, 14, 30, .62); }
+.tale:empty { display: none; }
+.eq { margin: 0; text-align: center; font-size: 2.4rem; font-weight: 900; text-shadow: 0 3px 0 rgba(0, 0, 0, .35); }
+.tag { margin: 0; text-align: center; font-weight: 800; }
+.piles { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: stretch; }
+.pile, .packer { display: grid; justify-items: center; align-content: start; gap: 8px; padding: 10px 14px; border-radius: 20px; background: rgba(10, 14, 30, .55); min-width: 220px; }
+.small-hero { width: 96px; }
+.pic.still { padding: 4px; }
+.pic.still img { width: 56px; height: 56px; }
+.pic.small img { width: 56px; height: 56px; }
+.landed:disabled { opacity: 1; }
+.rover .hero { width: 130px; }
+.drive { transform: translateX(160%); transition: transform 1s ease-in; }
+.inside { min-height: 40px; max-width: 380px; gap: 4px; }
+.inside .pic.still { padding: 2px; border-radius: 10px; }
+.inside .pic.still img { width: 30px; height: 30px; }
+.piles .pile { min-width: 0; padding: 8px 10px; }
+.piles .row { gap: 6px; }
+.piles .pic { padding: 3px; border-radius: 14px; box-shadow: 0 4px 0 rgba(36, 28, 51, .2); }
+.piles .pic.small img, .piles .pic.still img { width: 42px; height: 42px; border-radius: 10px; }
+.packer .hero { width: 84px; }

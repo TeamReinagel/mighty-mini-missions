@@ -401,15 +401,15 @@ function lessonCard(kidId, item, date, state, minutes) {
 
 const SKILL_GAMES = {
   "hear-name": ["hatch-match", "Hatch Match", "../hatch-match/", "Play Hatch Match. Match the big letter with the little letter."],
-  "hear-sound": ["sound-bugs", "Sound Bugs", "../sound-bugs/", "Play Sound Bugs. Tap the letter that makes the sound."],
+  "hear-sound": ["sound-bugs", "Jungle Jump", "../sound-bugs/", "Play Jungle Jump. The drum says a sound. Help the monkey across."],
   cvc: ["otter-slide", "Otter Slide", "../otter-slide/", "Play Otter Slide. Slide the sounds together."],
-  digraph: ["sound-teams", "Sound Teams", "../sound-teams/", "Play Sound Teams. Some letters stick together, like sh."],
-  count: ["snack-count", "Snack Count", "../snack-count/", "Play Snack Count. Tap each snack and count with me."],
-  numbers: ["snack-count", "Snack Count", "../snack-count/", "Play Snack Count. Tap the number I say."],
-  compare: ["more-or-fewer", "More or Fewer", "../more-or-fewer/", "Play More or Fewer. Which side has more?"],
-  pattern: ["pattern-park", "Pattern Park", "../pattern-park/", "Play Pattern Park. What comes next?"],
-  color: ["color-tap", "Color Tap", "../color-tap/", "Play Color Tap. Tap the color I say."],
-  regroup: ["block-trade", "Block Trade", "../block-trade/", "Play Block Trade. Trade 10 ones for a ten."]
+  digraph: ["sound-teams", "Tide Pool", "../sound-teams/", "Play Tide Pool. Catch the shell with the letter team."],
+  count: ["snack-count", "Sundae Stand", "../snack-count/", "Play Sundae Stand. Build the scoops the bunny asked for."],
+  numbers: ["snack-count", "Sundae Stand", "../snack-count/", "Play Sundae Stand. Match the number card to the sundae."],
+  compare: ["more-or-fewer", "Lost Sheep", "../more-or-fewer/", "Play Lost Sheep. Which pen has more, and who wandered off?"],
+  pattern: ["pattern-park", "Dino Express", "../pattern-park/", "Play Dino Express. Build the train that repeats."],
+  color: ["color-tap", "Dino Picnic", "../color-tap/", "Play Dino Picnic. Feed the dino and set the blanket."],
+  regroup: ["block-trade", "Moon Crates", "../block-trade/", "Play Moon Crates. Trade 10 rocks for a crate, then launch."]
 };
 
 function skillCard(kidId, item, date, state, minutes) {

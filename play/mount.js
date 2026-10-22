@@ -1,3 +1,4 @@
+// Retired quiz shell. The games in each folder load their own app.js.
 import { kid, stepParam, load, save, markReady, say, practice, fresh, el, shell, streak, word } from "./kit.mjs";
 import { COLORS, countRound, nameRound, compareRound, patternRound, addWithTrade, subWithTrade, soundRound, teamRound, SOUND_GROUPS, SOUND } from "./rounds.mjs";
 
