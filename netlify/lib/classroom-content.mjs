@@ -171,6 +171,8 @@ function hearSounds(step, rng, n) {
       type: "choice",
       say: `Tap the letter that says ${info.sound}, like in ${info.example}.`,
       answer: letter,
+      sound: info.sound,
+      example: info.example,
       choices: shuffle(rng, choices),
       item: letter
     };
@@ -192,6 +194,7 @@ function hearNames(step, rng, n) {
       type: "choice",
       say: `Tap the letter named ${LETTER_NAMES[letter]}.`,
       answer: letter,
+      spoken: LETTER_NAMES[letter],
       choices: shuffle(rng, choices),
       item: letter.toUpperCase()
     };
@@ -211,8 +214,24 @@ const SOUND = {
   t: "tuh", v: "vvv", w: "wuh", x: "ks", y: "yuh", z: "zzz"
 };
 
+export function wordParts(word) {
+  const parts = [];
+  let i = 0;
+  while (i < word.length) {
+    const pair = word.slice(i, i + 2);
+    if (pair === "sh" || pair === "ch" || pair === "th") {
+      parts.push({ letters: pair, sound: pair });
+      i += 2;
+    } else {
+      parts.push({ letters: word[i], sound: SOUND[word[i]] || word[i] });
+      i += 1;
+    }
+  }
+  return parts;
+}
+
 function blendSay(word) {
-  const sounds = [...word].map((letter) => SOUND[letter] || letter).join(", ");
+  const sounds = wordParts(word).map((part) => part.sound).join(", ");
   return `Say the sounds. ${sounds}. Push them together, then tap the letters.`;
 }
 
@@ -225,6 +244,7 @@ function cvcItems(step, rng, n, prefer) {
     tiles: wordTiles(word, rng),
     answer: word,
     item: word,
+    parts: wordParts(word),
     thenRead: true
   }));
 }
@@ -244,6 +264,7 @@ function wordItems(step, words, rng, n, prefer, sayFor) {
     tiles: wordTiles(word, rng),
     answer: word,
     item: word,
+    parts: wordParts(word),
     thenRead: true
   }));
 }

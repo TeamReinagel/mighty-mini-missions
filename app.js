@@ -178,18 +178,27 @@ function profileAllowsGame(profile, game) {
   return !Array.isArray(game.profiles) || Boolean(profile && game.profiles.includes(profile.id));
 }
 
+function readyFlags(profile) {
+  const all = safeJsonParse(localStorage.getItem("mighty-ready.v1") ?? "{}", {});
+  return all?.[profile?.id] || {};
+}
+
 /**
  * Split a child's games into the home screen and "More games". A game goes home when it
  * practices something on the child's list and suits their stage (games without `levels` suit
  * every stage). Profiles without a practicing list, or whose list matches nothing, see everything.
  */
 function gamesForProfile(profile) {
-  const all = (Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : []).filter((g) => profileAllowsGame(profile, g));
+  const flags = readyFlags(profile);
+  const open = typeof window.gameOpen === "function" ? window.gameOpen : () => true;
+  const all = (Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : []).filter((g) => profileAllowsGame(profile, g) && open(profile, g, flags));
   const sortHome = (list) => [...list].sort((a, b) => Number(Boolean(b.alwaysHome)) - Number(Boolean(a.alwaysHome)));
   if (!profile || !Array.isArray(profile.practicing)) return { home: sortHome(all), more: [] };
   const practicing = new Set(profile.practicing);
+  const readyNow = (g) => Boolean(g.after && g.after[profile.id]);
   const fits = (g) =>
     g.alwaysHome ||
+    readyNow(g) ||
     ((g.practices ?? []).some((s) => practicing.has(s)) &&
     (!Array.isArray(g.levels) || !profile.stage || g.levels.includes(profile.stage)));
   const home = sortHome(all.filter(fits));

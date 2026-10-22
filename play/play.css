@@ -1,0 +1,71 @@
+:root {
+  color-scheme: light;
+  --ink: #241c33;
+  --paper: #fff8ef;
+  --kid: #7c6cf0;
+  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(800px 360px at 0 0, color-mix(in srgb, var(--kid) 35%, white), transparent 60%),
+    var(--paper);
+}
+
+button, a { font: inherit; }
+
+#app { max-width: 880px; margin: 0 auto; padding: 16px 16px 40px; }
+
+.bar { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+
+h1 { margin: 0; font-size: clamp(32px, 6vw, 48px); }
+
+.home { color: #65597a; font-weight: 800; text-decoration: none; }
+
+.who, .note { color: #65597a; font-size: 1.2rem; }
+
+.stage { display: grid; gap: 16px; margin-top: 12px; }
+
+.row, .ten-row, .one-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+.choice, .swatch, .snack, .pile, .go {
+  min-height: 72px;
+  min-width: 72px;
+  border: 0;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 8px 0 #eadfce;
+  font-size: 1.4rem;
+  font-weight: 800;
+  padding: 12px 16px;
+}
+
+.choice.big, .pile { font-size: 2.4rem; min-width: 120px; }
+
+.choice.on { outline: 4px solid var(--kid); }
+
+.swatch { color: white; text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3); }
+
+.snack { font-size: 2.6rem; }
+
+.snack.popped, .cube.popped { transform: translateY(4px); opacity: 0.45; }
+
+.go { background: var(--kid); color: white; }
+
+.pattern, .sum { text-align: center; font-size: 2.2rem; margin: 0; }
+
+.blocks { display: grid; justify-items: center; gap: 8px; }
+
+.rod, .cube { display: inline-block; background: var(--kid); }
+
+.rod { width: 28px; height: 96px; border-radius: 8px; }
+
+.cube { width: 36px; height: 36px; border-radius: 6px; }
+button.cube { padding: 0; border: 0; min-width: 36px; min-height: 36px; box-shadow: none; }
+
+button:disabled { opacity: 0.4; }

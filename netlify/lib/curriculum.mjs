@@ -102,6 +102,13 @@ export const GAME_NAMES = {
   "train-set": "Train Set",
   "hatch-match": "Hatch Match",
   "otter-slide": "Otter Slide",
+  "color-tap": "Color Tap",
+  "snack-count": "Snack Count",
+  "more-or-fewer": "More or Fewer",
+  "pattern-park": "Pattern Park",
+  "block-trade": "Block Trade",
+  "sound-bugs": "Sound Bugs",
+  "sound-teams": "Sound Teams",
   missions: "Missions",
   joyce: "Today with Joyce"
 };

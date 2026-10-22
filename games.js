@@ -2,6 +2,8 @@
 // To add a game, append an object with title, icon, href, the skills it practices, and the
 // levels it suits. A child's home screen shows the games that practice something they are
 // working on at their level; everything else waits under "More games".
+// A game with `after` stays off both lists for that child until the earlier skill is in use.
+// The flag lives in localStorage `mighty-ready.v1` and is set by the game that comes before it.
 
 // Skill ids are stored in each profile's `practicing` list, so keep existing ids stable.
 // `kid` is the short label children see on a tile; `label` is what grown-ups see.
@@ -103,6 +105,74 @@ window.MIGHTY_GAMES = [
     levels: ["prek", "k", "1st"]
   },
   {
+    id: "color-tap",
+    title: "Color Tap",
+    icon: "./color-tap/icon.svg",
+    href: "./color-tap/",
+    profiles: ["ethan"],
+    practices: ["colors-shapes"],
+    levels: ["toddler"]
+  },
+  {
+    id: "snack-count",
+    title: "Snack Count",
+    icon: "./snack-count/icon.svg",
+    href: "./snack-count/",
+    profiles: ["ethan", "connor", "gabi"],
+    practices: ["counting"],
+    levels: ["toddler", "prek", "k"],
+    after: { ethan: "colors" }
+  },
+  {
+    id: "more-or-fewer",
+    title: "More or Fewer",
+    icon: "./more-or-fewer/icon.svg",
+    href: "./more-or-fewer/",
+    profiles: ["connor", "gabi"],
+    practices: ["counting"],
+    levels: ["prek", "k"],
+    after: { connor: "count-20", gabi: "numbers" }
+  },
+  {
+    id: "pattern-park",
+    title: "Pattern Park",
+    icon: "./pattern-park/icon.svg",
+    href: "./pattern-park/",
+    profiles: ["connor", "gabi"],
+    practices: ["counting"],
+    levels: ["prek", "k"],
+    after: { connor: "compare", gabi: "compare" }
+  },
+  {
+    id: "sound-bugs",
+    title: "Sound Bugs",
+    icon: "./sound-bugs/icon.svg",
+    href: "./sound-bugs/",
+    profiles: ["connor"],
+    practices: ["letter-sounds"],
+    levels: ["prek", "k"],
+    after: { connor: "letters" }
+  },
+  {
+    id: "sound-teams",
+    title: "Sound Teams",
+    icon: "./sound-teams/icon.svg",
+    href: "./sound-teams/",
+    profiles: ["gabi"],
+    practices: ["blending"],
+    levels: ["prek", "k"],
+    after: { gabi: "blending" }
+  },
+  {
+    id: "block-trade",
+    title: "Block Trade",
+    icon: "./block-trade/icon.svg",
+    href: "./block-trade/",
+    profiles: ["max"],
+    practices: ["math-facts"],
+    levels: ["1st", "2nd"]
+  },
+  {
     id: "design-studio",
     title: "Design with Sid",
     icon: "./design-studio/icon.svg",
@@ -119,3 +189,14 @@ window.MIGHTY_GAMES = [
     practices: ["game-design"]
   }
 ];
+
+// Home and More both use this. A future skill stays hidden until its `after` flag is true.
+window.gameOpen = function gameOpen(profile, game, flags) {
+  if (!game) return false;
+  if (game.alwaysHome) return true;
+  if (!profile) return false;
+  if (Array.isArray(game.profiles) && !game.profiles.includes(profile.id)) return false;
+  const need = game.after?.[profile.id];
+  if (need) return Boolean(flags?.[need]);
+  return true;
+};

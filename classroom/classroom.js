@@ -44,6 +44,34 @@ function el(tag, className, text) {
   return node;
 }
 
+const SOUND = {
+  a: "ah", e: "eh", i: "ih", o: "o", u: "uh",
+  b: "buh", c: "kuh", d: "duh", f: "fff", g: "guh",
+  h: "huh", j: "juh", k: "kuh", l: "lll", m: "mmm",
+  n: "nnn", p: "puh", q: "kwuh", r: "rrr", s: "sss",
+  t: "tuh", v: "vvv", w: "wuh", x: "ks", y: "yuh", z: "zzz"
+};
+
+const COUNT_WORD = [
+  "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+  "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"
+];
+
+function hold(buttons, ready) {
+  for (const button of buttons) button.disabled = true;
+  Promise.resolve(ready).then(() => {
+    for (const button of buttons) {
+      if (button.isConnected && !button.classList.contains("popped")) button.disabled = false;
+    }
+  });
+}
+
+function popStar() {
+  const star = el("div", "star-pop", "★");
+  document.body.append(star);
+  setTimeout(() => star.remove(), 700);
+}
+
 async function api(action, extra = {}) {
   const res = await fetch("/api/classroom", {
     method: "POST",
@@ -291,13 +319,32 @@ function shell(title) {
 function renderSimple() {
   const panel = shell(card.title);
   panel.append(el("p", "prompt", card.say));
-  say(card.say);
+  const spoken = say(card.say);
   if (card.kind === "app" || card.kind === "game") {
     const link = el("a", "go", card.kind === "app" ? "Open it" : "Play");
     link.href = card.href;
     link.target = "_blank";
     link.rel = "noopener";
     panel.append(link);
+    if (card.askLesson) {
+      const done = el("button", "go", "I'm done");
+      done.type = "button";
+      done.disabled = true;
+      link.addEventListener("click", () => { done.disabled = false; });
+      done.addEventListener("click", () => askLesson(panel));
+      panel.append(done);
+      return;
+    }
+    const done = el("button", "go", "I'm done");
+    done.type = "button";
+    done.disabled = true;
+    link.addEventListener("click", () => { done.disabled = false; });
+    done.addEventListener("click", () => finish("done"));
+    const back = el("button", "quiet", "Back");
+    back.type = "button";
+    back.addEventListener("click", renderBoard);
+    panel.append(done, back);
+    return;
   }
   if (card.askLesson) {
     const done = el("button", "go", "I'm done");
@@ -310,6 +357,10 @@ function renderSimple() {
   const done = el("button", "go", label);
   done.type = "button";
   done.addEventListener("click", () => finish("done"));
+  if (card.kind === "move") {
+    done.disabled = true;
+    spoken.then(() => { if (done.isConnected) done.disabled = false; });
+  }
   const back = el("button", "quiet", "Back");
   back.type = "button";
   back.addEventListener("click", renderBoard);
@@ -406,15 +457,16 @@ async function speakBeats(beat, gen) {
 function renderItem() {
   const item = currentItem();
   if (!item) {
-    finish("done");
+    const finishing = card;
+    setTimeout(() => { if (card === finishing) finish("done"); }, 0);
     return;
   }
   const panel = shell(`${card.title}  ${index + 1} / ${card.items.length}`);
   const prompt = item.type === "regroup" ? item.prompts[promptIndex] : item;
   const line = questionLine(item, prompt);
   if (item.type !== "story") panel.append(el("p", "prompt", line));
-  say(line);
-  drawItem(panel, item, prompt);
+  const spoken = say(line);
+  drawItem(panel, item, prompt, spoken);
   const note = el("p", "feedback");
   note.id = "feedback";
   const row = el("div", "actions");
@@ -431,31 +483,40 @@ function renderItem() {
   panel.append(note, row);
 }
 
-function drawItem(panel, item, prompt) {
-  if (item.type === "build") return drawBuild(panel, item);
+function drawItem(panel, item, prompt, ready) {
+  if (item.type === "build") return drawBuild(panel, item, ready);
   if (item.type === "read") return drawRead(panel, item);
   if (item.type === "story") return drawStory(panel, item);
-  if (item.type === "count") return drawCount(panel, item);
-  if (item.type === "compare") return drawCompare(panel, item);
-  if (item.type === "add") return drawAdd(panel, item);
-  if (item.type === "pattern") return drawPattern(panel, item);
-  if (item.type === "regroup") return drawRegroup(panel, item, prompt);
+  if (item.type === "count") return drawCount(panel, item, ready);
+  if (item.type === "compare") return drawCompare(panel, item, ready);
+  if (item.type === "add") return drawAdd(panel, item, ready);
+  if (item.type === "pattern") return drawPattern(panel, item, ready);
+  if (item.type === "regroup") return drawRegroup(panel, item, prompt, ready);
   if (item.show) panel.append(el("div", "big-number", String(item.show)));
-  drawChoices(panel, prompt.choices || item.choices, (id) => submit(id));
+  drawChoices(panel, prompt.choices || item.choices, (id) => submit(id), ready);
 }
 
-function drawChoices(panel, choices, onPick) {
+function drawChoices(panel, choices, onPick, ready) {
   const row = el("div", "choices");
+  const buttons = [];
   for (const choice of choices || []) {
     const button = el("button", "choice", choice.label);
     button.type = "button";
     button.addEventListener("click", () => onPick(choice.id));
+    buttons.push(button);
     row.append(button);
   }
+  hold(buttons, ready);
   panel.append(row);
 }
 
-function drawBuild(panel, item) {
+function drawBuild(panel, item, ready) {
+  const parts = item.parts?.length
+    ? item.parts
+    : [...item.word].map((letter) => ({ letters: letter, sound: SOUND[letter] || letter }));
+  let partIndex = 0;
+  let partBuilt = "";
+  let heard = false;
   const word = el("div", "big-word", "");
   const row = el("div", "tiles");
   const paint = () => {
@@ -466,21 +527,51 @@ function drawBuild(panel, item) {
       const before = item.tiles.slice(0, tileIndex).filter((entry) => entry === letter).length;
       const button = el("button", "tile", letter);
       button.type = "button";
-      if (before < used) button.disabled = true;
-      button.addEventListener("click", () => {
-        if (built.length >= item.word.length) return;
-        built.push(letter);
-        paint();
-        if (built.length === item.word.length) submit(built.join(""));
-      });
+      if (!heard || before < used) button.disabled = true;
+      button.addEventListener("click", () => take(letter));
       row.append(button);
     });
   };
+  const take = (letter) => {
+    const part = parts[partIndex];
+    if (!heard || !part || built.length >= item.word.length) return;
+    const want = part.letters[partBuilt.length];
+    if (letter !== want) {
+      say(`That letter says ${SOUND[letter] || letter}. Listen for ${part.sound}.`);
+      return;
+    }
+    partBuilt += letter;
+    built.push(letter);
+    paint();
+    if (partBuilt.length < part.letters.length) return;
+    const next = parts[partIndex + 1];
+    partIndex += 1;
+    partBuilt = "";
+    if (!next) {
+      say(`Yes. ${part.sound}. Push them together.`);
+      submit(built.join(""));
+      return;
+    }
+    say(`Yes. ${part.sound}. Next sound is ${next.sound}.`);
+  };
   const undo = el("button", "quiet", "Undo");
   undo.type = "button";
-  undo.addEventListener("click", () => { built.pop(); paint(); });
+  undo.addEventListener("click", () => {
+    if (!built.length || busy) return;
+    built.pop();
+    if (partBuilt.length) partBuilt = partBuilt.slice(0, -1);
+    else if (partIndex > 0) {
+      partIndex -= 1;
+      partBuilt = parts[partIndex].letters.slice(0, -1);
+    }
+    paint();
+  });
   panel.append(word, row, undo);
   paint();
+  Promise.resolve(ready).then(() => {
+    heard = true;
+    if (row.isConnected) paint();
+  });
 }
 
 function drawRead(panel, item) {
@@ -543,41 +634,66 @@ function drawStory(panel, item) {
   panel.append(next);
 }
 
-function drawCount(panel, item) {
-  panel.append(el("div", "dots", item.emoji.repeat(item.count)));
-  drawChoices(panel, item.choices, (id) => submit(id));
+function drawCount(panel, item, ready) {
+  const row = el("div", "dots count-dots");
+  let tapped = 0;
+  let lock = true;
+  const buttons = [];
+  for (let i = 0; i < item.count; i += 1) {
+    const button = el("button", "pop-dot", item.emoji);
+    button.type = "button";
+    button.addEventListener("click", async () => {
+      if (lock || button.disabled || busy) return;
+      lock = true;
+      button.disabled = true;
+      button.classList.add("popped");
+      tapped += 1;
+      await say(COUNT_WORD[tapped] || String(tapped));
+      if (tapped === item.count) submit(String(item.count));
+      else lock = false;
+    });
+    buttons.push(button);
+    row.append(button);
+  }
+  panel.append(el("p", "joyce-line", "Tap each one. I will count with you."));
+  panel.append(row);
+  Promise.resolve(ready).then(() => { lock = false; });
+  hold(buttons, ready);
 }
 
-function drawCompare(panel, item) {
+function drawCompare(panel, item, ready) {
   const row = el("div", "groups");
+  const buttons = [];
   for (const side of ["left", "right"]) {
     const button = el("button", "choice side", item.emoji.repeat(item[side]));
     button.type = "button";
     button.addEventListener("click", () => submit(side));
+    buttons.push(button);
     row.append(button);
   }
+  hold(buttons, ready);
   panel.append(row);
 }
 
-function drawAdd(panel, item) {
+function drawAdd(panel, item, ready) {
   const row = el("div", "groups");
   row.append(el("div", "dots", item.emoji.repeat(item.left)));
   row.append(el("div", "dots", "+"));
   row.append(el("div", "dots", item.emoji.repeat(item.right) || "0"));
   panel.append(row);
-  drawChoices(panel, item.choices, (id) => submit(id));
+  drawChoices(panel, item.choices, (id) => submit(id), ready);
 }
 
-function drawPattern(panel, item) {
+function drawPattern(panel, item, ready) {
   panel.append(el("div", "dots", item.sequence.join("  ")));
-  drawChoices(panel, item.choices, (id) => submit(id));
+  drawChoices(panel, item.choices, (id) => submit(id), ready);
 }
 
-function drawRegroup(panel, item, prompt) {
+function drawRegroup(panel, item, prompt, ready) {
   const blocks = el("div", "blocks");
   blocks.append(placeValue(item.a), el("div", "dots", "+"), placeValue(item.b));
   panel.append(blocks);
-  drawChoices(panel, prompt.choices, (id) => submit(id));
+  drawChoices(panel, prompt.choices, (id) => submit(id), ready);
 }
 
 function placeValue(number) {
@@ -604,25 +720,35 @@ async function submit(picked, extra = {}) {
       unsure: Boolean(extra.unsure)
     });
     const note = document.querySelector("#feedback");
+    if (data.wait) {
+      if (note) {
+        note.textContent = data.say;
+        note.className = "feedback";
+      }
+      await say(data.say);
+      return;
+    }
     if (note) {
       note.textContent = data.say;
       note.className = `feedback ${data.correct === false ? "no" : "yes"}`;
     }
-    say(data.say);
     if (data.correct === false) {
+      await say(data.say);
       const again = item.type === "regroup" ? item.prompts[promptIndex] : item;
-      say(questionLine(item, again));
+      await say(questionLine(item, again));
       return;
     }
+    popStar();
+    await say(data.say);
     if (item.type === "regroup" && promptIndex + 1 < item.prompts.length) {
       promptIndex += 1;
-      setTimeout(renderItem, 700);
+      renderItem();
       return;
     }
     promptIndex = 0;
     built = [];
     index += 1;
-    setTimeout(renderItem, 700);
+    renderItem();
   } catch (err) {
     feedback(app, err.message, "no");
   } finally {
@@ -674,6 +800,17 @@ async function finish(status) {
   stopTicker();
   try {
     const data = await api("card", { cardId: card.id, status });
+    if (data.redo) {
+      say(data.say);
+      index = 0;
+      promptIndex = 0;
+      built = [];
+      helps = 0;
+      busy = false;
+      if (card.beats?.length) renderTeach();
+      else renderItem();
+      return;
+    }
     if (data.say) say(data.say);
     day = await api("today");
     renderBoard();

@@ -43,6 +43,13 @@ const OFF_SCREEN = [
 // ---------- saved progress (per child) ----------
 const kid = window.MightyProgress?.currentKid() || { id: 'unknown', name: '' };
 const STORE = `otterSlide.v1:${kid.id}`;
+function markSkillReady(flag) {
+  if (!kid.id || kid.id === "unknown") return;
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem("mighty-ready.v1") || "{}"); } catch { all = {}; }
+  all[kid.id] = { ...(all[kid.id] || {}), [flag]: true };
+  localStorage.setItem("mighty-ready.v1", JSON.stringify(all));
+}
 function defaults() {
   return {
     words: {},
@@ -666,7 +673,10 @@ async function onRight(btn) {
   R.t++;
   if (first) { R.r++; R.s++; } else R.s = 0;
   const starNow = first && R.s >= STAR && !R.star;
-  if (starNow) R.star = true;
+  if (starNow) {
+    R.star = true;
+    markSkillReady("blending");
+  }
   R.n++;
   state.read++;
   const friend = Math.random() < FRIEND_CHANCE ? pick(FRIENDS) : null;

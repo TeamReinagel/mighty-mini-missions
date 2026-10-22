@@ -52,6 +52,13 @@ const speak = (L) => (useNatural() ? L.toUpperCase() : SPOKEN[L.toUpperCase()] |
 // ---------- saved progress (per child) ----------
 const kid = window.MightyProgress?.currentKid() || { id: 'unknown', name: '' };
 const STORE = `hatchMatch.v1:${kid.id}`;
+function markSkillReady(flag) {
+  if (!kid.id || kid.id === "unknown") return;
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem("mighty-ready.v1") || "{}"); } catch { all = {}; }
+  all[kid.id] = { ...(all[kid.id] || {}), [flag]: true };
+  localStorage.setItem("mighty-ready.v1", JSON.stringify(all));
+}
 function defaults() {
   return {
     letters: {},
@@ -529,7 +536,10 @@ async function onRight(btn, ghost) {
   R.t++;
   if (first) { R.r++; R.s++; } else R.s = 0;
   const starNow = first && R.s >= STAR && !R.star;
-  if (starNow) R.star = true;
+  if (starNow) {
+    R.star = true;
+    markSkillReady("letters");
+  }
   const rare = !r.flip && Math.random() < RARE_CHANCE ? pick(RARES) : null;
   const baby = rare ? rare.id : (r.flip ? r.lostBaby : r.mama.id);
   R.baby = baby;

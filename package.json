@@ -6,7 +6,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test:joyce": "node --test netlify/lib/joyce-tablet*.test.mjs netlify/lib/classroom.test.mjs",
+    "test:joyce": "node --test netlify/lib/joyce-tablet*.test.mjs netlify/lib/classroom.test.mjs play/*.test.mjs",
     "build:joyce": "bash joyce-tablet/build.sh",
     "test:joyce:android": "bash joyce-tablet/build.sh testDebugUnitTest lintDebug"
   },
