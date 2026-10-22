@@ -53,20 +53,45 @@ if (typeof document !== "undefined") {
   document.addEventListener("keydown", unlock, { capture: true, once: true });
 }
 
+// The shared ranking lives in ../voice-pick.js so every game gets the same, best-sounding voice.
+import "../voice-pick.js";
+
 let voice = null;
 function pickVoice() {
-  const synth = window.speechSynthesis;
-  if (!synth) return;
-  const list = synth.getVoices();
-  for (const name of ["Samantha", "Karen", "Moira", "Tessa", "Google US English"]) {
-    const found = list.find((entry) => entry.name.startsWith(name));
-    if (found) { voice = found; return; }
-  }
-  voice = list.find((entry) => /^en/i.test(entry.lang)) || null;
+  voice = window.MightyVoice?.pick() || null;
 }
 if (typeof window !== "undefined" && window.speechSynthesis) {
   pickVoice();
   window.speechSynthesis.onvoiceschanged = pickVoice;
+}
+
+// Grown-ups: open any game with ?voice=pick to choose the voice from this device's list.
+export function voicePicker() {
+  const synth = typeof window !== "undefined" ? window.speechSynthesis : null;
+  if (!synth || !window.MightyVoice || new URLSearchParams(location.search).get("voice") !== "pick") return null;
+  const wrap = el("label", "voice-pick", "Voice ");
+  const select = el("select");
+  const fill = () => {
+    select.replaceChildren();
+    const auto = el("option", "", `Best available${voice ? ` (${voice.name})` : ""}`);
+    auto.value = "";
+    select.append(auto);
+    for (const entry of window.MightyVoice.list()) {
+      const option = el("option", "", `${entry.name} (${entry.lang})`);
+      option.value = entry.name;
+      select.append(option);
+    }
+    select.value = window.MightyVoice.saved();
+  };
+  fill();
+  synth.addEventListener?.("voiceschanged", fill);
+  select.addEventListener("change", () => {
+    window.MightyVoice.choose(select.value);
+    pickVoice();
+    say("Hi. This is how I sound.", { force: true });
+  });
+  wrap.append(select);
+  return wrap;
 }
 
 export function say(text, { force = false } = {}) {
@@ -77,9 +102,13 @@ export function say(text, { force = false } = {}) {
   if (!tapped && !force) return Promise.resolve();
   synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
-  if (voice) utter.voice = voice;
+  if (!voice) pickVoice();
+  if (voice) {
+    utter.voice = voice;
+    utter.lang = voice.lang;
+  }
   utter.rate = 0.85;
-  utter.pitch = 1.1;
+  utter.pitch = 1;
   return new Promise((resolve) => {
     const timer = setTimeout(resolve, 1200 + text.length * 90);
     const done = () => { clearTimeout(timer); resolve(); };

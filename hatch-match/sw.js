@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "hatch-v4";
+const VERSION = "hatch-v5";
 const ART = [
   "mama_blue", "mama_pink", "mama_yellow", "mama_green",
   "egg_blue", "egg_pink", "egg_yellow", "egg_mint",
@@ -12,6 +12,7 @@ const CORE = [
   "styles.css",
   "app.js",
   "../progress.js",
+  "../voice-pick.js",
   "manifest.webmanifest",
   "fonts/andika-bold-latin.woff2",
   "art/bg_meadow.jpg",

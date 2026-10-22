@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "otter-v4";
+const VERSION = "otter-v5";
 const WORDS = [
   "cat", "cap", "bat", "map", "hat", "fan", "van", "rat", "bag", "jam", "can",
   "dog", "log", "fox", "box", "mop", "pot", "top",
@@ -21,6 +21,7 @@ const CORE = [
   "styles.css",
   "app.js",
   "../progress.js",
+  "../voice-pick.js",
   "manifest.webmanifest",
   "fonts/andika-bold-latin.woff2",
   "art/bg_pond.jpg",

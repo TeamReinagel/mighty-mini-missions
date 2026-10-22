@@ -1,4 +1,4 @@
-import { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word } from "./kit.mjs";
+import { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word, voicePicker } from "./kit.mjs";
 
 export { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word };
 
@@ -22,6 +22,8 @@ export function openGame(root, { title, background }) {
   scene.style.backgroundImage = `linear-gradient(rgba(20,16,30,.12), rgba(20,16,30,.02)), url("${background}")`;
   const shelf = el("section", "shelf");
   root.append(top, lineRow, scene, shelf);
+  const picker = voicePicker();
+  if (picker) root.append(picker);
   return {
     scene,
     who,

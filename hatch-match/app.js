@@ -138,6 +138,8 @@ const sfx = {
 const hasSpeech = 'speechSynthesis' in window;
 let voice = null;
 function pickVoice() {
+  const best = window.MightyVoice?.pick();
+  if (best) { voice = best; return; }
   const vs = speechSynthesis.getVoices();
   for (const p of ['Samantha', 'Karen', 'Moira', 'Tessa', 'Google US English']) {
     const v = vs.find((x) => x.name.startsWith(p));
