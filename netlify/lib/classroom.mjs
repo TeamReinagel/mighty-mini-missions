@@ -709,7 +709,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   const date = localDate(env, now);
   if (!kid) return { status: 400, body: { error: "Pick a child first." } };
 
-  if (action === "speak") return speak({ store, env, fetchImpl, text: body.text });
+  if (action === "speak") return speak({ store, env, fetchImpl, text: body.text, voice: body.voice });
   if (action === "live") return liveSession({ store, env, fetchImpl, kidId, kid, date, sdp: body.sdp, now });
 
   const state = await loadState(store, kidId);
@@ -862,23 +862,33 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   return { status: 400, body: { error: "Joyce didn't understand that." } };
 }
 
-async function speak({ store, env, fetchImpl, text }) {
+// The voices OpenAI's speech model offers. The voice lab (/voice-lab/) plays a line in each so a
+// grown-up can choose by ear. Anything outside this list is ignored.
+// "maple" is a ChatGPT app voice. The lab asks for it so we learn whether the API offers it.
+export const TTS_VOICES = ["maple", "alloy", "ash", "ballad", "coral", "echo", "fable", "marin", "cedar", "nova", "onyx", "sage", "shimmer", "verse"];
+
+async function speak({ store, env, fetchImpl, text, voice }) {
   const line = String(text || "").replace(/\s+/g, " ").trim().slice(0, 360);
   if (!line) return { status: 400, body: { error: "Nothing to say." } };
-  const key = `classroom/tts/${createHash("sha256").update(line).digest("hex").slice(0, 24)}`;
+  const chosen = TTS_VOICES.includes(String(voice || "")) ? String(voice) : "";
+  const key = `classroom/tts/${createHash("sha256").update(chosen ? `${chosen}:${line}` : line).digest("hex").slice(0, 24)}`;
   const cached = await store.get(key);
-  if (cached) return { status: 200, body: { audioBase64: cached, spokenText: line } };
-  const audio = await synthesize(line, env, fetchImpl);
+  if (cached) return { status: 200, body: { audioBase64: cached, spokenText: line, voice: chosen || undefined } };
+  const audio = await synthesize(line, env, fetchImpl, chosen);
   if (audio) await store.set(key, audio);
-  return { status: 200, body: { audioBase64: audio, spokenText: line } };
+  return { status: 200, body: { audioBase64: audio, spokenText: line, voice: chosen || undefined } };
 }
 
-async function synthesize(line, env, fetchImpl) {
+async function synthesize(line, env, fetchImpl, chosen = "") {
   if (!env.OPENAI_API_KEY) return "";
-  const attempts = [
-    { model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts", voice: env.JOYCE_TABLET_VOICE || "coral", instructions: "You are Joyce, a warm teacher beside a young child. Kind, clear, unhurried. No announcer voice." },
-    { model: "tts-1-hd", voice: "shimmer" }
-  ];
+  const instructions = "You are Joyce, a warm teacher beside a young child. Kind, clear, unhurried. No announcer voice.";
+  // A voice asked for by name is tried alone, so the lab never plays a different voice by surprise.
+  const attempts = chosen
+    ? [{ model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts", voice: chosen, instructions }]
+    : [
+      { model: env.JOYCE_TTS_MODEL || "gpt-4o-mini-tts", voice: env.JOYCE_TABLET_VOICE || "coral", instructions },
+      { model: "tts-1-hd", voice: "shimmer" }
+    ];
   for (const attempt of attempts) {
     try {
       const res = await fetchImpl("https://api.openai.com/v1/audio/speech", {

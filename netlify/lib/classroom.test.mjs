@@ -327,6 +327,26 @@ test("a second tap in the same breath does not count", async () => {
   assert.equal(rushed.body.correct, null);
 });
 
+test("the voice lab plays the voice that was asked for, and ignores a made-up one", async () => {
+  const store = memoryStore();
+  const used = [];
+  const fetchImpl = async (url, init) => {
+    used.push(JSON.parse(init.body));
+    return { ok: true, arrayBuffer: async () => new Uint8Array(64).buffer };
+  };
+  const env = { OPENAI_API_KEY: "test-key" };
+  const asked = await handleClassroom({ store, env, fetchImpl, body: { action: "speak", kid: "gabi", voice: "sage", text: "Hi." } });
+  assert.ok(asked.body.audioBase64);
+  assert.equal(used.at(-1).voice, "sage");
+  assert.equal(asked.body.voice, "sage");
+  const fake = await handleClassroom({ store, env, fetchImpl, body: { action: "speak", kid: "gabi", voice: "darth", text: "Hi." } });
+  assert.equal(used.at(-1).voice, "coral");
+  assert.equal(fake.body.voice, undefined);
+  const again = await handleClassroom({ store, env, fetchImpl, body: { action: "speak", kid: "gabi", voice: "sage", text: "Hi." } });
+  assert.equal(again.body.audioBase64, asked.body.audioBase64);
+  assert.equal(used.length, 2);
+});
+
 test("sh and ch and th stay one sound", () => {
   assert.deepEqual(wordParts("ship").map((part) => part.letters), ["sh", "i", "p"]);
   assert.deepEqual(wordParts("fish").map((part) => part.sound), ["fff", "ih", "sh"]);
