@@ -27,6 +27,7 @@
   <textarea id="line">Hi Gabi. Tap each snack and I will count with you. One. Two. Three. Yes, three!</textarea>
   <div class="quick" id="quick"></div>
   <div id="picked"></div>
+  <p id="why" style="color:#b3261e;font-weight:700"></p>
   <div id="list"></div>
 </main>
 <script>
@@ -40,6 +41,7 @@
   const list = document.querySelector("#list");
   const line = document.querySelector("#line");
   const picked = document.querySelector("#picked");
+  const why = document.querySelector("#why");
   let playing = null;
   const saved = localStorage.getItem("voiceLab.pick") || "";
 
@@ -80,7 +82,12 @@
           body: JSON.stringify({ action: "speak", kid: "gabi", voice, text: line.value })
         });
         const data = await res.json();
-        if (!data.audioBase64) { state.textContent = "Not available"; return; }
+        if (!data.audioBase64) {
+          state.textContent = "Not available";
+          why.textContent = `${voice}: ${data.why || "no reason given"}`;
+          return;
+        }
+        why.textContent = "";
         playing = new Audio(`data:audio/mp3;base64,${data.audioBase64}`);
         state.textContent = "Playing";
         playing.onended = () => { state.textContent = ""; };

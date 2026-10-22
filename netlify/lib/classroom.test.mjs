@@ -347,6 +347,21 @@ test("the voice lab plays the voice that was asked for, and ignores a made-up on
   assert.equal(used.length, 2);
 });
 
+test("when speech fails, the reason names the status and code but never the message", async () => {
+  const store = memoryStore();
+  const fetchImpl = async () => ({
+    ok: false,
+    status: 401,
+    json: async () => ({ error: { code: "invalid_api_key", message: "Incorrect API key provided: sk-secret1234" } })
+  });
+  const out = await handleClassroom({ store, env: { OPENAI_API_KEY: "sk-secret1234" }, fetchImpl, body: { action: "speak", kid: "gabi", text: "Hi." } });
+  assert.equal(out.body.audioBase64, "");
+  assert.match(out.body.why, /401 invalid_api_key/);
+  assert.equal(JSON.stringify(out.body).includes("secret"), false);
+  const none = await handleClassroom({ store, env: {}, body: { action: "speak", kid: "gabi", text: "Hello." } });
+  assert.match(none.body.why, /no OPENAI_API_KEY/);
+});
+
 test("sh and ch and th stay one sound", () => {
   assert.deepEqual(wordParts("ship").map((part) => part.letters), ["sh", "i", "p"]);
   assert.deepEqual(wordParts("fish").map((part) => part.sound), ["fff", "ih", "sh"]);

@@ -874,13 +874,19 @@ async function speak({ store, env, fetchImpl, text, voice }) {
   const key = `classroom/tts/${createHash("sha256").update(chosen ? `${chosen}:${line}` : line).digest("hex").slice(0, 24)}`;
   const cached = await store.get(key);
   if (cached) return { status: 200, body: { audioBase64: cached, spokenText: line, voice: chosen || undefined } };
-  const audio = await synthesize(line, env, fetchImpl, chosen);
+  const diag = {};
+  const audio = await synthesize(line, env, fetchImpl, chosen, diag);
   if (audio) await store.set(key, audio);
-  return { status: 200, body: { audioBase64: audio, spokenText: line, voice: chosen || undefined } };
+  return { status: 200, body: { audioBase64: audio, spokenText: line, voice: chosen || undefined, ...(audio ? {} : { why: diag.why || "no audio" }) } };
 }
 
-async function synthesize(line, env, fetchImpl, chosen = "") {
-  if (!env.OPENAI_API_KEY) return "";
+// `diag.why` keeps only the HTTP status and OpenAI's error code, never its message, because
+// that message can include part of the key. It tells a grown-up why Joyce has no voice.
+async function synthesize(line, env, fetchImpl, chosen = "", diag = {}) {
+  if (!env.OPENAI_API_KEY) {
+    diag.why = "no OPENAI_API_KEY on this site";
+    return "";
+  }
   const instructions = "You are Joyce, a warm teacher beside a young child. Kind, clear, unhurried. No announcer voice.";
   // A voice asked for by name is tried alone, so the lab never plays a different voice by surprise.
   const attempts = chosen
@@ -902,11 +908,24 @@ async function synthesize(line, env, fetchImpl, chosen = "") {
           ...(attempt.instructions ? { instructions: attempt.instructions } : {})
         })
       });
-      if (!res.ok || typeof res.arrayBuffer !== "function") continue;
+      if (!res.ok || typeof res.arrayBuffer !== "function") {
+        let code = "";
+        try {
+          const detail = await res.json();
+          code = String(detail?.error?.code || detail?.error?.type || "").slice(0, 60);
+        } catch { /* no readable error body */ }
+        diag.why = `${attempt.model} / ${attempt.voice}: HTTP ${res.status}${code ? ` ${code}` : ""}`;
+        console.error("Joyce speech request failed:", diag.why);
+        continue;
+      }
       const bytes = Buffer.from(await res.arrayBuffer());
-      if (bytes.length < 20 || bytes.length > 800_000) continue;
+      if (bytes.length < 20 || bytes.length > 800_000) {
+        diag.why = `${attempt.model} / ${attempt.voice}: audio came back ${bytes.length} bytes`;
+        continue;
+      }
       return bytes.toString("base64");
-    } catch {
+    } catch (err) {
+      diag.why = `${attempt.model} / ${attempt.voice}: ${String(err?.name || "error").slice(0, 40)}`;
       continue;
     }
   }
