@@ -26,6 +26,7 @@ test("the next skill stays hidden until the child is using the one before it", (
   assert.equal(open(gabi, game("sound-teams"), { blending: true }), true);
   assert.equal(open(gabi, game("otter-slide"), {}), true);
   assert.equal(open(max, game("block-trade"), {}), true);
-  assert.equal(open(max, game("snack-count"), {}), false);
+  assert.equal(open(max, game("snack-count"), {}), true);
+  assert.equal(open(max, game("more-or-fewer"), {}), false);
   assert.equal(open(gabi, game("today-with-joyce"), {}), true);
 });

@@ -72,6 +72,17 @@ export function addWithTrade(rng, fixed = false) {
   return { a: 28, b: 17, op: "+" };
 }
 
+/** The fewest coins that pay a price exactly. Biggest coin first is always fewest for US coins. */
+export function fewestCoins(price, coins) {
+  let left = price;
+  let used = 0;
+  for (const coin of [...coins].sort((a, b) => b - a)) {
+    used += Math.floor(left / coin);
+    left %= coin;
+  }
+  return left === 0 ? used : Infinity;
+}
+
 export function subWithTrade(rng) {
   for (let i = 0; i < 40; i += 1) {
     const a = 30 + Math.floor(rng() * 60);

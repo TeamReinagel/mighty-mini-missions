@@ -1,10 +1,28 @@
-import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam } from "../play/stage.mjs";
+import { fewestCoins } from "../play/rounds.mjs";
+import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam, practice } from "../play/stage.mjs";
 
 const GAME = "snack-count";
 const SCOOPS = ["assets/berry.png", "assets/cocoa.png", "assets/vanilla.png"];
 const CONE_AT = 5;
 const ROW = 5;
+const DISH = 10;
+const COIN_ART = {
+  1: "../coin-record-run/assets/coin_1.png",
+  5: "../coin-record-run/assets/coin_5.png",
+  10: "../coin-record-run/assets/coin_10.png",
+  25: "../coin-record-run/assets/coin_25.png"
+};
+const COIN_NAME = { 1: "penny", 5: "nickel", 10: "dime", 25: "quarter" };
+const ADD_ART = { 10: SCOOPS[2], 5: SCOOPS[1], 1: SCOOPS[0] };
+// Party levels have `adds` (the scoop buttons) and `coins` (what the bunny can pay with).
+// Each scoop costs one cent, so a full dish of ten is a dime.
 const LADDERS = {
+  max: [
+    { id: "fives", label: "Fives", min: 12, max: 45, adds: [5, 1], coins: [5, 1], skill: "Counting" },
+    { id: "tens", label: "Tens", min: 21, max: 99, adds: [10, 1], coins: [10, 1], skill: "Place value (tens) (2nd)" },
+    { id: "party", label: "Party", min: 35, max: 99, adds: [10, 5, 1], coins: [10, 5, 1], skill: "Place value (tens) (2nd)" },
+    { id: "quarters", label: "Quarters", min: 26, max: 99, adds: [10, 5, 1], coins: [25, 10, 5, 1], skill: "Place value (tens) (2nd)" }
+  ],
   ethan: [
     { id: "3", label: "To 3", min: 1, max: 3, flag: "count-3" },
     { id: "5", label: "To 5", min: 1, max: 5, flag: "count-5" }
@@ -66,10 +84,11 @@ function layer(box, src, { x, y, w, z, rotate, cls }) {
 }
 
 /** A sundae built from real parts: scoops stack on a cone, or sit in rows of five in a dish. */
-function sundae(count, vessel, unit, { capacity = count, cherry = false, fresh: freshest = false } = {}) {
+function sundae(count, vessel, unit, { capacity = count, cherry = false, fresh: freshest = false, newFrom = freshest ? count - 1 : Infinity, flavor = null } = {}) {
   const u = unit;
   const box = el("div", `sundae ${vessel}`);
   const tilt = (i) => [-3, 2, -1, 3, -2][i % 5];
+  const art = (i) => SCOOPS[(flavor ?? i) % SCOOPS.length];
   if (vessel === "cone") {
     const coneW = 0.8 * u;
     const coneH = coneW * (420 / 218);
@@ -83,13 +102,13 @@ function sundae(count, vessel, unit, { capacity = count, cherry = false, fresh: 
     layer(box, "assets/cone.png", { x: (width - coneW) / 2, y: coneTop, w: coneW, z: 1 });
     for (let i = 0; i < count; i += 1) {
       const nudge = [0, 0.04, -0.03, 0.02, -0.04][i % 5] * u;
-      layer(box, SCOOPS[i % SCOOPS.length], {
+      layer(box, art(i), {
         x: (width - u) / 2 + nudge,
         y: coneTop - 0.8 * u - i * step,
         w: u,
         z: 2 + i,
         rotate: tilt(i),
-        cls: freshest && i === count - 1 ? "scoop new" : "scoop"
+        cls: i >= newFrom ? "scoop new" : "scoop"
       });
     }
     if (cherry && count > 0) {
@@ -111,13 +130,13 @@ function sundae(count, vessel, unit, { capacity = count, cherry = false, fresh: 
     const row = Math.floor(i / ROW);
     const col = i % ROW;
     const shift = row % 2 ? 0.45 * u : 0;
-    layer(box, SCOOPS[i % SCOOPS.length], {
+    layer(box, art(i), {
       x: left + col * 0.96 * u + shift - (row % 2 ? 0.22 * u : 0),
       y: above + frontTop - row * rise,
       w: u,
       z: 2 + (rows - row) * 10 + col,
       rotate: tilt(i),
-      cls: freshest && i === count - 1 ? "scoop new" : "scoop"
+      cls: i >= newFrom ? "scoop new" : "scoop"
     });
   }
   const front = layer(box, "assets/dish.png", { x: 0, y: above, w: dishW, z: 60 });
@@ -135,11 +154,24 @@ function sundae(count, vessel, unit, { capacity = count, cherry = false, fresh: 
   return box;
 }
 
+/** A party order sits in dishes of ten, one flavor per dish, so the tens are easy to see. */
+function tray(count, unit, { from = count, cherry = false } = {}) {
+  const box = el("div", "tray");
+  const dishes = Math.max(1, Math.ceil(count / DISH));
+  for (let d = 0; d < dishes; d += 1) {
+    const here = Math.max(0, Math.min(DISH, count - d * DISH));
+    box.append(sundae(here, "dish", unit, { capacity: DISH, flavor: d, newFrom: from - d * DISH, cherry: cherry && d === dishes - 1 }));
+  }
+  return box;
+}
+
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 function lobby() {
   ui.scene.replaceChildren();
   ui.stars(state.stars?.[level]?.streak || 0);
   ui.prizes(state.prizes);
-  ui.speak("A bunny is at the counter.");
+  ui.speak(spec().adds ? "Party orders are in. A full dish holds ten scoops." : "A bunny is at the counter.");
   const hero = document.createElement("img");
   hero.className = "hero";
   hero.src = "assets/bunny.jpg";
@@ -262,7 +294,163 @@ async function chooseSundae(count, names) {
   return picked;
 }
 
+async function buildParty(count, item) {
+  ui.scene.replaceChildren();
+  const hero = document.createElement("img");
+  hero.className = "hero";
+  hero.src = "assets/bunny.jpg";
+  hero.alt = "Serve the bunny";
+  const pair = el("div", "pair");
+  pair.append(hero, el("p", "big-num", String(count)));
+  const counter = el("div", "counter");
+  ui.scene.append(pair, counter);
+  const unit = count > 40 ? 22 : 30;
+  let made = 0;
+  let first = true;
+  let served = false;
+  const paint = ({ from = made, cherry = false } = {}) => {
+    counter.replaceChildren(tray(made, unit, { from, cherry }));
+  };
+  paint();
+  ui.speak(`Party order! The bunny wants ${count} scoops. Fill the dishes, then tap the bunny.`);
+  const buttons = el("div", "row");
+  for (const size of item.adds) {
+    const add = pic(ADD_ART[size], `+${size}`, String(size));
+    add.classList.add("scooper");
+    add.setAttribute("aria-label", `Add ${size}`);
+    add.addEventListener("click", () => {
+      if (served) return;
+      if (made + size > count) {
+        first = false;
+        shake(add);
+        chime(false);
+        ui.speak(`${made + size} is too many. Try a smaller scoop.`);
+        return;
+      }
+      const before = made;
+      made += size;
+      chime(true);
+      ui.speak(String(made));
+      paint({ from: before });
+    });
+    buttons.append(add);
+  }
+  const serve = el("button", "go play", "Serve");
+  serve.type = "button";
+  buttons.append(serve);
+  ui.scene.append(buttons);
+  await new Promise((resolve) => {
+    const give = () => {
+      if (served) return;
+      if (made === count) {
+        served = true;
+        resolve();
+        return;
+      }
+      first = false;
+      shake(serve);
+      ui.speak(`Not yet. That's ${made}. The order is ${count}.`);
+    };
+    hero.addEventListener("click", give);
+    serve.addEventListener("click", give);
+  });
+  paint({ cherry: true });
+  hero.src = "assets/bunny-happy.jpg";
+  chime(true);
+  ui.speak("Here you go!");
+  await wait(1300);
+  return first;
+}
+
+/** One scoop costs one cent. The bunny pays exactly; using the fewest coins earns a bonus coin. */
+async function payBill(price, item) {
+  ui.scene.replaceChildren();
+  const hero = document.createElement("img");
+  hero.className = "hero";
+  hero.src = "assets/bunny-happy.jpg";
+  hero.alt = "";
+  const pair = el("div", "pair");
+  pair.append(hero, el("p", "big-num", `${price}¢`));
+  const till = el("div", "row till");
+  ui.scene.append(pair, till);
+  const coins = [...item.coins].sort((a, b) => b - a);
+  const best = fewestCoins(price, coins);
+  ui.speak(`That's ${price} cents. Help the bunny pay. Can you do it with just ${best} coins?`);
+  let paid = 0;
+  let used = 0;
+  let exact = true;
+  let settled = false;
+  await new Promise((resolve) => {
+    const purse = el("div", "row");
+    for (const coin of coins) {
+      const button = pic(COIN_ART[coin], `${coin}¢`, String(coin));
+      button.classList.add("coin");
+      button.setAttribute("aria-label", COIN_NAME[coin]);
+      button.addEventListener("click", () => {
+        if (settled) return;
+        if (paid + coin > price) {
+          exact = false;
+          shake(button);
+          chime(false);
+          ui.speak(`A ${COIN_NAME[coin]} makes ${paid + coin}. Too much. Try a smaller coin.`);
+          return;
+        }
+        paid += coin;
+        used += 1;
+        const dropped = document.createElement("img");
+        dropped.src = COIN_ART[coin];
+        dropped.alt = COIN_NAME[coin];
+        till.append(dropped);
+        chime(true);
+        if (paid === price) {
+          settled = true;
+          resolve();
+        } else {
+          ui.speak(`${paid} cents`);
+        }
+      });
+      purse.append(button);
+    }
+    ui.scene.append(purse);
+  });
+  const fewest = used === best;
+  ui.speak(fewest ? `Paid with ${used} coins. Record pay!` : `Paid! Next time, try it with ${best} coins.`);
+  await wait(1600);
+  return { exact, fewest };
+}
+
+async function partyRound() {
+  const item = spec();
+  const count = orderSize();
+  const built = await buildParty(count, item);
+  const pay = await payBill(count, item);
+  const clean = built && pay.exact;
+  const next = ladder[ladder.findIndex((entry) => entry.id === item.id) + 1];
+  const wasOpen = Boolean(next && (state.open || []).includes(next.id));
+  state.prizes = state.prizes || [];
+  if (clean && pay.fewest) {
+    const top = Math.max(...item.coins);
+    state.prizes.push({ id: `coin-${state.prizes.length}`, src: COIN_ART[top], alt: COIN_NAME[top] });
+  }
+  const opened = record(state, {
+    game: GAME,
+    level: item.id,
+    next: next?.id,
+    clean,
+    prize: clean ? { id: `cherry-${state.prizes.length}`, src: "assets/cherry.png", alt: "cherry" } : null,
+    skill: item.skill,
+    item: `${count} scoops`
+  });
+  practice({ game: GAME, skill: "Counting coins (2nd)", step: "", item: `${count} cents`, correct: pay.exact });
+  ui.stars(state.stars?.[item.id]?.streak || 0);
+  ui.prizes(state.prizes);
+  ui.speak(opened && next && !wasOpen ? "A bigger party is ready." : clean ? "The bunny left a cherry." : "The shop is still open.");
+  save(GAME, state);
+  setTimeout(lobby, 1100);
+}
+
 async function round() {
+  if (spec().adds) return partyRound();
   const count = orderSize();
   const names = spec().id === "names";
   const built = await buildOrder(count, names);

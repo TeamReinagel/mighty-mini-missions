@@ -90,6 +90,10 @@ button:disabled { opacity: .4; }
   from { transform: translateY(-46px) scale(.9); opacity: .25; }
 }
 .pic.scooper img { object-fit: contain; }
+.tray { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 8px 12px; max-width: 680px; }
+.pic.coin img { object-fit: contain; }
+.till { min-height: 52px; max-width: 520px; justify-self: center; gap: 4px; }
+.till img { width: 44px; height: 44px; object-fit: contain; }
 
 .pen, .blanket, .crate-zone {
   min-width: 42%;

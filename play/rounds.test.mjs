@@ -1,6 +1,15 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { addWithTrade, countRound, patternRound, rngFrom, soundRound, SOUND_GROUPS, subWithTrade, teamRound } from "./rounds.mjs";
+import { addWithTrade, countRound, fewestCoins, patternRound, rngFrom, soundRound, SOUND_GROUPS, subWithTrade, teamRound } from "./rounds.mjs";
+
+test("the fewest coins for a price uses the biggest coins the level allows", () => {
+  assert.equal(fewestCoins(34, [10, 1]), 7);
+  assert.equal(fewestCoins(23, [5, 1]), 7);
+  assert.equal(fewestCoins(68, [10, 5, 1]), 10);
+  assert.equal(fewestCoins(99, [25, 10, 5, 1]), 9);
+  assert.equal(fewestCoins(30, [25, 10, 5, 1]), 2);
+  assert.equal(fewestCoins(3, [10, 5]), Infinity);
+});
 
 test("a trade always has ten or more ones, and a subtraction has to break a ten", () => {
   const rng = rngFrom(7);

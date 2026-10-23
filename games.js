@@ -118,7 +118,7 @@ window.MIGHTY_GAMES = [
     title: "Sundae Stand",
     icon: "./snack-count/assets/icon.jpg",
     href: "./snack-count/",
-    profiles: ["ethan", "connor", "gabi"],
+    profiles: ["ethan", "connor", "gabi", "max"],
     practices: ["counting"],
     levels: ["toddler", "prek", "k"],
     after: { ethan: "colors" }
