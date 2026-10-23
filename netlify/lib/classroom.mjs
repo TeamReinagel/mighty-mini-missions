@@ -1,4 +1,7 @@
-// Today with Joyce: each child's path, the day's cards, mastery, cheers, and the weekly conference.
+// Today with Joyce: each child's path, the day's dose, mastery, cheers, and the weekly conference.
+// A school day is a dose, not a length of time: reading, math, and one bonus the child picks.
+// When the dose is done for real, the child is done. Once every child who started is done,
+// the tablets go down.
 // Joyce advances inside a path on her own. A "Not now" on a conference decision is what puts a hold on.
 
 import { createHash } from "node:crypto";
@@ -144,6 +147,51 @@ const GAMES = {
   train: { id: "train-set", title: "Train Set", href: "../train-set/", say: "Play with the trains, then come back and tap I played." },
   ghost: { id: "ghost-word-run", title: "Ghost Word Run", href: "../ghost-word-run/", say: "Play Ghost Word Run, then come back and tap I played." }
 };
+
+// A game card is done once this many answers from that game reach the progress log after the
+// card was opened. `game` is the name the game logs under, which is not always the card's id.
+const EVIDENCE = {
+  "otter-slide": { game: "otter-slide", need: 8 },
+  "hatch-match": { game: "hatch-match", need: 8 },
+  "sound-bugs": { game: "sound-bugs", need: 8 },
+  "sound-teams": { game: "sound-teams", need: 8 },
+  "snack-count": { game: "snack-count", need: 6 },
+  "more-or-fewer": { game: "more-or-fewer", need: 6 },
+  "pattern-park": { game: "pattern-park", need: 6 },
+  "color-tap": { game: "color-tap", need: 5 },
+  "block-trade": { game: "block-trade", need: 5 },
+  "coin-record-run": { game: "coin-record-run", need: 3 },
+  "monster-hunt": { game: "word-monsters", need: 6 },
+  "train-set": { game: "train-set", need: 3 },
+  "ghost-word-run": { game: "ghost-word-run", need: 10 }
+};
+
+export function evidenceFor(kidId, gameId) {
+  const rule = EVIDENCE[gameId];
+  if (!rule) return null;
+  return { game: rule.game, need: kidId === "ethan" ? Math.ceil(rule.need / 2) : rule.need };
+}
+
+const FREE = {
+  max: [GAMES.coins, GAMES.ghost],
+  gabi: [GAMES.otter, GAMES.monsters],
+  connor: [GAMES.monsters, GAMES.hatch],
+  ethan: [GAMES.train]
+};
+
+const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: "math", regroup: "math", play: "learn" };
+const PART_TITLES = {
+  max: { ela: "Reading", math: "Math" },
+  gabi: { ela: "Reading", math: "Math" },
+  connor: { ela: "Letters", math: "Counting" },
+  ethan: { learn: "Learn" }
+};
+const PART_ORDER = ["ela", "math", "learn", "bonus"];
+
+function partFor(kidId, stepId) {
+  const chain = (CHAINS[kidId] || []).find((candidate) => candidate.steps.some((entry) => entry.id === stepId));
+  return PART_OF_CHAIN[chain?.id] || "learn";
+}
 
 const MOVES = {
   max: [
@@ -378,7 +426,7 @@ function teachingFor(item) {
   };
 }
 
-function lessonCard(kidId, item, date, state, minutes) {
+function lessonCard(kidId, item, date, state) {
   const shorter = Boolean(state.shorter);
   const count = item.review ? Math.min(3, item.items || 3) : Math.max(item.activity === "story" ? 1 : 3, (item.items || 6) - (shorter ? 2 : 0));
   const shaped = { ...item, items: count };
@@ -387,8 +435,8 @@ function lessonCard(kidId, item, date, state, minutes) {
   return {
     id: `${date}:lesson:${item.id}${item.review ? ":review" : ""}`,
     kind: "lesson",
+    part: partFor(kidId, item.id),
     title: item.review ? `Another look: ${item.title}` : item.title,
-    minutes,
     say: taught.beats[0],
     beats: taught.beats,
     replay: taught.replay,
@@ -412,17 +460,17 @@ const SKILL_GAMES = {
   regroup: ["block-trade", "Moon Crates", "../block-trade/", "Play Moon Crates. Trade 10 rocks for a crate, then launch."]
 };
 
-function skillCard(kidId, item, date, state, minutes) {
+function skillCard(kidId, item, date, state) {
   const spec = SKILL_GAMES[item.activity];
-  if (!spec) return lessonCard(kidId, item, date, state, minutes);
+  if (!spec) return lessonCard(kidId, item, date, state);
   const [id, title, href, say] = spec;
   return {
     id: `${date}:game:${id}:${item.id}`,
     kind: "game",
+    part: partFor(kidId, item.id),
     gameId: id,
     title: item.review ? `Another look: ${title}` : title,
     href: `${href}?kid=${encodeURIComponent(kidId)}&step=${encodeURIComponent(item.id)}`,
-    minutes,
     say,
     goal: "Play, then come back",
     stepId: item.id,
@@ -431,23 +479,23 @@ function skillCard(kidId, item, date, state, minutes) {
   };
 }
 
-function gameCard(date, game, minutes, extra = "") {
+function gameCard(date, game, part) {
   return {
-    id: `${date}:game:${game.id}${extra}`,
+    id: `${date}:game:${game.id}`,
     gameId: game.id,
     kind: "game",
-    title: extra ? `${game.title} again` : game.title,
+    ...(part ? { part } : {}),
+    title: game.title,
     href: game.href,
-    minutes,
     say: game.say,
     goal: "Play, then come back"
   };
 }
 
-function moveCard(kidId, date, minutes = 5) {
+function moveCard(kidId, date, part) {
   const list = MOVES[kidId] || MOVES.ethan;
   const move = list[hash(`${date}:${kidId}`) % list.length];
-  return { id: `${date}:move:${move.title}`, kind: "move", title: move.title, minutes, say: move.say };
+  return { id: `${date}:move:${move.title}`, kind: "move", ...(part ? { part } : {}), title: move.title, say: move.say };
 }
 
 function hash(text) {
@@ -456,18 +504,30 @@ function hash(text) {
   return h >>> 0;
 }
 
-function minutesFor(kidId, rhythm, shorter) {
-  void rhythm;
-  if (kidId === "ethan") return shorter ? 5 : 8;
-  if (shorter) return 10;
-  return 15;
-}
-
 function markDone(cards, state, date) {
   const day = state.days?.[date] || {};
   const done = new Set(day.done || []);
+  const eased = new Set(day.eased || []);
   const skipped = new Set([...(day.skipped || []), ...(day.quit || [])]);
-  return cards.map((card) => ({ ...card, done: done.has(card.id), skipped: skipped.has(card.id) }));
+  return cards.map((card) => ({
+    ...card,
+    done: done.has(card.id) || eased.has(card.id),
+    eased: eased.has(card.id),
+    skipped: skipped.has(card.id)
+  }));
+}
+
+// A part is done when each of its cards is done. The bonus is done when any one of its choices is.
+export function doseOf(kidId, cards) {
+  const titles = { ...(PART_TITLES[kidId] || {}), bonus: "Bonus" };
+  const parts = PART_ORDER
+    .filter((id) => cards.some((card) => card.part === id))
+    .map((id) => {
+      const mine = cards.filter((card) => card.part === id);
+      const done = id === "bonus" ? mine.some((card) => card.done) : mine.every((card) => card.done);
+      return { id, title: titles[id] || id, done };
+    });
+  return { parts, complete: parts.length > 0 && parts.every((part) => part.done) };
 }
 
 function gabiGame(state) {
@@ -511,12 +571,12 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   const board = state.days?.[date]?.board || null;
   const shorter = board ? Boolean(board.shorter) : Boolean(plan.kids?.[kidId]?.shorter);
   const working = { ...state, shorter, ...(board ? { boardLessons: board.lessons } : {}) };
-  const minutes = minutesFor(kidId, rhythm, shorter);
   let cards = [];
-  if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, minutes });
-  else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, minutes, game: GAMES.train });
-  else cards = pairCards({ kidId, date, state: working, plan, rhythm, minutes, game: kidId === "gabi" ? gabiGame(working) : GAMES.monsters });
+  if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm });
+  else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
+  else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.monsters });
   cards = markDone(cards, working, date);
+  const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);
   const weekdayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekday];
   return {
     kid: kidId,
@@ -526,19 +586,23 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
     date,
     weekday: weekdayName,
     rhythm,
-    greeting: greeting(kidId, kid.name, rhythm, cards.length),
+    greeting: greeting(kidId, kid.name, dose),
     cards,
+    dose,
+    free: (FREE[kidId] || []).map((game) => ({ id: game.id, title: game.title, href: game.href })),
     liveMinutesLeft: liveLeft(working, date)
   };
 }
 
-function greeting(kidId, name, rhythm, count) {
-  if (rhythm === "weekend") return `Hi ${name}. No school block today. ${count} things are here if you want them.`;
-  if (kidId === "max") return `Hi ${name}. Trainer day. ${count} challenges, and each one has a finish line.`;
-  if (kidId === "gabi") return `Hi ${name}. I'll teach, then you try. ${count} parts.`;
-  if (kidId === "connor") return `Hi ${name}. I'll show you, then you try. ${count} little jobs.`;
-  if (rhythm === "light") return `Hi ${name}. Short day. ${count} things, then you're done.`;
-  return `Hi ${name}. ${count} things today.`;
+function greeting(kidId, name, dose) {
+  if (!dose) return `Hi ${name}. No school today. These are here if you want them.`;
+  if (dose.complete) return `You're done for today, ${name}.`;
+  const named = dose.parts.filter((part) => part.id !== "bonus").map((part) => part.title.toLowerCase());
+  const joined = named.length > 1 ? `${named.slice(0, -1).join(", ")} and ${named.at(-1)}` : named[0] || "one little job";
+  const list = `${joined[0].toUpperCase()}${joined.slice(1)}`;
+  if (kidId === "max") return `Hi ${name}. Trainer day. ${list}, then one bonus. When those are done, you're done.`;
+  if (kidId === "ethan") return `Hi ${name}. One little job and one fun one. Then go play.`;
+  return `Hi ${name}. ${list}, then a bonus you pick. Then you're done.`;
 }
 
 function lessonForAnswer(kidId, stepDef, date, state, plan) {
@@ -548,68 +612,100 @@ function lessonForAnswer(kidId, stepDef, date, state, plan) {
   const board = state.days?.[date]?.board;
   const pinned = board?.lessons?.find((entry) => entry.id === stepDef.id);
   const shorter = board ? Boolean(board.shorter) : Boolean(plan.kids?.[kidId]?.shorter);
-  const minutes = minutesFor(kidId, rhythmFor(weekdayIndex(date)), shorter);
   return lessonCard(
     kidId,
     { ...stepDef, review: Boolean(pinned?.review), missed: pinned?.missed || missedItems(state, stepDef.id) },
     date,
-    { ...state, shorter },
-    minutes
+    { ...state, shorter }
   );
 }
 
-function pairCards({ kidId, date, state, plan, rhythm, minutes, game }) {
+function pairCards({ kidId, date, state, plan, rhythm, game }) {
   const found = lessonFrontiers(kidId, state, plan);
-  if (rhythm === "weekend") return [gameCard(date, game, 10), moveCard(kidId, date)];
-  const cards = found.slice(0, 2).map((item) => skillCard(kidId, item, date, state, minutes));
+  if (rhythm === "weekend") return [gameCard(date, game), moveCard(kidId, date)];
+  const cards = found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
   let bonus = game;
   if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.monsters : GAMES.otter;
-  cards.push(gameCard(date, bonus, 15));
-  cards.push(moveCard(kidId, date, 15));
-  if (rhythm === "light") return cards;
-  cards.push(gameCard(date, bonus, 15, ":again"));
+  cards.push(gameCard(date, bonus, "bonus"), moveCard(kidId, date, "bonus"));
   return cards;
 }
 
-function littleCards({ kidId, date, state, plan, rhythm, minutes, game }) {
+function littleCards({ kidId, date, state, plan, rhythm, game }) {
   const next = lessonFrontiers(kidId, state, plan)[0];
-  const cards = [];
-  if (next && rhythm !== "weekend") cards.push(skillCard(kidId, next, date, state, minutes));
-  cards.push(gameCard(date, game, 8));
-  if (rhythm === "weekend" || rhythm === "full") cards.push(moveCard(kidId, date));
-  return cards.slice(0, rhythm === "weekend" ? 2 : 3);
+  if (rhythm === "weekend") return [gameCard(date, game), moveCard(kidId, date)];
+  const cards = next ? [skillCard(kidId, next, date, state)] : [];
+  cards.push(gameCard(date, game, "bonus"), moveCard(kidId, date, "bonus"));
+  return cards;
 }
 
-function readingCard(date, lesson, minutes) {
+function readingCard(date, lesson) {
   if (lesson >= 120) {
     return {
       id: `${date}:celebrate:reading`,
       kind: "celebrate",
+      part: "ela",
       title: "Reading.com is finished",
-      minutes: 2,
       say: "You finished every Reading.com lesson. Tell a grown-up. This one is worth a real celebration."
     };
   }
-  return { id: `${date}:app:reading`, kind: "app", title: "Reading.com", href: APPS.reading.href, minutes, say: APPS.reading.say, askLesson: true, lesson };
+  return { id: `${date}:app:reading`, kind: "app", part: "ela", title: "Reading.com", href: APPS.reading.href, say: APPS.reading.say, askLesson: true, lesson };
 }
 
-function mathCard(date, minutes) {
-  return { id: `${date}:app:math`, kind: "app", title: "AdaptedMind", href: APPS.math.href, minutes, say: APPS.math.say };
+function mathCard(date) {
+  return { id: `${date}:app:math`, kind: "app", part: "math", title: "AdaptedMind", href: APPS.math.href, say: APPS.math.say };
 }
 
-function maxCards({ date, state, plan, rhythm, minutes }) {
+function maxCards({ date, state, plan, rhythm }) {
   const lesson = state.readingLesson || READING_START;
   const regroup = lessonFrontiers("max", state, plan)[0];
-  if (rhythm === "weekend") return [gameCard(date, GAMES.coins, 10), moveCard("max", date)];
-  const cards = [
-    readingCard(date, lesson, 15),
-    mathCard(date, 15),
-    ...(regroup ? [skillCard("max", regroup, date, state, minutes)] : []),
-    gameCard(date, GAMES.coins, 15)
+  if (rhythm === "weekend") return [gameCard(date, GAMES.coins), moveCard("max", date)];
+  return [
+    readingCard(date, lesson),
+    mathCard(date),
+    ...(regroup ? [skillCard("max", regroup, date, state)] : []),
+    gameCard(date, GAMES.coins, "bonus"),
+    moveCard("max", date, "bonus")
   ];
-  if (rhythm === "light") return cards;
-  cards.push(moveCard("max", date, 15));
-  return cards;
+}
+
+// Counts answers the progress log received from one game after `since`. Event keys start with
+// the time the server received them, so a tablet's clock cannot make old play look new.
+async function playedSince(store, kidId, game, since, now) {
+  const from = Date.parse(since || "") || 0;
+  const days = new Set([new Date(from || now.getTime()).toISOString().slice(0, 10), now.toISOString().slice(0, 10)]);
+  let played = 0;
+  for (const day of days) {
+    const { blobs = [] } = (await store.list({ prefix: `events/${day}/` })) || {};
+    for (const { key } of blobs) {
+      const received = Number(String(key).split("/")[2]?.split("-")[0]);
+      if (!(received >= from)) continue;
+      const events = await store.get(key, { type: "json" });
+      for (const event of Array.isArray(events) ? events : []) {
+        if (event?.kid === kidId && event.game === game) played += 1;
+      }
+    }
+  }
+  return played;
+}
+
+async function roomStatus({ store, env, fetchImpl, date, plan }) {
+  const kids = [];
+  for (const id of Object.keys(CLASS_KIDS)) {
+    const state = await loadState(store, id);
+    const started = Boolean(state.days?.[date]?.board);
+    const complete = started && Boolean(buildDay({ kidId: id, date, state, plan })?.dose?.complete);
+    kids.push({ id, name: CLASS_KIDS[id].name, started, complete });
+  }
+  const started = kids.filter((entry) => entry.started);
+  const allDone = started.length > 0 && started.every((entry) => entry.complete);
+  if (allDone) {
+    const key = `classroom/room/${date}`;
+    if (!(await store.get(key))) {
+      await store.set(key, "done");
+      await postCheer({ env, fetchImpl, text: `Everyone is done in Learning Land (${started.map((entry) => entry.name).join(", ")}). Tablets down, time to play.` });
+    }
+  }
+  return { kids, allDone };
 }
 
 function liveLeft(state, date, env = {}) {
@@ -788,42 +884,85 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const item = lesson?.items?.find((entry) => entry.item === body.item);
     const say = helpLine(item, tries);
     if (tries >= 3) {
+      if (stepDef) {
+        const day = { done: [], skipped: [], quit: [], ...(state.days?.[date] || {}) };
+        day.stuck = { ...(day.stuck || {}), [stepDef.id]: true };
+        state.days = { ...(state.days || {}), [date]: day };
+      }
       await cheer(store, env, fetchImpl, state, date, {
         kind: "stuck",
         text: `${kid.name} is stuck on ${item?.item || stepDef?.title || "a lesson"} and could use you.`
       });
       await saveState(store, kidId, state);
-      return { status: 200, body: { say: `${say} I told a grown-up.`, offerBreak: true, alertParent: true } };
+      return { status: 200, body: { say: `${say} I told a grown-up.`, offerBreak: true, alertParent: true, canEase: Boolean(stepDef) } };
     }
     return { status: 200, body: { say, offerBreak: tries >= 2, alertParent: false } };
   }
 
+  if (action === "open") {
+    const cardId = String(body.cardId || "").slice(0, 120);
+    if (!cardId) return { status: 400, body: { error: "Joyce couldn't open that card." } };
+    const day = { done: [], skipped: [], quit: [], ...(state.days?.[date] || {}) };
+    if (!day.opened?.[cardId]) {
+      day.opened = { ...(day.opened || {}), [cardId]: now.toISOString() };
+      state.days = { ...(state.days || {}), [date]: day };
+      await saveState(store, kidId, state);
+    }
+    return { status: 200, body: { ok: true } };
+  }
+
+  if (action === "room") {
+    return { status: 200, body: await roomStatus({ store, env, fetchImpl, date, plan }) };
+  }
+
   if (action === "card") {
     const cardId = String(body.cardId || "").slice(0, 120);
-    const status = ["done", "skipped", "quit"].includes(body.status) ? body.status : "";
+    const status = ["done", "skipped", "quit", "eased"].includes(body.status) ? body.status : "";
     if (!cardId || !status) return { status: 400, body: { error: "Joyce couldn't save that card." } };
     const preview = buildDay({ kidId, date, state, plan });
-    const lesson = preview?.cards?.find((card) => card.id === cardId && card.kind === "lesson");
+    const target = preview?.cards?.find((card) => card.id === cardId);
+    const lesson = target?.kind === "lesson" ? target : null;
+    const day = { done: [], skipped: [], quit: [], eased: [], ...(state.days?.[date] || {}) };
     if (status === "done" && lesson && !lessonAnswered(state, lesson, date)) {
       return { status: 200, body: { ok: false, redo: true, say: "That one isn't finished yet. We'll do each part." } };
     }
-    const day = { done: [], skipped: [], quit: [], ...(state.days?.[date] || {}) };
-    for (const key of ["done", "skipped", "quit"]) day[key] = (day[key] || []).filter((id) => id !== cardId);
-    day[status === "done" ? "done" : status === "quit" ? "quit" : "skipped"].push(cardId);
+    if (status === "done" && preview.dose && target?.kind === "game") {
+      const rule = evidenceFor(kidId, target.gameId);
+      const played = rule ? await playedSince(store, kidId, rule.game, day.opened?.[cardId], now) : 0;
+      if (rule && played < rule.need) {
+        return {
+          status: 200,
+          body: {
+            ok: false,
+            notYet: true,
+            played,
+            need: rule.need,
+            say: played ? "Play a little more, then come back." : `Play ${target.title} first. Then come back and tap I'm done.`
+          }
+        };
+      }
+    }
+    if (status === "done" && preview.dose && target?.askLesson && state.readingDay !== date) {
+      return { status: 200, body: { ok: false, notYet: true, say: "Finish the next Reading.com lesson, then tell me its number." } };
+    }
+    if (status === "eased" && !(target?.stepId && day.stuck?.[target.stepId])) {
+      return { status: 400, body: { error: "Let's keep trying that one." } };
+    }
+    for (const key of ["done", "skipped", "quit", "eased"]) day[key] = (day[key] || []).filter((id) => id !== cardId);
+    day[status].push(cardId);
     state.days = { ...(state.days || {}), [date]: day };
     const today = buildDay({ kidId, date, state, plan });
-    const resolved = new Set([...(day.done || []), ...(day.skipped || []), ...(day.quit || [])]);
-    const complete = today.cards.length > 0 && today.cards.every((card) => resolved.has(card.id));
+    const complete = Boolean(today.dose?.complete);
     let said = status === "skipped" ? "We'll leave that one. Nothing wrong with switching." : "Saved.";
+    if (status === "eased") said = "We'll stop that one for today. You worked hard on it.";
     if (status === "done" && lesson?.skill === "Blending CVC words") {
       said = "You built the words. Otter Slide is next. Slide the sounds together.";
     }
-    if (complete && day.done.length && !day.cheered) {
+    if (complete && !day.cheered) {
       day.cheered = true;
       state.days[date] = day;
-      const text = `${kid.name} finished today's board.`;
-      await cheer(store, env, fetchImpl, state, date, { kind: "win", text });
-      said = `${kid.name}, you finished today's board.`;
+      await cheer(store, env, fetchImpl, state, date, { kind: "win", text: `${kid.name} finished today's work.` });
+      said = `${kid.name}, you're done for today.`;
     }
     await saveState(store, kidId, state);
     return { status: 200, body: { ok: true, say: said, complete } };
@@ -833,7 +972,13 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (kidId !== "max") return { status: 400, body: { error: "That lesson number is for Max." } };
     const lesson = Number(body.lesson);
     if (!Number.isInteger(lesson) || lesson < 1 || lesson > 120) return { status: 400, body: { error: "Lesson numbers go from 1 to 120." } };
+    const previous = state.readingLesson;
+    const sameAsToday = state.readingDay === date && lesson === previous;
+    if (Number.isInteger(previous) && lesson <= previous && !sameAsToday) {
+      return { status: 200, body: { ok: false, say: `Last time you finished lesson ${previous}. Finish the next one, then tell me its number.`, lesson: previous } };
+    }
     state.readingLesson = lesson;
+    state.readingDay = date;
     const cheered = new Set(state.readingCheered || []);
     let say = `Lesson ${lesson}. I'll remember that.`;
     for (const mark of [100, 110, 120]) {

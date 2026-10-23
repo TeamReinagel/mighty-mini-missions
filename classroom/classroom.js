@@ -19,14 +19,19 @@ let voice = null;
 let peer = null;
 let mic = null;
 let talkStarted = 0;
-let ticker = null;
 let speakToken = 0;
 let speakChain = Promise.resolve();
 let talking = false;
 let teachGen = 0;
-let sectionStarted = 0;
-let wiggleShown = false;
-let visTick = null;
+let idleTimer = null;
+let idleNudged = false;
+let roomTimer = null;
+let roomSaid = false;
+let doneSaid = false;
+
+const IDLE_MS = 2 * 60 * 1000;
+const ROOM_POLL_MS = 20 * 1000;
+const EVERYONE_DONE = "Everyone's done. Tablets down. Go play!";
 
 function storedKid() {
   try {
@@ -202,7 +207,7 @@ async function load() {
     day = await api("today");
     document.documentElement.style.setProperty("--kid", day.color || "#7c6cf0");
     renderBoard();
-    say(day.greeting);
+    if (!day.dose?.complete) say(day.greeting);
   } catch (err) {
     app.replaceChildren(header("Today with Joyce", err.message));
     const retry = el("button", "go", "Try again");
@@ -212,34 +217,146 @@ async function load() {
   }
 }
 
-function renderBoard() {
-  teachGen += 1;
-  stopTicker();
-  document.querySelector(".wiggle")?.remove();
-  card = null;
-  const root = header(day.name, day.greeting);
+const KIND_LABEL = { lesson: "Joyce teaches", game: "Game", app: "App", move: "Move", celebrate: "Celebrate" };
+
+function talkRow(line) {
   const actions = el("div", "actions");
   const talk = el("button", "go", "Ask Joyce");
   talk.type = "button";
   talk.addEventListener("click", () => startTalk());
   const again = el("button", "quiet", "Hear that again");
   again.type = "button";
-  again.addEventListener("click", () => replay(day.greeting));
+  again.addEventListener("click", () => replay(line));
   actions.append(talk, again);
-  const board = el("div", "board");
-  if (day.rhythm === "weekend") {
-    board.append(el("p", "joyce-line", "No school block today. These are here if you want them."));
-  }
-  for (const item of day.cards) {
-    const button = el("button", item.done ? "card done" : "card");
-    button.type = "button";
-    button.append(el("strong", "", item.done ? `${item.title} ✓` : item.title));
-    button.append(el("span", "", item.done ? "Done" : `${item.minutes} min`));
-    button.addEventListener("click", () => openCard(item));
-    board.append(button);
-  }
-  app.replaceChildren(root, actions, board);
+  return actions;
 }
+
+function cardButton(item) {
+  const button = el("button", item.done ? "card done" : "card");
+  button.type = "button";
+  button.append(el("strong", "", item.done ? `${item.title} ✓` : item.title));
+  button.append(el("span", "", item.done ? "Done" : KIND_LABEL[item.kind] || ""));
+  button.addEventListener("click", () => openCard(item));
+  return button;
+}
+
+// The next card Joyce leads to. The bonus is the child's pick, so it is never chosen for them.
+function nextCard() {
+  for (const part of day.dose?.parts || []) {
+    if (part.done || part.id === "bonus") continue;
+    const open = day.cards.find((item) => item.part === part.id && !item.done);
+    if (open) return open;
+  }
+  return null;
+}
+
+function bonusWaiting() {
+  return Boolean(day.dose?.parts.some((part) => part.id === "bonus" && !part.done));
+}
+
+function nextLine() {
+  const next = nextCard();
+  if (next) return `Next is ${next.title}. Tap Go.`;
+  if (bonusWaiting()) return "Pick one bonus.";
+  return "";
+}
+
+function renderBoard() {
+  teachGen += 1;
+  clearIdle();
+  card = null;
+  if (day.dose?.complete) {
+    renderDone();
+    return;
+  }
+  stopRoom();
+  const root = header(day.name, day.greeting);
+  if (!day.dose) {
+    const board = el("div", "board");
+    for (const item of day.cards) board.append(cardButton(item));
+    app.replaceChildren(root, talkRow(day.greeting), board);
+    return;
+  }
+  const trail = el("div", "trail");
+  for (const part of day.dose.parts) {
+    trail.append(el("div", part.done ? "stop done" : "stop", part.done ? `${part.title} ✓` : part.title));
+  }
+  const next = nextCard();
+  const lead = el("div", "actions");
+  if (next) {
+    const go = el("button", "go", `Go: ${next.title}`);
+    go.type = "button";
+    go.addEventListener("click", () => openCard(next));
+    lead.append(go);
+  } else if (bonusWaiting()) {
+    lead.append(el("p", "prompt", "Pick one bonus."));
+  }
+  const board = el("div", "board");
+  for (const part of day.dose.parts) {
+    const group = el("section", "part");
+    const label = part.id === "bonus" && !part.done ? "Bonus: pick one" : part.title;
+    group.append(el("h2", "", label));
+    for (const item of day.cards.filter((entry) => entry.part === part.id)) group.append(cardButton(item));
+    board.append(group);
+  }
+  app.replaceChildren(root, trail, lead, talkRow(day.greeting), board);
+}
+
+function renderDone() {
+  const line = `You're done for today, ${day.name}.`;
+  const root = header(day.name, line);
+  const trail = el("div", "trail");
+  for (const part of day.dose.parts) trail.append(el("div", "stop done", `${part.title} ✓`));
+  const note = el("p", "joyce-line", "Play a game while the others finish, or go play.");
+  const games = el("div", "board");
+  for (const game of day.free || []) {
+    const link = el("a", "card", game.title);
+    link.href = game.href;
+    link.target = "_blank";
+    link.rel = "noopener";
+    games.append(link);
+  }
+  const room = el("div", "room");
+  room.id = "room";
+  app.replaceChildren(root, trail, note, games, room);
+  if (!doneSaid) {
+    doneSaid = true;
+    say(`${line} Play a game while the others finish, or go play.`);
+  }
+  pollRoom();
+}
+
+function stopRoom() {
+  clearTimeout(roomTimer);
+  roomTimer = null;
+}
+
+async function pollRoom() {
+  stopRoom();
+  const box = document.getElementById("room");
+  if (!box) return;
+  try {
+    const data = await api("room");
+    if (!box.isConnected) return;
+    if (data.allDone) {
+      box.replaceChildren(el("p", "prompt", EVERYONE_DONE));
+      if (!roomSaid) {
+        roomSaid = true;
+        say(EVERYONE_DONE);
+      }
+      return;
+    }
+    const waiting = (data.kids || []).filter((entry) => entry.started && !entry.complete).map((entry) => entry.name);
+    box.replaceChildren(el("p", "joyce-line", waiting.length ? `Still finishing: ${waiting.join(", ")}.` : ""));
+  } catch {
+    // Keep the done screen; the next check will try again.
+  }
+  if (box.isConnected) roomTimer = setTimeout(pollRoom, ROOM_POLL_MS);
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && document.getElementById("room")) pollRoom();
+});
 
 function openCard(next) {
   if (next.done) {
@@ -253,66 +370,35 @@ function openCard(next) {
   promptIndex = 0;
   built = [];
   helps = 0;
-  sectionStarted = Date.now();
-  wiggleShown = false;
-  startTicker();
+  idleNudged = false;
   if (card.kind === "lesson" && card.beats?.length) renderTeach();
   else if (card.kind === "lesson") renderItem();
   else renderSimple();
 }
 
-function formatClock(seconds) {
-  const whole = Math.max(0, seconds);
-  const min = Math.floor(whole / 60);
-  const sec = String(whole % 60).padStart(2, "0");
-  return `${min}:${sec}`;
+function clearIdle() {
+  clearTimeout(idleTimer);
+  idleTimer = null;
 }
 
-function sectionSeconds() {
-  if (!sectionStarted) return 0;
-  return Math.floor((Date.now() - sectionStarted) / 1000);
+function armIdle() {
+  clearIdle();
+  if (!card || idleNudged) return;
+  idleTimer = setTimeout(() => {
+    if (!card || card.kind !== "lesson") return;
+    idleNudged = true;
+    say("Your stars are waiting. Want to keep going?");
+  }, IDLE_MS);
 }
 
-function startTicker() {
-  stopTicker();
-  const tick = () => {
-    const seconds = sectionSeconds();
-    const node = document.getElementById("section-clock");
-    if (node) node.textContent = formatClock(seconds);
-    if (seconds >= 30 * 60) showWiggle();
-  };
-  visTick = tick;
-  document.addEventListener("visibilitychange", tick);
-  ticker = setInterval(tick, 1000);
-  tick();
-}
-
-function showWiggle() {
-  if (wiggleShown) return;
-  wiggleShown = true;
-  const box = el("div", "wiggle");
-  box.append(el("p", "prompt", "Wiggle break. Hop, stretch, or shake."));
-  const left = el("p", "timer", "0:30");
-  box.append(left);
-  document.body.append(box);
-  replay("Wiggle break. Hop, stretch, or shake for a little bit. Then we keep going.");
-  const until = Date.now() + 30000;
-  const id = setInterval(() => {
-    const s = Math.max(0, Math.ceil((until - Date.now()) / 1000));
-    left.textContent = `0:${String(s).padStart(2, "0")}`;
-    if (s <= 0) {
-      clearInterval(id);
-      box.remove();
-    }
-  }, 250);
-}
+document.addEventListener("pointerdown", () => {
+  if (idleTimer) armIdle();
+});
 
 function shell(title) {
   const root = header(day.name, title);
-  const clock = el("p", "timer", formatClock(sectionSeconds()));
-  clock.id = "section-clock";
   const panel = el("div", "panel");
-  app.replaceChildren(root, clock, panel);
+  app.replaceChildren(root, panel);
   return panel;
 }
 
@@ -325,6 +411,8 @@ function renderSimple() {
     link.href = card.href;
     link.target = "_blank";
     link.rel = "noopener";
+    const opening = card;
+    link.addEventListener("click", () => { api("open", { cardId: opening.id }).catch(() => {}); });
     panel.append(link);
     if (card.askLesson) {
       const done = el("button", "go", "I'm done");
@@ -370,7 +458,7 @@ function renderSimple() {
 function askLesson(panel) {
   panel.replaceChildren();
   panel.append(el("p", "prompt", "Which lesson did you finish?"));
-  let lesson = Number(card.lesson) || 94;
+  let lesson = Math.min(120, (Number(card.lesson) || 93) + 1);
   const row = el("div", "stepper");
   const down = el("button", "choice", "−");
   down.type = "button";
@@ -390,6 +478,10 @@ function askLesson(panel) {
       const data = await api("reading", { lesson });
       say(data.say);
       busy = false;
+      if (data.ok === false) {
+        feedback(panel, data.say, "no");
+        return;
+      }
       await finish("done");
     } catch (err) {
       feedback(panel, err.message, "no");
@@ -481,6 +573,7 @@ function renderItem() {
   back.addEventListener("click", renderBoard);
   row.append(help, again, back);
   panel.append(note, row);
+  armIdle();
 }
 
 function drawItem(panel, item, prompt, ready) {
@@ -778,6 +871,13 @@ async function needHelp(item) {
       note.textContent = data.say;
       note.className = "feedback no";
     }
+    if (data.canEase && !document.querySelector("#ease")) {
+      const ease = el("button", "quiet", "Stop this one for today");
+      ease.type = "button";
+      ease.id = "ease";
+      ease.addEventListener("click", () => finish("eased"));
+      (note?.parentNode || app).append(ease);
+    }
   } catch (err) {
     feedback(app, err.message, "no");
   }
@@ -794,10 +894,12 @@ function feedback(panel, text, kind) {
   note.className = `feedback ${kind || ""}`;
 }
 
-async function finish(status) {
+const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function finish(status, retried = false) {
   if (!card || busy) return;
   busy = true;
-  stopTicker();
+  clearIdle();
   try {
     const data = await api("card", { cardId: card.id, status });
     if (data.redo) {
@@ -811,22 +913,28 @@ async function finish(status) {
       else renderItem();
       return;
     }
-    if (data.say) say(data.say);
+    if (data.notYet) {
+      busy = false;
+      // A game sends its answers a few seconds after the child leaves it, so check once more first.
+      if (card.kind === "game" && !retried) {
+        feedback(app, "Checking...", "");
+        await pause(4000);
+        return finish(status, true);
+      }
+      feedback(app, data.say, "no");
+      say(data.say);
+      return;
+    }
+    if (data.say && !data.complete) say(data.say);
     day = await api("today");
     renderBoard();
+    if (!day.dose?.complete) say(nextLine());
   } catch (err) {
     busy = false;
     feedback(app, err.message, "no");
     return;
   }
   busy = false;
-}
-
-function stopTicker() {
-  if (ticker) clearInterval(ticker);
-  ticker = null;
-  if (visTick) document.removeEventListener("visibilitychange", visTick);
-  visTick = null;
 }
 
 async function startTalk() {

@@ -57,18 +57,6 @@ button, a {
   50% { transform: scale(1.05); }
 }
 
-.wiggle {
-  position: fixed;
-  inset: 0;
-  z-index: 5;
-  display: grid;
-  place-content: center;
-  gap: 12px;
-  padding: 24px;
-  text-align: center;
-  background: color-mix(in srgb, var(--paper) 92%, var(--kid));
-}
-
 .top h1 {
   margin: 0;
   font-size: clamp(28px, 5vw, 40px);
@@ -275,9 +263,51 @@ button:disabled {
   gap: 12px;
 }
 
-.timer {
-  font-variant-numeric: tabular-nums;
-  font-size: 2rem;
+.trail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0 12px;
+}
+
+.stop {
+  flex: 1;
+  min-width: 110px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  background: white;
+  border: 3px dashed var(--line);
+  color: var(--muted);
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.stop.done {
+  border: 3px solid var(--kid);
+  background: color-mix(in srgb, var(--kid) 22%, white);
+  color: var(--ink);
+}
+
+.part {
+  display: grid;
+  gap: 10px;
+}
+
+.part h2 {
+  margin: 8px 0 0;
+  font-size: 1.2rem;
+  color: var(--muted);
+}
+
+a.card {
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.room {
+  margin-top: 18px;
   text-align: center;
 }
 

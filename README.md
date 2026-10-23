@@ -133,7 +133,16 @@ Joyce leads the Learning Land block. Each child opens **Today with Joyce** at th
 - **Ethan** gets one short colors or counting card and Train Set.
 - **Ask Joyce** is a live conversation, capped at 5 minutes, with a daily limit (default 10 minutes, `JOYCE_LIVE_MINUTES_PER_DAY`). Lessons themselves stay turn-based so a noisy room and the bill stay manageable. If her recorded voice isn't available, the tablet speaks instead.
 
-Each lesson starts with Joyce teaching the skill, then the practice. She speaks one line at a time, speaks every question, and **Hear it again** repeats that line. Her picture shows when she is talking. **I need help** replays that teaching, a second tap offers a wiggle break, and only then a note to you. **Back** leaves the card unfinished. **I'm done** can end a section early. A lesson, app, or game is planned for 15 minutes for Max, Gabi, and Connor (Ethan stays short). Wednesday is four of those sections. Other school days add one more, about 75 minutes. The timer counts from the clock, including time in AdaptedMind. At 30 minutes Joyce calls a 30-second wiggle, then the section continues. Joyce never says you are making them do it.
+A school day is a **dose**, not a length of time: reading (letters for Connor), math (counting for Connor), and one bonus the child picks, either a game or a short move. Ethan gets one little job and a bonus. The board shows those stops and a **Go** button that opens the next one, so a child doesn't have to choose. A child who works fast and accurately finishes early. A child who drifts simply has less free time.
+
+A checkmark means the work happened:
+- A lesson counts once every question has a real answer.
+- A game counts once enough answers from that game reach the progress log after the child tapped **Play**: 3 to 10 depending on the game, half that for Ethan. Joyce checks once more a few seconds later, since a game syncs after the child leaves it.
+- Max's Reading.com counts once he reports a lesson number higher than the last one. AdaptedMind and move cards are on the honor system.
+
+Each lesson starts with Joyce teaching the skill, then the practice. She speaks one line at a time, speaks every question, and **Hear it again** repeats that line. Her picture shows when she is talking. **I need help** replays that teaching, a second tap offers a wiggle break, and a third sends you a note. After that third tap, **Stop this one for today** appears, so a hard skill ends the part instead of stretching the day. If a lesson sits untouched for 2 minutes, Joyce asks once whether they want to keep going. **Back** leaves the card unfinished. Joyce never says you are making them do it.
+
+When a child finishes, Joyce says so and shows a couple of their games to play while the others finish. When every child who opened Today with Joyce that day is done, each finished tablet says **Everyone's done. Tablets down. Go play!**, and the cheer channel gets one line saying so.
 
 Cheers go only to `JOYCE_CHEER_CHANNEL` (a Slack channel id), at most a few per child per day, plus Reading.com milestones 100, 110, and 120. Each one names something specific to celebrate, or says a child is truly stuck. The floating Joyce button's "still stuck" moment uses that same channel. Nothing is posted until the channel and bot token are set, and cheers never fall back to the family report channel.
 

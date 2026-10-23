@@ -58,40 +58,165 @@ test("regrouping opens as Block Trade", () => {
   }
 });
 
-test("day length follows the rhythm", () => {
-  const gabiFull = buildDay({ kidId: "gabi", date: MONDAY });
-  assert.equal(gabiFull.rhythm, "full");
-  assert.equal(gabiFull.cards.length, 5);
-  assert.ok(gabiFull.cards.some((card) => card.stepId === "gabi-cvc-a"));
-  assert.ok(gabiFull.cards.some((card) => card.stepId === "gabi-count-10"));
-  assert.ok(gabiFull.cards.every((card) => card.minutes === 15));
+test("a school day is reading, math, and one bonus, with no clock", () => {
+  const parts = (day) => day.cards.map((card) => card.part);
+  for (const date of [MONDAY, "2026-10-20", WEDNESDAY, FRIDAY]) {
+    const gabi = buildDay({ kidId: "gabi", date });
+    assert.deepEqual(gabi.dose.parts.map((part) => part.title), ["Reading", "Math", "Bonus"]);
+    assert.deepEqual(parts(gabi), ["ela", "math", "bonus", "bonus"]);
+    assert.ok(gabi.cards.some((card) => card.stepId === "gabi-cvc-a" && card.part === "ela"));
+    assert.ok(gabi.cards.some((card) => card.stepId === "gabi-count-10" && card.part === "math"));
+    assert.ok(gabi.cards.every((card) => card.minutes === undefined));
+    assert.equal(gabi.dose.complete, false);
+  }
 
-  const gabiLight = buildDay({ kidId: "gabi", date: WEDNESDAY });
-  assert.equal(gabiLight.rhythm, "light");
-  assert.equal(gabiLight.cards.length, 4);
-  assert.equal(gabiLight.cards.filter((card) => card.stepId).length, 2);
-  assert.equal(gabiLight.cards.reduce((sum, card) => sum + card.minutes, 0), 60);
-
-  const gabiGroup = buildDay({ kidId: "gabi", date: "2026-10-20" });
-  assert.equal(gabiGroup.rhythm, "group");
-  assert.equal(gabiGroup.cards.reduce((sum, card) => sum + card.minutes, 0), 75);
-
-  const maxFull = buildDay({ kidId: "max", date: FRIDAY });
-  assert.deepEqual(maxFull.cards.map((card) => card.kind), ["app", "app", "game", "game", "move"]);
-  assert.equal(maxFull.cards[0].askLesson, true);
-  assert.equal(maxFull.cards.reduce((sum, card) => sum + card.minutes, 0), 75);
-
-  const maxLight = buildDay({ kidId: "max", date: WEDNESDAY });
-  assert.equal(maxLight.cards.length, 4);
-  assert.equal(maxLight.cards.reduce((sum, card) => sum + card.minutes, 0), 60);
+  const max = buildDay({ kidId: "max", date: FRIDAY });
+  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "math:app", "math:game", "bonus:game", "bonus:move"]);
+  assert.equal(max.cards[0].askLesson, true);
+  assert.match(max.greeting, /Trainer day\. Reading and math, then one bonus/);
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
+  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Letters", "Counting", "Bonus"]);
   assert.ok(connor.cards.some((card) => card.stepId === "connor-names-1"));
   assert.ok(connor.cards.some((card) => card.stepId === "connor-count-5"));
-  assert.equal(connor.cards.length, 5);
 
   const ethan = buildDay({ kidId: "ethan", date: MONDAY });
-  assert.ok(ethan.cards.every((card) => card.minutes <= 8));
+  assert.deepEqual(ethan.dose.parts.map((part) => part.id), ["learn", "bonus"]);
+
+  const weekend = buildDay({ kidId: "gabi", date: "2026-10-24" });
+  assert.equal(weekend.dose, null);
+  assert.equal(weekend.cards.length, 2);
+});
+
+const at = (iso, seconds = 0) => new Date(Date.parse(iso) + seconds * 1000);
+
+async function logPlay(store, when, kid, game, count) {
+  const events = Array.from({ length: count }, (_, i) => ({ id: `${game}-${i}`, kid, game, skill: "x", item: String(i), correct: i % 2 === 0 }));
+  await store.setJSON(`events/${when.toISOString().slice(0, 10)}/${when.getTime()}-${game}`, events);
+}
+
+async function finishCard(store, kid, cardId, now) {
+  return handleClassroom({ store, env: {}, body: { action: "card", kid, cardId, status: "done" }, now });
+}
+
+test("a game card counts only after real play since it was opened", async () => {
+  const store = memoryStore();
+  const start = "2026-10-19T15:00:00Z";
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now: at(start) });
+  const otter = first.body.cards.find((card) => card.gameId === "otter-slide" && card.part === "ela");
+
+  await logPlay(store, at(start, -600), "gabi", "otter-slide", 20);
+  await handleClassroom({ store, env: {}, body: { action: "open", kid: "gabi", cardId: otter.id }, now: at(start, 5) });
+  const tooSoon = await finishCard(store, "gabi", otter.id, at(start, 10));
+  assert.equal(tooSoon.body.notYet, true);
+  assert.equal(tooSoon.body.played, 0);
+
+  await logPlay(store, at(start, 60), "gabi", "otter-slide", 5);
+  await logPlay(store, at(start, 70), "max", "otter-slide", 5);
+  const short = await finishCard(store, "gabi", otter.id, at(start, 80));
+  assert.equal(short.body.notYet, true);
+  assert.equal(short.body.played, 5);
+
+  await logPlay(store, at(start, 120), "gabi", "otter-slide", 3);
+  const played = await finishCard(store, "gabi", otter.id, at(start, 130));
+  assert.equal(played.body.ok, true);
+  const after = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now: at(start, 140) });
+  assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
+});
+
+test("Monster Hunt is checked under the name it logs, word-monsters", async () => {
+  const store = memoryStore();
+  const start = "2026-10-19T15:00:00Z";
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now: at(start) });
+  const hunt = first.body.cards.find((card) => card.gameId === "monster-hunt");
+  assert.equal(hunt.part, "bonus");
+  await handleClassroom({ store, env: {}, body: { action: "open", kid: "connor", cardId: hunt.id }, now: at(start, 1) });
+  await logPlay(store, at(start, 30), "connor", "word-monsters", 6);
+  const done = await finishCard(store, "connor", hunt.id, at(start, 40));
+  assert.equal(done.body.ok, true);
+});
+
+test("Max's reading counts only when he reports a new lesson today", async () => {
+  const store = memoryStore();
+  await store.setJSON("classroom/kid/max", { readingLesson: 101, readingDay: "2026-10-16" });
+  const now = at("2026-10-19T15:00:00Z");
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "max" }, now });
+  const reading = first.body.cards.find((card) => card.askLesson);
+
+  const unreported = await finishCard(store, "max", reading.id, now);
+  assert.equal(unreported.body.notYet, true);
+
+  const same = await handleClassroom({ store, env: {}, body: { action: "reading", kid: "max", lesson: 101 }, now });
+  assert.equal(same.body.ok, false);
+  assert.match(same.body.say, /lesson 101/);
+
+  const next = await handleClassroom({ store, env: {}, body: { action: "reading", kid: "max", lesson: 102 }, now });
+  assert.equal(next.body.ok, true);
+  const again = await handleClassroom({ store, env: {}, body: { action: "reading", kid: "max", lesson: 102 }, now });
+  assert.equal(again.body.ok, true);
+  const done = await finishCard(store, "max", reading.id, now);
+  assert.equal(done.body.ok, true);
+});
+
+test("a lesson can be eased only after Joyce has called for help", async () => {
+  const store = memoryStore();
+  const now = at("2026-10-19T15:00:00Z");
+  await gabiReadyToAdd(store);
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now });
+  const lesson = first.body.cards.find((card) => card.stepId === "gabi-add");
+  const early = await handleClassroom({ store, env: {}, body: { action: "card", kid: "gabi", cardId: lesson.id, status: "eased" }, now });
+  assert.equal(early.status, 400);
+  const help = await handleClassroom({ store, env: {}, body: { action: "help", kid: "gabi", stepId: lesson.stepId, item: lesson.items[0].item, tries: 3 }, now });
+  assert.equal(help.body.canEase, true);
+  const eased = await handleClassroom({ store, env: {}, body: { action: "card", kid: "gabi", cardId: lesson.id, status: "eased" }, now });
+  assert.equal(eased.body.ok, true);
+  const after = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now });
+  assert.equal(after.body.dose.parts.find((part) => part.id === "math").done, true);
+});
+
+test("one bonus finishes the dose, and the room is done when everyone who started is done", async () => {
+  const store = memoryStore();
+  const start = "2026-10-19T15:00:00Z";
+  const posted = [];
+  const env = { JOYCE_CHEER_CHANNEL: "C1", SLACK_BOT_TOKEN: "xoxb-test" };
+  const fetchImpl = async (url, init) => {
+    posted.push(JSON.parse(init.body).text);
+    return { ok: true, json: async () => ({ ok: true }) };
+  };
+
+  const ethan = await handleClassroom({ store, env, fetchImpl, body: { action: "today", kid: "ethan" }, now: at(start) });
+  const gabi = await handleClassroom({ store, env, fetchImpl, body: { action: "today", kid: "gabi" }, now: at(start) });
+  const waiting = await handleClassroom({ store, env, fetchImpl, body: { action: "room", kid: "ethan" }, now: at(start) });
+  assert.equal(waiting.body.allDone, false);
+  assert.deepEqual(waiting.body.kids.filter((entry) => entry.started).map((entry) => entry.name), ["Gabi", "Ethan"]);
+
+  const finishAll = async (kid, cards, from) => {
+    let t = from;
+    for (const card of cards) {
+      t += 10;
+      await handleClassroom({ store, env, fetchImpl, body: { action: "open", kid, cardId: card.id }, now: at(start, t) });
+      if (card.kind === "game") await logPlay(store, at(start, t + 2), kid, card.gameId === "monster-hunt" ? "word-monsters" : card.gameId, 10);
+      const out = await handleClassroom({ store, env, fetchImpl, body: { action: "card", kid, cardId: card.id, status: "done" }, now: at(start, t + 5) });
+      assert.equal(out.body.ok, true, `${kid} ${card.title}`);
+    }
+    return t;
+  };
+
+  const ethanWork = ethan.body.cards.filter((card) => card.part !== "bonus" || card.kind === "move");
+  let t = await finishAll("ethan", ethanWork, 0);
+  const ethanDone = await handleClassroom({ store, env, fetchImpl, body: { action: "today", kid: "ethan" }, now: at(start, t + 20) });
+  assert.equal(ethanDone.body.dose.complete, true);
+  assert.equal(ethanDone.body.free[0].title, "Train Set");
+  const half = await handleClassroom({ store, env, fetchImpl, body: { action: "room", kid: "ethan" }, now: at(start, t + 20) });
+  assert.equal(half.body.allDone, false);
+
+  const gabiWork = gabi.body.cards.filter((card) => card.part !== "bonus" || card.kind === "game");
+  t = await finishAll("gabi", gabiWork, t + 30);
+  const room = await handleClassroom({ store, env, fetchImpl, body: { action: "room", kid: "gabi" }, now: at(start, t + 20) });
+  assert.equal(room.body.allDone, true);
+  const again = await handleClassroom({ store, env, fetchImpl, body: { action: "room", kid: "ethan" }, now: at(start, t + 40) });
+  assert.equal(again.body.allDone, true);
+  assert.equal(posted.filter((text) => /Everyone is done/.test(text)).length, 1);
 });
 
 test("a hold keeps the child on the step they already know", () => {
