@@ -871,7 +871,8 @@ async function speak({ store, env, fetchImpl, text, voice }) {
   const line = String(text || "").replace(/\s+/g, " ").trim().slice(0, 360);
   if (!line) return { status: 400, body: { error: "Nothing to say." } };
   const chosen = TTS_VOICES.includes(String(voice || "")) ? String(voice) : "";
-  const key = `classroom/tts/${createHash("sha256").update(chosen ? `${chosen}:${line}` : line).digest("hex").slice(0, 24)}`;
+  // The key names the voice actually used, so changing Joyce's voice never replays old cached clips.
+  const key = `classroom/tts/${createHash("sha256").update(`${chosen || env.JOYCE_TABLET_VOICE || "marin"}:${line}`).digest("hex").slice(0, 24)}`;
   const cached = await store.get(key);
   if (cached) return { status: 200, body: { audioBase64: cached, spokenText: line, voice: chosen || undefined } };
   const diag = {};
