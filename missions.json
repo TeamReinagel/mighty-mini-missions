@@ -1561,6 +1561,153 @@
         "forMax": "You're learning to help our family!",
         "forParent": "Builds: practical life skills, contribution, imitation, motor skills."
       }
+    },
+    {
+      "id": "writing-sky-letters",
+      "category": "writing",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "3–5",
+      "title": "Sky Writing: {{LETTER}}",
+      "prompt": "Write a giant {{LETTER}} in the air, then on someone's back, then with one finger on the table.",
+      "materials": ["Your arm", "A partner's back", "A table"],
+      "steps": [
+        "Grown-up writes {{LETTER}} big in the air first. Watch where it starts.",
+        "Stand up. Write it in the sky with your whole arm, 3 times. Say each stroke out loud.",
+        "Write it on a partner's back. They guess the letter.",
+        "Write it small on the table with one finger."
+      ],
+      "siblingStation": "Littles draw big circles and lines in the air.",
+      "skills": {
+        "forMax": "You're teaching your arm the path of the letter, so your pencil knows it later!",
+        "forParent": "Builds: letter formation from the shoulder down, start point and stroke order, big-to-small motor control."
+      }
+    },
+    {
+      "id": "writing-chalk-road",
+      "category": "writing",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "10–15",
+      "title": "Chalk Letter Road",
+      "prompt": "Draw giant chalk letters, then drive a toy car along each one, starting at the green dot.",
+      "materials": ["Sidewalk chalk (with green)", "A toy car", "Driveway or sidewalk"],
+      "steps": [
+        "Pick 3 letters from Joyce's writing card this week.",
+        "Draw each one huge. Put a green dot where it starts.",
+        "Drive the car from the green dot along the letter, the way the pencil goes.",
+        "Hard mode: draw it again, smaller, with your eyes on the green dot."
+      ],
+      "siblingStation": "Littles drive cars on a big chalk circle and a straight road.",
+      "skills": {
+        "forMax": "You're learning where each letter starts and which way it goes!",
+        "forParent": "Builds: letter formation through movement, directionality, visual tracking, gross-to-fine transfer."
+      }
+    },
+    {
+      "id": "writing-salt-tray",
+      "category": "writing",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "5–10",
+      "title": "Salt Tray Letters",
+      "prompt": "Write letters with one finger in a tray of salt, then shake it smooth and go again.",
+      "materials": ["A baking tray or shallow box", "Salt, sugar, or sand"],
+      "steps": [
+        "Pour a thin layer of salt in the tray.",
+        "Write c, o, a, d, g. They all start like c.",
+        "Shake the tray smooth after each one.",
+        "Grown-up says a letter, you write it without looking at a model."
+      ],
+      "siblingStation": "Littles draw lines, circles, and their first letter in the salt.",
+      "skills": {
+        "forMax": "You're writing letters from memory, just like a real writer!",
+        "forParent": "Builds: independent letter recall (not tracing), formation families, tactile feedback, low-pressure practice."
+      }
+    },
+    {
+      "id": "writing-shrink-ray",
+      "category": "writing",
+      "difficulty": "medium",
+      "level": "prek",
+      "minutes": "5–8",
+      "title": "Shrink Ray",
+      "prompt": "Write one letter giant, then zap it with the shrink ray: medium, small, and tiny.",
+      "materials": ["Paper or a whiteboard", "A marker or pencil"],
+      "steps": [
+        "Write a letter giant, as big as your hand.",
+        "Zap! Write it again, half as big.",
+        "Zap! Write it small enough to fit inside a box on your writing paper.",
+        "Zap! Can you make one tiny but still right?"
+      ],
+      "siblingStation": "Littles draw a big circle, then a smaller circle inside it.",
+      "skills": {
+        "forMax": "You're learning to make your letters any size you want!",
+        "forParent": "Builds: size control (Max's letters run much bigger than the lines), motor planning, self-monitoring."
+      }
+    },
+    {
+      "id": "writing-label-your-build",
+      "category": "writing",
+      "difficulty": "medium",
+      "level": "kinder",
+      "minutes": "10–15",
+      "title": "Label Your Build",
+      "prompt": "Make a sign for something you built: its name, in your own writing.",
+      "materials": ["Something you built", "An index card or sticky note", "A pencil", "Tape"],
+      "steps": [
+        "Choose a name for your build (1 to 3 words).",
+        "Say the sounds. Grown-up helps with spelling if you ask.",
+        "Write the sign. Leave a finger space between words.",
+        "Tape it on your build and give someone the tour."
+      ],
+      "siblingStation": "Littles draw a picture sign for their own build.",
+      "skills": {
+        "forMax": "You're writing for real, so everyone knows what you made!",
+        "forParent": "Builds: purposeful writing, spelling by sound, word spacing, pride in work."
+      }
+    },
+    {
+      "id": "writing-trainer-team",
+      "category": "writing",
+      "difficulty": "medium",
+      "level": "kinder",
+      "minutes": "10–15",
+      "title": "Trainer Team List",
+      "prompt": "Write your Pokémon team: 3 names, copied from your handbook.",
+      "materials": ["Your Pokémon handbook", "Lined writing paper", "A pencil"],
+      "steps": [
+        "Pick 3 Pokémon for your team.",
+        "Find each name in the handbook.",
+        "Copy each name on its own line. Check: do the letters stay in the lines?",
+        "Draw a Poké Ball next to each one."
+      ],
+      "siblingStation": "Littles draw their favorite Pokémon and write its first letter.",
+      "skills": {
+        "forMax": "You're making a real trainer roster in your own handwriting!",
+        "forParent": "Builds: copywork with a purpose, letter size on lines, attention to detail, interest-driven practice."
+      }
+    },
+    {
+      "id": "writing-mail-carrier",
+      "category": "writing",
+      "difficulty": "medium",
+      "level": "kinder",
+      "minutes": "10–15",
+      "title": "Mail Carrier",
+      "prompt": "Write a little note to someone in the family and deliver it.",
+      "materials": ["Paper or a card", "A pencil or crayons", "Optional: an envelope"],
+      "steps": [
+        "Pick who it's for.",
+        "Write To and their name, then one short message (like I like you or Come play).",
+        "Draw a picture and write your name at the bottom.",
+        "Deliver it. Bonus: wait for a reply."
+      ],
+      "siblingStation": "Littles draw a picture card and scribble their name.",
+      "skills": {
+        "forMax": "You're sending real mail that someone gets to read!",
+        "forParent": "Builds: writing to communicate, names and short words, spacing, social connection."
+      }
     }
   ],
   "templateVariables": {

@@ -140,7 +140,7 @@ function letterChoices(answer, pool, rng, count = 3) {
   return shuffle(rng, [answer, ...others]);
 }
 
-export function itemsFor(step, seed, missed = []) {
+function buildItems(step, seed, missed) {
   const rng = mulberry32(hashSeed(`${seed}:${step.id}`));
   const n = step.items || 6;
   const prefer = missed.map((item) => String(item).toLowerCase());
@@ -159,6 +159,21 @@ export function itemsFor(step, seed, missed = []) {
   if (step.activity === "regroup") return regroupItems(step, rng, n);
   if (step.activity === "color") return colorItems(rng, n);
   return [];
+}
+
+function itemKey(item) {
+  return String(item?.item || item?.word || "").toLowerCase();
+}
+
+/** `avoid` lists items the child practiced recently, so a cold check can use different ones. */
+export function itemsFor(step, seed, missed = [], avoid = []) {
+  const n = step.items || 6;
+  const skip = new Set((avoid || []).map((item) => String(item).toLowerCase()));
+  if (!skip.size) return buildItems(step, seed, missed);
+  const wide = buildItems({ ...step, items: n + Math.min(skip.size + 4, 12) }, seed, missed);
+  const fresh = wide.filter((item) => !skip.has(itemKey(item)));
+  if (fresh.length >= n) return fresh.slice(0, n);
+  return [...fresh, ...wide.filter((item) => !fresh.includes(item))].slice(0, n);
 }
 
 function hearSounds(step, rng, n) {
@@ -300,7 +315,9 @@ function countItems(step, rng, n) {
   const max = step.max ?? 10;
   const used = new Set();
   const items = [];
-  while (items.length < n) {
+  let spins = 0;
+  while (items.length < n && spins < n * 30) {
+    spins += 1;
     const count = min + Math.floor(rng() * (max - min + 1));
     const emoji = COUNT_EMOJI[Math.floor(rng() * COUNT_EMOJI.length)];
     const key = `${emoji}${count}`;
@@ -378,7 +395,9 @@ function addItems(step, rng, n) {
   const maxSum = step.maxSum || 5;
   const items = [];
   const seen = new Set();
-  while (items.length < n) {
+  let spins = 0;
+  while (items.length < n && spins < n * 30) {
+    spins += 1;
     const left = Math.floor(rng() * maxSum);
     const right = Math.floor(rng() * (maxSum - left + 1));
     const key = `${left}+${right}`;

@@ -6,7 +6,12 @@
 
 import { createHash } from "node:crypto";
 import { helpLine, itemsFor } from "./classroom-content.mjs";
+import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
+import {
+  ESSENTIAL, HELP_STEP, PERSIST_STEP, addSpot, applyCheck, checkDue, describeEssential, isEssentialId,
+  nextSchoolDay, noticeLine, reportView, scoreCheck, skillMap
+} from "./skills.mjs";
 import { post } from "./slack.mjs";
 
 export const CLASS_KIDS = {
@@ -181,12 +186,13 @@ const FREE = {
 
 const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: "math", regroup: "math", play: "learn" };
 const PART_TITLES = {
-  max: { ela: "Reading", math: "Math" },
+  max: { ela: "Reading", math: "Math", write: "Writing" },
   gabi: { ela: "Reading", math: "Math" },
   connor: { ela: "Letters", math: "Counting" },
   ethan: { learn: "Learn" }
 };
-const PART_ORDER = ["ela", "math", "learn", "bonus"];
+const PART_ORDER = ["ela", "math", "write", "learn", "bonus"];
+const WRITERS = new Set(["max"]);
 
 function partFor(kidId, stepId) {
   const chain = (CHAINS[kidId] || []).find((candidate) => candidate.steps.some((entry) => entry.id === stepId));
@@ -263,17 +269,28 @@ export function isMastered(rec, stepDef) {
   return recent.filter(Boolean).length >= hits && rec.correct / rec.graded >= 0.75;
 }
 
-export function applyAttempt(rec, correct, stepDef) {
+export function applyAttempt(rec, correct, stepDef, meta = {}) {
   const base = rec || { graded: 0, correct: 0, recent: [] };
   if (correct !== true && correct !== false) {
     return { ...base, mastered: Boolean(base.mastered) || isMastered(base, stepDef) };
   }
   const next = {
+    ...base,
     graded: (base.graded || 0) + 1,
     correct: (base.correct || 0) + (correct ? 1 : 0),
     recent: [...(base.recent || []), correct].slice(-8)
   };
   next.mastered = Boolean(base.mastered) || isMastered(next, stepDef);
+  const showedAgain = Boolean(base.slipping) && next.mastered && isMastered(next, stepDef);
+  const firstShow = !base.mastered && !base.shownAt && next.mastered;
+  if (showedAgain || firstShow) {
+    next.slipping = false;
+    next.shownAt = meta.date || base.shownAt || null;
+    next.shownVia = meta.via || base.shownVia || "lesson";
+    next.checkMisses = 0;
+    if (showedAgain) next.confirmedAt = null;
+    if (meta.date) next.nextCheck = nextSchoolDay(meta.date);
+  }
   return next;
 }
 
@@ -301,8 +318,10 @@ async function saveState(store, kidId, state) {
   const days = Object.keys(state.days || {}).sort().slice(-21);
   const cheers = Object.keys(state.cheers || {}).sort().slice(-14);
   const live = Object.keys(state.liveSeconds || {}).sort().slice(-14);
+  const essential = state.essential?.spots ? { spots: state.essential.spots.slice(-200) } : state.essential;
   await store.setJSON(kidKey(kidId), {
     ...state,
+    essential,
     log: (state.log || []).slice(-200),
     days: Object.fromEntries(days.map((day) => [day, state.days[day]])),
     cheers: Object.fromEntries(cheers.map((day) => [day, state.cheers[day]])),
@@ -338,7 +357,11 @@ function missedItems(state, stepId) {
 export function frontier(chain, state, plan) {
   const holds = plan?.holds || {};
   for (const item of chain.steps) {
-    if (item.placed || isMastered(state.steps?.[item.id], item) || state.steps?.[item.id]?.mastered) continue;
+    if (item.placed) continue;
+    if (state.steps?.[item.id]?.slipping) return { ...item, review: true };
+    const known = isMastered(state.steps?.[item.id], item) || state.steps?.[item.id]?.mastered;
+    if (known && holds[item.id]) return { ...item, review: true };
+    if (known) continue;
     if (holds[item.id]) {
       const earlier = chain.steps.filter((candidate, index) => index < chain.steps.indexOf(item) && !candidate.placed && (state.steps?.[candidate.id]?.mastered || isMastered(state.steps?.[candidate.id], candidate)));
       const prev = earlier.at(-1);
@@ -498,10 +521,44 @@ function moveCard(kidId, date, part) {
   return { id: `${date}:move:${move.title}`, kind: "move", ...(part ? { part } : {}), title: move.title, say: move.say };
 }
 
+function writeCard(date, plan) {
+  const lesson = writeLesson(plan);
+  return {
+    id: `${date}:write`,
+    kind: "write",
+    part: "write",
+    title: `Writing: ${lesson.letter}`,
+    ...lesson,
+    paperHref: `../writing-paper/?size=${lesson.paper}`
+  };
+}
+
 function hash(text) {
   let h = 2166136261;
   for (const ch of String(text)) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
   return h >>> 0;
+}
+
+const CHECK_SAY = "Show me what you know. No hints this time.";
+
+function insertCheck(cards, card) {
+  const at = cards.findIndex((entry) => entry.part === card.part);
+  const next = cards.slice();
+  next.splice(at < 0 ? next.length : at, 0, card);
+  return next;
+}
+
+function checkCard(kidId, stepDef, date, items) {
+  return {
+    id: `${date}:check:${stepDef.id}`,
+    kind: "check",
+    part: partFor(kidId, stepDef.id),
+    title: `Show me: ${stepDef.title}`,
+    say: CHECK_SAY,
+    stepId: stepDef.id,
+    skill: stepDef.skill,
+    items
+  };
 }
 
 function markDone(cards, state, date) {
@@ -546,6 +603,45 @@ function lessonFrontiers(kidId, state, plan) {
   return (CHAINS[kidId] || []).map((chain) => frontier(chain, state, plan)).filter(Boolean);
 }
 
+function settleShown(state, date) {
+  let changed = false;
+  const steps = { ...(state.steps || {}) };
+  for (const [id, rec] of Object.entries(steps)) {
+    if (rec?.mastered && !rec.shownAt && !rec.slipping) {
+      steps[id] = {
+        ...rec,
+        shownAt: date,
+        shownVia: rec.shownVia || "lesson",
+        nextCheck: rec.nextCheck || nextSchoolDay(date),
+        checks: rec.checks || []
+      };
+      changed = true;
+    }
+  }
+  if (changed) state.steps = steps;
+  return changed;
+}
+
+function recentItems(state, stepId) {
+  const out = [];
+  for (const entry of [...(state.log || [])].reverse()) {
+    if (entry.stepId !== stepId || !entry.item) continue;
+    const key = String(entry.item).toLowerCase();
+    if (!out.includes(key)) out.push(key);
+    if (out.length >= 12) break;
+  }
+  return out;
+}
+
+function pinCheck(state, kidId, date) {
+  if (rhythmFor(weekdayIndex(date)) === "weekend") return null;
+  const due = checkDue(state.steps, allSteps(kidId), date);
+  if (!due) return null;
+  const items = itemsFor({ ...due, items: 3, fixed: false }, `${date}:check:${due.id}`, [], recentItems(state, due.id));
+  if (items.length < 3) return null;
+  return { stepId: due.id, items: items.slice(0, 3) };
+}
+
 // The first open of a day freezes which lessons are on the board, and which missed
 // words those lessons already include. Mastery still counts, but the next lesson
 // waits until tomorrow so a question cannot disappear while the child is answering it.
@@ -558,7 +654,7 @@ function pinBoard(state, kidId, date, plan) {
     missed: missedItems(state, item.id)
   }));
   const day = { done: [], skipped: [], quit: [], ...(state.days?.[date] || {}) };
-  day.board = { shorter, lessons };
+  day.board = { shorter, lessons, check: pinCheck(state, kidId, date), ...(WRITERS.has(kidId) ? { write: writeToday(state.writing) } : {}) };
   state.days = { ...(state.days || {}), [date]: day };
   return true;
 }
@@ -571,10 +667,16 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   const board = state.days?.[date]?.board || null;
   const shorter = board ? Boolean(board.shorter) : Boolean(plan.kids?.[kidId]?.shorter);
   const working = { ...state, shorter, ...(board ? { boardLessons: board.lessons } : {}) };
+  const write = WRITERS.has(kidId) ? board?.write || writeToday(state.writing) : null;
   let cards = [];
-  if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm });
+  if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, write });
   else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
   else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.monsters });
+  const pinned = board?.check;
+  if (pinned?.stepId && rhythm !== "weekend") {
+    const def = stepById(kidId, pinned.stepId);
+    if (def && pinned.items?.length) cards = insertCheck(cards, checkCard(kidId, def, date, pinned.items));
+  }
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);
   const weekdayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekday];
@@ -655,7 +757,7 @@ function mathCard(date) {
   return { id: `${date}:app:math`, kind: "app", part: "math", title: "AdaptedMind", href: APPS.math.href, say: APPS.math.say };
 }
 
-function maxCards({ date, state, plan, rhythm }) {
+function maxCards({ date, state, plan, rhythm, write }) {
   const lesson = state.readingLesson || READING_START;
   const regroup = lessonFrontiers("max", state, plan)[0];
   if (rhythm === "weekend") return [gameCard(date, GAMES.coins), moveCard("max", date)];
@@ -663,6 +765,7 @@ function maxCards({ date, state, plan, rhythm }) {
     readingCard(date, lesson),
     mathCard(date),
     ...(regroup ? [skillCard("max", regroup, date, state)] : []),
+    ...(write ? [writeCard(date, write)] : []),
     gameCard(date, GAMES.coins, "bonus"),
     moveCard("max", date, "bonus")
   ];
@@ -798,6 +901,86 @@ function parentPraise(name, item) {
   return `Ask ${name} to show you ${shown}. ${name} just learned ${item.title}.`;
 }
 
+function dayBucket(state, date) {
+  const day = { done: [], skipped: [], quit: [], ...(state.days?.[date] || {}) };
+  state.days = { ...(state.days || {}), [date]: day };
+  return day;
+}
+
+function markMiss(state, date, stepId) {
+  const day = dayBucket(state, date);
+  day.missed = { ...(day.missed || {}), [stepId]: true };
+}
+
+function markSought(state, date, stepId) {
+  const day = dayBucket(state, date);
+  day.soughtHelp = { ...(day.soughtHelp || {}), [stepId]: true };
+}
+
+function checkFinished(day, stepId) {
+  const items = day.board?.check?.stepId === stepId ? day.board.check.items : [];
+  if (items.length < 3) return false;
+  const answers = day.checkAnswers?.[stepId] || {};
+  return items.every((item) => answers[item.item]?.done);
+}
+
+function closeCheck(state, date, stepDef) {
+  const day = state.days?.[date];
+  if (!day || day.board?.check?.stepId !== stepDef.id || day.checkClosed?.[stepDef.id]) return null;
+  if (!checkFinished(day, stepDef.id)) return null;
+  const answers = day.checkAnswers[stepDef.id];
+  const result = scoreCheck(Object.values(answers));
+  const before = state.steps?.[stepDef.id] || {};
+  state.steps = { ...(state.steps || {}), [stepDef.id]: applyCheck(before, { date, passed: result.passed, right: result.right }) };
+  day.checkClosed = { ...(day.checkClosed || {}), [stepDef.id]: true };
+  const rightItems = day.board.check.items
+    .filter((item) => answers[item.item]?.correct === true)
+    .map((item) => item.word || item.item);
+  return { result, rightItems };
+}
+
+function coldCheer(name, stepDef, rightItems) {
+  const list = rightItems.filter(Boolean);
+  const shown = list.length > 1 ? `${list.slice(0, -1).join(", ")} and ${list.at(-1)}` : (list[0] || stepDef.title);
+  if (["cvc", "digraph", "blend", "sight", "hear-sound", "hear-name"].includes(stepDef.activity)) {
+    return `${name} read ${shown} cold today. Ask ${name} to read you one.`;
+  }
+  return `${name} showed ${stepDef.title} cold today (${shown}). Ask ${name} to show you one.`;
+}
+
+function recordCheckPrompt(day, stepId, item, promptIndex, correct) {
+  const answers = { ...(day.checkAnswers?.[stepId] || {}) };
+  const existing = answers[item.item];
+  if (existing?.done) return { slot: existing, repeat: true };
+  const slot = { prompts: {}, ...(existing || {}) };
+  const key = String(promptIndex || 0);
+  if (slot.prompts[key] !== undefined) return { slot, repeat: true };
+  slot.prompts = { ...slot.prompts, [key]: correct === true };
+  const need = item.prompts?.length || 1;
+  const answered = Object.keys(slot.prompts).length;
+  if (correct !== true || answered >= need) {
+    slot.done = true;
+    slot.void = false;
+    slot.correct = correct === true && Object.values(slot.prompts).every(Boolean) && answered >= need;
+  } else {
+    slot.done = false;
+    slot.correct = true;
+  }
+  answers[item.item] = slot;
+  day.checkAnswers = { ...(day.checkAnswers || {}), [stepId]: answers };
+  return { slot, repeat: false };
+}
+
+function spotFinished(state, plan, kidId, stepId, date) {
+  if (!stepId || plan?.essentialOff || kidId === "ethan") return;
+  const day = state.days?.[date] || {};
+  let spots = state.essential?.spots || [];
+  const before = spots.length;
+  if (day.missed?.[stepId]) spots = addSpot(spots, { stepId: PERSIST_STEP, day: date, source: "persist" });
+  if (day.soughtHelp?.[stepId]) spots = addSpot(spots, { stepId: HELP_STEP, day: date, source: "help" });
+  if (spots.length !== before) state.essential = { spots };
+}
+
 export async function handleClassroom({ store, env = process.env, fetchImpl = fetch, body = {}, now = new Date() }) {
   const action = String(body.action || "today");
   const kidId = String(body.kid || "");
@@ -811,6 +994,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   const state = await loadState(store, kidId);
   const plan = await loadPlan(store);
   if (plan.kids?.[kidId]?.shorter) state.shorter = true;
+  if (settleShown(state, date)) await saveState(store, kidId, state);
   if (pinBoard(state, kidId, date, plan)) await saveState(store, kidId, state);
 
   if (action === "today") {
@@ -820,6 +1004,38 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   if (action === "answer") {
     const stepDef = stepById(kidId, String(body.stepId || ""));
     if (!stepDef) return { status: 400, body: { error: "That lesson isn't on today's board." } };
+    if (body.check) {
+      const day = dayBucket(state, date);
+      const pinned = day.board?.check;
+      const item = pinned?.items?.find((entry) => entry.item === body.item);
+      if (pinned?.stepId !== stepDef.id || !item) return { status: 400, body: { error: "That check isn't on today's board." } };
+      if (tooFast(state, stepDef.id, date, now)) {
+        return { status: 200, body: { ok: true, wait: true, correct: null, say: "Listen first. Then you tap." } };
+      }
+      const promptIndex = Number(body.prompt || 0);
+      const correct = grade(item, body.picked, promptIndex, Boolean(body.unsure));
+      if (correct === null) {
+        return { status: 200, body: { ok: true, correct: null, say: `I'll say ${item.word || "it"}. Then you say it.` } };
+      }
+      const { slot, repeat } = recordCheckPrompt(day, stepDef.id, item, promptIndex, correct);
+      if (repeat) {
+        return { status: 200, body: { ok: true, correct: slot.correct === true, moveOn: Boolean(slot.done), say: slot.correct ? "Yes." : "Next one." } };
+      }
+      state.log = [...(state.log || []), { t: now.toISOString(), day: date, stepId: stepDef.id, item: item.item, correct, check: true }];
+      if (correct === false) markMiss(state, date, stepDef.id);
+      const closed = closeCheck(state, date, stepDef);
+      let praise = "";
+      if (closed?.result?.passed) {
+        praise = coldCheer(kid.name, stepDef, closed.rightItems);
+        await cheer(store, env, fetchImpl, state, date, { kind: "win", text: praise });
+      }
+      await saveState(store, kidId, state);
+      const more = item.prompts && correct === true && promptIndex + 1 < item.prompts.length && !slot.done;
+      return {
+        status: 200,
+        body: { ok: true, correct, moveOn: correct === false || Boolean(slot.done && !more), say: correct ? "Yes." : "Next one.", praise }
+      };
+    }
     const lesson = lessonForAnswer(kidId, stepDef, date, state, plan);
     const item = lesson?.items?.find((entry) => entry.item === body.item) || lesson?.items?.[Number(body.index)];
     if (!item) return { status: 400, body: { error: "That question isn't in this lesson." } };
@@ -829,7 +1045,8 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const correct = grade(item, body.picked, Number(body.prompt || 0), Boolean(body.unsure));
     const before = Boolean(state.steps?.[stepDef.id]?.mastered);
     state.steps = { ...(state.steps || {}) };
-    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], correct, stepDef);
+    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], correct, stepDef, { date, via: "lesson" });
+    if (correct === false) markMiss(state, date, stepDef.id);
     const loggedItem = item.type === "regroup" ? `${item.item} ${item.prompts?.[Number(body.prompt || 0)]?.id || ""}`.trim() : item.item;
     state.log = [...(state.log || []), { t: now.toISOString(), day: date, stepId: stepDef.id, item: loggedItem, correct }];
     const justMastered = !before && state.steps[stepDef.id].mastered;
@@ -858,7 +1075,8 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (typeof body.correct !== "boolean") return { status: 400, body: { error: "Joyce couldn't save that play." } };
     const before = Boolean(state.steps?.[stepDef.id]?.mastered);
     state.steps = { ...(state.steps || {}) };
-    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], body.correct, stepDef);
+    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], body.correct, stepDef, { date, via: "game" });
+    if (body.correct === false) markMiss(state, date, stepDef.id);
     const loggedItem = String(body.item || stepDef.title).slice(0, 160);
     state.log = [...(state.log || []), { t: now.toISOString(), day: date, stepId: stepDef.id, item: loggedItem, correct: body.correct }];
     const justMastered = !before && state.steps[stepDef.id].mastered;
@@ -880,6 +1098,23 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   if (action === "help") {
     const stepDef = stepById(kidId, String(body.stepId || ""));
     const tries = Number(body.tries || 1);
+    if (body.check) {
+      const day = dayBucket(state, date);
+      const pinned = day.board?.check;
+      const item = pinned?.items?.find((entry) => entry.item === body.item);
+      if (!stepDef || pinned?.stepId !== stepDef.id || !item) return { status: 400, body: { error: "That check isn't on today's board." } };
+      const answers = { ...(day.checkAnswers?.[stepDef.id] || {}) };
+      if (!answers[item.item]?.done) answers[item.item] = { done: true, void: true, correct: null, prompts: {} };
+      day.checkAnswers = { ...(day.checkAnswers || {}), [stepDef.id]: answers };
+      markSought(state, date, stepDef.id);
+      const closed = closeCheck(state, date, stepDef);
+      if (closed?.result?.passed) {
+        await cheer(store, env, fetchImpl, state, date, { kind: "win", text: coldCheer(kid.name, stepDef, closed.rightItems) });
+      }
+      await saveState(store, kidId, state);
+      return { status: 200, body: { say: "We'll leave that one.", moveOn: true, correct: null } };
+    }
+    if (stepDef) markSought(state, date, stepDef.id);
     const lesson = stepDef ? lessonForAnswer(kidId, stepDef, date, state, plan) : null;
     const item = lesson?.items?.find((entry) => entry.item === body.item);
     const say = helpLine(item, tries);
@@ -896,6 +1131,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
       await saveState(store, kidId, state);
       return { status: 200, body: { say: `${say} I told a grown-up.`, offerBreak: true, alertParent: true, canEase: Boolean(stepDef) } };
     }
+    await saveState(store, kidId, state);
     return { status: 200, body: { say, offerBreak: tries >= 2, alertParent: false } };
   }
 
@@ -926,6 +1162,9 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (status === "done" && lesson && !lessonAnswered(state, lesson, date)) {
       return { status: 200, body: { ok: false, redo: true, say: "That one isn't finished yet. We'll do each part." } };
     }
+    if (status === "done" && target?.kind === "check" && !checkFinished(day, target.stepId)) {
+      return { status: 200, body: { ok: false, redo: true, say: "That one isn't finished yet. We'll do each part." } };
+    }
     if (status === "done" && preview.dose && target?.kind === "game") {
       const rule = evidenceFor(kidId, target.gameId);
       const played = rule ? await playedSince(store, kidId, rule.game, day.opened?.[cardId], now) : 0;
@@ -945,12 +1184,23 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (status === "done" && preview.dose && target?.askLesson && state.readingDay !== date) {
       return { status: 200, body: { ok: false, notYet: true, say: "Finish the next Reading.com lesson, then tell me its number." } };
     }
+    if (status === "done" && preview.dose && target?.kind === "write" && state.writing?.day !== date) {
+      return { status: 200, body: { ok: false, notYet: true, say: "Write your letters, then look at them with me." } };
+    }
     if (status === "eased" && !(target?.stepId && day.stuck?.[target.stepId])) {
       return { status: 400, body: { error: "Let's keep trying that one." } };
     }
     for (const key of ["done", "skipped", "quit", "eased"]) day[key] = (day[key] || []).filter((id) => id !== cardId);
     day[status].push(cardId);
     state.days = { ...(state.days || {}), [date]: day };
+    if (status === "done" && target?.kind === "check") {
+      const stepDef = stepById(kidId, target.stepId);
+      const closed = stepDef ? closeCheck(state, date, stepDef) : null;
+      if (closed?.result?.passed) {
+        await cheer(store, env, fetchImpl, state, date, { kind: "win", text: coldCheer(kid.name, stepDef, closed.rightItems) });
+      }
+    }
+    if (status === "done") spotFinished(state, plan, kidId, target?.stepId, date);
     const today = buildDay({ kidId, date, state, plan });
     const complete = Boolean(today.dose?.complete);
     let said = status === "skipped" ? "We'll leave that one. Nothing wrong with switching." : "Saved.";
@@ -994,6 +1244,32 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     state.readingCheered = [...cheered];
     await saveState(store, kidId, state);
     return { status: 200, body: { ok: true, say, lesson } };
+  }
+
+  if (action === "write") {
+    const target = buildDay({ kidId, date, state, plan })?.cards?.find((entry) => entry.kind === "write");
+    if (!target) return { status: 400, body: { error: "There's no writing on today's board." } };
+    if (typeof body.fits !== "boolean") return { status: 400, body: { error: "Joyce couldn't save that." } };
+    const before = state.writing?.size || 0;
+    const { writing, moved, repeat } = recordWrite(state.writing, { date, letter: target.letter, fits: body.fits });
+    if (repeat) return { status: 200, body: { ok: true, say: "Saved." } };
+    state.writing = writing;
+    if (moved === "narrower") {
+      await cheer(store, env, fetchImpl, state, date, {
+        kind: "win",
+        text: `${kid.name}'s letters fit the ${paperLabel(before)} paper three days in a row, so next time ${kid.name} moves to ${paperLabel(writing.size)} paper. Take a look at today's page.`
+      });
+    }
+    try {
+      await writeEvent(store, { kidId, name: kid.name, skill: "Handwriting", item: [target.letter, target.word].filter(Boolean).join(" "), correct: null });
+    } catch (err) {
+      console.error("Saving a writing card failed:", err);
+    }
+    await saveState(store, kidId, state);
+    let say = body.fits ? "Nice. They fit." : "That's okay. Next time, try to make them a little smaller.";
+    if (moved === "narrower") say = `Your letters fit three days in a row. Next time you get ${paperLabel(writing.size)} paper.`;
+    if (moved === "wider") say = `Next time we'll use the ${paperLabel(writing.size)} paper again. Bigger boxes are fine.`;
+    return { status: 200, body: { ok: true, say, moved } };
   }
 
   if (action === "live-used") {
@@ -1146,6 +1422,18 @@ export function conferencePackage({ roster, plan = emptyPlan(), date = "" }) {
     if (mastered.length) bits.push(`finished ${mastered.slice(-3).map((item) => item.title).join(", ")}`);
     if (open.length) bits.push(`working on ${open.map((item) => item.title).join(" and ")}`);
     if (id === "max" && state?.readingLesson) bits.push(`Reading.com lesson ${state.readingLesson}`);
+    const mapped = skillMap({
+      stepDefs: allSteps(id),
+      records: state?.steps || {},
+      essential: plan.essentialOff || id === "ethan" ? { spots: [] } : (state?.essential || {})
+    });
+    const view = reportView(mapped);
+    bits.push(`Confirmed: ${view.confirmed.join(", ") || "none"}. Checking next week: ${view.shown.join(", ") || "none"}. Slipping: ${view.slipping.join(", ") || "none"}`);
+    if (id !== "ethan" && !plan.essentialOff) {
+      if (view.essentialStrengths.length) bits.push(`Spotted: ${view.essentialStrengths.join("; ")}`);
+      const notice = noticeLine(name, mapped.notice);
+      if (notice) bits.push(notice);
+    }
     const used = bits.length || Object.keys(state?.days || {}).length;
     lines.push(used ? `${name}: ${bits.join("; ")}.` : `${name}: day board is ready, not used yet.`);
 
@@ -1181,6 +1469,19 @@ export function conferencePackage({ roster, plan = emptyPlan(), date = "" }) {
           kind: "notice",
           stepId: item.id,
           prompt: `${name} finished ${prev.strandName} and is ready for ${item.title}. OK to keep going?`
+        });
+      }
+    }
+    for (const item of allSteps(id)) {
+      const rec = state?.steps?.[item.id];
+      const holdId = `hold-check-${item.id}`;
+      if ((rec?.checkMisses || 0) >= 2 && !plan.holds?.[item.id] && !plan.asked?.[holdId]) {
+        decisions.push({
+          id: holdId,
+          kid: id,
+          kind: "hold",
+          stepId: item.id,
+          prompt: `${name} missed the cold check for ${item.title} twice. Keep this step next week instead of moving on.`
         });
       }
     }
@@ -1266,4 +1567,129 @@ export async function postConference({ store, env = process.env, fetchImpl = fet
   }
   await post({ text: `Parent-teacher conference\n${pack.summary}`, blocks }, { env, fetchImpl });
   return pack;
+}
+
+export function academicCatalogText() {
+  const lines = ["Academic steps. Use an id only when the note clearly shows that skill for that child:"];
+  for (const [kidId, chains] of Object.entries(CHAINS)) {
+    if (kidId === "ethan") continue;
+    for (const chain of chains) {
+      for (const step of chain.steps) {
+        if (step.placed) continue;
+        lines.push(`${step.id} (${kidId}, ${step.title})`);
+      }
+    }
+  }
+  return lines.join("\n");
+}
+
+export function allowedStepIds(kidIds) {
+  const ids = new Set(ESSENTIAL.flatMap((entry) => entry.steps.map((step) => step.id)));
+  for (const kidId of kidIds) for (const step of allSteps(kidId)) ids.add(step.id);
+  return ids;
+}
+
+export function labelStep(id) {
+  const essential = describeEssential(id);
+  if (essential) return essential;
+  for (const kidId of Object.keys(CLASS_KIDS)) {
+    const found = stepById(kidId, id);
+    if (found) return found.title;
+  }
+  return "";
+}
+
+export async function setEssentialOff(store, off) {
+  const plan = await loadPlan(store);
+  plan.essentialOff = Boolean(off);
+  await savePlan(store, plan);
+  return plan.essentialOff;
+}
+
+export async function skillMaps(store) {
+  const plan = await loadPlan(store);
+  const out = {};
+  for (const id of Object.keys(CLASS_KIDS)) {
+    const state = await loadState(store, id);
+    const essential = plan.essentialOff || id === "ethan" ? { spots: [] } : (state.essential || { spots: [] });
+    out[id] = reportView(skillMap({ stepDefs: allSteps(id), records: state.steps || {}, essential }));
+  }
+  return out;
+}
+
+export async function noteSignal({ store, env = process.env, kidId, source, day }) {
+  if (!CLASS_KIDS[kidId] || kidId === "ethan") return { spotted: false };
+  const plan = await loadPlan(store);
+  if (plan.essentialOff) return { spotted: false };
+  const stepId = source === "help" ? HELP_STEP : PERSIST_STEP;
+  const state = await loadState(store, kidId);
+  const when = day || localDate(env);
+  const spots = addSpot(state.essential?.spots, { stepId, day: when, source: source === "help" ? "help" : "persist" });
+  if (spots.length === (state.essential?.spots || []).length) return { spotted: false, stepId };
+  state.essential = { spots };
+  await saveState(store, kidId, state);
+  return { spotted: true, stepId };
+}
+
+export async function noteHelpFinished({ store, env, kidId }) {
+  return noteSignal({ store, env, kidId, source: "help" });
+}
+
+export async function recordNoteSteps({ store, kids, steps, text, obsId, day }) {
+  const plan = await loadPlan(store);
+  const counted = [];
+  for (const kidId of kids) {
+    if (!CLASS_KIDS[kidId]) continue;
+    const state = await loadState(store, kidId);
+    let changed = false;
+    for (const stepId of steps) {
+      if (isEssentialId(stepId)) {
+        if (plan.essentialOff || kidId === "ethan") continue;
+        const spots = addSpot(state.essential?.spots, { stepId, day, source: "note", obsId, text });
+        if (spots.length === (state.essential?.spots || []).length) continue;
+        state.essential = { spots };
+        counted.push(stepId);
+        changed = true;
+      } else if (stepById(kidId, stepId)) {
+        const rec = { graded: 0, correct: 0, recent: [], ...(state.steps?.[stepId] || {}) };
+        rec.sightings = [...(rec.sightings || []), { day, text, obsId }].slice(-8);
+        state.steps = { ...(state.steps || {}), [stepId]: rec };
+        counted.push(stepId);
+        changed = true;
+      }
+    }
+    if (changed) await saveState(store, kidId, state);
+  }
+  return [...new Set(counted)];
+}
+
+export async function dropLastNoteSpots({ store, kids }) {
+  const ids = (kids.length ? kids : Object.keys(CLASS_KIDS)).filter((id) => CLASS_KIDS[id] && id !== "ethan");
+  let newest = null;
+  const states = {};
+  for (const id of ids) {
+    states[id] = await loadState(store, id);
+    for (const spot of states[id].essential?.spots || []) {
+      if (spot.source !== "note") continue;
+      if (!newest || (spot.at || 0) >= (newest.at || 0)) newest = spot;
+    }
+  }
+  if (!newest?.obsId) return [];
+  const removed = [];
+  for (const id of ids) {
+    const state = states[id];
+    const before = state.essential?.spots || [];
+    const spots = before.filter((spot) => spot.obsId !== newest.obsId);
+    let changed = spots.length !== before.length;
+    if (changed) state.essential = { spots };
+    for (const rec of Object.values(state.steps || {})) {
+      if (!rec?.sightings?.some((spot) => spot.obsId === newest.obsId)) continue;
+      rec.sightings = rec.sightings.filter((spot) => spot.obsId !== newest.obsId);
+      changed = true;
+    }
+    if (!changed) continue;
+    await saveState(store, id, state);
+    removed.push(id);
+  }
+  return removed;
 }

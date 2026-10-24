@@ -9,7 +9,7 @@ export const KIDS = [
     id: "max",
     name: "Max",
     age: 5,
-    where: "Reading.com lesson 94 of 120, finished from Today with Joyce; AdaptedMind on smart practice. Joyce teaches regrouping. Coins stay in Coin Record Run. Known gaps: coins, regrouping. Handwriting is well behind reading.",
+    where: "Reading.com lesson 94 of 120, finished from Today with Joyce; AdaptedMind on smart practice. Joyce teaches regrouping. Coins stay in Coin Record Run. Known gaps: coins, regrouping. Handwriting is well behind reading: tracing is fine, writing on his own is hesitant, and letters run much bigger than the lines. Today with Joyce has a daily writing card (one lowercase letter by formation family, on paper that narrows from big boxes to lines), and missions have a Writing category.",
     // The tablet helper skips single-letter sounds for a reader at this level.
     knowsLetterSounds: true,
     guides: [

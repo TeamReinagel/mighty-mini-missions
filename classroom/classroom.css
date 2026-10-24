@@ -322,6 +322,58 @@ a.card {
   font-size: 3rem;
 }
 
+.write-box {
+  display: block;
+  width: min(340px, 72vw);
+  margin: 0 auto 8px;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 8px 0 var(--line);
+}
+
+.write-box .guide {
+  stroke: #9fb4d8;
+  stroke-width: 1.2;
+}
+
+.write-box .guide.mid {
+  stroke-dasharray: 4 4;
+}
+
+.write-box .stroke {
+  fill: none;
+  stroke: var(--kid);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.write-box .start {
+  fill: var(--good);
+}
+
+.write-box .start.old {
+  opacity: 0.25;
+}
+
+.write-word {
+  margin: 8px auto 16px;
+  padding: 10px 24px;
+  width: fit-content;
+  border-radius: 22px;
+  background: white;
+  box-shadow: 0 8px 0 var(--line);
+  font-size: clamp(3.5rem, 14vw, 7rem);
+  letter-spacing: 0.06em;
+}
+
+.paper-link {
+  display: inline-block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
 @media (max-width: 640px) {
   .kids { grid-template-columns: 1fr; }
 }

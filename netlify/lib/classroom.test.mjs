@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CVC, itemsFor, wordParts } from "./classroom-content.mjs";
 import {
-  applyAttempt, buildDay, conferencePackage, decidePlan, handleClassroom, isMastered, memoryStore, rhythmFor, stepById, weekdayIndex
+  applyAttempt, buildDay, conferencePackage, decidePlan, dropLastNoteSpots, handleClassroom, isMastered,
+  memoryStore, noteSignal, recordNoteSteps, rhythmFor, setEssentialOff, stepById, weekdayIndex
 } from "./classroom.mjs";
 
 const MONDAY = "2026-10-19";
@@ -71,9 +72,11 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   }
 
   const max = buildDay({ kidId: "max", date: FRIDAY });
-  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "math:app", "math:game", "bonus:game", "bonus:move"]);
+  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "math:app", "math:game", "write:write", "bonus:game", "bonus:move"]);
   assert.equal(max.cards[0].askLesson, true);
-  assert.match(max.greeting, /Trainer day\. Reading and math, then one bonus/);
+  assert.deepEqual(max.dose.parts.map((part) => part.title), ["Reading", "Math", "Writing", "Bonus"]);
+  assert.match(max.greeting, /Trainer day\. Reading, math and writing, then one bonus/);
+  assert.equal(buildDay({ kidId: "max", date: "2026-10-24" }).cards.some((card) => card.kind === "write"), false);
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
   assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Letters", "Counting", "Bonus"]);
@@ -156,6 +159,40 @@ test("Max's reading counts only when he reports a new lesson today", async () =>
   assert.equal(again.body.ok, true);
   const done = await finishCard(store, "max", reading.id, now);
   assert.equal(done.body.ok, true);
+});
+
+test("Max's writing card counts after his own check, and the paper narrows after three fits", async () => {
+  const store = memoryStore();
+  const days = ["2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22"];
+  const seen = [];
+  for (const [i, date] of days.entries()) {
+    const now = at(`${date}T15:00:00Z`);
+    const today = await handleClassroom({ store, env: {}, body: { action: "today", kid: "max" }, now });
+    const write = today.body.cards.find((card) => card.kind === "write");
+    seen.push(`${write.letter}:${write.paper}`);
+    assert.ok(write.strokes.length >= 1);
+    if (i === 0) {
+      const early = await finishCard(store, "max", write.id, now);
+      assert.equal(early.body.notYet, true);
+    }
+    const checked = await handleClassroom({ store, env: {}, body: { action: "write", kid: "max", fits: true }, now });
+    assert.equal(checked.body.ok, true);
+    assert.equal(checked.body.moved, i === 2 ? "narrower" : null);
+    const again = await handleClassroom({ store, env: {}, body: { action: "write", kid: "max", fits: true }, now });
+    assert.equal(again.body.moved, undefined);
+    const done = await finishCard(store, "max", write.id, now);
+    assert.equal(done.body.ok, true);
+    const after = await handleClassroom({ store, env: {}, body: { action: "today", kid: "max" }, now });
+    assert.equal(after.body.cards.find((card) => card.kind === "write").letter, write.letter);
+    assert.equal(after.body.dose.parts.find((part) => part.id === "write").done, true);
+  }
+  assert.deepEqual(seen, ["c:big", "o:big", "a:big", "d:small"]);
+  const saved = await store.get("classroom/kid/max", { type: "json" });
+  assert.equal(saved.writing.count, 4);
+  const logged = [];
+  for (const { key } of (await store.list({ prefix: "events/" })).blobs) logged.push(...(await store.get(key, { type: "json" })));
+  assert.ok(logged.every((event) => event.skill === "Handwriting" && event.correct === null));
+  assert.deepEqual(logged.map((event) => event.item).sort(), ["a", "c", "d cod", "o"]);
 });
 
 test("a lesson can be eased only after Joyce has called for help", async () => {
@@ -507,3 +544,215 @@ test("an approved conference decision is remembered", async () => {
   assert.equal(plan.celebrated.reading120, "yes");
   assert.equal(plan.asked["read-120"], "approved");
 });
+
+test("a cold check uses lesson items and confirms after two of three", async () => {
+  const store = memoryStore();
+  const posted = [];
+  const env = { JOYCE_CHEER_CHANNEL: "C1", SLACK_BOT_TOKEN: "xoxb-test" };
+  const fetchImpl = async (_url, init) => {
+    posted.push(JSON.parse(init.body).text);
+    return { ok: true, json: async () => ({ ok: true }) };
+  };
+  await store.setJSON("classroom/kid/gabi", {
+    steps: {
+      "gabi-cvc-a": {
+        mastered: true,
+        graded: 6,
+        correct: 6,
+        recent: [true, true, true, true, true, true],
+        shownAt: "2026-10-16",
+        shownVia: "game",
+        nextCheck: MONDAY
+      }
+    }
+  });
+  const now = at("2026-10-19T15:00:00Z");
+  const first = await handleClassroom({ store, env, fetchImpl, body: { action: "today", kid: "gabi" }, now });
+  const check = first.body.cards.find((card) => card.kind === "check");
+  assert.equal(check.stepId, "gabi-cvc-a");
+  assert.equal(check.say, "Show me what you know. No hints this time.");
+  assert.equal(check.items.length, 3);
+  assert.equal(check.items[0].type, "build");
+  assert.equal(check.part, "ela");
+
+  let t = now.getTime();
+  for (const [i, item] of check.items.entries()) {
+    t += 2000;
+    const out = await handleClassroom({
+      store,
+      env,
+      fetchImpl,
+      body: {
+        action: "answer",
+        kid: "gabi",
+        stepId: check.stepId,
+        item: item.item,
+        picked: i === 0 ? "nope" : item.answer,
+        check: true
+      },
+      now: new Date(t)
+    });
+    assert.equal(out.body.correct, i !== 0);
+    assert.equal(out.body.moveOn, true);
+  }
+  const done = await handleClassroom({
+    store,
+    env,
+    fetchImpl,
+    body: { action: "card", kid: "gabi", cardId: check.id, status: "done" },
+    now: new Date(t + 2000)
+  });
+  assert.equal(done.body.ok, true);
+  const saved = await store.get("classroom/kid/gabi", { type: "json" });
+  assert.equal(saved.steps["gabi-cvc-a"].confirmedAt, MONDAY);
+  assert.equal(saved.steps["gabi-cvc-a"].nextCheck, "2026-10-26");
+  assert.match(posted.join("\n"), /cold today/);
+  assert.equal(saved.essential.spots.some((spot) => spot.stepId === "adapting-3" && spot.source === "persist"), true);
+});
+
+test("help on a check leaves that item out", async () => {
+  const store = memoryStore();
+  await store.setJSON("classroom/kid/gabi", {
+    steps: {
+      "gabi-cvc-a": {
+        mastered: true,
+        graded: 6,
+        correct: 6,
+        recent: [true, true, true, true, true, true],
+        shownAt: "2026-10-16",
+        shownVia: "lesson",
+        nextCheck: MONDAY
+      }
+    }
+  });
+  const now = at("2026-10-19T15:00:00Z");
+  const first = await handleClassroom({ store, body: { action: "today", kid: "gabi" }, now });
+  const check = first.body.cards.find((card) => card.kind === "check");
+  const left = await handleClassroom({
+    store,
+    body: { action: "help", kid: "gabi", stepId: check.stepId, item: check.items[0].item, tries: 1, check: true },
+    now
+  });
+  assert.equal(left.body.say, "We'll leave that one.");
+  assert.equal(left.body.moveOn, true);
+  let t = now.getTime();
+  for (const item of check.items.slice(1)) {
+    t += 2000;
+    const out = await handleClassroom({
+      store,
+      body: { action: "answer", kid: "gabi", stepId: check.stepId, item: item.item, picked: item.answer, check: true },
+      now: new Date(t)
+    });
+    assert.equal(out.body.correct, true);
+  }
+  const saved = await store.get("classroom/kid/gabi", { type: "json" });
+  assert.equal(saved.steps["gabi-cvc-a"].confirmedAt, MONDAY);
+  assert.equal(saved.days[MONDAY].checkAnswers["gabi-cvc-a"][check.items[0].item].void, true);
+});
+
+test("a finished miss and a request for help are spotted moments", async () => {
+  const store = memoryStore();
+  const env = {};
+  const now = at("2026-10-19T15:00:00Z");
+  await gabiReadyToAdd(store);
+  const first = await handleClassroom({ store, env, body: { action: "today", kid: "gabi" }, now });
+  const lesson = first.body.cards.find((card) => card.stepId === "gabi-add");
+  const wrong = lesson.items[0].choices.find((choice) => choice.id !== lesson.items[0].answer);
+  const missed = await handleClassroom({
+    store,
+    env,
+    body: { action: "answer", kid: "gabi", stepId: lesson.stepId, item: lesson.items[0].item, picked: wrong.id },
+    now
+  });
+  assert.equal(missed.body.correct, false);
+  await handleClassroom({
+    store,
+    env,
+    body: { action: "help", kid: "gabi", stepId: lesson.stepId, item: lesson.items[0].item, tries: 1 },
+    now: at("2026-10-19T15:00:00Z", 2)
+  });
+  let t = now.getTime();
+  for (const item of lesson.items) {
+    t += 2000;
+    await handleClassroom({
+      store,
+      env,
+      body: { action: "answer", kid: "gabi", stepId: lesson.stepId, item: item.item, picked: item.answer },
+      now: new Date(t)
+    });
+  }
+  const done = await handleClassroom({
+    store,
+    env,
+    body: { action: "card", kid: "gabi", cardId: lesson.id, status: "done" },
+    now: new Date(t + 2000)
+  });
+  assert.equal(done.body.ok, true);
+  const saved = await store.get("classroom/kid/gabi", { type: "json" });
+  const sources = saved.essential.spots.map((spot) => `${spot.stepId}:${spot.source}`);
+  assert.ok(sources.includes("adapting-3:persist"));
+  assert.ok(sources.includes("problem-solving-2:help"));
+});
+
+test("Ethan and a switched-off map do not collect essential spots", async () => {
+  const store = memoryStore();
+  assert.equal((await noteSignal({ store, kidId: "ethan", source: "persist", day: MONDAY })).spotted, false);
+  assert.equal(await store.get("classroom/kid/ethan", { type: "json" }), null);
+  await setEssentialOff(store, true);
+  assert.equal((await noteSignal({ store, kidId: "gabi", source: "help", day: MONDAY })).spotted, false);
+  assert.equal(await store.get("classroom/kid/gabi", { type: "json" }), null);
+});
+
+test("a parent note can spot a skill, and not-that removes it", async () => {
+  const store = memoryStore();
+  const counted = await recordNoteSteps({
+    store,
+    kids: ["max", "ethan"],
+    steps: ["teamwork-1", "max-regroup"],
+    text: "Max split the laundry and showed a trade of ten blocks.",
+    obsId: "note-1",
+    day: MONDAY
+  });
+  assert.deepEqual(counted.sort(), ["max-regroup", "teamwork-1"]);
+  const saved = await store.get("classroom/kid/max", { type: "json" });
+  assert.equal(saved.essential.spots[0].stepId, "teamwork-1");
+  assert.equal(saved.steps["max-regroup"].sightings.length, 1);
+  assert.equal(await store.get("classroom/kid/ethan", { type: "json" }), null);
+  const removed = await dropLastNoteSpots({ store, kids: ["max"] });
+  assert.deepEqual(removed, ["max"]);
+  const after = await store.get("classroom/kid/max", { type: "json" });
+  assert.equal(after.essential.spots.length, 0);
+  assert.equal(after.steps["max-regroup"].sightings.length, 0);
+});
+
+test("the conference names the map and asks after two missed checks", () => {
+  const pack = conferencePackage({
+    roster: [{
+      id: "gabi",
+      name: "Gabi",
+      state: {
+        steps: {
+          "gabi-cvc-a": { mastered: true, shownAt: "2026-10-16", confirmedAt: MONDAY, checkMisses: 0 },
+          "gabi-cvc-e": { slipping: true, checkMisses: 2, graded: 8, correct: 3, recent: [] }
+        },
+        essential: { spots: [{ stepId: "teamwork-1", day: MONDAY, source: "note", at: 1 }] }
+      }
+    }],
+    plan: {}
+  });
+  assert.match(pack.summary, /Confirmed: Short a words/);
+  assert.match(pack.summary, /Slipping: Short e words/);
+  assert.match(pack.summary, /Teamwork: Working together/);
+  assert.match(pack.summary, /Next to notice for Gabi: Teamwork step 1/);
+  assert.ok(pack.decisions.some((item) => item.id === "hold-check-gabi-cvc-e"));
+});
+
+test("a check can avoid words the child just practiced", () => {
+  const step = stepById("gabi", "gabi-cvc-a");
+  const first = itemsFor({ ...step, items: 3 }, "check-seed");
+  const next = itemsFor({ ...step, items: 3 }, "check-seed", [], first.map((item) => item.item));
+  assert.equal(next.length, 3);
+  for (const item of next) assert.equal(first.some((earlier) => earlier.item === item.item), false);
+  for (const item of next) assert.ok(CVC.a.includes(item.word));
+});
+

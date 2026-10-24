@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Writing paper</title>
+  <style>
+    @page { size: letter; margin: 0.5in; }
+    body {
+      margin: 0;
+      color: #241c33;
+      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 16px;
+    }
+    .controls a, .controls button {
+      padding: 10px 16px;
+      border: 2px solid #eadfce;
+      border-radius: 14px;
+      background: white;
+      color: inherit;
+      font: inherit;
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .controls .on { border-color: #4fa3ff; }
+    .controls p { width: 100%; margin: 0; color: #65597a; }
+    .sheet { width: 7.5in; margin: 0 auto; }
+    .row {
+      position: relative;
+      height: var(--h);
+      margin-bottom: calc(var(--h) * 0.55);
+      border-top: 2px solid #6f86b8;
+      border-bottom: 2px solid #6f86b8;
+    }
+    .row::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      border-top: 2px dashed #9fb4d8;
+    }
+    .boxes .row {
+      border-right: 2px solid #6f86b8;
+      background: repeating-linear-gradient(to right, #6f86b8 0 2px, transparent 2px var(--w));
+    }
+    @media print {
+      .controls { display: none; }
+      .row { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <a href="?size=big" data-size="big">Big boxes</a>
+    <a href="?size=small" data-size="small">Small boxes</a>
+    <a href="?size=lines" data-size="lines">Lines</a>
+    <button type="button" id="print">Print</button>
+    <p>Joyce says which paper to use. Each box holds one letter. Tall letters touch the top line, short ones stop at the dashed line.</p>
+  </div>
+  <div class="sheet" id="sheet"></div>
+  <script>
+    // Each size fills a letter page: the box width divides the 7.5in line evenly.
+    const SIZES = {
+      big: { height: 1.5, boxes: 6, rows: 4 },
+      small: { height: 1, boxes: 8, rows: 6 },
+      lines: { height: 0.625, boxes: 0, rows: 10 }
+    };
+    const id = new URLSearchParams(location.search).get("size");
+    const size = SIZES[id] ? id : "big";
+    const spec = SIZES[size];
+    const sheet = document.getElementById("sheet");
+    sheet.classList.toggle("boxes", spec.boxes > 0);
+    sheet.style.setProperty("--h", `${spec.height}in`);
+    if (spec.boxes) sheet.style.setProperty("--w", `${7.5 / spec.boxes}in`);
+    for (let i = 0; i < spec.rows; i += 1) sheet.append(Object.assign(document.createElement("div"), { className: "row" }));
+    document.querySelector(`[data-size="${size}"]`).classList.add("on");
+    document.getElementById("print").addEventListener("click", () => window.print());
+  </script>
+</body>
+</html>

@@ -128,17 +128,32 @@ Tutoring and picture-interpretation fixes on the website take effect on the next
 Joyce leads the Learning Land block. Each child opens **Today with Joyce** at the top of their Mighty Mini Missions home screen. Joyce greets them and shows the day's cards: a lesson she teaches, a game, a short movement mission, and, for Max, Reading.com and AdaptedMind.
 
 - **Max** keeps finishing Reading.com. After the lesson, Joyce asks which number he finished. Lesson 120 is a celebration, and Friday's conference asks you about his next reading lane before anything replaces it. AdaptedMind stays on smart practice. Joyce teaches regrouping, and Coin Record Run covers coins.
+- **Max's writing** is a fourth stop every school day, after math. Joyce draws one lowercase letter stroke by stroke, with a green dot where the pencil starts, and says each stroke. Max writes it three times on paper, then one short word made only of letters he has already done. Letters come in families that start the same way (c o a d g q, then l t i j, r n m h b p, u y v w, e s f k x z), one new letter a day. Then he looks at his own page: **Yes, they fit** or **Not yet**. Three fits in a row moves him from big boxes to small boxes to lines, and the cheer channel says so, so you can look at that page. Two "not yet" in a row moves him back one size. Print the paper from the card's **Grown-up: print writing paper** link or `/writing-paper/?size=big` (`small`, `lines`). Each card logs one Handwriting practice (no right or wrong) for Friday's report. The letters are in `netlify/lib/handwriting.mjs`.
 - **Gabi's** daily reading and math are Joyce's. She is through Reading.com lesson 34, so letter sounds stay known and her reading card starts with a short b/d/p/q reminder, then short-vowel blending. After that: sh/ch/th, blends, sight words, and short stories. Math is counting, numbers, more and fewer, patterns, and adding within 5 with pictures. Otter Slide is her game. Reading.com and AdaptedMind stay installed.
 - **Connor's** daily work is letter names and sounds, then counting, more and fewer, and patterns. His other apps stay available.
 - **Ethan** gets one short colors or counting card and Train Set.
 - **Ask Joyce** is a live conversation, capped at 5 minutes, with a daily limit (default 10 minutes, `JOYCE_LIVE_MINUTES_PER_DAY`). Lessons themselves stay turn-based so a noisy room and the bill stay manageable. If her recorded voice isn't available, the tablet speaks instead.
 
-A school day is a **dose**, not a length of time: reading (letters for Connor), math (counting for Connor), and one bonus the child picks, either a game or a short move. Ethan gets one little job and a bonus. The board shows those stops and a **Go** button that opens the next one, so a child doesn't have to choose. A child who works fast and accurately finishes early. A child who drifts simply has less free time.
+A school day is a **dose**, not a length of time: reading (letters for Connor), math (counting for Connor), writing for Max, and one bonus the child picks, either a game or a short move. Ethan gets one little job and a bonus. The board shows those stops and a **Go** button that opens the next one, so a child doesn't have to choose. A child who works fast and accurately finishes early. A child who drifts simply has less free time.
 
 A checkmark means the work happened:
 - A lesson counts once every question has a real answer.
 - A game counts once enough answers from that game reach the progress log after the child tapped **Play**: 3 to 10 depending on the game, half that for Ethan. Joyce checks once more a few seconds later, since a game syncs after the child leaves it.
 - Max's Reading.com counts once he reports a lesson number higher than the last one. AdaptedMind and move cards are on the honor system.
+
+### Skill map
+
+Each child has one skill map. Academic steps are the ones on their Today with Joyce path. Essential skills are the first six steps of each skill in the [Skills Builder Universal Framework](https://www.skillsbuilder.org/global/universal-framework): Listening, Speaking, Problem Solving, Creativity, Adapting, Planning, Leadership, and Teamwork.
+
+A skill is not confirmed until it shows up twice.
+
+- **Shown** means the usual mastery rule is met. The path moves on the same day.
+- **Confirmed** means a later school day included a one-minute **Show me** check: 3 questions, no teaching first, and at least 2 right. Only the first answer counts. Asking for help leaves that question out. There is at most one check a day. The same check comes back 7 days later, then 21 days later. A short check puts that step back on the board as another look.
+- **Essential skills** are confirmed from spotted moments, not from quizzes. Two notes from you, on different days, are enough. Joyce names the step in her reply ("I'm counting this as Teamwork: working together"). Reply **not that** and she takes it off. A child who misses a question and still finishes, or who asks for help and then finishes, can also leave a spot, but two of those same automatic spots do not confirm a step by themselves.
+- Children never see essential-skill steps or scores, and nothing is locked behind one. Ethan is not part of essential skills. Say **stop counting essential skills** and Joyce stops.
+- New learning games practice one Getting started step (steps 1–4) inside the play. The educator toolkit is `netlify/skills/UF2.0-Toolkit-Educators.pdf`. Games already built stay as they are until that game is changed.
+
+Friday's conference reads the map: confirmed, still to check, slipping, what was spotted, and one off-screen invitation. A cold check missed twice becomes an Approve / Not now decision. The Friday report mentions essential skills only as spotted strengths.
 
 Each lesson starts with Joyce teaching the skill, then the practice. She speaks one line at a time, speaks every question, and **Hear it again** repeats that line. Her picture shows when she is talking. **I need help** replays that teaching, a second tap offers a wiggle break, and a third sends you a note. After that third tap, **Stop this one for today** appears, so a hard skill ends the part instead of stretching the day. If a lesson sits untouched for 2 minutes, Joyce asks once whether they want to keep going. **Back** leaves the card unfinished. Joyce never says you are making them do it.
 
@@ -259,6 +274,7 @@ Use one of:
 - `nature`
 - `social`
 - `responsibility`
+- `writing` (big-to-small letter practice and writing for a real reason: signs for builds, a Pokémon team list, notes to family)
 
 ### Difficulty
 Use one of:

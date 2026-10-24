@@ -1,4 +1,5 @@
 import { chatJSON } from "./ai.mjs";
+import { skillMaps } from "./classroom.mjs";
 import { GAME_NAMES, curriculumText, nextSteps } from "./curriculum.mjs";
 import { KIDS, allMilestones, guideFor, kidById } from "./kids.mjs";
 
@@ -199,6 +200,8 @@ Voice and values:
 Rules:
 - Only state things supported by the data. Never invent numbers, words, or skills.
 - "Mastered" means right on the first try the last 3 times. "Practice only" skills have no right/wrong.
+- "Confirmed" on the skill map means the skill was shown in practice and then passed a later cold check. "Shown" means practice looks solid and the cold check is still ahead. "Slipping" means a cold check came back short, so that skill is in review.
+- Essential skills (Listening, Speaking, Problem Solving, Creativity, Adapting, Planning, Leadership, Teamwork) appear only as spotted strengths from skillMap.essentialStrengths. Never describe an essential skill as missing, weak, or something to work on. If that list is empty, say nothing about essential skills.
 - "Try next": choose 1-2 from the child's milestone guide (next unmet goals from the family's monthly milestones spreadsheet, earliest first), fitting what the data shows they're ready for and the current month. Mention a game step from the curriculum order when a game supports it. If the child's guide is empty, suggest gently from the data.
 - Milestones met: list a milestone id only when this week's game data or an observation clearly shows it (for example, mastered most letters, or "Max counted coins on his own" for a coin-counting goal). Use ids only from that child's guide. When unsure, leave it out.
 - Report text uses Slack mrkdwn: *bold* for headings, "${BULLET}" bullets, no markdown headers (#), no tables.
@@ -252,6 +255,8 @@ function writePlain(summaries) {
     strong.forEach((k) => lines.push(`${BULLET} ${k.skill} (${k.game}): ${k.accuracy} right on the first try`));
     if (lines.length === 2) lines.push(`${BULLET} Practiced ${w.skills.slice(0, 3).map((k) => k.skill).join(", ")}`);
     if (noticed.length) lines.push("*Noticed at home:*", ...noticed);
+    if (s.skillMap?.confirmed?.length) lines.push(`${BULLET} Confirmed: ${s.skillMap.confirmed.join(", ")}`);
+    if (s.skillMap?.essentialStrengths?.length) lines.push(`${BULLET} Spotted strengths: ${s.skillMap.essentialStrengths.join("; ")}`);
     lines.push("*Working on:*");
     const shown = new Set();
     w.workingOn.slice(0, 3).forEach((k) => {
@@ -438,6 +443,8 @@ export async function runWeeklyReport({ store, env = process.env, now = new Date
   const since = state.lastReportAt ? new Date(state.lastReportAt) : new Date(now.getTime() - 7 * DAY_MS);
   const tz = env.REPORT_TIMEZONE || "America/Chicago";
   const { events, observations, kids, summaries } = await collectWeek({ store, state, since, now, tz });
+  const maps = await skillMaps(store);
+  for (const summary of summaries) summary.skillMap = maps[summary.kidId] || null;
 
   const header = `:books: *Joyce's weekly learning report* \u00b7 ${weekLabel(since, now, tz)}`;
   const footer = `_Tell me what you notice during the week: post here or message me with a child's name, like "Max counted coins on his own." Ask me "what should we do today?" any morning, and correct me anytime; I'll ask before I remember anything._`;

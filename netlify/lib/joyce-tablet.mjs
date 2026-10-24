@@ -5,7 +5,7 @@
 
 import { timingSafeEqual } from "node:crypto";
 import { chatVisionJSON } from "./ai.mjs";
-import { notifyStuck } from "./classroom.mjs";
+import { notifyStuck, noteHelpFinished } from "./classroom.mjs";
 import { KIDS, kidById } from "./kids.mjs";
 
 const MAX_IMAGE = 1_800_000;
@@ -852,6 +852,10 @@ async function recordOutcome({ store, env, fetchImpl, sessionId, outcome }) {
     } catch (err) {
       console.error("Cheer for a stuck moment failed:", err);
     }
+  }
+  if (outcome === "got-it") {
+    try { await noteHelpFinished({ store, env, kidId: pointer.kid }); }
+    catch (err) { console.error("Saving a help spot failed:", err); }
   }
   const say = outcome === "got-it" ? `${kidById(pointer.kid).name}, you did it.` : "";
   return { status: 200, body: { ok: true, say, sessionId, done: true, saved: true } };

@@ -3,7 +3,8 @@ import { KIDS, findKidsIn } from "./kids.mjs";
 import {
   BUILTIN_SKILLS, DATA_SOURCES, SCHEDULES, cleanSkill, lessonsText, loadLog, loadMemory, logTurn, newId, saveMemory
 } from "./joyce-memory.mjs";
-import { decidePlan, postConference } from "./classroom.mjs";
+import { decidePlan, postConference, academicCatalogText, allowedStepIds, dropLastNoteSpots, labelStep, recordNoteSteps, setEssentialOff } from "./classroom.mjs";
+import { catalogText, cleanStepIds } from "./skills.mjs";
 import { buildKidContext, runWeeklyReport } from "./report.mjs";
 import { post, respond, slackGet } from "./slack.mjs";
 
@@ -24,7 +25,7 @@ When the family asks about a child's learning, talk the way a teacher talks with
 const ABOUT_JOYCE = `How you work (answer questions about yourself from this; don't invent beyond it):
 - What you do: every Friday at 3pm Central you post a learning report per child (progress, what's tricky, what to try next), then a short parent-teacher conference with Approve buttons for any big change. During the school block the kids open Today with Joyce on Mighty Mini Missions. You assign the day's cards, teach the lesson, and send a cheer to the grown-up's phone for a real win or a child who is truly stuck. Family members tell you things they notice in everyday life ("Max counted coins on his own") and you save them for the report. You tell the family how each child is doing, suggest activities for today, and recap what they practiced, on request. You learn lessons, new abilities, and code changes, but only after Stephanie clicks Approve. You move to the next lesson inside an approved path on your own. Starting a brand-new strand, slowing down, shortening the day, and Max's reading after Reading.com wait for Approve.
 - How you know what the kids did: each child plays Mighty Mini Missions on their own tablet, picked on the home screen. The games (Ghost Word Run for sight words and rhyming, Monster Hunt for letters and sounds, Coin Record Run for money, Monster Maker for early math and reading, Train Set for colors and shapes, Hatch Match for matching big and little letters (items like "Bb"), Otter Slide for blending three-letter CVC words (items like "cat"), plus off-screen Missions) log every answer: which child, which skill, which item, and whether it was right on the first try. The tablets sync that to you when online. You also use the observations people tell you, and a Kindergarten to 2nd-grade monthly milestones spreadsheet for what comes next. On the Android tablets, a Joyce button can float over other apps. When a child taps it, you see one screenshot, they point at a word or circle a problem, and you give a short hint out loud. Sight words are not sounded out. If they are still stuck after two hints, you say the answer. That moment is saved as an observation (what they pointed at, the hints, whether you told them the answer, and whether they got it). You don't watch the screen the rest of the time. Off the app and off those help moments, you only know what someone tells you.
-- Mastery: an item is mastered when it's right on the first try the last 3 times and 75%+ overall.
+- Mastery: an item is mastered when it's right on the first try the last 3 times and 75%+ overall. On each child's skill map, a practiced skill is confirmed only after a later cold check. Eight essential skills from the Skills Builder Universal Framework (Listening, Speaking, Problem Solving, Creativity, Adapting, Planning, Leadership, Teamwork) are confirmed from spotted moments, mostly notes the family tells you. Children do not see those steps. Stephanie can turn essential-skill spotting off in one line.
 - Tech stack: a static HTML/CSS/JavaScript site (no framework) hosted on Netlify, with Netlify Functions (Node.js) for your logic and Netlify Blobs for storage. You're a Slack app (Events API plus interactive buttons; slow work runs in Netlify background functions). Your writing comes from OpenAI (gpt-4o-mini by default). Code changes go to a Cursor cloud agent that opens a pull request on GitHub (TeamReinagel/mighty-mini-missions) for Stephanie to review; that needs a Cursor API key in Netlify. The code was written with Cursor.
 - Privacy: game answers, observations, and your conversations with the family live in the site's Netlify Blobs storage. You don't keep general family chat.`;
 
@@ -45,7 +46,7 @@ ${ABOUT_JOYCE}
 You read one new Slack message from the family (with the conversation before it, when there is one) and decide what to do. Children (id, name, age): {{KIDS}}.
 
 What you can do:
-1. observations: save things a family member noticed a child do or say in everyday life that show learning, growth, or a struggle (for example "Max counted coins on his own"). One entry per child-moment, using child ids. Plans, logistics, and chit-chat are not observations.
+1. observations: save things a family member noticed a child do or say in everyday life that show learning, growth, or a struggle (for example "Max counted coins on his own"). One entry per child-moment, using child ids. Plans, logistics, and chit-chat are not observations. On each observation, steps is 0 to 2 ids from the skill catalog below, and only when the note clearly shows that step. When it is not clear, leave steps empty. Ethan has no essential skills.
 2. useSkill: when the message asks for something one of your abilities does, pick its exact id from "Your abilities" and restate the request (including the time period, like "today"). Match the purpose, never using "today" (ideas) for questions about the past: questions about how a child is doing ("how is Max doing with his learning?", "how did Max do this week?", "what has Gabi mastered?", "does she need my help with anything?", "what games does he like?") use "checkin"; questions about what they did on a given day ("what did the kids work on today?", "did they play?") and follow-ups asking for specifics ("which words did he miss?", "how many did she get right?") use "recap". If someone pushes back on your last answer ("not ideas, I want to know..."), use the conversation to work out what they wanted and do that.
 3. lesson: when someone corrects you, tells you how they want you to work or write, or shares a lasting fact about a child that should change your future suggestions ("Gabi hates worksheets", "skip screen ideas before noon", "that milestone wasn't really met"). A lesson is one short, specific instruction to yourself. A one-time moment is an observation, not a lesson. Skip lessons you already have.
 4. newSkill: when someone wants something useful that none of your abilities covers but that you could do by reading your data sources and writing a reply. Also use it to change an ability: set "replaces" to its id and give the full new version (for example, "send me the activity every morning" = the "today" ability with schedule "weekday-morning").
@@ -53,6 +54,8 @@ What you can do:
 6. memory: "list" when asked what you've learned or can do; "forget" with a lesson or ability id when asked to forget or stop one.
 7. reply: answer what was actually asked, directly and specifically (for "how do you know what the kids did?", explain the tablets and game logging; for "what tech stack?", name the stack). Use the person's name when you know it. Don't reintroduce yourself if you already did earlier in the conversation, and don't repeat a generic list of what you can do. If you're proposing something, a one-line lead-in is enough.
 8. unmet: if you're asked for something you can't do and it isn't worth proposing, say what in a few words.
+9. skillSpots: "off" when they tell you to stop counting essential skills or skill spots, "on" when they tell you to count them again.
+10. dropLastSpots: true when they say a skill you just counted was wrong ("not that", "don't count that").
 
 When to act:
 - Direct messages are always to you.
@@ -62,13 +65,18 @@ When to act:
 - Propose at most one new thing per message (lesson, newSkill, or codeChange), and never something on the declined list unless they ask again plainly.
 - Abilities can only read these data sources: {{DATA}}. Schedules: {{SCHEDULES}}.
 
+Skill catalog (step ids for observations):
+{{SKILLS}}
+
 Reply with JSON only, using null or empty values for anything that doesn't apply:
-{"observations": [{"kids": ["<id>"], "text": "<what happened, in their words>"}],
+{"observations": [{"kids": ["<id>"], "text": "<what happened, in their words>", "steps": ["<step id>"]}],
  "useSkill": {"id": "<ability id>", "request": "<what they want>"},
  "lesson": {"text": "<instruction to yourself>", "kids": ["<id>"]},
  "newSkill": {"name": "", "when": "<when to use it>", "instructions": "<how to do it, written to yourself>", "data": ["<source>"], "schedule": "on-request|weekday-morning|friday", "replaces": "<ability id or empty>", "why": "<one line>"},
  "codeChange": {"title": "", "details": "<what to build and how it should behave>", "why": "<one line>"},
  "memory": {"action": "list|forget", "id": "<lesson or ability id>"},
+ "skillSpots": "",
+ "dropLastSpots": false,
  "reply": "",
  "unmet": ""}`;
 
@@ -84,7 +92,8 @@ async function understand({ text, context, mem, env, fetchImpl }) {
   const system = UNDERSTAND_PROMPT
     .replace("{{KIDS}}", kidList())
     .replace("{{DATA}}", Object.entries(DATA_SOURCES).map(([k, v]) => `${k} (${v})`).join("; "))
-    .replace("{{SCHEDULES}}", Object.entries(SCHEDULES).map(([k, v]) => `${k} (${v})`).join("; "));
+    .replace("{{SCHEDULES}}", Object.entries(SCHEDULES).map(([k, v]) => `${k} (${v})`).join("; "))
+    .replace("{{SKILLS}}", `${catalogText()}\n\n${academicCatalogText()}`);
   return chatJSON({
     env,
     fetchImpl,
@@ -380,11 +389,11 @@ async function conversation({ event, appId, joyceUserId, isDirect, mentionsJoyce
   };
 }
 
-async function saveObservation(store, { kids, text, from, eventId, ts }) {
+async function saveObservation(store, { kids, text, from, eventId, ts, steps }) {
   const now = Date.now();
   const day = new Date(now).toISOString().slice(0, 10);
   await store.setJSON(`observations/${day}/${now}-${eventId}`, {
-    id: eventId, t: new Date(Number(ts) * 1000 || now).toISOString(), kids, text: clip(text, 2000), from
+    id: eventId, t: new Date(Number(ts) * 1000 || now).toISOString(), kids, text: clip(text, 2000), from, steps: steps || []
   });
 }
 
@@ -456,13 +465,34 @@ export async function handleMessage({ store, env = process.env, fetchImpl = fetc
   const did = [];
   const parts = [];
 
+  if (plan.skillSpots === "off" || plan.skillSpots === "on") {
+    await setEssentialOff(store, plan.skillSpots === "off");
+    parts.push(plan.skillSpots === "off" ? "Essential skill spotting is off." : "I'll count essential skills again when a note clearly shows one.");
+    did.push("skill-spots");
+  }
+
+  if (plan.dropLastSpots) {
+    const named = validKids((Array.isArray(plan.observations) ? plan.observations : []).flatMap((entry) => entry?.kids));
+    const kids = named.length ? named : findKidsIn(text).map((kid) => kid.id);
+    const removed = await dropLastNoteSpots({ store, kids });
+    parts.push(removed.length ? "I took that off the skill map." : "I didn't have a skill counted on the latest note.");
+    did.push("drop-spots");
+  }
+
   const observations = (Array.isArray(plan.observations) ? plan.observations : [])
-    .map((o) => ({ kids: validKids(o?.kids), text: clip(o?.text, 2000) }))
+    .map((o) => ({ kids: validKids(o?.kids), text: clip(o?.text, 2000), steps: o?.steps }))
     .filter((o) => o.kids.length && o.text);
-  for (const [i, o] of observations.entries()) await saveObservation(store, { ...o, from: event.user, eventId: `${eventId}-${i}`, ts: event.ts });
+  const counted = [];
+  for (const [i, o] of observations.entries()) {
+    const steps = plan.dropLastSpots ? [] : cleanStepIds(o.steps, allowedStepIds(o.kids));
+    await saveObservation(store, { ...o, steps, from: event.user, eventId: `${eventId}-${i}`, ts: event.ts });
+    if (steps.length) counted.push(...await recordNoteSteps({ store, kids: o.kids, steps, text: o.text, obsId: `${eventId}-${i}`, day: localDate(env) }));
+  }
   if (observations.length) {
     const names = [...new Set(observations.flatMap((o) => o.kids))].map((id) => KIDS.find((k) => k.id === id).name);
-    parts.push(`Noted for ${joinNames(names)}'s Friday report. :white_check_mark:`);
+    const labels = [...new Set(counted.map((id) => labelStep(id)).filter(Boolean))];
+    const counting = labels.length ? ` I'm counting this as ${labels.join(" and ")}.` : "";
+    parts.push(`Noted for ${joinNames(names)}'s Friday report.${counting} :white_check_mark:`);
     did.push("observation");
   }
 

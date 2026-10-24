@@ -331,8 +331,22 @@ async function subRound(problem) {
   return first && right;
 }
 
+let last = "";
+
+/** 27 + 15 is the worked example for the very first launch only. */
+function pick() {
+  if (level === "show" && !state.stars?.show) return addWithTrade(rng, true);
+  let problem;
+  for (let tries = 0; tries < 10; tries += 1) {
+    problem = level === "sub" ? subWithTrade(rng) : addWithTrade(rng, false);
+    if (`${problem.a} ${problem.op} ${problem.b}` !== last) break;
+  }
+  return problem;
+}
+
 async function round() {
-  const problem = level === "show" ? addWithTrade(rng, true) : level === "sub" ? subWithTrade(rng) : addWithTrade(rng, false);
+  const problem = pick();
+  last = `${problem.a} ${problem.op} ${problem.b}`;
   const clean = level === "sub" ? await subRound(problem) : await addRound(problem);
   const order = LEVELS.map((item) => item.id);
   const next = order[order.indexOf(level) + 1];

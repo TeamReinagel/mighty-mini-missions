@@ -217,7 +217,7 @@ async function load() {
   }
 }
 
-const KIND_LABEL = { lesson: "Joyce teaches", game: "Game", app: "App", move: "Move", celebrate: "Celebrate" };
+const KIND_LABEL = { lesson: "Joyce teaches", check: "Show me", game: "Game", app: "App", move: "Move", celebrate: "Celebrate", write: "Write" };
 
 function talkRow(line) {
   const actions = el("div", "actions");
@@ -371,9 +371,162 @@ function openCard(next) {
   built = [];
   helps = 0;
   idleNudged = false;
-  if (card.kind === "lesson" && card.beats?.length) renderTeach();
+  if (card.kind === "check") renderCheckIntro();
+  else if (card.kind === "lesson" && card.beats?.length) renderTeach();
   else if (card.kind === "lesson") renderItem();
+  else if (card.kind === "write") renderWrite();
   else renderSimple();
+}
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function svgNode(tag, attrs) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, String(value));
+  return node;
+}
+
+// The same three lines as the writing paper: top, dashed middle, bottom.
+function letterBox() {
+  const svg = svgNode("svg", { viewBox: "0 0 100 120", class: "write-box", "aria-label": `How to write ${card.letter}` });
+  for (const y of [10, 50, 90]) svg.append(svgNode("line", { x1: 4, x2: 96, y1: y, y2: y, class: y === 50 ? "guide mid" : "guide" }));
+  return svg;
+}
+
+// Draws each stroke while Joyce says it, with a green dot where the pencil starts.
+async function showStrokes(svg, line, gen) {
+  svg.querySelectorAll(".stroke, .start").forEach((node) => node.remove());
+  for (const stroke of card?.strokes || []) {
+    if (gen !== teachGen) return;
+    line.textContent = stroke.text;
+    svg.querySelectorAll(".start").forEach((node) => node.classList.add("old"));
+    const path = svgNode("path", { d: stroke.d, class: "stroke" });
+    svg.append(path);
+    const length = path.getTotalLength();
+    const begin = path.getPointAtLength(0);
+    svg.append(svgNode("circle", { cx: begin.x, cy: begin.y, r: 5, class: "start" }));
+    const ms = Math.max(900, length * 14);
+    if (length > 2) {
+      path.style.strokeDasharray = `${length}`;
+      path.style.strokeDashoffset = `${length}`;
+      path.getBoundingClientRect();
+      path.style.transition = `stroke-dashoffset ${ms}ms ease-in-out`;
+      path.style.strokeDashoffset = "0";
+    }
+    await Promise.all([say(stroke.cue), pause(ms + 200)]);
+  }
+}
+
+function renderWrite() {
+  const panel = shell(card.title);
+  const line = el("p", "prompt", card.sayText);
+  const svg = letterBox();
+  const wrote = el("button", "go", "I wrote them");
+  wrote.type = "button";
+  wrote.disabled = true;
+  wrote.addEventListener("click", () => {
+    if (card.word) renderWriteWord();
+    else renderWriteCheck();
+  });
+  const again = el("button", "quiet", "Watch again");
+  again.type = "button";
+  const back = el("button", "quiet", "Back");
+  back.type = "button";
+  back.addEventListener("click", () => {
+    teachGen += 1;
+    hush();
+    renderBoard();
+  });
+  const row = el("div", "actions");
+  row.append(wrote, again, back);
+  const paper = el("a", "paper-link", "Grown-up: print writing paper");
+  paper.href = card.paperHref;
+  paper.target = "_blank";
+  paper.rel = "noopener";
+  panel.append(line, svg, row, paper);
+  const demo = async () => {
+    teachGen += 1;
+    hush();
+    const gen = teachGen;
+    line.textContent = card.sayText;
+    await say(card.say);
+    await showStrokes(svg, line, gen);
+    if (gen !== teachGen) return;
+    line.textContent = card.writeText;
+    await say(card.write);
+    if (gen === teachGen && wrote.isConnected) wrote.disabled = false;
+  };
+  again.addEventListener("click", demo);
+  demo();
+}
+
+function renderWriteWord() {
+  teachGen += 1;
+  hush();
+  const panel = shell(card.title);
+  panel.append(el("p", "prompt", card.wordSay), el("div", "write-word", card.word));
+  const wrote = el("button", "go", "I wrote it");
+  wrote.type = "button";
+  wrote.disabled = true;
+  wrote.addEventListener("click", renderWriteCheck);
+  const again = el("button", "quiet", "Hear it again");
+  again.type = "button";
+  again.addEventListener("click", () => replay(card.wordSay));
+  const row = el("div", "actions");
+  row.append(wrote, again);
+  panel.append(row);
+  say(card.wordSay).then(() => { if (wrote.isConnected) wrote.disabled = false; });
+}
+
+function renderWriteCheck() {
+  teachGen += 1;
+  hush();
+  const panel = shell(card.title);
+  panel.append(el("p", "prompt", card.check));
+  const answer = async (fits) => {
+    if (busy) return;
+    busy = true;
+    try {
+      const data = await api("write", { fits });
+      busy = false;
+      say(data.say);
+      await finish("done");
+    } catch (err) {
+      busy = false;
+      feedback(panel, err.message, "no");
+    }
+  };
+  const yes = el("button", "go", "Yes, they fit");
+  yes.type = "button";
+  yes.addEventListener("click", () => answer(true));
+  const notYet = el("button", "quiet", "Not yet");
+  notYet.type = "button";
+  notYet.addEventListener("click", () => answer(false));
+  const row = el("div", "actions");
+  row.append(yes, notYet);
+  panel.append(row);
+  hold([yes, notYet], say(card.check));
+}
+
+function renderCheckIntro() {
+  const panel = shell(card.title);
+  panel.append(el("p", "prompt", card.say));
+  const go = el("button", "go", "I'm ready");
+  go.type = "button";
+  go.addEventListener("click", () => {
+    hush();
+    renderItem();
+  });
+  const back = el("button", "quiet", "Back");
+  back.type = "button";
+  back.addEventListener("click", () => {
+    hush();
+    renderBoard();
+  });
+  const row = el("div", "actions");
+  row.append(go, back);
+  panel.append(row);
+  say(card.say);
 }
 
 function clearIdle() {
@@ -810,7 +963,8 @@ async function submit(picked, extra = {}) {
       index,
       prompt: promptIndex,
       picked,
-      unsure: Boolean(extra.unsure)
+      unsure: Boolean(extra.unsure),
+      check: card.kind === "check"
     });
     const note = document.querySelector("#feedback");
     if (data.wait) {
@@ -819,6 +973,19 @@ async function submit(picked, extra = {}) {
         note.className = "feedback";
       }
       await say(data.say);
+      return;
+    }
+    if (data.moveOn) {
+      if (note) {
+        note.textContent = data.say;
+        note.className = `feedback ${data.correct === false ? "no" : "yes"}`;
+      }
+      if (data.correct !== false) popStar();
+      await say(data.say);
+      promptIndex = 0;
+      built = [];
+      index += 1;
+      renderItem();
       return;
     }
     if (note) {
@@ -850,8 +1017,26 @@ async function submit(picked, extra = {}) {
 }
 
 async function needHelp(item) {
+  if (card?.kind === "check") {
+    if (busy) return;
+    busy = true;
+    try {
+      const data = await api("help", { stepId: card.stepId, item: item.item, tries: 1, check: true });
+      await say(data.say);
+      promptIndex = 0;
+      built = [];
+      index += 1;
+      busy = false;
+      renderItem();
+    } catch (err) {
+      busy = false;
+      feedback(app, err.message, "no");
+    }
+    return;
+  }
   helps += 1;
   if (helps === 1) {
+    api("help", { stepId: card.stepId, item: item.item, tries: 1 }).catch(() => {});
     const teaching = card.replay || (card.beats || []).join(" ");
     feedback(app, teaching, "");
     replay(teaching);

@@ -10,7 +10,8 @@ const DEFAULT_LEVELS = {
   math: "any",
   nature: "any",
   social: "any",
-  responsibility: "any"
+  responsibility: "any",
+  writing: "any"
 };
 
 // `stage` and `practicing` choose the games on each child's home screen (see games.js).
@@ -24,7 +25,7 @@ const DEFAULT_PROFILES = [
     color: "#4fa3ff",
     stage: "1st",
     practicing: ["sight-words", "rhyming", "money", "math-facts", "missions", "game-design"],
-    levels: { build: "any", phonics: "1st", math: "1st", nature: "any", social: "any", responsibility: "any" }
+    levels: { build: "any", phonics: "1st", math: "1st", nature: "any", social: "any", responsibility: "any", writing: "kinder" }
   },
   {
     id: "gabi",
@@ -34,7 +35,7 @@ const DEFAULT_PROFILES = [
     color: "#e27bd0",
     stage: "prek",
     practicing: ["letters", "letter-sounds", "blending", "counting", "feelings", "missions"],
-    levels: { build: "prek", phonics: "prek", math: "prek", nature: "prek", social: "prek", responsibility: "prek" }
+    levels: { build: "prek", phonics: "prek", math: "prek", nature: "prek", social: "prek", responsibility: "prek", writing: "prek" }
   },
   {
     id: "connor",
@@ -71,10 +72,11 @@ const CATEGORY_LABELS = {
   math: "Movement Math",
   nature: "Nature",
   social: "Co-op",
-  responsibility: "Responsibility"
+  responsibility: "Responsibility",
+  writing: "Writing"
 };
 
-const CATEGORY_EMOJI = { build: "🔧", phonics: "📖", math: "🔢", nature: "🌿", social: "🤝", responsibility: "✅" };
+const CATEGORY_EMOJI = { build: "🔧", phonics: "📖", math: "🔢", nature: "🌿", social: "🤝", responsibility: "✅", writing: "✏️" };
 
 const DIFFICULTY_LABELS = {
   any: "Any",
@@ -1105,7 +1107,7 @@ async function main() {
 
   function renderManageProfilesList() {
     const LEVEL_LABELS = { toddler: "Toddler", prek: "Pre-K", kinder: "K", "1st": "1st", any: "Any" };
-    const categories = ["build", "phonics", "math", "nature", "social", "responsibility"];
+    const categories = ["build", "phonics", "math", "nature", "social", "responsibility", "writing"];
     const stages = window.MIGHTY_STAGES ?? [];
     const skills = window.MIGHTY_SKILLS ?? [];
     const homePreview = (p) => {
