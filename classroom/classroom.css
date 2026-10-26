@@ -112,7 +112,13 @@ button, a {
 }
 
 .card.done {
-  opacity: 0.62;
+  opacity: 1;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--good) 40%, var(--line));
+}
+
+.card.later {
+  opacity: 0.72;
+  box-shadow: 0 4px 0 var(--line);
 }
 
 .panel {
@@ -376,4 +382,261 @@ a.card {
 
 @media (max-width: 640px) {
   .kids { grid-template-columns: 1fr; }
+  .hero-choices { grid-template-columns: 1fr; }
+}
+
+.board-top {
+  align-items: flex-start;
+}
+
+.talk-quiet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.talk-quiet .quiet {
+  min-height: 44px;
+  min-width: 0;
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.talk-quiet .quiet.live {
+  border-color: var(--kid);
+  color: var(--ink);
+}
+
+.path {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 14px;
+  overflow-x: auto;
+}
+
+.stamp {
+  flex: 1;
+  min-width: 84px;
+  min-height: 72px;
+  padding: 8px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: white;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+}
+
+.stamp-mark {
+  display: block;
+  font-size: 1.35rem;
+}
+
+.stamp-label {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.82rem;
+  line-height: 1.15;
+}
+
+.stamp.done {
+  border-color: var(--good);
+  background: color-mix(in srgb, var(--good) 16%, white);
+  color: var(--ink);
+}
+
+.stamp.now {
+  flex: 1.35;
+  border-color: var(--kid);
+  color: var(--ink);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--kid) 35%, white);
+  animation: stamp-pulse 1.4s ease-in-out infinite;
+}
+
+.stamp.just {
+  animation: stamp-pop 700ms ease;
+}
+
+@keyframes stamp-pulse {
+  50% { transform: scale(1.04); }
+}
+
+@keyframes stamp-pop {
+  0% { transform: scale(0.86); }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
+.hero {
+  margin: 0 0 16px;
+  padding: 18px 18px 16px;
+  border: 4px solid var(--kid);
+  border-radius: 28px;
+  background:
+    radial-gradient(420px 180px at 100% 0%, color-mix(in srgb, var(--kid) 28%, white), transparent 70%),
+    white;
+  box-shadow: 0 10px 0 color-mix(in srgb, var(--kid) 55%, black);
+}
+
+.mission-kicker {
+  margin: 0;
+  color: var(--kid);
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  margin: 6px 0 4px;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  line-height: 1.05;
+}
+
+.hero-kind {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.hero-start {
+  width: 100%;
+  min-height: 88px;
+  border-radius: 22px;
+  font-size: 2rem;
+}
+
+.hero-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.hero-choice {
+  min-height: 120px;
+  padding: 16px;
+  border: 0;
+  border-radius: 22px;
+  background: var(--kid);
+  color: white;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--kid) 55%, black);
+  text-align: left;
+  cursor: pointer;
+}
+
+.hero-choice strong,
+.hero-choice span {
+  display: block;
+}
+
+.hero-choice strong {
+  font-size: 1.45rem;
+}
+
+.hero-choice span {
+  margin-top: 4px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.group-title {
+  margin: 16px 0 8px;
+  color: var(--muted);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  color: var(--kid);
+  font-size: 1.8rem;
+  animation: spark-out 900ms ease-out forwards;
+}
+
+.spark-bit {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--kid);
+  font-size: 0;
+}
+
+@keyframes spark-out {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(0.6); }
+  to { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); }
+}
+
+.fx-layer .confetti-piece {
+  position: absolute;
+  top: -16px;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall 1.8s ease-out forwards;
+}
+
+.fx-layer .confetti-piece.confetti-circle {
+  border-radius: 50%;
+}
+
+.fx-layer .confetti-piece.confetti-star {
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.day-banner {
+  position: fixed;
+  z-index: 7;
+  left: 50%;
+  top: 18%;
+  width: min(560px, calc(100% - 32px));
+  padding: 28px 22px;
+  border: 4px solid var(--kid);
+  border-radius: 28px;
+  background: white;
+  box-shadow: 0 16px 0 color-mix(in srgb, var(--kid) 45%, black);
+  color: var(--ink);
+  font-size: clamp(2rem, 6vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  text-align: center;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: banner-pop 2.2s ease forwards;
+}
+
+@keyframes banner-pop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.8); }
+  12% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+  70% { opacity: 1; transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-24px) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp.now,
+  .stamp.just,
+  .spark,
+  .fx-layer .confetti-piece,
+  .day-banner,
+  .joyce-photo.talking {
+    animation: none;
+  }
 }

@@ -202,7 +202,7 @@ async function load() {
     showKids();
     return;
   }
-  app.replaceChildren(header("Today with Joyce", "Getting today's board..."));
+  app.replaceChildren(header("Today with Joyce", "Getting today's missions..."));
   try {
     day = await api("today");
     document.documentElement.style.setProperty("--kid", day.color || "#7c6cf0");
@@ -219,10 +219,15 @@ async function load() {
 
 const KIND_LABEL = { lesson: "Joyce teaches", check: "Show me", game: "Game", app: "App", move: "Move", celebrate: "Celebrate", write: "Write" };
 
-function talkRow(line) {
-  const actions = el("div", "actions");
-  const talk = el("button", "go", "Ask Joyce");
+function calmMotion() {
+  return Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+}
+
+function talkControls(line) {
+  const actions = el("div", "talk-quiet");
+  const talk = el("button", "quiet", "Ask Joyce");
   talk.type = "button";
+  talk.dataset.talk = "ask";
   talk.addEventListener("click", () => startTalk());
   const again = el("button", "quiet", "Hear that again");
   again.type = "button";
@@ -231,13 +236,115 @@ function talkRow(line) {
   return actions;
 }
 
-function cardButton(item) {
-  const button = el("button", item.done ? "card done" : "card");
+function boardHeader(title, line) {
+  const root = header(title, line);
+  root.classList.add("board-top");
+  root.lastElementChild.append(talkControls(line));
+  return root;
+}
+
+function missionTrack() {
+  const required = [];
+  for (const part of day.dose?.parts || []) {
+    if (part.id === "bonus") continue;
+    for (const item of day.cards) {
+      if (item.part === part.id) required.push(item);
+    }
+  }
+  const bonus = day.cards.filter((item) => item.part === "bonus");
+  return {
+    required,
+    bonus,
+    picked: bonus.find((item) => item.done) || null,
+    total: required.length + (bonus.length ? 1 : 0)
+  };
+}
+
+function missionRow(item, tone) {
+  const button = el("button", `card mission-row ${tone}`);
   button.type = "button";
   button.append(el("strong", "", item.done ? `${item.title} ✓` : item.title));
-  button.append(el("span", "", item.done ? "Done" : KIND_LABEL[item.kind] || ""));
+  button.append(el("span", "", item.done ? "Done" : KIND_LABEL[item.kind] || "Mission"));
   button.addEventListener("click", () => openCard(item));
   return button;
+}
+
+function missionGroup(title, rows) {
+  if (!rows.length) return null;
+  const section = el("section", "mission-group");
+  section.append(el("h2", "group-title", title));
+  const board = el("div", "board");
+  for (const row of rows) board.append(row);
+  section.append(board);
+  return section;
+}
+
+function stampButton({ state, mark, label, missionId, onClick }) {
+  const button = el("button", `stamp ${state}`);
+  button.type = "button";
+  if (missionId) button.dataset.mission = missionId;
+  if (state === "now") button.setAttribute("aria-current", "step");
+  button.append(el("b", "stamp-mark", mark), el("span", "stamp-label", label));
+  button.addEventListener("click", onClick);
+  return button;
+}
+
+function renderPath(track) {
+  const path = el("div", "path");
+  path.setAttribute("aria-label", "Today's missions");
+  const next = nextCard();
+  track.required.forEach((item, index) => {
+    const state = item.done ? "done" : next?.id === item.id ? "now" : "later";
+    path.append(stampButton({
+      state,
+      mark: item.done ? "✓" : String(index + 1),
+      label: item.title,
+      missionId: item.id,
+      onClick: () => openCard(item)
+    }));
+  });
+  if (!track.bonus.length) return path;
+  const current = !next && bonusWaiting();
+  const state = track.picked ? "done" : current ? "now" : "later";
+  path.append(stampButton({
+    state,
+    mark: track.picked ? "✓" : "?",
+    label: track.picked ? track.picked.title : "Bonus",
+    missionId: track.picked?.id || "",
+    onClick: () => {
+      if (track.picked) openCard(track.picked);
+      else document.querySelector(".hero")?.scrollIntoView({ behavior: calmMotion() ? "auto" : "smooth", block: "nearest" });
+    }
+  }));
+  return path;
+}
+
+function heroMission(item, index, total) {
+  const hero = el("section", "hero");
+  hero.append(el("p", "mission-kicker", `Mission ${index} of ${total}`));
+  hero.append(el("h2", "hero-title", item.title));
+  hero.append(el("p", "hero-kind", KIND_LABEL[item.kind] || "Mission"));
+  const start = el("button", "go hero-start", "Start");
+  start.type = "button";
+  start.addEventListener("click", () => openCard(item));
+  hero.append(start);
+  return hero;
+}
+
+function heroBonus(track, index) {
+  const hero = el("section", "hero");
+  hero.append(el("p", "mission-kicker", `Mission ${index} of ${track.total}`));
+  hero.append(el("h2", "hero-title", "Pick one bonus mission"));
+  const choices = el("div", "hero-choices");
+  for (const item of track.bonus) {
+    const button = el("button", "hero-choice");
+    button.type = "button";
+    button.append(el("strong", "", item.title), el("span", "", KIND_LABEL[item.kind] || "Mission"));
+    button.addEventListener("click", () => openCard(item));
+    choices.append(button);
+  }
+  hero.append(choices);
+  return hero;
 }
 
 // The next card Joyce leads to. The bonus is the child's pick, so it is never chosen for them.
@@ -256,58 +363,65 @@ function bonusWaiting() {
 
 function nextLine() {
   const next = nextCard();
-  if (next) return `Next is ${next.title}. Tap Go.`;
-  if (bonusWaiting()) return "Pick one bonus.";
+  if (next) return `Next mission is ${next.title}. Tap Start.`;
+  if (bonusWaiting()) return "Pick one bonus mission.";
   return "";
 }
 
-function renderBoard() {
+function missionCheer(said) {
+  if (said && said !== "Saved.") return said;
+  const next = nextLine();
+  return next ? `Mission complete. ${next}` : "Mission complete.";
+}
+
+function renderBoard(options = {}) {
   teachGen += 1;
   clearIdle();
   card = null;
   if (day.dose?.complete) {
-    renderDone();
+    renderDone(options);
     return;
   }
   stopRoom();
-  const root = header(day.name, day.greeting);
+  const root = boardHeader(day.name, day.greeting);
   if (!day.dose) {
+    const note = el("h2", "group-title", "Missions if you want them");
     const board = el("div", "board");
-    for (const item of day.cards) board.append(cardButton(item));
-    app.replaceChildren(root, talkRow(day.greeting), board);
+    for (const item of day.cards) board.append(missionRow(item, item.done ? "done" : "open"));
+    app.replaceChildren(root, note, board);
+    if (options.celebrateId) celebrateMission(options.celebrateId);
     return;
   }
-  const trail = el("div", "trail");
-  for (const part of day.dose.parts) {
-    trail.append(el("div", part.done ? "stop done" : "stop", part.done ? `${part.title} ✓` : part.title));
-  }
+  const track = missionTrack();
   const next = nextCard();
-  const lead = el("div", "actions");
-  if (next) {
-    const go = el("button", "go", `Go: ${next.title}`);
-    go.type = "button";
-    go.addEventListener("click", () => openCard(next));
-    lead.append(go);
-  } else if (bonusWaiting()) {
-    lead.append(el("p", "prompt", "Pick one bonus."));
+  const currentIndex = next
+    ? track.required.findIndex((item) => item.id === next.id) + 1
+    : track.required.length + 1;
+  const hero = next ? heroMission(next, currentIndex, track.total) : heroBonus(track, currentIndex);
+  const doneRows = [];
+  const laterRows = [];
+  for (const item of track.required) {
+    if (item.done) doneRows.push(missionRow(item, "done"));
+    else if (item.id !== next?.id) laterRows.push(missionRow(item, "later"));
   }
-  const board = el("div", "board");
-  for (const part of day.dose.parts) {
-    const group = el("section", "part");
-    const label = part.id === "bonus" && !part.done ? "Bonus: pick one" : part.title;
-    group.append(el("h2", "", label));
-    for (const item of day.cards.filter((entry) => entry.part === part.id)) group.append(cardButton(item));
-    board.append(group);
+  if (track.picked) doneRows.push(missionRow(track.picked, "done"));
+  else if (next) {
+    for (const item of track.bonus) laterRows.push(missionRow(item, "later"));
   }
-  app.replaceChildren(root, trail, lead, talkRow(day.greeting), board);
+  app.replaceChildren(
+    root,
+    renderPath(track),
+    hero,
+    ...[missionGroup("Done", doneRows), missionGroup("Later", laterRows)].filter(Boolean)
+  );
+  if (options.celebrateId) celebrateMission(options.celebrateId);
 }
 
-function renderDone() {
-  const line = `You're done for today, ${day.name}.`;
-  const root = header(day.name, line);
-  const trail = el("div", "trail");
-  for (const part of day.dose.parts) trail.append(el("div", "stop done", `${part.title} ✓`));
+function renderDone(options = {}) {
+  const line = `All missions done, ${day.name}!`;
+  const root = boardHeader(day.name, line);
   const note = el("p", "joyce-line", "Play a game while the others finish, or go play.");
+  const play = el("h2", "group-title", "Play a game");
   const games = el("div", "board");
   for (const game of day.free || []) {
     const link = el("a", "card", game.title);
@@ -318,10 +432,18 @@ function renderDone() {
   }
   const room = el("div", "room");
   room.id = "room";
-  app.replaceChildren(root, trail, note, games, room);
-  if (!doneSaid) {
+  const pieces = [root];
+  if (day.dose) pieces.push(renderPath(missionTrack()));
+  pieces.push(note, play, games, room);
+  app.replaceChildren(...pieces);
+  if (options.skipSpeech) doneSaid = true;
+  else if (!doneSaid) {
     doneSaid = true;
     say(`${line} Play a game while the others finish, or go play.`);
+  }
+  if (options.celebrateDay) {
+    celebrateDay();
+    if (!calmMotion()) missionNode(options.celebrateId)?.classList.add("just");
   }
   pollRoom();
 }
@@ -343,6 +465,7 @@ async function pollRoom() {
       if (!roomSaid) {
         roomSaid = true;
         say(EVERYONE_DONE);
+        celebrateRoom(box);
       }
       return;
     }
@@ -360,7 +483,7 @@ document.addEventListener("visibilitychange", () => {
 
 function openCard(next) {
   if (next.done) {
-    replay("You already did that one.");
+    replay("You already finished that mission.");
     return;
   }
   hush();
@@ -1110,10 +1233,21 @@ async function finish(status, retried = false) {
       say(data.say);
       return;
     }
-    if (data.say && !data.complete) say(data.say);
+    const finishedId = card.id;
+    const finishing = status === "done" || status === "eased";
     day = await api("today");
-    renderBoard();
-    if (!day.dose?.complete) say(nextLine());
+    hush();
+    if (!finishing) {
+      renderBoard();
+      if (data.say && !day.dose?.complete) say(data.say);
+      if (!day.dose?.complete) say(nextLine());
+    } else if (day.dose?.complete) {
+      renderBoard({ skipSpeech: true, celebrateDay: true, celebrateId: finishedId });
+      say(`All missions done, ${day.name}!`);
+    } else {
+      renderBoard({ celebrateId: finishedId });
+      say(missionCheer(data.say));
+    }
   } catch (err) {
     busy = false;
     feedback(app, err.message, "no");
@@ -1162,8 +1296,11 @@ async function startTalk() {
     if (data.greeting) greeting = data.greeting;
     await peer.setRemoteDescription({ type: "answer", sdp: data.sdp });
     talkStarted = Date.now();
-    const button = [...app.querySelectorAll("button")].find((node) => node.textContent === "Ask Joyce");
-    if (button) button.textContent = "Hang up";
+    const button = document.querySelector("[data-talk]");
+    if (button) {
+      button.textContent = "Hang up";
+      button.classList.add("live");
+    }
     setTimeout(() => { if (peer) stopTalk(); }, 5 * 60 * 1000);
   } catch (err) {
     stopTalk();
@@ -1179,8 +1316,109 @@ async function stopTalk() {
   peer = null;
   mic = null;
   if (seconds > 0) api("live-used", { seconds }).catch(() => {});
-  const button = [...app.querySelectorAll("button")].find((node) => node.textContent === "Hang up");
-  if (button) button.textContent = "Ask Joyce";
+  const button = document.querySelector("[data-talk]");
+  if (button) {
+    button.textContent = "Ask Joyce";
+    button.classList.remove("live");
+  }
+}
+
+function fxLayer() {
+  let layer = document.querySelector(".fx-layer");
+  if (!layer) {
+    layer = el("div", "fx-layer");
+    document.body.append(layer);
+  }
+  return layer;
+}
+
+function sparkle(origin, count) {
+  if (calmMotion()) return;
+  const layer = fxLayer();
+  const rect = origin?.getBoundingClientRect();
+  const x = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+  const y = rect ? rect.top + rect.height / 2 : window.innerHeight * 0.3;
+  for (let i = 0; i < count; i += 1) {
+    const piece = el("span", i % 3 === 0 ? "spark" : "spark spark-bit");
+    if (i % 3 === 0) piece.textContent = "★";
+    const angle = (Math.PI * 2 * i) / count;
+    const dist = 64 + Math.random() * 86;
+    piece.style.left = `${x}px`;
+    piece.style.top = `${y}px`;
+    piece.style.setProperty("--dx", `${Math.cos(angle) * dist}px`);
+    piece.style.setProperty("--dy", `${Math.sin(angle) * dist}px`);
+    layer.append(piece);
+    setTimeout(() => piece.remove(), 900);
+  }
+}
+
+function confettiRain(count) {
+  if (calmMotion()) return;
+  const layer = fxLayer();
+  const colors = ["#78a6ff", "#9affc8", "#ff6b6b", "#ffd93d", "#6bcb77", "#ec4899", "#8b5cf6"];
+  const shapes = ["", "confetti-circle", "confetti-star"];
+  for (let i = 0; i < count; i += 1) {
+    const piece = el("i", `confetti-piece ${shapes[i % shapes.length]}`);
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.background = colors[i % colors.length];
+    piece.style.animationDelay = `${Math.random() * 0.35}s`;
+    piece.style.animationDuration = `${1.3 + Math.random() * 0.8}s`;
+    layer.append(piece);
+    setTimeout(() => piece.remove(), 2600);
+  }
+}
+
+function chime(kind) {
+  if (calmMotion()) return;
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    const notes = kind === "day" ? [523, 659, 784, 1047] : [523, 659, 784];
+    notes.forEach((freq, index) => osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.08));
+    const length = kind === "day" ? 0.55 : 0.35;
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + length);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + length);
+    setTimeout(() => ctx.close(), 800);
+  } catch {
+    // A missing sound still leaves the stamps and words.
+  }
+}
+
+function missionNode(id) {
+  if (!id) return null;
+  const safe = window.CSS?.escape ? CSS.escape(id) : String(id).replace(/"/g, '\\"');
+  return document.querySelector(`[data-mission="${safe}"]`);
+}
+
+function celebrateMission(id) {
+  if (calmMotion()) return;
+  const stamp = missionNode(id);
+  if (stamp) stamp.classList.add("just");
+  sparkle(stamp, 16);
+  confettiRain(18);
+  chime("mission");
+}
+
+function celebrateDay() {
+  const banner = el("div", "day-banner", `All missions done, ${day.name}!`);
+  document.body.append(banner);
+  setTimeout(() => banner.remove(), calmMotion() ? 1600 : 2200);
+  if (calmMotion()) return;
+  confettiRain(56);
+  sparkle(null, 24);
+  chime("day");
+}
+
+function celebrateRoom(origin) {
+  if (calmMotion()) return;
+  sparkle(origin, 10);
+  confettiRain(16);
 }
 
 load();
