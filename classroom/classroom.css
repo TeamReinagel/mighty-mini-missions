@@ -154,6 +154,45 @@ button, a {
   cursor: pointer;
 }
 
+.with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.btn-icon {
+  flex: none;
+  font-size: 1.55em;
+  line-height: 1;
+}
+
+.btn-label {
+  line-height: 1.15;
+}
+
+.mission-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mission-row .btn-icon {
+  font-size: 2rem;
+}
+
+.mission-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mission-copy strong,
+.mission-copy span {
+  display: block;
+}
+
 .choice.pick, .tile.on {
   outline: 4px solid var(--kid);
 }
@@ -433,7 +472,8 @@ a.card {
 
 .stamp-mark {
   display: block;
-  font-size: 1.35rem;
+  font-size: 1.7rem;
+  line-height: 1.1;
 }
 
 .stamp-label {
@@ -492,9 +532,20 @@ a.card {
 }
 
 .hero-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin: 6px 0 4px;
   font-size: clamp(2rem, 6vw, 3.2rem);
   line-height: 1.05;
+}
+
+.hero-title .btn-icon {
+  font-size: 0.9em;
+}
+
+.hero-start .btn-icon {
+  font-size: 1.5em;
 }
 
 .hero-kind {
@@ -525,13 +576,17 @@ a.card {
   background: var(--kid);
   color: white;
   box-shadow: 0 6px 0 color-mix(in srgb, var(--kid) 55%, black);
+  justify-content: flex-start;
   text-align: left;
   cursor: pointer;
 }
 
-.hero-choice strong,
-.hero-choice span {
-  display: block;
+.hero-choice .btn-icon {
+  font-size: 2.2rem;
+}
+
+.hero-choice .mission-copy {
+  color: white;
 }
 
 .hero-choice strong {

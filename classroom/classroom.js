@@ -210,27 +210,50 @@ async function load() {
     if (!day.dose?.complete) say(day.greeting);
   } catch (err) {
     app.replaceChildren(header("Today with Joyce", err.message));
-    const retry = el("button", "go", "Try again");
-    retry.type = "button";
+    const retry = btn("go", "🔄", "Try again");
     retry.addEventListener("click", load);
     app.append(retry);
   }
 }
 
 const KIND_LABEL = { lesson: "Joyce teaches", check: "Show me", game: "Game", app: "App", move: "Move", celebrate: "Celebrate", write: "Write" };
+const KIND_ICON = { lesson: "📚", check: "👀", game: "🎮", app: "📱", move: "🏃", celebrate: "🎉", write: "✏️" };
 
 function calmMotion() {
   return Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
 }
 
+function iconMark(icon) {
+  const mark = el("span", "btn-icon", icon);
+  mark.setAttribute("aria-hidden", "true");
+  return mark;
+}
+
+// Words stay for grown-ups; the icon is what Gabi can spot without reading.
+function btn(className, icon, label) {
+  const button = el("button", `with-icon ${className}`);
+  button.type = "button";
+  button.append(iconMark(icon), el("span", "btn-label", label));
+  return button;
+}
+
+function labeledLink(className, icon, label) {
+  const link = el("a", `with-icon ${className}`);
+  link.append(iconMark(icon), el("span", "btn-label", label));
+  return link;
+}
+
+function setTalkButton(button, live) {
+  button.replaceChildren(iconMark(live ? "☎️" : "🎤"), el("span", "btn-label", live ? "Hang up" : "Ask Joyce"));
+  button.classList.toggle("live", live);
+}
+
 function talkControls(line) {
   const actions = el("div", "talk-quiet");
-  const talk = el("button", "quiet", "Ask Joyce");
-  talk.type = "button";
+  const talk = btn("quiet", "🎤", "Ask Joyce");
   talk.dataset.talk = "ask";
   talk.addEventListener("click", () => startTalk());
-  const again = el("button", "quiet", "Hear that again");
-  again.type = "button";
+  const again = btn("quiet", "🔊", "Hear that again");
   again.addEventListener("click", () => replay(line));
   actions.append(talk, again);
   return actions;
@@ -263,8 +286,11 @@ function missionTrack() {
 function missionRow(item, tone) {
   const button = el("button", `card mission-row ${tone}`);
   button.type = "button";
-  button.append(el("strong", "", item.done ? `${item.title} ✓` : item.title));
-  button.append(el("span", "", item.done ? "Done" : KIND_LABEL[item.kind] || "Mission"));
+  button.append(iconMark(item.done ? "✅" : KIND_ICON[item.kind] || "⭐"));
+  const copy = el("span", "mission-copy");
+  copy.append(el("strong", "", item.done ? `${item.title} ✓` : item.title));
+  copy.append(el("span", "", item.done ? "Done" : KIND_LABEL[item.kind] || "Mission"));
+  button.append(copy);
   button.addEventListener("click", () => openCard(item));
   return button;
 }
@@ -297,7 +323,7 @@ function renderPath(track) {
     const state = item.done ? "done" : next?.id === item.id ? "now" : "later";
     path.append(stampButton({
       state,
-      mark: item.done ? "✓" : String(index + 1),
+      mark: item.done ? "✅" : KIND_ICON[item.kind] || String(index + 1),
       label: item.title,
       missionId: item.id,
       onClick: () => openCard(item)
@@ -308,7 +334,7 @@ function renderPath(track) {
   const state = track.picked ? "done" : current ? "now" : "later";
   path.append(stampButton({
     state,
-    mark: track.picked ? "✓" : "?",
+    mark: track.picked ? "✅" : "🎁",
     label: track.picked ? track.picked.title : "Bonus",
     missionId: track.picked?.id || "",
     onClick: () => {
@@ -322,10 +348,11 @@ function renderPath(track) {
 function heroMission(item, index, total) {
   const hero = el("section", "hero");
   hero.append(el("p", "mission-kicker", `Mission ${index} of ${total}`));
-  hero.append(el("h2", "hero-title", item.title));
+  const title = el("h2", "hero-title");
+  title.append(iconMark(KIND_ICON[item.kind] || "⭐"), el("span", "", item.title));
+  hero.append(title);
   hero.append(el("p", "hero-kind", KIND_LABEL[item.kind] || "Mission"));
-  const start = el("button", "go hero-start", "Start");
-  start.type = "button";
+  const start = btn("go hero-start", "▶️", "Start");
   start.addEventListener("click", () => openCard(item));
   hero.append(start);
   return hero;
@@ -337,9 +364,12 @@ function heroBonus(track, index) {
   hero.append(el("h2", "hero-title", "Pick one bonus mission"));
   const choices = el("div", "hero-choices");
   for (const item of track.bonus) {
-    const button = el("button", "hero-choice");
+    const button = el("button", "with-icon hero-choice");
     button.type = "button";
-    button.append(el("strong", "", item.title), el("span", "", KIND_LABEL[item.kind] || "Mission"));
+    button.append(iconMark(KIND_ICON[item.kind] || "⭐"));
+    const copy = el("span", "mission-copy");
+    copy.append(el("strong", "", item.title), el("span", "", KIND_LABEL[item.kind] || "Mission"));
+    button.append(copy);
     button.addEventListener("click", () => openCard(item));
     choices.append(button);
   }
@@ -424,10 +454,11 @@ function renderDone(options = {}) {
   const play = el("h2", "group-title", "Play a game");
   const games = el("div", "board");
   for (const game of day.free || []) {
-    const link = el("a", "card", game.title);
+    const link = el("a", "card with-icon");
     link.href = game.href;
     link.target = "_blank";
     link.rel = "noopener";
+    link.append(iconMark("🎮"), el("span", "btn-label", game.title));
     games.append(link);
   }
   const room = el("div", "room");
@@ -544,17 +575,14 @@ function renderWrite() {
   const panel = shell(card.title);
   const line = el("p", "prompt", card.sayText);
   const svg = letterBox();
-  const wrote = el("button", "go", "I wrote them");
-  wrote.type = "button";
+  const wrote = btn("go", "✏️", "I wrote them");
   wrote.disabled = true;
   wrote.addEventListener("click", () => {
     if (card.word) renderWriteWord();
     else renderWriteCheck();
   });
-  const again = el("button", "quiet", "Watch again");
-  again.type = "button";
-  const back = el("button", "quiet", "Back");
-  back.type = "button";
+  const again = btn("quiet", "👀", "Watch again");
+  const back = btn("quiet", "↩️", "Back");
   back.addEventListener("click", () => {
     teachGen += 1;
     hush();
@@ -588,12 +616,10 @@ function renderWriteWord() {
   hush();
   const panel = shell(card.title);
   panel.append(el("p", "prompt", card.wordSay), el("div", "write-word", card.word));
-  const wrote = el("button", "go", "I wrote it");
-  wrote.type = "button";
+  const wrote = btn("go", "✏️", "I wrote it");
   wrote.disabled = true;
   wrote.addEventListener("click", renderWriteCheck);
-  const again = el("button", "quiet", "Hear it again");
-  again.type = "button";
+  const again = btn("quiet", "🔊", "Hear it again");
   again.addEventListener("click", () => replay(card.wordSay));
   const row = el("div", "actions");
   row.append(wrote, again);
@@ -619,11 +645,9 @@ function renderWriteCheck() {
       feedback(panel, err.message, "no");
     }
   };
-  const yes = el("button", "go", "Yes, they fit");
-  yes.type = "button";
+  const yes = btn("go", "👍", "Yes, they fit");
   yes.addEventListener("click", () => answer(true));
-  const notYet = el("button", "quiet", "Not yet");
-  notYet.type = "button";
+  const notYet = btn("quiet", "🔄", "Not yet");
   notYet.addEventListener("click", () => answer(false));
   const row = el("div", "actions");
   row.append(yes, notYet);
@@ -634,14 +658,12 @@ function renderWriteCheck() {
 function renderCheckIntro() {
   const panel = shell(card.title);
   panel.append(el("p", "prompt", card.say));
-  const go = el("button", "go", "I'm ready");
-  go.type = "button";
+  const go = btn("go", "👍", "I'm ready");
   go.addEventListener("click", () => {
     hush();
     renderItem();
   });
-  const back = el("button", "quiet", "Back");
-  back.type = "button";
+  const back = btn("quiet", "↩️", "Back");
   back.addEventListener("click", () => {
     hush();
     renderBoard();
@@ -683,7 +705,7 @@ function renderSimple() {
   panel.append(el("p", "prompt", card.say));
   const spoken = say(card.say);
   if (card.kind === "app" || card.kind === "game") {
-    const link = el("a", "go", card.kind === "app" ? "Open it" : "Play");
+    const link = labeledLink("go", card.kind === "app" ? "📲" : "▶️", card.kind === "app" ? "Open it" : "Play");
     link.href = card.href;
     link.target = "_blank";
     link.rel = "noopener";
@@ -691,42 +713,39 @@ function renderSimple() {
     link.addEventListener("click", () => { api("open", { cardId: opening.id }).catch(() => {}); });
     panel.append(link);
     if (card.askLesson) {
-      const done = el("button", "go", "I'm done");
-      done.type = "button";
+      const done = btn("go", "✅", "I'm done");
       done.disabled = true;
       link.addEventListener("click", () => { done.disabled = false; });
       done.addEventListener("click", () => askLesson(panel));
       panel.append(done);
       return;
     }
-    const done = el("button", "go", "I'm done");
-    done.type = "button";
+    const done = btn("go", "✅", "I'm done");
     done.disabled = true;
     link.addEventListener("click", () => { done.disabled = false; });
     done.addEventListener("click", () => finish("done"));
-    const back = el("button", "quiet", "Back");
-    back.type = "button";
+    const back = btn("quiet", "↩️", "Back");
     back.addEventListener("click", renderBoard);
     panel.append(done, back);
     return;
   }
   if (card.askLesson) {
-    const done = el("button", "go", "I'm done");
-    done.type = "button";
+    const done = btn("go", "✅", "I'm done");
     done.addEventListener("click", () => askLesson(panel));
     panel.append(done);
     return;
   }
-  const label = card.kind === "move" ? "I did it" : card.kind === "celebrate" ? "I told someone" : "I'm done";
-  const done = el("button", "go", label);
-  done.type = "button";
+  const done = card.kind === "move"
+    ? btn("go", "✅", "I did it")
+    : card.kind === "celebrate"
+      ? btn("go", "🗣️", "I told someone")
+      : btn("go", "✅", "I'm done");
   done.addEventListener("click", () => finish("done"));
   if (card.kind === "move") {
     done.disabled = true;
     spoken.then(() => { if (done.isConnected) done.disabled = false; });
   }
-  const back = el("button", "quiet", "Back");
-  back.type = "button";
+  const back = btn("quiet", "↩️", "Back");
   back.addEventListener("click", renderBoard);
   panel.append(done, back);
 }
@@ -745,8 +764,7 @@ function askLesson(panel) {
   down.addEventListener("click", () => { lesson = Math.max(1, lesson - 1); show(); });
   up.addEventListener("click", () => { lesson = Math.min(120, lesson + 1); show(); });
   row.append(down, num, up);
-  const save = el("button", "go", "This lesson");
-  save.type = "button";
+  const save = btn("go", "✅", "This lesson");
   save.addEventListener("click", async () => {
     if (busy) return;
     busy = true;
@@ -787,21 +805,18 @@ function renderTeach() {
     blocks.append(placeValue(27), el("div", "dots", "+"), placeValue(15));
     panel.append(blocks);
   }
-  const go = el("button", "go", "Your turn");
-  go.type = "button";
+  const go = btn("go", "👉", "Your turn");
   go.addEventListener("click", () => {
     teachGen += 1;
     hush();
     renderItem();
   });
-  const again = el("button", "quiet", "Hear it again");
-  again.type = "button";
+  const again = btn("quiet", "🔊", "Hear it again");
   again.addEventListener("click", () => {
     teachGen += 1;
     replay((card.beats || []).join(" "));
   });
-  const back = el("button", "quiet", "Back");
-  back.type = "button";
+  const back = btn("quiet", "↩️", "Back");
   back.addEventListener("click", () => {
     teachGen += 1;
     hush();
@@ -838,14 +853,11 @@ function renderItem() {
   const note = el("p", "feedback");
   note.id = "feedback";
   const row = el("div", "actions");
-  const help = el("button", "quiet", "I need help");
-  help.type = "button";
+  const help = btn("quiet", "🙋", "I need help");
   help.addEventListener("click", () => needHelp(item));
-  const again = el("button", "quiet", "Hear it again");
-  again.type = "button";
+  const again = btn("quiet", "🔊", "Hear it again");
   again.addEventListener("click", () => replay(line));
-  const back = el("button", "quiet", "Back");
-  back.type = "button";
+  const back = btn("quiet", "↩️", "Back");
   back.addEventListener("click", renderBoard);
   row.append(help, again, back);
   panel.append(note, row);
@@ -923,8 +935,7 @@ function drawBuild(panel, item, ready) {
     }
     say(`Yes. ${part.sound}. Next sound is ${next.sound}.`);
   };
-  const undo = el("button", "quiet", "Undo");
-  undo.type = "button";
+  const undo = btn("quiet", "↩️", "Undo");
   undo.addEventListener("click", () => {
     if (!built.length || busy) return;
     built.pop();
@@ -945,8 +956,7 @@ function drawBuild(panel, item, ready) {
 
 function drawRead(panel, item) {
   panel.append(el("div", "big-word", item.word));
-  const button = el("button", "go", "I'll read it");
-  button.type = "button";
+  const button = btn("go", "🎤", "I'll read it");
   button.addEventListener("click", () => hearWord(item));
   panel.append(button);
 }
@@ -992,8 +1002,8 @@ function closeEnough(heard, word) {
 function drawStory(panel, item) {
   const page = item.pages[promptIndex] || item.pages[0];
   panel.append(el("div", "big-word", page.text));
-  const next = el("button", "go", promptIndex + 1 < item.pages.length ? "Next page" : "I read it");
-  next.type = "button";
+  const last = promptIndex + 1 >= item.pages.length;
+  const next = btn("go", last ? "✅" : "➡️", last ? "I read it" : "Next page");
   next.addEventListener("click", () => {
     if (promptIndex + 1 < item.pages.length) {
       promptIndex += 1;
@@ -1180,8 +1190,7 @@ async function needHelp(item) {
       note.className = "feedback no";
     }
     if (data.canEase && !document.querySelector("#ease")) {
-      const ease = el("button", "quiet", "Stop this one for today");
-      ease.type = "button";
+      const ease = btn("quiet", "🛑", "Stop this one for today");
       ease.id = "ease";
       ease.addEventListener("click", () => finish("eased"));
       (note?.parentNode || app).append(ease);
@@ -1297,10 +1306,7 @@ async function startTalk() {
     await peer.setRemoteDescription({ type: "answer", sdp: data.sdp });
     talkStarted = Date.now();
     const button = document.querySelector("[data-talk]");
-    if (button) {
-      button.textContent = "Hang up";
-      button.classList.add("live");
-    }
+    if (button) setTalkButton(button, true);
     setTimeout(() => { if (peer) stopTalk(); }, 5 * 60 * 1000);
   } catch (err) {
     stopTalk();
@@ -1317,10 +1323,7 @@ async function stopTalk() {
   mic = null;
   if (seconds > 0) api("live-used", { seconds }).catch(() => {});
   const button = document.querySelector("[data-talk]");
-  if (button) {
-    button.textContent = "Ask Joyce";
-    button.classList.remove("live");
-  }
+  if (button) setTalkButton(button, false);
 }
 
 function fxLayer() {
