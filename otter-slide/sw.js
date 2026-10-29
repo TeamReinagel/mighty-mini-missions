@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "otter-v5";
+const VERSION = "otter-v7";
 const WORDS = [
   "cat", "cap", "bat", "map", "hat", "fan", "van", "rat", "bag", "jam", "can",
   "dog", "log", "fox", "box", "mop", "pot", "top",

@@ -2,7 +2,7 @@
 
 Usage (from otter-slide/): python3 tools/make_audio.py
 Needs macOS `say` with the "Ava (Premium)" voice, and `afconvert`. Writes audio/w_*.wav.
-The letter sounds come from human recordings instead: see make_letter_sounds.py.
+The letter sounds come from the ElevenLabs recordings instead: see make_letter_sounds.py.
 """
 import subprocess
 import tempfile
