@@ -6,7 +6,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test:joyce": "node --test netlify/lib/joyce-tablet*.test.mjs netlify/lib/classroom.test.mjs netlify/lib/handwriting.test.mjs netlify/lib/skills.test.mjs netlify/lib/design-studio.test.mjs play/*.test.mjs",
+    "test:joyce": "node --test netlify/lib/joyce-tablet*.test.mjs netlify/lib/classroom.test.mjs netlify/lib/moon-path.test.mjs netlify/lib/handwriting.test.mjs netlify/lib/skills.test.mjs netlify/lib/design-studio.test.mjs play/*.test.mjs moon-path/tools/verify.mjs moon-path/tools/*.test.mjs",
     "build:joyce": "bash joyce-tablet/build.sh",
     "test:joyce:android": "bash joyce-tablet/build.sh testDebugUnitTest lintDebug"
   },

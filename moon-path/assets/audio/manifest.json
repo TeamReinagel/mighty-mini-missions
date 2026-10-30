@@ -1,0 +1,1257 @@
+{
+  "model": "netlify-configured",
+  "source": "mmm-netlify-classroom",
+  "provider": "OpenAI speech via the existing Mighty Mini Missions endpoint",
+  "voiceDirection": "You are Joyce, a warm teacher beside a young child. Kind, clear, unhurried. No announcer voice.",
+  "modelNote": "The existing server uses JOYCE_TTS_MODEL, defaulting to gpt-4o-mini-tts. It does not accept custom direction from the caller.",
+  "generatedAt": "2026-10-29T02:51:24.865Z",
+  "lines": {
+    "s1-good-news": {
+      "file": "assets/audio/s1-good-news.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "1912d2963ada886ff93ae7eb0617ce13032b427cc9b0194b5c36163a50c82653",
+      "duration": 4.608
+    },
+    "s1-brakes-question": {
+      "file": "assets/audio/s1-brakes-question.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "58818b30092a0a767b023afa385a18cc1e479899b606c41dbb2bddd421d8d3b0",
+      "duration": 1.416
+    },
+    "phoneme-m": {
+      "file": "assets/audio/phoneme-m.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "e2da039ba03478631ef25df3915dd8a0aa526610ca2bbea4107ab7b0f14f51a9",
+      "duration": 0.864
+    },
+    "s1-scarf": {
+      "file": "assets/audio/s1-scarf.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "492127e245f95c0275f73320da022ec2ed5626cc352ce33640396aba58a77e18",
+      "duration": 1.056
+    },
+    "s1-other-news": {
+      "file": "assets/audio/s1-other-news.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "19c8568b5df14d975601013b85acbead49c54bda575f55c145c583475c3f1759",
+      "duration": 1.8
+    },
+    "s1-excellent": {
+      "file": "assets/audio/s1-excellent.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "e259ccfe7dec59be1808157124ab2d24c2b5bfb78766a329903852068a4a0303",
+      "duration": 2.112
+    },
+    "s1-treasure-already": {
+      "file": "assets/audio/s1-treasure-already.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "9ba184401525961422305204ae389eeec7fcca57cfe2126608e736756b42a769",
+      "duration": 2.016
+    },
+    "s1-latch": {
+      "file": "assets/audio/s1-latch.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "35dd292f4d211c7c83dcca167e59d303fcb0d517da44ada3e46bb594754477ff",
+      "duration": 3.456
+    },
+    "s1-latch-correct": {
+      "file": "assets/audio/s1-latch-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "51fb8bd98cb3d39ea39741d89cc1284f5b2863b01edb6a2c2f217c6a77d1db1e",
+      "duration": 1.608
+    },
+    "s1-latch-retry": {
+      "file": "assets/audio/s1-latch-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "09c1a2af19171ca0e3b9e41fff4e6e4a75702f5fa89baea70ea74a34f886fa8d",
+      "duration": 5.208
+    },
+    "s1-latch-hint": {
+      "file": "assets/audio/s1-latch-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "59ca15ab5cc6f1e74c80809643f4a91677fe0cd14dd4b1b9563976cb8d184b40",
+      "duration": 3.816
+    },
+    "s1-hole": {
+      "file": "assets/audio/s1-hole.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "9adf6bbb3b4099eff5473e3a47dce7787b4b62728db672d5f4259c33d1713706",
+      "duration": 1.656
+    },
+    "s1-clear-view": {
+      "file": "assets/audio/s1-clear-view.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "d8d06bd8f7c5c7d50560cdb441f6fa3b76379024a4b4919c546d809be5299ab4",
+      "duration": 2.016
+    },
+    "s1-clear-map": {
+      "file": "assets/audio/s1-clear-map.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "a7c817e3a7181c953891452279bc02fb09a69b5ab969a3242e80e2dd8f99e200",
+      "duration": 1.704
+    },
+    "s1-introductions": {
+      "file": "assets/audio/s1-introductions.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "4b5939d14642bac29dff25cce20a37024c57f4f6cda7f0ee1c8ad7d4530d0ac7",
+      "duration": 3.912
+    },
+    "s1-build": {
+      "file": "assets/audio/s1-build.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "158562589dc145476b75784295460fde7972626eb531702455b2b876febb2c18",
+      "duration": 1.8
+    },
+    "s1-finished": {
+      "file": "assets/audio/s1-finished.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "12ac9aead3f8e363ec0c2bf626c1e92593a70ad74bc26727b70a3558e5ee89db",
+      "duration": 1.8
+    },
+    "s1-explorer": {
+      "file": "assets/audio/s1-explorer.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a247a408cd4fc729e1af04edc899a90fa4e66f4fa4f37d683b78998ce5c96e4c",
+      "duration": 2.616
+    },
+    "s1-tree": {
+      "file": "assets/audio/s1-tree.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "b89db44961b8597f8bd04a92f88cc392c9fb74df87c441596bb95b3e32819736",
+      "duration": 2.016
+    },
+    "s2-tree-treasure": {
+      "file": "assets/audio/s2-tree-treasure.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "711b7c32925301f213dfeace2af21e34e5dece7dae9afc2463378cb6d8db09fd",
+      "duration": 2.256
+    },
+    "s2-room": {
+      "file": "assets/audio/s2-room.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "cc18373f84d52425fb1dac75bc8377ad35b15a559672c8c00c31eb2437aed6bb",
+      "duration": 5.112
+    },
+    "s2-inside": {
+      "file": "assets/audio/s2-inside.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "e14dd318b63495f7cae829b971d978e9e40a0f51c239f67b5358c420fd10fbb7",
+      "duration": 2.52
+    },
+    "s2-first-map": {
+      "file": "assets/audio/s2-first-map.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "5935838e3d82ecf28ed395776a705890c580d47735c1b8f8419c512584dc36e5",
+      "duration": 5.952
+    },
+    "s2-dont-know": {
+      "file": "assets/audio/s2-dont-know.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "16fd1b06ea86f8e30ab5cbe4900365c5a864fecf67dea76b2cce2dee69aa9bca",
+      "duration": 3.36
+    },
+    "s2-fit": {
+      "file": "assets/audio/s2-fit.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "9d5b1c0fe99b14b5cf37e5ebd50c461d7e1f42f8bde08eaf81603537635eb0b0",
+      "duration": 3.6
+    },
+    "s2-wriggling": {
+      "file": "assets/audio/s2-wriggling.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "8d036803432aae79a2379bd0a5e068494565643957e1be79ada1631969730844",
+      "duration": 2.016
+    },
+    "s2-moonstone": {
+      "file": "assets/audio/s2-moonstone.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a0d2299669bf03d3d06c9baeb4b9cacefce4925703b4ae8f55500168ae6dcdbb",
+      "duration": 4.512
+    },
+    "s2-missing": {
+      "file": "assets/audio/s2-missing.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "93a50a12dc369ea0d771af8735437d8c2cb312820b37bcf7f61c3f27ed9aeaff",
+      "duration": 4.752
+    },
+    "s2-moon-rock": {
+      "file": "assets/audio/s2-moon-rock.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "084e0b820b2b7a5b386970b7a33d6e44b94b38fd74237a6492ec045dd0fb9791",
+      "duration": 2.304
+    },
+    "s2-start": {
+      "file": "assets/audio/s2-start.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "bba5940b82d65022f2b3473b28cabb959d5f380aaf1fa4a655b138eda22c5e80",
+      "duration": 3.216
+    },
+    "s2-hidden-trail": {
+      "file": "assets/audio/s2-hidden-trail.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "ff9f0bece7a37b54b059346cf8559c5b13b25803e47c4135eaeff1b4b90368e1",
+      "duration": 4.416
+    },
+    "s2-next-piece": {
+      "file": "assets/audio/s2-next-piece.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "aa2c59d7be8a727d471d8cfb7637e45c88516901a5faed81f7788479f97b4ec8",
+      "duration": 4.32
+    },
+    "s2-flies-away": {
+      "file": "assets/audio/s2-flies-away.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "1763e8a7879e16815f0e1dd8c4a54d0ccaf2cfff1139d1cd71e6fc71fdca62ca",
+      "duration": 2.52
+    },
+    "s2-route": {
+      "file": "assets/audio/s2-route.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "17be2d8fc78275d3f802315aae5cc0ba1397993524d43c7edcb26d2770b48357",
+      "duration": 4.56
+    },
+    "s2-route-correct": {
+      "file": "assets/audio/s2-route-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "be71642ee6656aeb10a0b4cdae86cfef33b6f32b0aecec30c8a7fa3be4bee207",
+      "duration": 4.416
+    },
+    "s2-route-retry": {
+      "file": "assets/audio/s2-route-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "0f25af78a1716e263955cb7e477223b72736100e5b67e2a8009fafdd34e9345e",
+      "duration": 4.32
+    },
+    "s2-route-hint": {
+      "file": "assets/audio/s2-route-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "4139dbb65f1c1a83027c8b38f680c5173a26b3155574df3e0950e235b93df38f",
+      "duration": 4.8
+    },
+    "s2-rope": {
+      "file": "assets/audio/s2-rope.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "4cda6ffe88f10f540a38aadf20a6a6a5a14695f4e14e62f25d38d3d3139d7a8e",
+      "duration": 1.464
+    },
+    "s3-umbrella": {
+      "file": "assets/audio/s3-umbrella.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a69be1f8efc077146ea3bb0e4e2ec2635456ef686a9b3f4d4e0af05cb6fc581e",
+      "duration": 2.76
+    },
+    "s3-small-boat": {
+      "file": "assets/audio/s3-small-boat.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "eeef89bc2fdee65e8cde1b75a66708dc4ca24b4497562fd4b39897253d2177be",
+      "duration": 2.952
+    },
+    "s3-trail-machines": {
+      "file": "assets/audio/s3-trail-machines.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "13883987af72d393d1f939de0e24e1f05b42ce99119cf3ce1fe300caf37c9c16",
+      "duration": 5.76
+    },
+    "s3-letter-intro": {
+      "file": "assets/audio/s3-letter-intro.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "f51e26ddf9967736c76260af2e569864081f3167b6b2cd639b63edac3bf6b036",
+      "duration": 5.664
+    },
+    "s3-hum": {
+      "file": "assets/audio/s3-hum.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "8b4ad889d19f6b94af2d0899de0b5e326f72bbefe0f22769e419758d4511881d",
+      "duration": 4.464
+    },
+    "s3-hum-correct": {
+      "file": "assets/audio/s3-hum-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "18d2dbd4286890acd15cd1a593b7fe685ca69979a3675a48a3711f2c7c03c4c9",
+      "duration": 3.048
+    },
+    "s3-hum-hint": {
+      "file": "assets/audio/s3-hum-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "2f5ff59c78137f2ccc37db4399c5b620607d36190eb47cbbd3b132bb7c499690",
+      "duration": 6.264
+    },
+    "s3-hum-retry": {
+      "file": "assets/audio/s3-hum-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "1d369ffb68cbefb644cd4d9bbde3ff830b54bacb4d59362988309fb1048fee33",
+      "duration": 4.608
+    },
+    "s3-working": {
+      "file": "assets/audio/s3-working.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "4fb7eaf24b9f4d4c0815512158b59f90caa16ae73dfb4e41f984da19cb308609",
+      "duration": 2.448
+    },
+    "s3-feel": {
+      "file": "assets/audio/s3-feel.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "3524a7151212dd346fb697f41df2b6f0db1c51b181475cfe566bc12fda48e14d",
+      "duration": 4.512
+    },
+    "s3-moon-beginning": {
+      "file": "assets/audio/s3-moon-beginning.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "62f6a2f4ac0eb64d561bfcc2ec76bb6759a1c593110b75d1c9b00fe90cff2420",
+      "duration": 8.256
+    },
+    "s3-moon-sound": {
+      "file": "assets/audio/s3-moon-sound.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "167f1bd3ceba028497e8d1de9f76732d4a7499fd0c219b5dd127c286a34fbe8c",
+      "duration": 4.656
+    },
+    "s3-dropped": {
+      "file": "assets/audio/s3-dropped.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "997c28546ccbc8eda1601d0b7c0a9cea1c47e05de1120a76c9c4ba2094e24986",
+      "duration": 2.568
+    },
+    "s3-letter": {
+      "file": "assets/audio/s3-letter.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "256ec66ff8d5512414e94f65891bbaf7ac2297b93b9c5db395106b556b4133cb",
+      "duration": 3.768
+    },
+    "s3-letter-correct": {
+      "file": "assets/audio/s3-letter-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "701fffca595d511e184b00ad1c4aa01aca4bdee67ab80b7325871abee48fb31e",
+      "duration": 2.064
+    },
+    "s3-letter-retry": {
+      "file": "assets/audio/s3-letter-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "af5364190337905a367ee75b4ec8f219576389345e81438d45bb71d0d2ee896b",
+      "duration": 4.368
+    },
+    "s3-letter-hint": {
+      "file": "assets/audio/s3-letter-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "7b5fa62fd1fafbd1eff3fad2ff918d7c6d1601550f0ea452ac9d6153037079aa",
+      "duration": 4.656
+    },
+    "s3-across": {
+      "file": "assets/audio/s3-across.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "092b22f03ea042db56bb1e7b5666d12fd6eb05f331a14058c521f10f881c17e1",
+      "duration": 4.248
+    },
+    "s3-better-boat": {
+      "file": "assets/audio/s3-better-boat.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "b4589e8242e484a937b80881ba9e1426f8eaea7fc351d809c5b3216ee1eba125",
+      "duration": 2.352
+    },
+    "s4-moon-trail": {
+      "file": "assets/audio/s4-moon-trail.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "1674a672456d56f4513759a4022ee7f93d3bf6aa3898c87882987db21150d993",
+      "duration": 4.248
+    },
+    "s4-shortcut": {
+      "file": "assets/audio/s4-shortcut.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "33f8b2cb0477f9186d4ffe9734082aeec1ba8fd5b831f354ddd834651857be26",
+      "duration": 1.968
+    },
+    "s4-long-cut": {
+      "file": "assets/audio/s4-long-cut.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "78641921290b8a4adb1b061a3b3d5abef019c8659a0ac2fbb5068125eed37653",
+      "duration": 2.904
+    },
+    "s4-clues": {
+      "file": "assets/audio/s4-clues.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "71966e219ce08af4ea234b50c5ef6d0d00df2e28a6c3613d6e5f3bf8ca230bd4",
+      "duration": 2.064
+    },
+    "s4-wheels": {
+      "file": "assets/audio/s4-wheels.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "c1d19f3ca4968abb160658e417084e1b68af6d7c5d6f31d9e7958ce431862104",
+      "duration": 2.568
+    },
+    "s4-help": {
+      "file": "assets/audio/s4-help.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "d84a22139346532204d23cba6b2d64352f5373a16a23601f637651fb88c3ea4f",
+      "duration": 1.56
+    },
+    "s4-moss-correct": {
+      "file": "assets/audio/s4-moss-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "ac32d0428c782eb1da8a9f616418f71429925f6eda827279b97d7475847a36c8",
+      "duration": 2.904
+    },
+    "s4-moss": {
+      "file": "assets/audio/s4-moss.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "400b7d8dd13095c318cca19e06e03c5c219f264c85bde68ec65d167d1250b735",
+      "duration": 7.752
+    },
+    "s4-moss-retry": {
+      "file": "assets/audio/s4-moss-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "fbc14373921c454c75236303663c7aae3c0d7f8fb7e4f987a1f80bd632144a02",
+      "duration": 6.72
+    },
+    "s4-moss-hint": {
+      "file": "assets/audio/s4-moss-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "b19e8a4fe53389422ffaddacc1e6105e4aaef5e3f370f8f65fbe9ff5679ed177",
+      "duration": 6.408
+    },
+    "s4-mushroom": {
+      "file": "assets/audio/s4-mushroom.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "5c0c99dc354a2fc23329797176e7dcdebfd9ff00d8f170ec1553b2085fdf7c43",
+      "duration": 5.664
+    },
+    "s4-mushroom-correct": {
+      "file": "assets/audio/s4-mushroom-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "191acbbf87251e951eb097bb35c41368fb44217669f78a7c06ec6d73e4d676fc",
+      "duration": 3.864
+    },
+    "s4-mushroom-retry": {
+      "file": "assets/audio/s4-mushroom-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "4d8e24815044ca17c42bc06e5b177d4716e5b12865a262810dff90418fd2f630",
+      "duration": 6.6
+    },
+    "s4-mushroom-hint": {
+      "file": "assets/audio/s4-mushroom-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "35c2a507220e50ed881854f96dd201242780fcc79339565e7904af59d4fe73e1",
+      "duration": 4.704
+    },
+    "s4-listened": {
+      "file": "assets/audio/s4-listened.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "e94cf43c14056625fcc9793822b01e7998b048b54413efddb1c0192608700fbb",
+      "duration": 2.208
+    },
+    "s4-treasure-spotted": {
+      "file": "assets/audio/s4-treasure-spotted.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "aa2648de8da82f639c0b62b6c7cd0890f7b9e14cd80f81136d8ce8a278179670",
+      "duration": 1.8
+    },
+    "s5-boat-book": {
+      "file": "assets/audio/s5-boat-book.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "9ef285bb420e29df177f93db1b3536d04b0e8e65d8e88fbafb1e0a504799f25d",
+      "duration": 2.064
+    },
+    "s4-mud-boot": {
+      "file": "assets/audio/s4-mud-boot.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "41eeb281c2b3c344f1ba9db6c4cea8d8e7eeae4a3f065d87af894e8005969353",
+      "duration": 1.92
+    },
+    "s5-bring-over": {
+      "file": "assets/audio/s5-bring-over.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "dbc39c9743ec11f344ab547b7ac211e258e2dc468358f4d908348dee2ec22fe8",
+      "duration": 2.4
+    },
+    "s5-book-one": {
+      "file": "assets/audio/s5-book-one.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "c7e356ece0de493405affc31cc87e96e715f08247432bcbb254d962d0dcd3993",
+      "duration": 8.52
+    },
+    "s5-book-two": {
+      "file": "assets/audio/s5-book-two.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a9f94e882e481e35709aa0de72a04e8aa2b6db0a257411a05520fcacb8447cbc",
+      "duration": 6.72
+    },
+    "s5-need": {
+      "file": "assets/audio/s5-need.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "e7239e84ed1ca12dae2b91258692abd4b8e4b7a6c8b04da90cdc0574dc41d634",
+      "duration": 2.304
+    },
+    "s5-same": {
+      "file": "assets/audio/s5-same.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "72087f761e544b94f9f83492f1880657668c67e943a262b982268615651c8549",
+      "duration": 3.264
+    },
+    "s5-dock-book": {
+      "file": "assets/audio/s5-dock-book.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "aa2d65ee4fadd864d7455d19e054512d4d421079d20c04ea288a63bea9dfb4bf",
+      "duration": 4.368
+    },
+    "s5-coread": {
+      "file": "assets/audio/s5-coread.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "97fec692a2975e8ed315158c7f34a29de31b22b2f481d11d343ab0054f07186d",
+      "duration": 5.256
+    },
+    "s5-coread-correct": {
+      "file": "assets/audio/s5-coread-correct.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "38a23b1533a6752523e9ca13a21c1cc19e668b746a4ee8292f743c4506e61c10",
+      "duration": 5.664
+    },
+    "s5-coread-retry": {
+      "file": "assets/audio/s5-coread-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "848645f2e46da978e35ed7102269bf5868fe2033424f40e6a4c6a3c063052f10",
+      "duration": 6
+    },
+    "s5-coread-hint": {
+      "file": "assets/audio/s5-coread-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "d34f4875847f92cce069c6e75812b4d1a741b4bdb13cf00bb0faf4dec64394be",
+      "duration": 5.16
+    },
+    "s5-sequence": {
+      "file": "assets/audio/s5-sequence.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "0bb5298343787deb12a9d628c4bc10b0d7278de9f4509526ba592b183249cd7e",
+      "duration": 5.016
+    },
+    "s5-sequence-correct": {
+      "file": "assets/audio/s5-sequence-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "e6772721c38cb54e108c83d6d785353da9b7fb504e773ff383f26833b21a4e0e",
+      "duration": 3.552
+    },
+    "s5-sequence-retry": {
+      "file": "assets/audio/s5-sequence-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "e95700b90fcd052f823d8b4eab409df41ed422f7d1184c7b932d51ef61cee72d",
+      "duration": 4.008
+    },
+    "s5-sequence-hint": {
+      "file": "assets/audio/s5-sequence-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "ad29261f85b8c69174775bfbd605b02079af1c66d389246d0f672aca5d19dd9d",
+      "duration": 5.4
+    },
+    "s5-spare": {
+      "file": "assets/audio/s5-spare.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "2face9a4ed083ac8b141526edecce15b6fefb0ac6be832dda55be388c2f36cba",
+      "duration": 1.752
+    },
+    "s6-groove": {
+      "file": "assets/audio/s6-groove.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "0a49814a90e79393604bed6a3cc7ac0c9a254977bc413aa0986d466b493a4b31",
+      "duration": 3.264
+    },
+    "s6-rope-ready": {
+      "file": "assets/audio/s6-rope-ready.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "b1042d58d4d10e396d1e7d917bb30b2388dd1fcf015a8b8ed91adda8a772e271",
+      "duration": 3.36
+    },
+    "s6-trace": {
+      "file": "assets/audio/s6-trace.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "0cdebf0a58d7e3809cb6d9c7b148ba3706ca4f30bff1b2ae4ac59fcdb3469f19",
+      "duration": 7.152
+    },
+    "s6-trace-correct": {
+      "file": "assets/audio/s6-trace-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "acb5cacc0c9c7b45c2f59178d5ee25653701eda3281c52f276f36a8960fdb0ed",
+      "duration": 3.12
+    },
+    "s6-trace-retry": {
+      "file": "assets/audio/s6-trace-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "09b538c9b63d7f4326a01a1c317eedf889302263101ee2fdfd83e7c6cac54d1b",
+      "duration": 1.416
+    },
+    "s6-joined": {
+      "file": "assets/audio/s6-joined.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "6d5079cf7dd58d9cc58fa5f982e6f28ca9d4c5641969a7cfa2779394ce6d4ae2",
+      "duration": 2.616
+    },
+    "s6-trace-hint": {
+      "file": "assets/audio/s6-trace-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "4c5cf09d7fb25aa6637e8b090f93332070b5729ad8532551742ac481ff84be72",
+      "duration": 6
+    },
+    "s6-boat-bit": {
+      "file": "assets/audio/s6-boat-bit.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "545550625b9c417e95b93dc3c8c03f4f25253c5f09e07401dd7be51e2c119c19",
+      "duration": 1.704
+    },
+    "s6-made-m": {
+      "file": "assets/audio/s6-made-m.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "1fd2e1bade7ca8370412aa2c5223d1d738ddb6bcf78b2a1eb04143c32c0f12cf",
+      "duration": 3.408
+    },
+    "s6-hello-treasure": {
+      "file": "assets/audio/s6-hello-treasure.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "074205264de4776160db5f41d81d13890ff70e13b2c96cdec6d914394f644f17",
+      "duration": 1.92
+    },
+    "s6-lark": {
+      "file": "assets/audio/s6-lark.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "e03147248c328d285e1e58fa32cf3638929dc9605918c33bb81ed9c4bbfed4b9",
+      "duration": 0.648
+    },
+    "s6-see-it": {
+      "file": "assets/audio/s6-see-it.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "5c16bff39ab9509937cba29f2f2bcbfb1f8971be252c50337eb41f79603d49a5",
+      "duration": 1.608
+    },
+    "s6-leaving": {
+      "file": "assets/audio/s6-leaving.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "2161bf689f3059217865c75638f0552b1b12d5a14749f2094e92b8c2e0ce6f6f",
+      "duration": 2.352
+    },
+    "s7-still-not": {
+      "file": "assets/audio/s7-still-not.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "c51d8af6a242586f1d6ecf2e50e28246b22140ebdb0454e29fa8ef6bd9218464",
+      "duration": 1.8
+    },
+    "s7-got-it": {
+      "file": "assets/audio/s7-got-it.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "97b3fd09cbe7e630c4abc367bd40491f939dc74645b834a168e7771101611f84",
+      "duration": 2.808
+    },
+    "s7-safe-stone": {
+      "file": "assets/audio/s7-safe-stone.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "94c7b1d32a9dabc954e5696160265a2f0dacec7a03844b9f5debb3227c887b49",
+      "duration": 2.904
+    },
+    "s7-ready": {
+      "file": "assets/audio/s7-ready.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "5bed213ddb994b2a616a9bc115e765d0d23817da1e27f24952f80a6176c85193",
+      "duration": 2.952
+    },
+    "s7-bell": {
+      "file": "assets/audio/s7-bell.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "893cd0a38cf151acf8eb50ca21a48ea0ea1cffc1006519f41f56768a7f94a267",
+      "duration": 3.504
+    },
+    "s7-bell-correct": {
+      "file": "assets/audio/s7-bell-correct.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "642ca88acb6d01953ab262d7248e6c81317bd1e9b3be91610991554b54346598",
+      "duration": 2.16
+    },
+    "s7-bell-retry": {
+      "file": "assets/audio/s7-bell-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "467ebac29282b8b0a395c508af1b5e9e454d176a29ab8a94493313bd7d12597f",
+      "duration": 5.568
+    },
+    "s7-bell-hint": {
+      "file": "assets/audio/s7-bell-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "ac02c2d46c3bc6fb7e1e30fa1f3e5f7c1a535dd28c7ad9bb3733065de28c9cc0",
+      "duration": 6.768
+    },
+    "s7-rope-on": {
+      "file": "assets/audio/s7-rope-on.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "3f0ad0cc4a98dbb923c01897fb13964d6770b01f3f98c1e5f4dadb6715fe7538",
+      "duration": 1.56
+    },
+    "s7-stopped": {
+      "file": "assets/audio/s7-stopped.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "744af26d758c941b8ec78683565fda4396bd3cb616eb73d889c23adaf0708347",
+      "duration": 1.704
+    },
+    "s7-delivered": {
+      "file": "assets/audio/s7-delivered.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "589ab6831dba0f42e1158fea30b2640713543194fe481aa3930516fe150e7b4e",
+      "duration": 2.904
+    },
+    "s7-remembered": {
+      "file": "assets/audio/s7-remembered.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "2c1a226c22f9e52fc4985c7900f344b825d85a4bcc44a9c1e54e1f1a9bc90a54",
+      "duration": 3.12
+    },
+    "s8-small": {
+      "file": "assets/audio/s8-small.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "f3287af72d3f3446c4fa49d47c4ddb1d323294cb498d8250f8902eca6b0ef9db",
+      "duration": 2.016
+    },
+    "s8-reveal": {
+      "file": "assets/audio/s8-reveal.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a17bdd02cad75092c9184504436f3130caab2e10786448664e75383483cd1b71",
+      "duration": 2.856
+    },
+    "s8-reveal-correct": {
+      "file": "assets/audio/s8-reveal-correct.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a69d2d197fedda2fd7418a7d3dc5ba8bfb1b5dfe4dda9d167bbf0080284a59f8",
+      "duration": 3.36
+    },
+    "s8-reveal-retry": {
+      "file": "assets/audio/s8-reveal-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "729040628f28d3522afeaf28dadf710304002faf63846b6059a9559c02c3ffab",
+      "duration": 3.6
+    },
+    "s8-reveal-hint": {
+      "file": "assets/audio/s8-reveal-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "8d6544ed128621879fee3473c1d57c176ad06b6803eda44d9b9aec2465f87b99",
+      "duration": 4.416
+    },
+    "s8-after-orchard": {
+      "file": "assets/audio/s8-after-orchard.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "5d92f39d200bb74e9221aa92da8096b786bf07c05eb0ac774192488f31042ac5",
+      "duration": 2.016
+    },
+    "s8-find-out": {
+      "file": "assets/audio/s8-find-out.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a17e504c787817d63cc161af677fb685ca3daea12c8749fd16adf4a6fd5e55c9",
+      "duration": 2.664
+    },
+    "s8-one-at-time": {
+      "file": "assets/audio/s8-one-at-time.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "ccf7c016b76a4f84d37f23f98557a85173cd61c604dc668d98c86c0083f02565",
+      "duration": 2.352
+    },
+    "s8-snacks": {
+      "file": "assets/audio/s8-snacks.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "8aed401716b725d1ffa0cec87dd95937f50f58c5e3ad5073532fd6e1543c586e",
+      "duration": 1.92
+    },
+    "s8-understands": {
+      "file": "assets/audio/s8-understands.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "f46814fff4abf8972fb54a4415c086b5973643ec673c2ccc87cea52c1da6a1d1",
+      "duration": 1.8
+    },
+    "s8-collect": {
+      "file": "assets/audio/s8-collect.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "b1866bb2069002016520d5ee47d36b17d7f3a2de83e4831db8863975789d8671",
+      "duration": 7.104
+    },
+    "s8-collect-correct": {
+      "file": "assets/audio/s8-collect-correct.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "0e8ba7aa58c282c6fffaadca23717f8a33024240630edbbcb60fcd8dad58e166",
+      "duration": 3.504
+    },
+    "s8-collect-retry": {
+      "file": "assets/audio/s8-collect-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "e5c6bc13b7acba8deed1d0b6f05f04c42c9d0d64dc8620f44eab00d36baf682e",
+      "duration": 4.32
+    },
+    "s8-collect-hint": {
+      "file": "assets/audio/s8-collect-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "6c160640e67514d6c41aa00d2eb87572edef8a1c1cdb520c8f56d274abdeedb0",
+      "duration": 4.2
+    },
+    "s8-basket": {
+      "file": "assets/audio/s8-basket.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "506bbd5a7782d1b8c1cda2ea1b2bd949708250f8edcc9878a3ff0cabc1b1b74d",
+      "duration": 2.304
+    },
+    "s8-different": {
+      "file": "assets/audio/s8-different.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "7d1d994f9b5b59876cc7d703a3cbc4392cf2679ac25e2bf6140b10e885e1baa4",
+      "duration": 2.112
+    },
+    "s9-one-chapter": {
+      "file": "assets/audio/s9-one-chapter.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "270f61fae3daa5643ba4913dc3a83f0fea5d6b8386d77843bfe6d505660ace79",
+      "duration": 4.056
+    },
+    "s9-rescue-in": {
+      "file": "assets/audio/s9-rescue-in.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "e2dd706b3c1b4e995b0d38a8493adef50750ebd4109440cf35e789171a6dc3e9",
+      "duration": 2.52
+    },
+    "s9-all-of-it": {
+      "file": "assets/audio/s9-all-of-it.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "e4dbceb0eef936cc05ddf78a49a7e68ce0b18b46371ed1a82fff70116fc76b30",
+      "duration": 1.464
+    },
+    "s9-even-umbrella": {
+      "file": "assets/audio/s9-even-umbrella.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "933505c150a34f62320b383bb067b967dbb2114447b29c4a7ce72d1acdcad629",
+      "duration": 1.704
+    },
+    "s9-especially": {
+      "file": "assets/audio/s9-especially.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "035cc3c59335c3b5881ced9a5cf217d609158aa20c3d12f28e05af241c70e542",
+      "duration": 2.304
+    },
+    "s9-library-one": {
+      "file": "assets/audio/s9-library-one.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "fc6b803ed3ef53a9f53ac431779dfaacc3fac184738c214af6ce3952afd9a9a8",
+      "duration": 8.304
+    },
+    "s9-nose": {
+      "file": "assets/audio/s9-nose.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "112659c771630394f0ae80cffcd2433a8b9b2322d1a0692f0286880ad131b777",
+      "duration": 1.92
+    },
+    "s9-reread": {
+      "file": "assets/audio/s9-reread.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "f10d25725ef037fc9e627e313a2c1bb342e9c8a73d4036b988ad5ae6f2b2bfc0",
+      "duration": 5.52
+    },
+    "s9-reread-correct": {
+      "file": "assets/audio/s9-reread-correct.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "69bee2c2583236e489668422eac84d0ae19ae16e73d5ceae9dcbf3fdb478faac",
+      "duration": 6.408
+    },
+    "s9-reread-retry": {
+      "file": "assets/audio/s9-reread-retry.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "ee430fe57bb805bea9a00016cf1b343c28137b371da9bc036b82eee6ba380e59",
+      "duration": 3.216
+    },
+    "s9-reread-hint": {
+      "file": "assets/audio/s9-reread-hint.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "c7f9aa08d1f34e402ef4e2e55f473eb4f6021fe2465809de667952c2747dc90e",
+      "duration": 5.256
+    },
+    "s9-library-three": {
+      "file": "assets/audio/s9-library-three.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a93cad546619679d26dda56f0925d4c0f4563dd98425865e059fe6f14a98388f",
+      "duration": 8.616
+    },
+    "s9-library-four": {
+      "file": "assets/audio/s9-library-four.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "8a3659cfd0189fd10d62b148a2e5f6e8bb65d707d8c3a337713433a721bfdf4d",
+      "duration": 9.72
+    },
+    "s9-umbrella-help": {
+      "file": "assets/audio/s9-umbrella-help.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "2ec071329041c03d34a5934cc0a76c59cd26fadf03c47af1bc5af8ce2a5ef8e9",
+      "duration": 2.712
+    },
+    "s9-bring-map": {
+      "file": "assets/audio/s9-bring-map.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "c76129f6cf394c030408f1e951ea3094024f117ba8ce029cce5dd5d7a9e79e85",
+      "duration": 2.76
+    },
+    "s9-bring-wagon": {
+      "file": "assets/audio/s9-bring-wagon.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "0fbbfa059bb5fe25c1176f5315170156dec7ab505e097d2c1f2daa66a54d8cb0",
+      "duration": 1.56
+    },
+    "s9-library-five": {
+      "file": "assets/audio/s9-library-five.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "bff82b4c7e19edd7851e65834b02d34d54c99c5752d45088c6a2f779830a1112",
+      "duration": 9
+    },
+    "s9-those-brakes": {
+      "file": "assets/audio/s9-those-brakes.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "f3e1cdc2cfece54ae5e892cadd16d559b07406205f916c7b5e722404cb0d5d60",
+      "duration": 1.704
+    },
+    "s9-comfortable": {
+      "file": "assets/audio/s9-comfortable.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "3ec488f56c89fec96b0a32a592d8af01a33cf63f0ce53669cf30b9cb9806aa02",
+      "duration": 2.16
+    },
+    "s9-snack": {
+      "file": "assets/audio/s9-snack.mp3",
+      "speaker": "nib",
+      "voice": "cedar",
+      "textHash": "fd3f4a6828c094056ef82651f1b80ac9dad073060c69301650aca1fc4d273ed4",
+      "duration": 3.168
+    },
+    "help-replay": {
+      "file": "assets/audio/help-replay.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "9b1cb1db276323ad05c5191c14f9ee8c72594c0900233293a523c22fc5830f92",
+      "duration": 2.256
+    },
+    "help-mic-uncertain": {
+      "file": "assets/audio/help-mic-uncertain.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "70a6309cefeb2a9e454a92942173438baa529546262de6d0894a70d04ccc9eb2",
+      "duration": 3.456
+    },
+    "help-mic-unavailable": {
+      "file": "assets/audio/help-mic-unavailable.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "88cbfaae8b5c82b78d80da7a3b0539bd78ef171dcb5ce9243815e68a62cec0fc",
+      "duration": 2.616
+    },
+    "help-phoneme-no-schwa": {
+      "file": "assets/audio/help-phoneme-no-schwa.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "1f1c0c1a59de5805b5de3083fb6dd11463835bfd52673243b46fa7e29e36cc54",
+      "duration": 3.36
+    },
+    "help-phoneme": {
+      "file": "assets/audio/help-phoneme.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "66d1e6e682b83128b98f12a8fe1e6e03a12c04c743f778a9a4d18b7c311ef237",
+      "duration": 3.768
+    },
+    "help-formation-start": {
+      "file": "assets/audio/help-formation-start.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "f34f2397ce964a540004b7277b66828630a67e6774b23be7653074a39e5a32f7",
+      "duration": 4.464
+    },
+    "help-touch-hum": {
+      "file": "assets/audio/help-touch-hum.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "d87b8280150d135eae146ba9e7e65362152f6e303cb8cbd989b7b4437b8c133b",
+      "duration": 3.912
+    },
+    "help-formation-piece": {
+      "file": "assets/audio/help-formation-piece.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "c6dd01409a3eb8b4eacc80aca0ec4afdf33728ded8606c578fd5db07dda39d5d",
+      "duration": 3.72
+    },
+    "help-formation-hill": {
+      "file": "assets/audio/help-formation-hill.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "95554e631413bf7ec08d524dec5300588a44c992e072aa73a59d8db046264da0",
+      "duration": 4.416
+    },
+    "help-rescue-supported": {
+      "file": "assets/audio/help-rescue-supported.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "76443b6fda09870bfedddaab63a21b3de794e5b63e370eedad997925625a6212",
+      "duration": 4.152
+    },
+    "help-library-ready": {
+      "file": "assets/audio/help-library-ready.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "34889037ad3529a3e3f7d59b3745c207ef9386d93a4962e42f8bc76a2bfb0099",
+      "duration": 2.76
+    },
+    "help-play-again": {
+      "file": "assets/audio/help-play-again.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "769ff0c9fc7f990d9e830526d113361d6c67013de091c376efce46e97118f1ad",
+      "duration": 2.4
+    },
+    "help-read-chapter": {
+      "file": "assets/audio/help-read-chapter.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "43052c10d9ca90750733fa2294c4a521b10ab99c8e1bc3d1a911014cf55f88b4",
+      "duration": 1.848
+    },
+    "help-bell-sound-m": {
+      "file": "assets/audio/help-bell-sound-m.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "e2da039ba03478631ef25df3915dd8a0aa526610ca2bbea4107ab7b0f14f51a9",
+      "duration": 0.864
+    },
+    "help-bell-sound-s": {
+      "file": "assets/audio/help-bell-sound-s.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "be1a613ca2e96856de5fec0e24c8d83ce830139cebc10880b648a6f1c65e566a",
+      "duration": 2.352
+    },
+    "help-route": {
+      "file": "assets/audio/help-route.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "102d8bd441c28f4aa6915f257dca5aad8be79cf28038b055a5f807a0faf73c71",
+      "duration": 5.4
+    },
+    "help-object-moss": {
+      "file": "assets/audio/help-object-moss.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "1a6310a044322a85ddacbb23792468fd9b50d6a970c1d071139951dd3eb0e5df",
+      "duration": 1.512
+    },
+    "help-object-rock": {
+      "file": "assets/audio/help-object-rock.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "ef7ead3577b0dba97bf5165aedfb6b231c849024704bb82f324a411f123b16f0",
+      "duration": 1.32
+    },
+    "help-object-mushroom": {
+      "file": "assets/audio/help-object-mushroom.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a82bd4fb04fd3185812d358a5863ca6a1546d598b84ad13063cb71e777c6269d",
+      "duration": 1.32
+    },
+    "help-object-flower": {
+      "file": "assets/audio/help-object-flower.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "96c90012063ea1ec23320aa0c7f53e7c116a5ef97ebb3aa6511e4bcb89a73a20",
+      "duration": 2.112
+    },
+    "help-continue": {
+      "file": "assets/audio/help-continue.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "a20c9de1644323cdfa1e4273a0bdc44feaab4b778fe6861da061c22c0d804b8d",
+      "duration": 2.352
+    },
+    "help-pause": {
+      "file": "assets/audio/help-pause.mp3",
+      "speaker": "joyce",
+      "voice": "marin",
+      "textHash": "f6e12d1b28e771bd55b0a1483b7c24f11b6cd439f54ba863150992bb7c996baa",
+      "duration": 3.768
+    },
+    "chapter-map": {
+      "file": "assets/audio/chapter-map.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "fc6b803ed3ef53a9f53ac431779dfaacc3fac184738c214af6ce3952afd9a9a8",
+      "duration": 8.304
+    },
+    "chapter-dock": {
+      "file": "assets/audio/chapter-dock.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "a93cad546619679d26dda56f0925d4c0f4563dd98425865e059fe6f14a98388f",
+      "duration": 8.616
+    },
+    "chapter-return": {
+      "file": "assets/audio/chapter-return.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "8a3659cfd0189fd10d62b148a2e5f6e8bb65d707d8c3a337713433a721bfdf4d",
+      "duration": 9.72
+    },
+    "chapter-next": {
+      "file": "assets/audio/chapter-next.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "bff82b4c7e19edd7851e65834b02d34d54c99c5752d45088c6a2f779830a1112",
+      "duration": 9
+    },
+    "chapter-sound": {
+      "file": "assets/audio/chapter-sound.mp3",
+      "speaker": "lark",
+      "voice": "marin",
+      "textHash": "bee5a7158ae0a0437f1a68dcdcd1172235952820014643839c97dc8e42921b1c",
+      "duration": 10.92
+    }
+  },
+  "durationMeasurement": "Seconds measured using macOS afinfo; each value includes encoded silence."
+}

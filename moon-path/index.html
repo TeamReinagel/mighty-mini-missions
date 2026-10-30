@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#102d36">
+  <meta name="description" content="Join Lark and Nib on The Moon Path, a fully voiced interactive Mighty Mini Missions adventure.">
+  <title>The Moon Path · Mighty Mini Missions</title>
+  <link rel="stylesheet" href="./styles.css?v=mouth-layers-v3">
+  <script src="../progress.js"></script>
+  <script type="module" src="./app.mjs?v=mmm-integration-v4"></script>
+</head>
+<body>
+  <main id="theatre" aria-label="The Moon Path interactive adventure">
+    <canvas id="world" aria-label="Animated story scene"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <header id="toolbar">
+      <button id="home" class="brand" aria-label="Open adventure menu"><span>MIGHTY MINI</span><strong>MISSIONS</strong></button>
+      <nav aria-label="Adventure controls">
+        <a class="tool joyce-return" data-joyce-return href="../classroom/">Joyce</a>
+        <button id="map-button" class="tool" aria-label="Open treasure map">Map</button>
+        <button id="pause-button" class="tool" aria-label="Pause adventure">Pause</button>
+        <button id="sound-button" class="tool" aria-label="Mute voices">Sound on</button>
+        <button id="parent-button" class="tool quiet" aria-label="Grown-up controls">•••</button>
+      </nav>
+    </header>
+    <div id="interaction" aria-live="off"></div>
+    <section id="caption" hidden aria-live="polite" aria-atomic="true">
+      <span id="speaker"></span><p id="line"></p>
+      <button id="repeat-button" aria-label="Hear that line again">Again</button>
+    </section>
+    <div id="turn-tools" hidden>
+      <button id="mic-button" class="tool" aria-label="Answer with your voice">Speak</button>
+      <button id="help-button" class="tool" aria-label="Ask Joyce for one hint">Joyce</button>
+    </div>
+    <div id="toast" role="status" hidden></div>
+    <section id="welcome" class="scrim welcome" aria-label="Start adventure">
+      <div class="welcome-copy">
+        <span class="eyebrow">THE MAP PIECES · EPISODE ONE</span>
+        <h1>The Moon<br>Path</h1>
+        <p>A little letter. A lost map.<br>A very important mouse delivery.</p>
+        <div class="welcome-actions"><button id="start-button" class="primary" disabled>Getting the crew ready…</button><button id="restart-button" class="text-button" hidden>Start from the beginning</button></div>
+        <span id="load-status" class="small-status">Loading the painted world and character frames…</span>
+      </div>
+      <span class="voice-credit">Narrated story · ElevenLabs AI-generated voices</span>
+    </section>
+    <section id="pause-screen" class="scrim" hidden aria-label="Paused adventure">
+      <div class="pause-card"><span class="eyebrow">WE'LL WAIT RIGHT HERE</span><h2>Adventure paused</h2><button id="resume-button" class="primary">Keep exploring</button></div>
+    </section>
+    <section id="finish-screen" class="scrim" hidden aria-label="Adventure complete">
+      <div class="finish-card"><span class="eyebrow">YOUR FIRST ADVENTURE</span><h2>Moonstone found.</h2><p>A new path is waiting.<br>Your first chapter is ready to read again.</p><div class="finish-actions"><a class="primary joyce-return" data-joyce-return href="../classroom/">Back to Joyce</a><button id="read-button" class="secondary">Read our chapter</button><button id="again-button" class="secondary">Play again</button></div></div>
+    </section>
+    <dialog id="map-dialog" class="map-dialog">
+      <button class="close-dialog" data-close="map-dialog" aria-label="Close map">×</button>
+      <span class="eyebrow">OUR FIRST TREASURE HUNT</span><h2>The Moon Path</h2>
+      <div class="map-paper"><canvas id="map-art" width="800" height="700"></canvas><ol id="map-stops"></ol></div>
+      <p class="map-note">Lagoon. Woods. River. Follow the trail together.</p>
+      <div class="collection-row"><span id="collection-status">An empty space for your first treasure.</span><button id="map-library" class="text-button" hidden>Open our chapter</button></div>
+    </dialog>
+    <dialog id="library-dialog" class="library-dialog">
+      <button class="close-dialog" data-close="library-dialog" aria-label="Close chapter">×</button>
+      <span class="eyebrow">THE MAP PIECES · CHAPTER ONE</span><h2>The Moon Path</h2>
+      <div id="library-spread"><div class="library-picture"><canvas id="library-art" width="700" height="500"></canvas></div><div class="library-words"><span id="page-title"></span><p id="page-text"></p><button id="library-sound" class="letter-small" hidden aria-label="Hear m">m<span class="sound-track"></span></button></div></div>
+      <div class="book-controls"><button id="book-prev" class="secondary" aria-label="Previous page">Back</button><span id="book-page"></span><button id="book-read" class="text-button">Read to me</button><button id="book-next" class="primary" aria-label="Next page">Next</button></div>
+    </dialog>
+    <dialog id="parent-dialog" class="parent-dialog">
+      <button class="close-dialog" data-close="parent-dialog" aria-label="Close grown-up controls">×</button>
+      <span class="eyebrow">GROWN-UP CONTROLS</span><h2>Preview the adventure</h2>
+      <p>Your ElevenLabs narrated story plays over the painted world and pauses for the child's turn. Captions and characters follow the recording. Progress and the listening position are saved on this browser.</p>
+      <label>Jump to a scene<select id="scene-select"></select></label>
+      <div class="parent-buttons"><button id="jump-button" class="secondary">Go to scene</button><button id="next-beat" class="secondary">Skip this beat</button><button id="captions-button" class="secondary">Captions on</button></div>
+      <dl id="build-status"></dl>
+      <details><summary>What the practice records</summary><p>First choices and support are recorded separately for this child in MMM. Supported tracing is not independent handwriting. Completion records participation, not mastery. Review mode and scene skipping send no learning evidence.</p><pre id="practice-log"></pre></details>
+      <p class="fine-print">The main story uses your supplied ElevenLabs recording. Existing OpenAI Marin/Cedar recordings remain for Joyce, hints, retries, sound models, and the short library summaries. No API key is included in this player.</p>
+    </dialog>
+  </main>
+</body>
+</html>

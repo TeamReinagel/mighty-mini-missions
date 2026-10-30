@@ -79,8 +79,11 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   assert.equal(buildDay({ kidId: "max", date: "2026-10-24" }).cards.some((card) => card.kind === "write"), false);
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
-  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Letters", "Counting", "Bonus"]);
-  assert.ok(connor.cards.some((card) => card.stepId === "connor-names-1"));
+  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Reading", "Counting", "Bonus"]);
+  const story = connor.cards.find((card) => card.gameId === "moon-path");
+  assert.equal(story.part, "ela");
+  assert.match(story.href, /moon-path\/\?kid=connor/);
+  assert.equal(connor.cards.some((card) => card.stepId === "connor-names-1"), false);
   assert.ok(connor.cards.some((card) => card.stepId === "connor-count-5"));
 
   const ethan = buildDay({ kidId: "ethan", date: MONDAY });

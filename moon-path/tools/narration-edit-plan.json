@@ -1,0 +1,276 @@
+{
+  "version": 1,
+  "description": "Editable visual anchors and source scene metadata. Timing comes from narration-alignment.json. No audio/model files or credentials are embedded.",
+  "scenes": [
+    {
+      "id": "excellent-brakes",
+      "title": "An expedition with excellent brakes",
+      "background": "camp",
+      "mapStop": "camp",
+      "initialStage": "wagon"
+    },
+    {
+      "id": "missing-map",
+      "title": "A map with something missing",
+      "background": "camp",
+      "mapStop": "camp",
+      "initialStage": "map"
+    },
+    {
+      "id": "letter-lagoon",
+      "title": "The little letter at the lagoon",
+      "background": "lagoon",
+      "mapStop": "lagoon",
+      "initialStage": "lagoon"
+    },
+    {
+      "id": "nibs-shortcut",
+      "title": "Nib's shortcut",
+      "background": "woods",
+      "mapStop": "woods",
+      "initialStage": "woods-moss"
+    },
+    {
+      "id": "ferrymans-book",
+      "title": "The ferryman's book",
+      "background": "river",
+      "mapStop": "shore",
+      "initialStage": "river-book"
+    },
+    {
+      "id": "little-letter-big-job",
+      "title": "A little letter does a big job",
+      "background": "river",
+      "mapStop": "river",
+      "initialStage": "river-trace"
+    },
+    {
+      "id": "bring-mouse-home",
+      "title": "Bring our mouse home",
+      "background": "river",
+      "mapStop": "river",
+      "initialStage": "river-rescue"
+    },
+    {
+      "id": "treasures-secret",
+      "title": "The treasure has another secret",
+      "background": "evening",
+      "mapStop": "treasure",
+      "initialStage": "stone"
+    },
+    {
+      "id": "our-first-chapter",
+      "title": "Our first chapter",
+      "background": "camp",
+      "mapStop": "camp",
+      "initialStage": "journal"
+    }
+  ],
+  "visuals": [
+    {
+      "anchor": "Nib came bouncing down the hill",
+      "stage": "wagon",
+      "action": "wagon-roll",
+      "duration": 8
+    },
+    {
+      "anchor": "Nib flung the end of his scarf",
+      "stage": "wagon",
+      "action": "wagon-stop",
+      "duration": 4,
+      "flags": {
+        "parked": true
+      }
+    },
+    {
+      "anchor": "Something crinkled beneath a wheel.",
+      "stage": "case"
+    },
+    {
+      "anchor": "The latch was cool beneath your fingers.",
+      "stage": "case",
+      "action": "map-open",
+      "duration": 3
+    },
+    {
+      "anchor": "His nose poked through a hole in the middle.",
+      "stage": "map"
+    },
+    {
+      "anchor": "You leaned closer.",
+      "stage": "map"
+    },
+    {
+      "anchor": "The lagoon shone between tall reeds.",
+      "stage": "lagoon"
+    },
+    {
+      "anchor": "The hum returned.",
+      "stage": "lagoon",
+      "action": "bridge-rise",
+      "duration": 4,
+      "flags": {
+        "bridge": true
+      }
+    },
+    {
+      "anchor": "Then the wagon rolled safely over the water.",
+      "stage": "lagoon",
+      "action": "cross-bridge",
+      "duration": 4
+    },
+    {
+      "anchor": "The woods smelled of damp earth and green leaves.",
+      "stage": "woods-moss"
+    },
+    {
+      "anchor": "It certainly looked shorter.",
+      "stage": "woods-moss",
+      "action": "mud-stuck",
+      "duration": 6
+    },
+    {
+      "anchor": "The wheel came free so suddenly",
+      "stage": "woods-moss",
+      "action": "mud-free",
+      "duration": 4
+    },
+    {
+      "anchor": "Moss. You led the way onto the green path.",
+      "stage": "woods-moss",
+      "action": "travel",
+      "duration": 4
+    },
+    {
+      "anchor": "At the next fork, a yellow flower",
+      "stage": "woods-mushroom"
+    },
+    {
+      "anchor": "Mushroom began with the sound you knew.",
+      "stage": "woods-mushroom",
+      "action": "travel",
+      "duration": 5
+    },
+    {
+      "anchor": "The dock was weathered silver",
+      "stage": "river-book"
+    },
+    {
+      "anchor": "Lark settled beside you and opened it.",
+      "stage": "river-book",
+      "action": "book-open",
+      "duration": 3
+    },
+    {
+      "anchor": "Lark brushed the mud from the copper groove.",
+      "stage": "river-trace"
+    },
+    {
+      "anchor": "A thread of light ran through the repaired letter",
+      "stage": "river-trace",
+      "action": "repair-glow",
+      "duration": 4,
+      "flags": {
+        "repaired": true
+      }
+    },
+    {
+      "anchor": "She gave the rope beneath m a gentle pull.",
+      "stage": "river-rescue"
+    },
+    {
+      "anchor": "The ferry's little paddle began to turn",
+      "stage": "river-rescue",
+      "action": "boat-arrive",
+      "duration": 6,
+      "flags": {
+        "arrived": true
+      }
+    },
+    {
+      "anchor": "Behind him, the boarding rope slipped",
+      "stage": "river-rescue",
+      "action": "boat-drift",
+      "duration": 5,
+      "flags": {
+        "drifted": true,
+        "returned": false
+      }
+    },
+    {
+      "anchor": "The ferry drifted into a lazy circle of current.",
+      "stage": "river-rescue",
+      "flags": {
+        "drifted": true,
+        "returned": false
+      }
+    },
+    {
+      "anchor": "The low note sounded again.",
+      "stage": "river-rescue",
+      "action": "boat-return",
+      "duration": 6,
+      "flags": {
+        "returned": true,
+        "drifted": false
+      }
+    },
+    {
+      "anchor": "Evening was turning the river blue",
+      "stage": "stone"
+    },
+    {
+      "anchor": "A whole trail emerged beneath the glow",
+      "stage": "stone",
+      "action": "stone-reveal",
+      "duration": 4
+    },
+    {
+      "anchor": "You settled the stone into its place.",
+      "stage": "stone",
+      "action": "treasure-store",
+      "duration": 3,
+      "flags": {
+        "stored": true
+      }
+    },
+    {
+      "anchor": "By the time you reached camp",
+      "stage": "journal",
+      "flags": {
+        "parked": true
+      }
+    },
+    {
+      "anchor": "Lark placed the journal on the camp library shelf.",
+      "stage": "ending",
+      "action": "library-save",
+      "duration": 3,
+      "flags": {
+        "stored": true
+      }
+    },
+    {
+      "anchor": "An apple rolled out of the dusk",
+      "stage": "ending",
+      "action": "apple-roll",
+      "duration": 4
+    }
+  ],
+  "flagDefaults": {
+    "parked": false,
+    "bridge": false,
+    "repaired": false,
+    "arrived": false,
+    "drifted": false,
+    "returned": false,
+    "stored": false
+  },
+  "encoding": {
+    "codec": "libmp3lame",
+    "bitrate": "192k",
+    "sampleRate": 44100,
+    "channels": 1
+  },
+  "captionMaximumWords": 35
+}

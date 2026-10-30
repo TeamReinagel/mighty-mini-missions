@@ -6,6 +6,7 @@
 
 import { createHash } from "node:crypto";
 import { helpLine, itemsFor } from "./classroom-content.mjs";
+import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
 import {
@@ -168,13 +169,14 @@ const EVIDENCE = {
   "coin-record-run": { game: "coin-record-run", need: 3 },
   "monster-hunt": { game: "word-monsters", need: 6 },
   "train-set": { game: "train-set", need: 3 },
-  "ghost-word-run": { game: "ghost-word-run", need: 10 }
+  "ghost-word-run": { game: "ghost-word-run", need: 10 },
+  "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM }
 };
 
 export function evidenceFor(kidId, gameId) {
   const rule = EVIDENCE[gameId];
   if (!rule) return null;
-  return { game: rule.game, need: kidId === "ethan" ? Math.ceil(rule.need / 2) : rule.need };
+  return { ...rule, need: kidId === "ethan" ? Math.ceil(rule.need / 2) : rule.need };
 }
 
 const FREE = {
@@ -188,7 +190,7 @@ const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: 
 const PART_TITLES = {
   max: { ela: "Reading", math: "Math", write: "Writing" },
   gabi: { ela: "Reading", math: "Math" },
-  connor: { ela: "Letters", math: "Counting" },
+  connor: { ela: "Reading", math: "Counting" },
   ethan: { learn: "Learn" }
 };
 const PART_ORDER = ["ela", "math", "write", "learn", "bonus"];
@@ -725,7 +727,10 @@ function lessonForAnswer(kidId, stepDef, date, state, plan) {
 function pairCards({ kidId, date, state, plan, rhythm, game }) {
   const found = lessonFrontiers(kidId, state, plan);
   if (rhythm === "weekend") return [gameCard(date, game), moveCard(kidId, date)];
-  const cards = found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
+  const counting = found.find((item) => partFor(kidId, item.id) === "math");
+  const cards = kidId === "connor"
+    ? [moonPathCard(date, kidId), ...(counting ? [skillCard(kidId, counting, date, state)] : [])]
+    : found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
   let bonus = game;
   if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.monsters : GAMES.otter;
   cards.push(gameCard(date, bonus, "bonus"), moveCard(kidId, date, "bonus"));
@@ -773,8 +778,9 @@ function maxCards({ date, state, plan, rhythm, write }) {
 
 // Counts answers the progress log received from one game after `since`. Event keys start with
 // the time the server received them, so a tablet's clock cannot make old play look new.
-async function playedSince(store, kidId, game, since, now) {
+async function playedSince(store, kidId, game, since, now, completionItem) {
   const from = Date.parse(since || "") || 0;
+  if (completionItem && !from) return 0;
   const days = new Set([new Date(from || now.getTime()).toISOString().slice(0, 10), now.toISOString().slice(0, 10)]);
   let played = 0;
   for (const day of days) {
@@ -784,7 +790,7 @@ async function playedSince(store, kidId, game, since, now) {
       if (!(received >= from)) continue;
       const events = await store.get(key, { type: "json" });
       for (const event of Array.isArray(events) ? events : []) {
-        if (event?.kid === kidId && event.game === game) played += 1;
+        if (event?.kid === kidId && event.game === game && (!completionItem || (event.item === completionItem && event.extra?.completed === true))) played += 1;
       }
     }
   }
@@ -1167,7 +1173,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     }
     if (status === "done" && preview.dose && target?.kind === "game") {
       const rule = evidenceFor(kidId, target.gameId);
-      const played = rule ? await playedSince(store, kidId, rule.game, day.opened?.[cardId], now) : 0;
+      const played = rule ? await playedSince(store, kidId, rule.game, day.opened?.[cardId], now, rule.item) : 0;
       if (rule && played < rule.need) {
         return {
           status: 200,
@@ -1176,7 +1182,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
             notYet: true,
             played,
             need: rule.need,
-            say: played ? "Play a little more, then come back." : `Play ${target.title} first. Then come back and tap I'm done.`
+            say: rule.item ? `Finish ${target.title}, then come back and tap I'm done.` : played ? "Play a little more, then come back." : `Play ${target.title} first. Then come back and tap I'm done.`
           }
         };
       }

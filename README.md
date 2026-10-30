@@ -130,7 +130,7 @@ Joyce leads the Learning Land block. Each child opens **Today with Joyce** at th
 - **Max** keeps finishing Reading.com. After the lesson, Joyce asks which number he finished. Lesson 120 is a celebration, and Friday's conference asks you about his next reading lane before anything replaces it. AdaptedMind stays on smart practice. Joyce teaches regrouping, and Coin Record Run covers coins.
 - **Max's writing** is a fourth stop every school day, after math. Joyce draws one lowercase letter stroke by stroke, with a green dot where the pencil starts, and says each stroke. Max writes it three times on paper, then one short word made only of letters he has already done. Letters come in families that start the same way (c o a d g q, then l t i j, r n m h b p, u y v w, e s f k x z), one new letter a day. Then he looks at his own page: **Yes, they fit** or **Not yet**. Three fits in a row moves him from big boxes to small boxes to lines, and the cheer channel says so, so you can look at that page. Two "not yet" in a row moves him back one size. Print the paper from the card's **Grown-up: print writing paper** link or `/writing-paper/?size=big` (`small`, `lines`). Each card logs one Handwriting practice (no right or wrong) for Friday's report. The letters are in `netlify/lib/handwriting.mjs`.
 - **Gabi's** daily reading and math are Joyce's. She is through Reading.com lesson 34, so letter sounds stay known and her reading card starts with a short b/d/p/q reminder, then short-vowel blending. After that: sh/ch/th, blends, sight words, and short stories. Math is counting, numbers, more and fewer, patterns, and adding within 5 with pictures. Otter Slide is her game. Reading.com and AdaptedMind stay installed.
-- **Connor's** daily work is letter names and sounds, then counting, more and fewer, and patterns. His other apps stay available.
+- **Connor's** reading stop is **The Moon Path**, the narrated Lark and Nib adventure at `/moon-path/?kid=connor`. It pauses for 13 child turns and saves the listening position separately for each child. His counting stop and bonus choices remain. The reading checkmark requires an episode-completion event after he opens the card; a few answers or a parent scene jump do not finish it. First responses and help stay separate, and finishing is participation rather than a mastery claim. His other apps stay available.
 - **Ethan** gets one short colors or counting card and Train Set.
 - **Ask Joyce** is a live conversation, capped at 5 minutes, with a daily limit (default 10 minutes, `JOYCE_LIVE_MINUTES_PER_DAY`). Lessons themselves stay turn-based so a noisy room and the bill stay manageable. If her recorded voice isn't available, the tablet speaks instead.
 
@@ -172,6 +172,8 @@ One-time setup, on top of the Slack app you already have:
 5. On each tablet, open the site, tap the child, tap **Today with Joyce**, and allow the microphone once.
 
 The classroom is a web page, so this does not require a new APK. App links for Reading.com and AdaptedMind live in `netlify/lib/classroom.mjs` (`APPS`) if the tablets open them a different way.
+
+The repeatable episode workflow is in [the episode production recipe](docs/episodes/PRODUCTION.md), with [a next-episode template](docs/episodes/episode-template.md). The Moon Path manuscript, art directions, timing plans, and rebuild tools are retained beside the episode.
 
 ### Preview or send a report any time
 - Preview (posts nothing): `https://<your-site>.netlify.app/api/report-now?key=<REPORT_SECRET>`
