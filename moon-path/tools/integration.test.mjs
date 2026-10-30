@@ -33,3 +33,9 @@ test('Partial play, parent jumps, review mode, and unknown players produce no co
   }
   assert.equal(events.length,0);
 });
+test('A completion stays retryable until it has reached the device progress queue',()=>{
+  const p=finished();let ready=false;
+  const report=episodeReporter({child:{id:'connor',name:'Connor'},log:()=>ready});
+  assert.equal(report.complete(p,turnIds),false);assert.equal(p.completionReported,undefined);
+  ready=true;assert.equal(report.complete(p,turnIds),true);assert.equal(p.completionReported,true);
+});

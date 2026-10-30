@@ -12,7 +12,7 @@ const helpLines=new Map(HELP_LINES.map(x=>[x.id,x]));
 const params=new URLSearchParams(location.search),review=params.has('review');
 const child=episodeChild(params.get('kid'),window.MightyProgress?.currentKid());
 const progressStorage=childStorage(review?sessionStorage:localStorage,child?.id);
-const reporter=episodeReporter({child,review,log:entry=>{if(!window.MightyProgress)return false;window.MightyProgress.log(entry);return true;},flush:()=>window.MightyProgress?.flush()});
+const reporter=episodeReporter({child,review,log:entry=>{if(!window.MightyProgress)return false;window.MightyProgress.log(entry);return true;},flush:()=>window.MightyProgress?.flush({keepalive:true})});
 const turnIds=EPISODE.scenes.flatMap(scene=>scene.beats).filter(beat=>beat.kind==='challenge').map(beat=>beat.id);
 let progress=validateLocation(readProgress(progressStorage),EPISODE),runToken=0,started=false,paused=false,modal=false,muted=false,captions=true;
 let currentBeat=null,currentScene=null,challengeResolve=null,currentChallenge=null,activeChoice=null,recognition=null,bookIndex=0,bookAuto=false;
