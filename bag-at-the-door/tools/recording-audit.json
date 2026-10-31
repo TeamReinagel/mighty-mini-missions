@@ -1,0 +1,518 @@
+{
+  "source": {
+    "name": "ElevenLabs_The_Bag_at_the_Door.mp3",
+    "sha256": "eecde67d0c38ae67b69d5d8fb0910fdbc26f4564a1f10e74a58cb51d0fd65fed",
+    "duration": 488.32596371882084,
+    "sampleRate": 44100,
+    "model": "whisper-large-v3-turbo-4bit"
+  },
+  "allSourceRangesContiguous": true,
+  "allCutsInMeasuredQuiet": true,
+  "sourceCoverageSeconds": 488.32596371882084,
+  "clips": [
+    {
+      "id": "a-library-to-share:p1",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 28.85578231292517,
+      "decodedDuration": 28.85578231292517,
+      "expectedDuration": 28.85578231292517,
+      "sha256": "e928d7cd3a29ddf074463dfde092db1a6a40b568d4cc8f950891f17c400034c4"
+    },
+    {
+      "id": "a-library-to-share:p2",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 28.85578231292517,
+      "sourceEnd": 36.70718820861678,
+      "decodedDuration": 7.85140589569161,
+      "expectedDuration": 7.851405895691606,
+      "sha256": "0515ab24cd368979e1c852b5afe464b5f56fb7b0ae7ea48ef78ad71672850e0c"
+    },
+    {
+      "id": "a-library-to-share:p3",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 36.70718820861678,
+      "sourceEnd": 50.93446712018141,
+      "decodedDuration": 14.227278911564627,
+      "expectedDuration": 14.227278911564632,
+      "sha256": "a7a5cc4111a7f9857431e63d36dcfa42fe875c522ebd765f28a22d06d6c8f99d"
+    },
+    {
+      "id": "a-library-to-share:p4",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 50.93446712018141,
+      "sourceEnd": 58.2363492063492,
+      "decodedDuration": 7.301882086167801,
+      "expectedDuration": 7.301882086167794,
+      "sha256": "825f0d16ffbcfb3abd5108a3ebe5143cfbc0eb31fbeadbb84df9893f6cf21523"
+    },
+    {
+      "id": "a-library-to-share:p5",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 58.2363492063492,
+      "sourceEnd": 66.08755102040816,
+      "decodedDuration": 7.851201814058957,
+      "expectedDuration": 7.851201814058953,
+      "sha256": "1ad8df0eea55f50844cb660a5777a4d8702ed7831a7b0ae3603065d8b50b9a78"
+    },
+    {
+      "id": "bring-the-map:p1",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 66.08755102040816,
+      "sourceEnd": 76.8869387755102,
+      "decodedDuration": 10.79938775510204,
+      "expectedDuration": 10.799387755102046,
+      "sha256": "96476c8b023a9432c87cb8e5579ba6759b67246ecb6cb75a1d1fa482e566a010"
+    },
+    {
+      "id": "bring-the-map:p2",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 76.8869387755102,
+      "sourceEnd": 83.51154195011338,
+      "decodedDuration": 6.624603174603174,
+      "expectedDuration": 6.62460317460318,
+      "sha256": "519c21c0a1143a802d538eeb29496381fd34350e16bb77207e884ff6e9aeb5a9"
+    },
+    {
+      "id": "a-difficult-departure:p1",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 83.51154195011338,
+      "sourceEnd": 98.8550566893424,
+      "decodedDuration": 15.343514739229025,
+      "expectedDuration": 15.343514739229022,
+      "sha256": "a13e287ac255899823be69cdcb3fda1b9697089cf00a7c18de56bc00e97215d1"
+    },
+    {
+      "id": "a-difficult-departure:p2",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 98.8550566893424,
+      "sourceEnd": 102.78609977324263,
+      "decodedDuration": 3.9310430839002266,
+      "expectedDuration": 3.931043083900221,
+      "sha256": "7508a5181345c914767a11814099f62c84c7fe3b65bf12424926f6c3be8628a5"
+    },
+    {
+      "id": "a-difficult-departure:p3",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 102.78609977324263,
+      "sourceEnd": 105.6704761904762,
+      "decodedDuration": 2.88437641723356,
+      "expectedDuration": 2.884376417233568,
+      "sha256": "453cf6df717196f652b358c904b774060513df67ee892c402b0596a75705f6f5"
+    },
+    {
+      "id": "a-difficult-departure:p4",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 105.6704761904762,
+      "sourceEnd": 111.53530612244899,
+      "decodedDuration": 5.864829931972789,
+      "expectedDuration": 5.864829931972793,
+      "sha256": "4cc1235837b3038926d23d246f9b80e813e660aa788f5b9aaf86a73ae1b394fe"
+    },
+    {
+      "id": "a-difficult-departure:p5",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 111.53530612244899,
+      "sourceEnd": 122.16052154195012,
+      "decodedDuration": 10.625215419501133,
+      "expectedDuration": 10.625215419501131,
+      "sha256": "6a703057f7d3ae70c4818ba697a5d2297b9dd7858a06cc8cb04b49f35b650472"
+    },
+    {
+      "id": "do-not-drag:p1",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 122.16052154195012,
+      "sourceEnd": 127.1718820861678,
+      "decodedDuration": 5.011360544217687,
+      "expectedDuration": 5.0113605442176805,
+      "sha256": "1a183a4e4112919f4cdf8eaf5306e645a7a4a61788b45225498c9c3231fc1e85"
+    },
+    {
+      "id": "do-not-drag:p2",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 127.1718820861678,
+      "sourceEnd": 135.0215873015873,
+      "decodedDuration": 7.849705215419501,
+      "expectedDuration": 7.84970521541949,
+      "sha256": "d27cbc2c2c8cd76da68e5a197442f3ffeb0a23509931cd9a4290a8696a86e2e8"
+    },
+    {
+      "id": "do-not-drag:p3",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 135.0215873015873,
+      "sourceEnd": 147.34113378684808,
+      "decodedDuration": 12.319546485260771,
+      "expectedDuration": 12.319546485260787,
+      "sha256": "973fc2f3c7fd94eb939b8c6a390df17d5882fdd856429def441a8fb94c37087a"
+    },
+    {
+      "id": "do-not-drag:p4",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 147.34113378684808,
+      "sourceEnd": 149.99580498866214,
+      "decodedDuration": 2.654671201814059,
+      "expectedDuration": 2.654671201814068,
+      "sha256": "90939c88bb26701394dc89080f72d01c7b195b1882e1d9b924748a7e1cc346ba"
+    },
+    {
+      "id": "do-not-drag:p5",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 149.99580498866214,
+      "sourceEnd": 154.71181405895692,
+      "decodedDuration": 4.716009070294785,
+      "expectedDuration": 4.716009070294774,
+      "sha256": "857a72cd6ac55cb089c569ec5261a71b167dbdbf927748e31d821fe146c43c01"
+    },
+    {
+      "id": "do-not-drag:p6",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 154.71181405895692,
+      "sourceEnd": 163.74485260770976,
+      "decodedDuration": 9.033038548752835,
+      "expectedDuration": 9.033038548752842,
+      "sha256": "34c0e1c66eb2dc7d4fb6204a8552ec1f3d52d0c6d8bd92b267cbde5951ced718"
+    },
+    {
+      "id": "a-small-new-sound:p1",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 163.74485260770976,
+      "sourceEnd": 176.62249433106575,
+      "decodedDuration": 12.877641723356009,
+      "expectedDuration": 12.877641723355993,
+      "sha256": "27e316adf96db9aa469ea4bc267c088a26be32b6c6303d305b0df4b2d580a713"
+    },
+    {
+      "id": "a-small-new-sound:p2",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 176.62249433106575,
+      "sourceEnd": 188.39156462585035,
+      "decodedDuration": 11.76907029478458,
+      "expectedDuration": 11.769070294784598,
+      "sha256": "8b53c4fad4307436c49b87a64647c3060b6a71767d2d1af80ecbec11cdc3fff4"
+    },
+    {
+      "id": "a-small-new-sound:p3",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 188.39156462585035,
+      "sourceEnd": 193.6484126984127,
+      "decodedDuration": 5.2568480725623585,
+      "expectedDuration": 5.256848072562349,
+      "sha256": "e4e03484ff151fab8013f4750e8382082a507bde7201599fdaee10b0809fb973"
+    },
+    {
+      "id": "a-small-new-sound:p4",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 193.6484126984127,
+      "sourceEnd": 199.3667573696145,
+      "decodedDuration": 5.718344671201814,
+      "expectedDuration": 5.718344671201805,
+      "sha256": "7f6f4f62017b0da01126c4e392a02dc53a72c8520030c91a9964111a0bb5ea1d"
+    },
+    {
+      "id": "a-small-new-sound:p5",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 199.3667573696145,
+      "sourceEnd": 204.53428571428572,
+      "decodedDuration": 5.167528344671202,
+      "expectedDuration": 5.1675283446712115,
+      "sha256": "781170f1f4eedfd1226eb18199291c2e51021e0f6446d118bed64327617d0e82"
+    },
+    {
+      "id": "a-small-new-sound:p6",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 204.53428571428572,
+      "sourceEnd": 219.78950113378684,
+      "decodedDuration": 15.255215419501134,
+      "expectedDuration": 15.255215419501127,
+      "sha256": "e03057be0d55883eb586db80b8953a6a7bd9ed21d069be734b22facbd4c0661a"
+    },
+    {
+      "id": "the-cupboard-label:p1",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 219.78950113378684,
+      "sourceEnd": 232.45544217687075,
+      "decodedDuration": 12.665941043083901,
+      "expectedDuration": 12.665941043083905,
+      "sha256": "99e22cce7d4d9ff23b75fec8fa3de429cef1dc70dc9d50440f6a702ed09022e7"
+    },
+    {
+      "id": "the-cupboard-label:p2",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 232.45544217687075,
+      "sourceEnd": 237.61512471655328,
+      "decodedDuration": 5.15968253968254,
+      "expectedDuration": 5.159682539682535,
+      "sha256": "6906f2ebd2347876ee8df218450bb8529a7d49852003b637c8f662bbd8c96d82"
+    },
+    {
+      "id": "the-cupboard-label:p3",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 237.61512471655328,
+      "sourceEnd": 245.52643990929704,
+      "decodedDuration": 7.911315192743764,
+      "expectedDuration": 7.911315192743757,
+      "sha256": "cd533fb251ccae6b6e16900bbe3907b93f36934f074d8417d03af1f24a84ab05"
+    },
+    {
+      "id": "a-pad-for-the-latch:p1",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 245.52643990929704,
+      "sourceEnd": 258.75356009070293,
+      "decodedDuration": 13.227120181405896,
+      "expectedDuration": 13.227120181405894,
+      "sha256": "4cf2ecf3778488df79b3631c0cd51f61e845ec27d2d815c61463cc54a37d0e4d"
+    },
+    {
+      "id": "a-pad-for-the-latch:p2",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 258.75356009070293,
+      "sourceEnd": 263.6701360544218,
+      "decodedDuration": 4.916575963718821,
+      "expectedDuration": 4.916575963718856,
+      "sha256": "be5f00cb19582d41e7f92e8811365ae915e6e84fcc7d6a2d651f81069d3993e6"
+    },
+    {
+      "id": "a-pad-for-the-latch:p3",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 263.6701360544218,
+      "sourceEnd": 268.2466213151927,
+      "decodedDuration": 4.576485260770975,
+      "expectedDuration": 4.576485260770937,
+      "sha256": "00c634c8473292b587422522cdd86ea081b81a49a2ae0aa8aa6824d45ddbc071"
+    },
+    {
+      "id": "a-pad-for-the-latch:p4",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 268.2466213151927,
+      "sourceEnd": 278.57113378684807,
+      "decodedDuration": 10.324512471655328,
+      "expectedDuration": 10.32451247165534,
+      "sha256": "6ba1909ea41942f10c86f54346775b04a906acdda53f942db25406cef5a6651d"
+    },
+    {
+      "id": "a-pad-for-the-latch:p5",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 278.57113378684807,
+      "sourceEnd": 290.21414965986395,
+      "decodedDuration": 11.643015873015873,
+      "expectedDuration": 11.643015873015884,
+      "sha256": "c5adce0c3b5fa4b886ab6d5e2db28101701ce419856e658653485db73ebd42fa"
+    },
+    {
+      "id": "three-small-jobs:p1",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 290.21414965986395,
+      "sourceEnd": 294.3062811791383,
+      "decodedDuration": 4.092131519274377,
+      "expectedDuration": 4.092131519274346,
+      "sha256": "bea31c5dc1b202f0fdc4f46718449f440f3a96dad2db45fd4c7cce6076910252"
+    },
+    {
+      "id": "three-small-jobs:p2",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 294.3062811791383,
+      "sourceEnd": 299.1589795918367,
+      "decodedDuration": 4.8526984126984125,
+      "expectedDuration": 4.85269841269843,
+      "sha256": "ebc096bcfd8c868b666a41720a7a10c2890f14e4c9379c46c0be16da57bd863c"
+    },
+    {
+      "id": "three-small-jobs:p3",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 299.1589795918367,
+      "sourceEnd": 307.36047619047616,
+      "decodedDuration": 8.201496598639455,
+      "expectedDuration": 8.201496598639437,
+      "sha256": "5658851bddfbb02f3d76b471f8f1e5145cdd121cfb21863a371b479ffd4c7445"
+    },
+    {
+      "id": "three-small-jobs:p4",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 307.36047619047616,
+      "sourceEnd": 314.80857142857144,
+      "decodedDuration": 7.448095238095238,
+      "expectedDuration": 7.448095238095277,
+      "sha256": "4a5317fb38adf7f4c4a82713630403106819df741bf422dcb9f908268c60c5b8"
+    },
+    {
+      "id": "out-without-a-dent:p1",
+      "file": "assets/narration/37.mp3",
+      "sourceStart": 314.80857142857144,
+      "sourceEnd": 325.1970068027211,
+      "decodedDuration": 10.38843537414966,
+      "expectedDuration": 10.388435374149651,
+      "sha256": "87ac5d08eaf9d747d9c5ac19cc95f29ea9717e9252f67ca83d6a21be9761535f"
+    },
+    {
+      "id": "out-without-a-dent:p2",
+      "file": "assets/narration/38.mp3",
+      "sourceStart": 325.1970068027211,
+      "sourceEnd": 330.41687074829935,
+      "decodedDuration": 5.219863945578231,
+      "expectedDuration": 5.219863945578254,
+      "sha256": "373b787513102f0e09ee53f169edc8281d2a8cd6913bc7d9f01d4ab3da51c48c"
+    },
+    {
+      "id": "out-without-a-dent:p3",
+      "file": "assets/narration/39.mp3",
+      "sourceStart": 330.41687074829935,
+      "sourceEnd": 343.7581859410431,
+      "decodedDuration": 13.341315192743764,
+      "expectedDuration": 13.341315192743764,
+      "sha256": "726bfb7de0bb7881a529e2fec6e619bdbae806539e95740a8ead502b5f3581a0"
+    },
+    {
+      "id": "out-without-a-dent:p4",
+      "file": "assets/narration/40.mp3",
+      "sourceStart": 343.7581859410431,
+      "sourceEnd": 348.6471882086168,
+      "decodedDuration": 4.889002267573696,
+      "expectedDuration": 4.889002267573687,
+      "sha256": "ed449598fb2eb7794096013ea89e9cde8f784e522d091bb3f9f35a423cd117d3"
+    },
+    {
+      "id": "out-without-a-dent:p5",
+      "file": "assets/narration/41.mp3",
+      "sourceStart": 348.6471882086168,
+      "sourceEnd": 355.7172562358277,
+      "decodedDuration": 7.070068027210884,
+      "expectedDuration": 7.07006802721088,
+      "sha256": "d5deac79dc084ff298316206ea75f8f9d9f00aadba5f278c048b00d965ffc02c"
+    },
+    {
+      "id": "check-the-three-deliveries:p1",
+      "file": "assets/narration/42.mp3",
+      "sourceStart": 355.7172562358277,
+      "sourceEnd": 369.4454648526077,
+      "decodedDuration": 13.728208616780046,
+      "expectedDuration": 13.728208616780023,
+      "sha256": "9dbd93bc1b3e14e38336b21fb26262332c59066f26db649d507677d63a5638d8"
+    },
+    {
+      "id": "check-the-three-deliveries:p2",
+      "file": "assets/narration/43.mp3",
+      "sourceStart": 369.4454648526077,
+      "sourceEnd": 378.07643990929705,
+      "decodedDuration": 8.630975056689342,
+      "expectedDuration": 8.630975056689351,
+      "sha256": "040aaae2e478bb8d1bb71dcc1292fe7d2699e3006672b1ab03012091d422a462"
+    },
+    {
+      "id": "check-the-three-deliveries:p3",
+      "file": "assets/narration/44.mp3",
+      "sourceStart": 378.07643990929705,
+      "sourceEnd": 388.9639455782313,
+      "decodedDuration": 10.88750566893424,
+      "expectedDuration": 10.887505668934239,
+      "sha256": "15f45232233318fb907aaf354a4e3049823a45c8a319286bd6e7088cc53366fe"
+    },
+    {
+      "id": "our-first-courier-page:p1",
+      "file": "assets/narration/45.mp3",
+      "sourceStart": 388.9639455782313,
+      "sourceEnd": 400.38444444444445,
+      "decodedDuration": 11.420498866213151,
+      "expectedDuration": 11.420498866213165,
+      "sha256": "1f4dd692d515fcce5fcd6985985e5cf0d5f31ed82fe708318d1a6b5ef1c9ff6c"
+    },
+    {
+      "id": "our-first-courier-page:p2",
+      "file": "assets/narration/46.mp3",
+      "sourceStart": 400.38444444444445,
+      "sourceEnd": 412.99709750566893,
+      "decodedDuration": 12.61265306122449,
+      "expectedDuration": 12.612653061224478,
+      "sha256": "582e9b3d65d2223b8c59888dc143483e3ae41cb9c8f79d7bac0b9194c7b825ca"
+    },
+    {
+      "id": "our-first-courier-page:p3",
+      "file": "assets/narration/47.mp3",
+      "sourceStart": 412.99709750566893,
+      "sourceEnd": 420.6719954648526,
+      "decodedDuration": 7.6748979591836735,
+      "expectedDuration": 7.6748979591836815,
+      "sha256": "822fe1a96ccbd6d012600887eb845c492a5efb60bdd4a641fabacfc5f1866b57"
+    },
+    {
+      "id": "our-first-courier-page:p4",
+      "file": "assets/narration/48.mp3",
+      "sourceStart": 420.6719954648526,
+      "sourceEnd": 428.4513378684807,
+      "decodedDuration": 7.779342403628118,
+      "expectedDuration": 7.779342403628107,
+      "sha256": "705c3c534c73c33da40b4e56bd0278370167b160fc7f202a9c0b783c40fcc0e7"
+    },
+    {
+      "id": "our-first-courier-page:p5",
+      "file": "assets/narration/49.mp3",
+      "sourceStart": 428.4513378684807,
+      "sourceEnd": 435.46043083900224,
+      "decodedDuration": 7.009092970521542,
+      "expectedDuration": 7.009092970521522,
+      "sha256": "f11a4a9fe9c0d7a7c9bb076103c69de24b41356111ed40f79c1bac11414ca38e"
+    },
+    {
+      "id": "the-first-direction:p1",
+      "file": "assets/narration/50.mp3",
+      "sourceStart": 435.46043083900224,
+      "sourceEnd": 446.3990022675737,
+      "decodedDuration": 10.938571428571429,
+      "expectedDuration": 10.938571428571436,
+      "sha256": "cae6fc9a872a9c7ad5a12ae739d16b8ead056b5e96c0ae5469ef48e8d90d6d37"
+    },
+    {
+      "id": "the-first-direction:p2",
+      "file": "assets/narration/51.mp3",
+      "sourceStart": 446.3990022675737,
+      "sourceEnd": 460.0158049886621,
+      "decodedDuration": 13.616802721088435,
+      "expectedDuration": 13.616802721088447,
+      "sha256": "cbe159c32b7482a30c3908c36d4b9dfe4bc5a968f29b80203df59bafdcc440cb"
+    },
+    {
+      "id": "the-first-direction:p3",
+      "file": "assets/narration/52.mp3",
+      "sourceStart": 460.0158049886621,
+      "sourceEnd": 465.047664399093,
+      "decodedDuration": 5.031859410430839,
+      "expectedDuration": 5.0318594104308545,
+      "sha256": "12738d6e157f662ca091ed09f3138af4cf45ebfa7818d91c35faa73a188a060d"
+    },
+    {
+      "id": "the-first-direction:p4",
+      "file": "assets/narration/53.mp3",
+      "sourceStart": 465.047664399093,
+      "sourceEnd": 469.73589569161,
+      "decodedDuration": 4.688231292517007,
+      "expectedDuration": 4.688231292517003,
+      "sha256": "746e1a4501344b394ad524bc41eb5385e12b8f0de5f43e1bfc92286d5231b768"
+    },
+    {
+      "id": "the-first-direction:p5",
+      "file": "assets/narration/54.mp3",
+      "sourceStart": 469.73589569161,
+      "sourceEnd": 472.57866213151925,
+      "decodedDuration": 2.842766439909297,
+      "expectedDuration": 2.842766439909269,
+      "sha256": "8b6311c1d467ed14ff7f49205ce29d302814663c5e62e7a309e306d34795c01f"
+    },
+    {
+      "id": "the-first-direction:p6",
+      "file": "assets/narration/55.mp3",
+      "sourceStart": 472.57866213151925,
+      "sourceEnd": 477.27496598639453,
+      "decodedDuration": 4.696303854875284,
+      "expectedDuration": 4.696303854875282,
+      "sha256": "a104b210113b8099c0c52ebeea821616caa7b876dda9267ea7502ad08b86bf86"
+    },
+    {
+      "id": "the-first-direction:p7",
+      "file": "assets/narration/56.mp3",
+      "sourceStart": 477.27496598639453,
+      "sourceEnd": 488.32596371882084,
+      "decodedDuration": 11.050997732426303,
+      "expectedDuration": 11.05099773242631,
+      "sha256": "8e07105a8a824df0dc089e98f95d3b10102bc16b5751cff413fbf938ca129cd5"
+    }
+  ]
+}

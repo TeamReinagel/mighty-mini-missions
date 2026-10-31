@@ -1,0 +1,401 @@
+{
+  "status": "awaiting-new-cast-recording",
+  "approved": false,
+  "manuscriptSHA256": "36cec6324164e2fbcb498a6694cecc224d3c3de83d3173c84ec411baa321f4ac",
+  "sourceSHA256": null,
+  "sourceDuration": null,
+  "entries": {
+    "a-library-to-share:p1": {
+      "file": null,
+      "text": "Morning slipped through the open door of the Treasure Tree. Yesterday’s damp leaves glittered outside. Inside, your finished adventure stood on the shelf: The Map Pieces. The whole map rested safely in its folio, beside the moonstone. Nothing was missing today.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-library-to-share:p2": {
+      "file": null,
+      "text": "“We found a library,” Lark declared delightedly. “Now we need readers!”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-library-to-share:p3": {
+      "file": null,
+      "text": "On the packing shelf lay three fresh invitations. Lark read their destinations aloud: Reed Hut, the Mill, and Fern Lodge. Nib dropped one into each of his new courier bag’s three pockets.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-library-to-share:p4": {
+      "file": null,
+      "text": "“Three deliveries,” Nib announced grandly. “One dependable mouse.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-library-to-share:p5": {
+      "file": null,
+      "text": "He ducked under the strap. The bag settled with a soft thump. It was rather wider than the dependable mouse.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "bring-the-map:p1": {
+      "file": null,
+      "text": "Lark brought two closed folios down from the shelf. They looked almost alike. One held the map; the other held your folded mat. Each had its own little label.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "bring-the-map:p2": {
+      "file": null,
+      "text": "“Let’s take the map,” Lark suggested warmly. “Which label says map?”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "review-map"
+    },
+    "a-difficult-departure:p1": {
+      "file": null,
+      "text": "With the map tucked safely into the bag, Nib marched toward the door. His feet made determined little pats across the boards. The bottom of the bag passed through. The middle passed through. Then the strap stopped dead.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-difficult-departure:p2": {
+      "file": null,
+      "text": "“I have arrived,” Nib declared.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-difficult-departure:p3": {
+      "file": null,
+      "text": "He glanced back at the packing shelf.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-difficult-departure:p4": {
+      "file": null,
+      "text": "“At a very nearby destination,” Nib added doubtfully.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-difficult-departure:p5": {
+      "file": null,
+      "text": "A loose loop had caught beneath the brass latch. The door was wide enough. The bag was wide enough. The strap had simply found the one place it could not pass.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "do-not-drag:p1": {
+      "file": null,
+      "text": "Nib gave a small tug. The latch pressed a dent into the cloth.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "do-not-drag:p2": {
+      "file": null,
+      "text": "“Don’t drag it,” Lark urged gently. “We’ll rub a hole in our delivery bag.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "do-not-drag:p3": {
+      "file": null,
+      "text": "You helped set the bag on the dry floor. Lark lifted the three invitations out, one by one, and laid them safely on the packing shelf. Nobody had received a delivery yet.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "do-not-drag:p4": {
+      "file": null,
+      "text": "Nib drooped beside the doorway.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "do-not-drag:p5": {
+      "file": null,
+      "text": "“A splendid bag,” Nib murmured sadly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "do-not-drag:p6": {
+      "file": null,
+      "text": "“A rather grabby latch,” Lark replied thoughtfully. “We need something soft between the brass and the strap.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-small-new-sound:p1": {
+      "file": null,
+      "text": "The shelf had two little cupboards. Their contents were hidden behind wooden doors. Lark drew a round shape, then a tall line beside it, on a small slate. A lowercase d.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-small-new-sound:p2": {
+      "file": null,
+      "text": "“Listen to the beginning of dip,” Lark invited softly. “A quick little sound. Your tongue touches just behind your top teeth, then lets go.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-small-new-sound:p3": {
+      "file": null,
+      "text": "Nib tried it once. A tiny puff disturbed a speck of dust.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-small-new-sound:p4": {
+      "file": null,
+      "text": "“A small sound for a difficult door,” Nib observed hopefully.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-small-new-sound:p5": {
+      "file": null,
+      "text": "Lark set three letters in a row: p, a, d.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-small-new-sound:p6": {
+      "file": null,
+      "text": "“Here are two sounds we know and our new one,” Lark explained patiently. “We can join them: pad. A soft pad can protect the strap. Slide with me, then say the whole word if you like.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "model-pad"
+    },
+    "the-cupboard-label:p1": {
+      "file": null,
+      "text": "Nib leaned toward the cupboard nearest him. Then he paused. Both labels began with p. Both had a in the middle. That would not tell him which cupboard held the pad.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-cupboard-label:p2": {
+      "file": null,
+      "text": "“I nearly picked the first one,” Nib admitted sheepishly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-cupboard-label:p3": {
+      "file": null,
+      "text": "“The last sound matters too,” Lark reminded him gently. “Find pad on the shelf.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "find-pad"
+    },
+    "a-pad-for-the-latch:p1": {
+      "file": null,
+      "text": "The cupboard opened. Inside lay a folded felt pad, just the right size. You carried it to the doorway. Its soft cloth wrapped around the sharp lower edge of the latch, leaving the handle clear.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-pad-for-the-latch:p2": {
+      "file": null,
+      "text": "Nib touched the strap. No new scrape. No deep dent.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-pad-for-the-latch:p3": {
+      "file": null,
+      "text": "“A padded problem,” Nib announced proudly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-pad-for-the-latch:p4": {
+      "file": null,
+      "text": "“A protected strap,” Lark corrected him with a chuckle. “The loop is still caught underneath. We’ll need to do different jobs together.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "a-pad-for-the-latch:p5": {
+      "file": null,
+      "text": "Lark fluttered up to lift the latch. Nib lowered the bag until its base rested on the floor. That made the strap slack. A clear opening appeared above the loose loop.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "three-small-jobs:p1": {
+      "file": null,
+      "text": "“I’ll hold this up,” Lark called steadily.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "three-small-jobs:p2": {
+      "file": null,
+      "text": "“I’ll keep the bag down,” Nib answered determinedly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "three-small-jobs:p3": {
+      "file": null,
+      "text": "The loose strap rested within reach. You could guide it through the opening while your friends held their places. Nobody needed to tug.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "three-small-jobs:p4": {
+      "file": null,
+      "text": "“Bring the strap through the gap,” Lark urged encouragingly. “We’ll hold it for you.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "free-strap"
+    },
+    "out-without-a-dent:p1": {
+      "file": null,
+      "text": "The loop slipped clear. Lark lowered the latch only after the cloth was free. Nib took one careful step backward. The bag came with him.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "out-without-a-dent:p2": {
+      "file": null,
+      "text": "“It did!” Nib exclaimed delightedly. “It did go through!”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "out-without-a-dent:p3": {
+      "file": null,
+      "text": "He examined the strap from end to end. The pad had kept it from tearing. Lark folded the pad around the strap’s worn spot and fastened its small cloth tie. It could travel with the bag now.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "out-without-a-dent:p4": {
+      "file": null,
+      "text": "“We didn’t need a bigger door,” Lark remarked thoughtfully.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "out-without-a-dent:p5": {
+      "file": null,
+      "text": "“Or a smaller mouse,” Nib added with relief. “Excellent news for the mouse.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "check-the-three-deliveries:p1": {
+      "file": null,
+      "text": "The three invitations still waited on the dry shelf. Lark read their destinations again and pointed to the matching pictures on the bag’s pockets: a reed-roofed hut, the Mill wheel, and Fern Lodge’s fern. You did not need to read those names yourself.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "check-the-three-deliveries:p2": {
+      "file": null,
+      "text": "Nib held the pockets open, one at a time. Lark kept the bag steady. There was a separate place for every invitation.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "check-the-three-deliveries:p3": {
+      "file": null,
+      "text": "“Three invitations,” Lark counted calmly. “Three pockets. Put each picture with its matching pocket, and we’ll check them together.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "pack-invitations"
+    },
+    "our-first-courier-page:p1": {
+      "file": null,
+      "text": "One invitation in each pocket. Three invitations altogether. The map and route book lay in the main compartment, away from the damp patch on Nib’s scarf.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "our-first-courier-page:p2": {
+      "file": null,
+      "text": "Lark opened a fresh journal. She drew the caught strap, the pad, and three friends doing three useful jobs. Nib added a very large doorway and a very small dent.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "our-first-courier-page:p3": {
+      "file": null,
+      "text": "Beside the drawing, Lark fastened a little wooden tag from the packing shelf. She had written d on it.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "our-first-courier-page:p4": {
+      "file": null,
+      "text": "“Our doorway tag,” Lark explained warmly. “For the first page of our delivery adventure.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "our-first-courier-page:p5": {
+      "file": null,
+      "text": "Nib held it up, then tucked it into your collection pocket. Your first courier page was ready to read again.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p1": {
+      "file": null,
+      "text": "Outside, daylight dappled the dry path. Nib checked that the strap lay flat before lifting the bag. This time he passed through the door without a tug.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p2": {
+      "file": null,
+      "text": "Lark opened the route book on a low, level stump. Its first picture showed a fish’s fin beside a fork in the path. She read the next direction aloud. That little word would be your next discovery.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p3": {
+      "file": null,
+      "text": "“First stop: Reed Hut,” Lark announced brightly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p4": {
+      "file": null,
+      "text": "“First job: done,” Nib declared proudly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p5": {
+      "file": null,
+      "text": "He looked down at his dependable bag.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p6": {
+      "file": null,
+      "text": "“Next job: delivery,” Nib declared eagerly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    },
+    "the-first-direction:p7": {
+      "file": null,
+      "text": "With all three invitations safe, you set off together. Behind you, the library door rested open. Ahead, the woodland had readers to find.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null
+    }
+  }
+}

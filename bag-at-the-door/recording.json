@@ -1,0 +1,1388 @@
+{
+  "status": "approved",
+  "approved": true,
+  "manuscriptSHA256": "36cec6324164e2fbcb498a6694cecc224d3c3de83d3173c84ec411baa321f4ac",
+  "sourceSHA256": "eecde67d0c38ae67b69d5d8fb0910fdbc26f4564a1f10e74a58cb51d0fd65fed",
+  "sourceName": "ElevenLabs_The_Bag_at_the_Door.mp3",
+  "sourceDuration": 488.32596371882084,
+  "alignmentMethod": "Offline exact-text DTW for every spoken paragraph; all 55 physical boundaries centered in independently measured -42dB quiet intervals. Word times are model estimates.",
+  "cutPolicy": "Center of longest measured quiet interval between adjacent paragraph speech edges; do not cut in a shorter stop-consonant closure before its release.",
+  "recordingDifferences": [
+    {
+      "paragraph": "a-pad-for-the-latch:p4",
+      "manuscript": "The loop is still caught underneath.",
+      "recording": "A loop is still caught underneath.",
+      "check": "Agrees in whole-recording ASR and a fresh-context local excerpt pass."
+    },
+    {
+      "paragraph": "out-without-a-dent:p2",
+      "manuscript": "Nib exclaimed delightedly.",
+      "recording": "Nib exclaimed.",
+      "check": "Agrees in whole-recording ASR and a fresh-context local excerpt pass."
+    },
+    {
+      "paragraph": "check-the-three-deliveries:p1",
+      "manuscript": " You did not need to read those names yourself.",
+      "recording": "",
+      "check": "Agrees in whole-recording ASR and a fresh-context local excerpt pass."
+    }
+  ],
+  "entries": {
+    "a-library-to-share:p1": {
+      "text": "Morning slipped through the open door of the Treasure Tree. Yesterday’s damp leaves glittered outside. Inside, your finished adventure stood on the shelf: The Map Pieces. The whole map rested safely in its folio, beside the moonstone. Nothing was missing today.",
+      "spokenText": "Morning slipped through the open door of the Treasure Tree. Yesterday’s damp leaves glittered outside. Inside, your finished adventure stood on the shelf: The Map Pieces. The whole map rested safely in its folio, beside the moonstone. Nothing was missing today.",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 28.85578231292517,
+      "duration": 28.85578231292517,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.2,
+          "speaker": "narrator",
+          "text": "The Bag at the Door."
+        },
+        {
+          "start": 2.86,
+          "end": 5.14,
+          "speaker": "narrator",
+          "text": "Lark & Nib’s Treasure Quest."
+        },
+        {
+          "start": 5.66,
+          "end": 7.0,
+          "speaker": "narrator",
+          "text": "Through the Woods."
+        },
+        {
+          "start": 7.62,
+          "end": 9.38,
+          "speaker": "narrator",
+          "text": "Season 2. Episode 1."
+        },
+        {
+          "start": 9.8,
+          "end": 21.68,
+          "speaker": "narrator",
+          "text": "Morning slipped through the open door of the Treasure Tree. Yesterday’s damp leaves glittered outside. Inside, your finished adventure stood on the shelf: The Map Pieces."
+        },
+        {
+          "start": 21.68,
+          "end": 28.42,
+          "speaker": "narrator",
+          "text": "The whole map rested safely in its folio, beside the moonstone. Nothing was missing today."
+        }
+      ]
+    },
+    "a-library-to-share:p2": {
+      "text": "“We found a library,” Lark declared delightedly. “Now we need readers!”",
+      "spokenText": "“We found a library,” Lark declared delightedly. “Now we need readers!”",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 28.85578231292517,
+      "sourceEnd": 36.70718820861678,
+      "duration": 7.851405895691606,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.325468,
+          "end": 1.684218,
+          "speaker": "lark",
+          "text": "We found a library,"
+        },
+        {
+          "start": 1.684218,
+          "end": 4.584218,
+          "speaker": "narrator",
+          "text": "Lark declared delightedly."
+        },
+        {
+          "start": 4.584218,
+          "end": 7.224218,
+          "speaker": "lark",
+          "text": "Now we need readers!"
+        }
+      ]
+    },
+    "a-library-to-share:p3": {
+      "text": "On the packing shelf lay three fresh invitations. Lark read their destinations aloud: Reed Hut, the Mill, and Fern Lodge. Nib dropped one into each of his new courier bag’s three pockets.",
+      "spokenText": "On the packing shelf lay three fresh invitations. Lark read their destinations aloud: Reed Hut, the Mill, and Fern Lodge. Nib dropped one into each of his new courier bag’s three pockets.",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 36.70718820861678,
+      "sourceEnd": 50.93446712018141,
+      "duration": 14.227278911564632,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.303187,
+          "end": 9.352812,
+          "speaker": "narrator",
+          "text": "On the packing shelf lay three fresh invitations. Lark read their destinations aloud: Reed Hut, the Mill, and Fern Lodge."
+        },
+        {
+          "start": 9.352812,
+          "end": 13.812812,
+          "speaker": "narrator",
+          "text": "Nib dropped one into each of his new courier bag’s three pockets."
+        }
+      ]
+    },
+    "a-library-to-share:p4": {
+      "text": "“Three deliveries,” Nib announced grandly. “One dependable mouse.”",
+      "spokenText": "“Three deliveries,” Nib announced grandly. “One dependable mouse.”",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 50.93446712018141,
+      "sourceEnd": 58.2363492063492,
+      "duration": 7.301882086167794,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.25547,
+          "end": 1.345533,
+          "speaker": "nib",
+          "text": "Three deliveries,"
+        },
+        {
+          "start": 1.345533,
+          "end": 4.105533,
+          "speaker": "narrator",
+          "text": "Nib announced grandly."
+        },
+        {
+          "start": 4.105533,
+          "end": 6.665533,
+          "speaker": "nib",
+          "text": "One dependable mouse."
+        }
+      ]
+    },
+    "a-library-to-share:p5": {
+      "text": "He ducked under the strap. The bag settled with a soft thump. It was rather wider than the dependable mouse.",
+      "spokenText": "He ducked under the strap. The bag settled with a soft thump. It was rather wider than the dependable mouse.",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 58.2363492063492,
+      "sourceEnd": 66.08755102040816,
+      "duration": 7.851201814058953,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.490464,
+          "end": 7.423651,
+          "speaker": "narrator",
+          "text": "He ducked under the strap. The bag settled with a soft thump. It was rather wider than the dependable mouse."
+        }
+      ]
+    },
+    "bring-the-map:p1": {
+      "text": "Lark brought two closed folios down from the shelf. They looked almost alike. One held the map; the other held your folded mat. Each had its own little label.",
+      "spokenText": "Lark brought two closed folios down from the shelf. They looked almost alike. One held the map; the other held your folded mat. Each had its own little label.",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 66.08755102040816,
+      "sourceEnd": 76.8869387755102,
+      "duration": 10.799387755102046,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.339136,
+          "end": 8.212449,
+          "speaker": "narrator",
+          "text": "Lark brought two closed folios down from the shelf. They looked almost alike. One held the map; the other held your folded mat."
+        },
+        {
+          "start": 8.212449,
+          "end": 10.452449,
+          "speaker": "narrator",
+          "text": "Each had its own little label."
+        }
+      ]
+    },
+    "bring-the-map:p2": {
+      "text": "“Let’s take the map,” Lark suggested warmly. “Which label says map?”",
+      "spokenText": "“Let’s take the map,” Lark suggested warmly. “Which label says map?”",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 76.8869387755102,
+      "sourceEnd": 83.51154195011338,
+      "duration": 6.62460317460318,
+      "source": "elevenlabs-upload",
+      "gateAfter": "review-map",
+      "cues": [
+        {
+          "start": 0.279874,
+          "end": 1.373061,
+          "speaker": "lark",
+          "text": "Let’s take the map,"
+        },
+        {
+          "start": 1.373061,
+          "end": 3.693061,
+          "speaker": "narrator",
+          "text": "Lark suggested warmly."
+        },
+        {
+          "start": 3.693061,
+          "end": 6.133061,
+          "speaker": "lark",
+          "text": "Which label says map?"
+        }
+      ]
+    },
+    "a-difficult-departure:p1": {
+      "text": "With the map tucked safely into the bag, Nib marched toward the door. His feet made determined little pats across the boards. The bottom of the bag passed through. The middle passed through. Then the strap stopped dead.",
+      "spokenText": "With the map tucked safely into the bag, Nib marched toward the door. His feet made determined little pats across the boards. The bottom of the bag passed through. The middle passed through. Then the strap stopped dead.",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 83.51154195011338,
+      "sourceEnd": 98.8550566893424,
+      "duration": 15.343514739229022,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.413896,
+          "end": 8.068458,
+          "speaker": "narrator",
+          "text": "With the map tucked safely into the bag, Nib marched toward the door. His feet made determined little pats across the boards."
+        },
+        {
+          "start": 8.068458,
+          "end": 14.948458,
+          "speaker": "narrator",
+          "text": "The bottom of the bag passed through. The middle passed through. Then the strap stopped dead."
+        }
+      ]
+    },
+    "a-difficult-departure:p2": {
+      "text": "“I have arrived,” Nib declared.",
+      "spokenText": "“I have arrived,” Nib declared.",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 98.8550566893424,
+      "sourceEnd": 102.78609977324263,
+      "duration": 3.931043083900221,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.277068,
+          "end": 1.464943,
+          "speaker": "nib",
+          "text": "I have arrived,"
+        },
+        {
+          "start": 1.464943,
+          "end": 3.124943,
+          "speaker": "narrator",
+          "text": "Nib declared."
+        }
+      ]
+    },
+    "a-difficult-departure:p3": {
+      "text": "He glanced back at the packing shelf.",
+      "spokenText": "He glanced back at the packing shelf.",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 102.78609977324263,
+      "sourceEnd": 105.6704761904762,
+      "duration": 2.884376417233568,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.657963,
+          "end": 2.4139,
+          "speaker": "narrator",
+          "text": "He glanced back at the packing shelf."
+        }
+      ]
+    },
+    "a-difficult-departure:p4": {
+      "text": "“At a very nearby destination,” Nib added doubtfully.",
+      "spokenText": "“At a very nearby destination,” Nib added doubtfully.",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 105.6704761904762,
+      "sourceEnd": 111.53530612244899,
+      "duration": 5.864829931972793,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.351836,
+          "end": 2.649524,
+          "speaker": "nib",
+          "text": "At a very nearby destination,"
+        },
+        {
+          "start": 2.649524,
+          "end": 5.249524,
+          "speaker": "narrator",
+          "text": "Nib added doubtfully."
+        }
+      ]
+    },
+    "a-difficult-departure:p5": {
+      "text": "A loose loop had caught beneath the brass latch. The door was wide enough. The bag was wide enough. The strap had simply found the one place it could not pass.",
+      "spokenText": "A loose loop had caught beneath the brass latch. The door was wide enough. The bag was wide enough. The strap had simply found the one place it could not pass.",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 111.53530612244899,
+      "sourceEnd": 122.16052154195012,
+      "duration": 10.625215419501131,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.287257,
+          "end": 6.184694,
+          "speaker": "narrator",
+          "text": "A loose loop had caught beneath the brass latch. The door was wide enough. The bag was wide enough."
+        },
+        {
+          "start": 6.184694,
+          "end": 10.124694,
+          "speaker": "narrator",
+          "text": "The strap had simply found the one place it could not pass."
+        }
+      ]
+    },
+    "do-not-drag:p1": {
+      "text": "Nib gave a small tug. The latch pressed a dent into the cloth.",
+      "spokenText": "Nib gave a small tug. The latch pressed a dent into the cloth.",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 122.16052154195012,
+      "sourceEnd": 127.1718820861678,
+      "duration": 5.0113605442176805,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.422853,
+          "end": 4.482103,
+          "speaker": "narrator",
+          "text": "Nib gave a small tug. The latch pressed a dent into the cloth."
+        }
+      ]
+    },
+    "do-not-drag:p2": {
+      "text": "“Don’t drag it,” Lark urged gently. “We’ll rub a hole in our delivery bag.”",
+      "spokenText": "“Don’t drag it,” Lark urged gently. “We’ll rub a hole in our delivery bag.”",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 127.1718820861678,
+      "sourceEnd": 135.0215873015873,
+      "duration": 7.84970521541949,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.529243,
+          "end": 1.728118,
+          "speaker": "lark",
+          "text": "Don’t drag it,"
+        },
+        {
+          "start": 1.728118,
+          "end": 4.048118,
+          "speaker": "narrator",
+          "text": "Lark urged gently."
+        },
+        {
+          "start": 4.048118,
+          "end": 7.208118,
+          "speaker": "lark",
+          "text": "We’ll rub a hole in our delivery bag."
+        }
+      ]
+    },
+    "do-not-drag:p3": {
+      "text": "You helped set the bag on the dry floor. Lark lifted the three invitations out, one by one, and laid them safely on the packing shelf. Nobody had received a delivery yet.",
+      "spokenText": "You helped set the bag on the dry floor. Lark lifted the three invitations out, one by one, and laid them safely on the packing shelf. Nobody had received a delivery yet.",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 135.0215873015873,
+      "sourceEnd": 147.34113378684808,
+      "duration": 12.319546485260787,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.567601,
+          "end": 9.318413,
+          "speaker": "narrator",
+          "text": "You helped set the bag on the dry floor. Lark lifted the three invitations out, one by one, and laid them safely on the packing shelf."
+        },
+        {
+          "start": 9.318413,
+          "end": 11.898413,
+          "speaker": "narrator",
+          "text": "Nobody had received a delivery yet."
+        }
+      ]
+    },
+    "do-not-drag:p4": {
+      "text": "Nib drooped beside the doorway.",
+      "spokenText": "Nib drooped beside the doorway.",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 147.34113378684808,
+      "sourceEnd": 149.99580498866214,
+      "duration": 2.654671201814068,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.386928,
+          "end": 2.098866,
+          "speaker": "narrator",
+          "text": "Nib drooped beside the doorway."
+        }
+      ]
+    },
+    "do-not-drag:p5": {
+      "text": "“A splendid bag,” Nib murmured sadly.",
+      "spokenText": "“A splendid bag,” Nib murmured sadly.",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 149.99580498866214,
+      "sourceEnd": 154.71181405895692,
+      "duration": 4.716009070294774,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.401258,
+          "end": 1.864195,
+          "speaker": "nib",
+          "text": "A splendid bag,"
+        },
+        {
+          "start": 1.864195,
+          "end": 4.124195,
+          "speaker": "narrator",
+          "text": "Nib murmured sadly."
+        }
+      ]
+    },
+    "do-not-drag:p6": {
+      "text": "“A rather grabby latch,” Lark replied thoughtfully. “We need something soft between the brass and the strap.”",
+      "spokenText": "“A rather grabby latch,” Lark replied thoughtfully. “We need something soft between the brass and the strap.”",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 154.71181405895692,
+      "sourceEnd": 163.74485260770976,
+      "duration": 9.033038548752842,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.454249,
+          "end": 2.308186,
+          "speaker": "lark",
+          "text": "A rather grabby latch,"
+        },
+        {
+          "start": 2.308186,
+          "end": 4.608186,
+          "speaker": "narrator",
+          "text": "Lark replied thoughtfully."
+        },
+        {
+          "start": 4.608186,
+          "end": 8.448186,
+          "speaker": "lark",
+          "text": "We need something soft between the brass and the strap."
+        }
+      ]
+    },
+    "a-small-new-sound:p1": {
+      "text": "The shelf had two little cupboards. Their contents were hidden behind wooden doors. Lark drew a round shape, then a tall line beside it, on a small slate. A lowercase d.",
+      "spokenText": "The shelf had two little cupboards. Their contents were hidden behind wooden doors. Lark drew a round shape, then a tall line beside it, on a small slate. A lowercase d.",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 163.74485260770976,
+      "sourceEnd": 176.62249433106575,
+      "duration": 12.877641723355993,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.447835,
+          "end": 10.695147,
+          "speaker": "narrator",
+          "text": "The shelf had two little cupboards. Their contents were hidden behind wooden doors. Lark drew a round shape, then a tall line beside it, on a small slate."
+        },
+        {
+          "start": 10.695147,
+          "end": 12.355147,
+          "speaker": "narrator",
+          "text": "A lowercase d."
+        }
+      ]
+    },
+    "a-small-new-sound:p2": {
+      "text": "“Listen to the beginning of dip,” Lark invited softly. “A quick little sound. Your tongue touches just behind your top teeth, then lets go.”",
+      "spokenText": "“Listen to the beginning of dip,” Lark invited softly. “A quick little sound. Your tongue touches just behind your top teeth, then lets go.”",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 176.62249433106575,
+      "sourceEnd": 188.39156462585035,
+      "duration": 11.769070294784598,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.359006,
+          "end": 2.217506,
+          "speaker": "lark",
+          "text": "Listen to the beginning of dip,"
+        },
+        {
+          "start": 2.217506,
+          "end": 4.857506,
+          "speaker": "narrator",
+          "text": "Lark invited softly."
+        },
+        {
+          "start": 4.857506,
+          "end": 11.197506,
+          "speaker": "lark",
+          "text": "A quick little sound. Your tongue touches just behind your top teeth, then lets go."
+        }
+      ]
+    },
+    "a-small-new-sound:p3": {
+      "text": "Nib tried it once. A tiny puff disturbed a speck of dust.",
+      "spokenText": "Nib tried it once. A tiny puff disturbed a speck of dust.",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 188.39156462585035,
+      "sourceEnd": 193.6484126984127,
+      "duration": 5.256848072562349,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.491372,
+          "end": 4.648435,
+          "speaker": "narrator",
+          "text": "Nib tried it once. A tiny puff disturbed a speck of dust."
+        }
+      ]
+    },
+    "a-small-new-sound:p4": {
+      "text": "“A small sound for a difficult door,” Nib observed hopefully.",
+      "spokenText": "“A small sound for a difficult door,” Nib observed hopefully.",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 193.6484126984127,
+      "sourceEnd": 199.3667573696145,
+      "duration": 5.718344671201805,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.522837,
+          "end": 2.891587,
+          "speaker": "nib",
+          "text": "A small sound for a difficult door,"
+        },
+        {
+          "start": 2.891587,
+          "end": 5.171587,
+          "speaker": "narrator",
+          "text": "Nib observed hopefully."
+        }
+      ]
+    },
+    "a-small-new-sound:p5": {
+      "text": "Lark set three letters in a row: p, a, d.",
+      "spokenText": "Lark set three letters in a row: p, a, d.",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 199.3667573696145,
+      "sourceEnd": 204.53428571428572,
+      "duration": 5.1675283446712115,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.389055,
+          "end": 4.573243,
+          "speaker": "narrator",
+          "text": "Lark set three letters in a row: p, a, d."
+        }
+      ]
+    },
+    "a-small-new-sound:p6": {
+      "text": "“Here are two sounds we know and our new one,” Lark explained patiently. “We can join them: pad. A soft pad can protect the strap. Slide with me, then say the whole word if you like.”",
+      "spokenText": "“Here are two sounds we know and our new one,” Lark explained patiently. “We can join them: pad. A soft pad can protect the strap. Slide with me, then say the whole word if you like.”",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 204.53428571428572,
+      "sourceEnd": 219.78950113378684,
+      "duration": 15.255215419501127,
+      "source": "elevenlabs-upload",
+      "gateAfter": "model-pad",
+      "cues": [
+        {
+          "start": 0.382652,
+          "end": 3.385714,
+          "speaker": "lark",
+          "text": "Here are two sounds we know and our new one,"
+        },
+        {
+          "start": 3.385714,
+          "end": 5.865714,
+          "speaker": "narrator",
+          "text": "Lark explained patiently."
+        },
+        {
+          "start": 5.865714,
+          "end": 14.685714,
+          "speaker": "lark",
+          "text": "We can join them: pad. A soft pad can protect the strap. Slide with me, then say the whole word if you like."
+        }
+      ]
+    },
+    "the-cupboard-label:p1": {
+      "text": "Nib leaned toward the cupboard nearest him. Then he paused. Both labels began with p. Both had a in the middle. That would not tell him which cupboard held the pad.",
+      "spokenText": "Nib leaned toward the cupboard nearest him. Then he paused. Both labels began with p. Both had a in the middle. That would not tell him which cupboard held the pad.",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 219.78950113378684,
+      "sourceEnd": 232.45544217687075,
+      "duration": 12.665941043083905,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.509624,
+          "end": 9.070499,
+          "speaker": "narrator",
+          "text": "Nib leaned toward the cupboard nearest him. Then he paused. Both labels began with p. Both had a in the middle."
+        },
+        {
+          "start": 9.070499,
+          "end": 12.290499,
+          "speaker": "narrator",
+          "text": "That would not tell him which cupboard held the pad."
+        }
+      ]
+    },
+    "the-cupboard-label:p2": {
+      "text": "“I nearly picked the first one,” Nib admitted sheepishly.",
+      "spokenText": "“I nearly picked the first one,” Nib admitted sheepishly.",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 232.45544217687075,
+      "sourceEnd": 237.61512471655328,
+      "duration": 5.159682539682535,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.264058,
+          "end": 2.104558,
+          "speaker": "nib",
+          "text": "I nearly picked the first one,"
+        },
+        {
+          "start": 2.104558,
+          "end": 4.564558,
+          "speaker": "narrator",
+          "text": "Nib admitted sheepishly."
+        }
+      ]
+    },
+    "the-cupboard-label:p3": {
+      "text": "“The last sound matters too,” Lark reminded him gently. “Find pad on the shelf.”",
+      "spokenText": "“The last sound matters too,” Lark reminded him gently. “Find pad on the shelf.”",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 237.61512471655328,
+      "sourceEnd": 245.52643990929704,
+      "duration": 7.911315192743757,
+      "source": "elevenlabs-upload",
+      "gateAfter": "find-pad",
+      "cues": [
+        {
+          "start": 0.552687,
+          "end": 2.224875,
+          "speaker": "lark",
+          "text": "The last sound matters too,"
+        },
+        {
+          "start": 2.224875,
+          "end": 4.664875,
+          "speaker": "narrator",
+          "text": "Lark reminded him gently."
+        },
+        {
+          "start": 4.664875,
+          "end": 7.404875,
+          "speaker": "lark",
+          "text": "Find pad on the shelf."
+        }
+      ]
+    },
+    "a-pad-for-the-latch:p1": {
+      "text": "The cupboard opened. Inside lay a folded felt pad, just the right size. You carried it to the doorway. Its soft cloth wrapped around the sharp lower edge of the latch, leaving the handle clear.",
+      "spokenText": "The cupboard opened. Inside lay a folded felt pad, just the right size. You carried it to the doorway. Its soft cloth wrapped around the sharp lower edge of the latch, leaving the handle clear.",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 245.52643990929704,
+      "sourceEnd": 258.75356009070293,
+      "duration": 13.227120181405894,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.275373,
+          "end": 7.05356,
+          "speaker": "narrator",
+          "text": "The cupboard opened. Inside lay a folded felt pad, just the right size. You carried it to the doorway."
+        },
+        {
+          "start": 7.05356,
+          "end": 12.75356,
+          "speaker": "narrator",
+          "text": "Its soft cloth wrapped around the sharp lower edge of the latch, leaving the handle clear."
+        }
+      ]
+    },
+    "a-pad-for-the-latch:p2": {
+      "text": "Nib touched the strap. No new scrape. No deep dent.",
+      "spokenText": "Nib touched the strap. No new scrape. No deep dent.",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 258.75356009070293,
+      "sourceEnd": 263.6701360544218,
+      "duration": 4.916575963718856,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.358502,
+          "end": 4.30644,
+          "speaker": "narrator",
+          "text": "Nib touched the strap. No new scrape. No deep dent."
+        }
+      ]
+    },
+    "a-pad-for-the-latch:p3": {
+      "text": "“A padded problem,” Nib announced proudly.",
+      "spokenText": "“A padded problem,” Nib announced proudly.",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 263.6701360544218,
+      "sourceEnd": 268.2466213151927,
+      "duration": 4.576485260770937,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.442177,
+          "end": 1.789864,
+          "speaker": "nib",
+          "text": "A padded problem,"
+        },
+        {
+          "start": 1.789864,
+          "end": 3.949864,
+          "speaker": "narrator",
+          "text": "Nib announced proudly."
+        }
+      ]
+    },
+    "a-pad-for-the-latch:p4": {
+      "text": "“A protected strap,” Lark corrected him with a chuckle. “The loop is still caught underneath. We’ll need to do different jobs together.”",
+      "spokenText": "“A protected strap,” Lark corrected him with a chuckle. “A loop is still caught underneath. We’ll need to do different jobs together.”",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 268.2466213151927,
+      "sourceEnd": 278.57113378684807,
+      "duration": 10.32451247165534,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.463504,
+          "end": 1.773379,
+          "speaker": "lark",
+          "text": "A protected strap,"
+        },
+        {
+          "start": 1.773379,
+          "end": 4.553379,
+          "speaker": "narrator",
+          "text": "Lark corrected him with a chuckle."
+        },
+        {
+          "start": 4.553379,
+          "end": 9.733379,
+          "speaker": "lark",
+          "text": "A loop is still caught underneath. We’ll need to do different jobs together."
+        }
+      ]
+    },
+    "a-pad-for-the-latch:p5": {
+      "text": "Lark fluttered up to lift the latch. Nib lowered the bag until its base rested on the floor. That made the strap slack. A clear opening appeared above the loose loop.",
+      "spokenText": "Lark fluttered up to lift the latch. Nib lowered the bag until its base rested on the floor. That made the strap slack. A clear opening appeared above the loose loop.",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 278.57113378684807,
+      "sourceEnd": 290.21414965986395,
+      "duration": 11.643015873015884,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.446304,
+          "end": 8.068866,
+          "speaker": "narrator",
+          "text": "Lark fluttered up to lift the latch. Nib lowered the bag until its base rested on the floor. That made the strap slack."
+        },
+        {
+          "start": 8.068866,
+          "end": 11.268866,
+          "speaker": "narrator",
+          "text": "A clear opening appeared above the loose loop."
+        }
+      ]
+    },
+    "three-small-jobs:p1": {
+      "text": "“I’ll hold this up,” Lark called steadily.",
+      "spokenText": "“I’ll hold this up,” Lark called steadily.",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 290.21414965986395,
+      "sourceEnd": 294.3062811791383,
+      "duration": 4.092131519274346,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.35735,
+          "end": 1.44585,
+          "speaker": "lark",
+          "text": "I’ll hold this up,"
+        },
+        {
+          "start": 1.44585,
+          "end": 3.64585,
+          "speaker": "narrator",
+          "text": "Lark called steadily."
+        }
+      ]
+    },
+    "three-small-jobs:p2": {
+      "text": "“I’ll keep the bag down,” Nib answered determinedly.",
+      "spokenText": "“I’ll keep the bag down,” Nib answered determinedly.",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 294.3062811791383,
+      "sourceEnd": 299.1589795918367,
+      "duration": 4.85269841269843,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.337719,
+          "end": 1.713719,
+          "speaker": "nib",
+          "text": "I’ll keep the bag down,"
+        },
+        {
+          "start": 1.713719,
+          "end": 4.473719,
+          "speaker": "narrator",
+          "text": "Nib answered determinedly."
+        }
+      ]
+    },
+    "three-small-jobs:p3": {
+      "text": "The loose strap rested within reach. You could guide it through the opening while your friends held their places. Nobody needed to tug.",
+      "spokenText": "The loose strap rested within reach. You could guide it through the opening while your friends held their places. Nobody needed to tug.",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 299.1589795918367,
+      "sourceEnd": 307.36047619047616,
+      "duration": 8.201496598639437,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.30027,
+          "end": 7.78102,
+          "speaker": "narrator",
+          "text": "The loose strap rested within reach. You could guide it through the opening while your friends held their places. Nobody needed to tug."
+        }
+      ]
+    },
+    "three-small-jobs:p4": {
+      "text": "“Bring the strap through the gap,” Lark urged encouragingly. “We’ll hold it for you.”",
+      "spokenText": "“Bring the strap through the gap,” Lark urged encouragingly. “We’ll hold it for you.”",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 307.36047619047616,
+      "sourceEnd": 314.80857142857144,
+      "duration": 7.448095238095277,
+      "source": "elevenlabs-upload",
+      "gateAfter": "free-strap",
+      "cues": [
+        {
+          "start": 0.357961,
+          "end": 2.139524,
+          "speaker": "lark",
+          "text": "Bring the strap through the gap,"
+        },
+        {
+          "start": 2.139524,
+          "end": 4.859524,
+          "speaker": "narrator",
+          "text": "Lark urged encouragingly."
+        },
+        {
+          "start": 4.859524,
+          "end": 6.899524,
+          "speaker": "lark",
+          "text": "We’ll hold it for you."
+        }
+      ]
+    },
+    "out-without-a-dent:p1": {
+      "text": "The loop slipped clear. Lark lowered the latch only after the cloth was free. Nib took one careful step backward. The bag came with him.",
+      "spokenText": "The loop slipped clear. Lark lowered the latch only after the cloth was free. Nib took one careful step backward. The bag came with him.",
+      "file": "assets/narration/37.mp3",
+      "sourceStart": 314.80857142857144,
+      "sourceEnd": 325.1970068027211,
+      "duration": 10.388435374149651,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.503992,
+          "end": 10.071429,
+          "speaker": "narrator",
+          "text": "The loop slipped clear. Lark lowered the latch only after the cloth was free. Nib took one careful step backward. The bag came with him."
+        }
+      ]
+    },
+    "out-without-a-dent:p2": {
+      "text": "“It did!” Nib exclaimed delightedly. “It did go through!”",
+      "spokenText": "“It did!” Nib exclaimed. “It did go through!”",
+      "file": "assets/narration/38.mp3",
+      "sourceStart": 325.1970068027211,
+      "sourceEnd": 330.41687074829935,
+      "duration": 5.219863945578254,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.299118,
+          "end": 0.842993,
+          "speaker": "nib",
+          "text": "It did!"
+        },
+        {
+          "start": 0.842993,
+          "end": 2.842993,
+          "speaker": "narrator",
+          "text": "Nib exclaimed."
+        },
+        {
+          "start": 2.842993,
+          "end": 4.442993,
+          "speaker": "nib",
+          "text": "It did go through!"
+        }
+      ]
+    },
+    "out-without-a-dent:p3": {
+      "text": "He examined the strap from end to end. The pad had kept it from tearing. Lark folded the pad around the strap’s worn spot and fastened its small cloth tie. It could travel with the bag now.",
+      "spokenText": "He examined the strap from end to end. The pad had kept it from tearing. Lark folded the pad around the strap’s worn spot and fastened its small cloth tie. It could travel with the bag now.",
+      "file": "assets/narration/39.mp3",
+      "sourceStart": 330.41687074829935,
+      "sourceEnd": 343.7581859410431,
+      "duration": 13.341315192743764,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.522442,
+          "end": 4.863129,
+          "speaker": "narrator",
+          "text": "He examined the strap from end to end. The pad had kept it from tearing."
+        },
+        {
+          "start": 4.863129,
+          "end": 13.003129,
+          "speaker": "narrator",
+          "text": "Lark folded the pad around the strap’s worn spot and fastened its small cloth tie. It could travel with the bag now."
+        }
+      ]
+    },
+    "out-without-a-dent:p4": {
+      "text": "“We didn’t need a bigger door,” Lark remarked thoughtfully.",
+      "spokenText": "“We didn’t need a bigger door,” Lark remarked thoughtfully.",
+      "file": "assets/narration/40.mp3",
+      "sourceStart": 343.7581859410431,
+      "sourceEnd": 348.6471882086168,
+      "duration": 4.889002267573687,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.298064,
+          "end": 1.841814,
+          "speaker": "lark",
+          "text": "We didn’t need a bigger door,"
+        },
+        {
+          "start": 1.841814,
+          "end": 4.301814,
+          "speaker": "narrator",
+          "text": "Lark remarked thoughtfully."
+        }
+      ]
+    },
+    "out-without-a-dent:p5": {
+      "text": "“Or a smaller mouse,” Nib added with relief. “Excellent news for the mouse.”",
+      "spokenText": "“Or a smaller mouse,” Nib added with relief. “Excellent news for the mouse.”",
+      "file": "assets/narration/41.mp3",
+      "sourceStart": 348.6471882086168,
+      "sourceEnd": 355.7172562358277,
+      "duration": 7.07006802721088,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.279812,
+          "end": 1.732812,
+          "speaker": "nib",
+          "text": "Or a smaller mouse,"
+        },
+        {
+          "start": 1.732812,
+          "end": 3.952812,
+          "speaker": "narrator",
+          "text": "Nib added with relief."
+        },
+        {
+          "start": 3.952812,
+          "end": 6.552812,
+          "speaker": "nib",
+          "text": "Excellent news for the mouse."
+        }
+      ]
+    },
+    "check-the-three-deliveries:p1": {
+      "text": "The three invitations still waited on the dry shelf. Lark read their destinations again and pointed to the matching pictures on the bag’s pockets: a reed-roofed hut, the Mill wheel, and Fern Lodge’s fern. You did not need to read those names yourself.",
+      "spokenText": "The three invitations still waited on the dry shelf. Lark read their destinations again and pointed to the matching pictures on the bag’s pockets: a reed-roofed hut, the Mill wheel, and Fern Lodge’s fern.",
+      "file": "assets/narration/42.mp3",
+      "sourceStart": 355.7172562358277,
+      "sourceEnd": 369.4454648526077,
+      "duration": 13.728208616780023,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.409494,
+          "end": 10.442744,
+          "speaker": "narrator",
+          "text": "The three invitations still waited on the dry shelf. Lark read their destinations again and pointed to the matching pictures on the bag’s pockets: a reed-roofed hut,"
+        },
+        {
+          "start": 10.442744,
+          "end": 13.342744,
+          "speaker": "narrator",
+          "text": "the Mill wheel, and Fern Lodge’s fern."
+        }
+      ]
+    },
+    "check-the-three-deliveries:p2": {
+      "text": "Nib held the pockets open, one at a time. Lark kept the bag steady. There was a separate place for every invitation.",
+      "spokenText": "Nib held the pockets open, one at a time. Lark kept the bag steady. There was a separate place for every invitation.",
+      "file": "assets/narration/43.mp3",
+      "sourceStart": 369.4454648526077,
+      "sourceEnd": 378.07643990929705,
+      "duration": 8.630975056689351,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.310223,
+          "end": 8.054535,
+          "speaker": "narrator",
+          "text": "Nib held the pockets open, one at a time. Lark kept the bag steady. There was a separate place for every invitation."
+        }
+      ]
+    },
+    "check-the-three-deliveries:p3": {
+      "text": "“Three invitations,” Lark counted calmly. “Three pockets. Put each picture with its matching pocket, and we’ll check them together.”",
+      "spokenText": "“Three invitations,” Lark counted calmly. “Three pockets. Put each picture with its matching pocket, and we’ll check them together.”",
+      "file": "assets/narration/44.mp3",
+      "sourceStart": 378.07643990929705,
+      "sourceEnd": 388.9639455782313,
+      "duration": 10.887505668934239,
+      "source": "elevenlabs-upload",
+      "gateAfter": "pack-invitations",
+      "cues": [
+        {
+          "start": 0.398623,
+          "end": 1.68356,
+          "speaker": "lark",
+          "text": "Three invitations,"
+        },
+        {
+          "start": 1.68356,
+          "end": 4.10356,
+          "speaker": "narrator",
+          "text": "Lark counted calmly."
+        },
+        {
+          "start": 4.10356,
+          "end": 10.34356,
+          "speaker": "lark",
+          "text": "Three pockets. Put each picture with its matching pocket, and we’ll check them together."
+        }
+      ]
+    },
+    "our-first-courier-page:p1": {
+      "text": "One invitation in each pocket. Three invitations altogether. The map and route book lay in the main compartment, away from the damp patch on Nib’s scarf.",
+      "spokenText": "One invitation in each pocket. Three invitations altogether. The map and route book lay in the main compartment, away from the damp patch on Nib’s scarf.",
+      "file": "assets/narration/45.mp3",
+      "sourceStart": 388.9639455782313,
+      "sourceEnd": 400.38444444444445,
+      "duration": 11.420498866213165,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.292054,
+          "end": 10.876054,
+          "speaker": "narrator",
+          "text": "One invitation in each pocket. Three invitations altogether. The map and route book lay in the main compartment, away from the damp patch on Nib’s scarf."
+        }
+      ]
+    },
+    "our-first-courier-page:p2": {
+      "text": "Lark opened a fresh journal. She drew the caught strap, the pad, and three friends doing three useful jobs. Nib added a very large doorway and a very small dent.",
+      "spokenText": "Lark opened a fresh journal. She drew the caught strap, the pad, and three friends doing three useful jobs. Nib added a very large doorway and a very small dent.",
+      "file": "assets/narration/46.mp3",
+      "sourceStart": 400.38444444444445,
+      "sourceEnd": 412.99709750566893,
+      "duration": 12.612653061224478,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.360243,
+          "end": 7.655556,
+          "speaker": "narrator",
+          "text": "Lark opened a fresh journal. She drew the caught strap, the pad, and three friends doing three useful jobs."
+        },
+        {
+          "start": 7.655556,
+          "end": 12.075556,
+          "speaker": "narrator",
+          "text": "Nib added a very large doorway and a very small dent."
+        }
+      ]
+    },
+    "our-first-courier-page:p3": {
+      "text": "Beside the drawing, Lark fastened a little wooden tag from the packing shelf. She had written d on it.",
+      "spokenText": "Beside the drawing, Lark fastened a little wooden tag from the packing shelf. She had written d on it.",
+      "file": "assets/narration/47.mp3",
+      "sourceStart": 412.99709750566893,
+      "sourceEnd": 420.6719954648526,
+      "duration": 7.6748979591836815,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.411777,
+          "end": 7.322902,
+          "speaker": "narrator",
+          "text": "Beside the drawing, Lark fastened a little wooden tag from the packing shelf. She had written d on it."
+        }
+      ]
+    },
+    "our-first-courier-page:p4": {
+      "text": "“Our doorway tag,” Lark explained warmly. “For the first page of our delivery adventure.”",
+      "spokenText": "“Our doorway tag,” Lark explained warmly. “For the first page of our delivery adventure.”",
+      "file": "assets/narration/48.mp3",
+      "sourceStart": 420.6719954648526,
+      "sourceEnd": 428.4513378684807,
+      "duration": 7.779342403628107,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.331005,
+          "end": 1.588005,
+          "speaker": "lark",
+          "text": "Our doorway tag,"
+        },
+        {
+          "start": 1.588005,
+          "end": 3.928005,
+          "speaker": "narrator",
+          "text": "Lark explained warmly."
+        },
+        {
+          "start": 3.928005,
+          "end": 7.148005,
+          "speaker": "lark",
+          "text": "For the first page of our delivery adventure."
+        }
+      ]
+    },
+    "our-first-courier-page:p5": {
+      "text": "Nib held it up, then tucked it into your collection pocket. Your first courier page was ready to read again.",
+      "spokenText": "Nib held it up, then tucked it into your collection pocket. Your first courier page was ready to read again.",
+      "file": "assets/narration/49.mp3",
+      "sourceStart": 428.4513378684807,
+      "sourceEnd": 435.46043083900224,
+      "duration": 7.009092970521522,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.445974,
+          "end": 6.548662,
+          "speaker": "narrator",
+          "text": "Nib held it up, then tucked it into your collection pocket. Your first courier page was ready to read again."
+        }
+      ]
+    },
+    "the-first-direction:p1": {
+      "text": "Outside, daylight dappled the dry path. Nib checked that the strap lay flat before lifting the bag. This time he passed through the door without a tug.",
+      "spokenText": "Outside, daylight dappled the dry path. Nib checked that the strap lay flat before lifting the bag. This time he passed through the door without a tug.",
+      "file": "assets/narration/50.mp3",
+      "sourceStart": 435.46043083900224,
+      "sourceEnd": 446.3990022675737,
+      "duration": 10.938571428571436,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.341632,
+          "end": 10.539569,
+          "speaker": "narrator",
+          "text": "Outside, daylight dappled the dry path. Nib checked that the strap lay flat before lifting the bag. This time he passed through the door without a tug."
+        }
+      ]
+    },
+    "the-first-direction:p2": {
+      "text": "Lark opened the route book on a low, level stump. Its first picture showed a fish’s fin beside a fork in the path. She read the next direction aloud. That little word would be your next discovery.",
+      "spokenText": "Lark opened the route book on a low, level stump. Its first picture showed a fish’s fin beside a fork in the path. She read the next direction aloud. That little word would be your next discovery.",
+      "file": "assets/narration/51.mp3",
+      "sourceStart": 446.3990022675737,
+      "sourceEnd": 460.0158049886621,
+      "duration": 13.616802721088447,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.328623,
+          "end": 7.520998,
+          "speaker": "narrator",
+          "text": "Lark opened the route book on a low, level stump. Its first picture showed a fish’s fin beside a fork in the path."
+        },
+        {
+          "start": 7.520998,
+          "end": 13.080998,
+          "speaker": "narrator",
+          "text": "She read the next direction aloud. That little word would be your next discovery."
+        }
+      ]
+    },
+    "the-first-direction:p3": {
+      "text": "“First stop: Reed Hut,” Lark announced brightly.",
+      "spokenText": "“First stop: Reed Hut,” Lark announced brightly.",
+      "file": "assets/narration/52.mp3",
+      "sourceStart": 460.0158049886621,
+      "sourceEnd": 465.047664399093,
+      "duration": 5.0318594104308545,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.406195,
+          "end": 2.104195,
+          "speaker": "lark",
+          "text": "First stop: Reed Hut,"
+        },
+        {
+          "start": 2.104195,
+          "end": 4.444195,
+          "speaker": "narrator",
+          "text": "Lark announced brightly."
+        }
+      ]
+    },
+    "the-first-direction:p4": {
+      "text": "“First job: done,” Nib declared proudly.",
+      "spokenText": "“First job: done,” Nib declared proudly.",
+      "file": "assets/narration/53.mp3",
+      "sourceStart": 465.047664399093,
+      "sourceEnd": 469.73589569161,
+      "duration": 4.688231292517003,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.383086,
+          "end": 1.692336,
+          "speaker": "nib",
+          "text": "First job: done,"
+        },
+        {
+          "start": 1.692336,
+          "end": 4.052336,
+          "speaker": "narrator",
+          "text": "Nib declared proudly."
+        }
+      ]
+    },
+    "the-first-direction:p5": {
+      "text": "He looked down at his dependable bag.",
+      "spokenText": "He looked down at his dependable bag.",
+      "file": "assets/narration/54.mp3",
+      "sourceStart": 469.73589569161,
+      "sourceEnd": 472.57866213151925,
+      "duration": 2.842766439909269,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.500979,
+          "end": 2.464104,
+          "speaker": "narrator",
+          "text": "He looked down at his dependable bag."
+        }
+      ]
+    },
+    "the-first-direction:p6": {
+      "text": "“Next job: delivery,” Nib declared eagerly.",
+      "spokenText": "“Next job: delivery,” Nib declared eagerly.",
+      "file": "assets/narration/55.mp3",
+      "sourceStart": 472.57866213151925,
+      "sourceEnd": 477.27496598639453,
+      "duration": 4.696303854875282,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.300401,
+          "end": 1.821338,
+          "speaker": "nib",
+          "text": "Next job: delivery,"
+        },
+        {
+          "start": 1.821338,
+          "end": 4.141338,
+          "speaker": "narrator",
+          "text": "Nib declared eagerly."
+        }
+      ]
+    },
+    "the-first-direction:p7": {
+      "text": "With all three invitations safe, you set off together. Behind you, the library door rested open. Ahead, the woodland had readers to find.",
+      "spokenText": "With all three invitations safe, you set off together. Behind you, the library door rested open. Ahead, the woodland had readers to find.",
+      "file": "assets/narration/56.mp3",
+      "sourceStart": 477.27496598639453,
+      "sourceEnd": 488.32596371882084,
+      "duration": 11.05099773242631,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.483346,
+          "end": 10.285034,
+          "speaker": "narrator",
+          "text": "With all three invitations safe, you set off together. Behind you, the library door rested open. Ahead, the woodland had readers to find."
+        }
+      ]
+    }
+  }
+}

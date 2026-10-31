@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Bag at the Door · Lark and Nib</title>
+  <meta name="theme-color" content="#173d38">
+  <link rel="stylesheet" href="./styles.css?v=original-art-4">
+  <script src="../progress.js"></script>
+  <script type="module" src="./app.mjs?v=cast-1"></script>
+</head>
+<body>
+  <main>
+    <header><a id="joyce-return" href="../classroom/">← Joyce</a><span class="series">Lark &amp; Nib’s Treasure Quest</span><button id="pause" aria-label="Pause story" disabled>Pause</button><button id="grownup" aria-label="Open grown-up controls">•••</button></header>
+    <div class="stage-wrap"><canvas id="world" aria-label="The library doorway with Lark, Nib, and the courier bag"></canvas><span id="scene-name"></span></div>
+    <section id="welcome" class="sheet">
+      <p class="eyebrow">Through the Woods · Episode 1</p><h1>The Bag <span class="title-rest">at the Door</span></h1>
+      <p>Three invitations. A determined mouse.<br>One rather grabby latch.</p>
+      <button id="start" class="primary" disabled>Getting the crew ready…</button>
+      <button id="restart" hidden>Start again</button>
+      <p id="audio-status" class="preview-note">Loading the story recording…</p>
+    </section>
+    <section id="story" class="sheet" hidden aria-label="Story and your turn">
+      <p id="caption" aria-live="off"></p>
+      <div id="turn" hidden></div><p id="feedback" role="status" hidden></p>
+      <div class="controls"><button id="again">Hear again</button><button id="help" hidden>Help</button><button id="next" class="primary">Continue →</button></div>
+    </section>
+    <section id="finish" class="sheet" hidden>
+      <p class="eyebrow">Bag ready · Invitations safe</p><h1>First job done.</h1>
+      <div class="tag"><img src="./assets/doorway-tag.png" alt="Carved wooden doorway tag engraved with lowercase d"></div>
+      <p>Your doorway tag and first courier chapter are in your collection.</p>
+      <div class="controls"><button id="read" class="primary">Read our chapter</button><a id="finish-return" href="../classroom/">Back to Joyce</a><button id="replay">Play again</button></div>
+    </section>
+    <dialog id="parent"><button class="close" data-close="parent">Close</button><h2>Episode preview</h2><p id="production-status"></p>
+      <p>The word marks and sliders follow the saved Reading.com references. These short-vowel words need no arches, bars, or yellow sight-word underline. Moving a slider plays retained phoneme recordings and counts as support.</p>
+      <label>Preview a scene <select id="scene-select"></select></label><button id="jump">Open scene</button>
+      <p>Scene previewing, skipped narration, and device narration never report learning or mark a Joyce reading card complete.</p><details><summary>Local response notes</summary><pre id="local-notes"></pre></details>
+    </dialog>
+    <dialog id="library"><button class="close" data-close="library">Close</button><p class="eyebrow">Through the Woods · Chapter 1</p><h2>The Bag at the Door</h2><div id="chapter"></div><p class="adult-note">Read the connecting prose aloud. The child can try the large word, use its slider, or ask for a model.</p></dialog>
+    <dialog id="paused"><h2>We’ll wait right here.</h2><button id="resume" class="primary">Continue</button></dialog>
+  </main>
+</body>
+</html>

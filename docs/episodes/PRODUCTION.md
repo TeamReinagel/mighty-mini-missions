@@ -1,6 +1,12 @@
 # Mighty Mini Missions narrated episode recipe
 
-Approved reference: **The Moon Path**, October 30, 2026. The canonical integrated player is `moon-path/`. Start with its working engine and retained assets rather than rebuilding a new player. The original independent preview's last animation release was `2e8d5ab61c6f1ca1a1712b58fc05d1d06470f792`; MMM is now the integration source.
+Format and engine reference: **The Moon Path**, October 30, 2026, in **Lark & Nib’s Treasure Quest** (formerly Reading Trail). The canonical integrated player is `moon-path/`. Start with its working engine and retained assets rather than rebuilding a new player. The original independent preview's last animation release was `2e8d5ab61c6f1ca1a1712b58fc05d1d06470f792`; MMM is now the integration source.
+
+First-use feedback, October 30: Connor, age 3, was excited initially but wanted to be done toward the end. He also noticed Nib standing on water or floating in some scenes. The reference's 21:27 recording and existing staging are not acceptance targets. Apply the revised length, script, and staging guidance below to new episodes and revisions; these instructions do not themselves change the existing recording or art.
+
+For Season 1 writing, use [the season story plan](season-1-story-plan.md) for the ending, reverse dependencies, continuity ledger, and cumulative reading sequence, then [the nine episode briefs](season-1-episode-briefs.md) for individual plots, scene beats, child turns, and staging. These continue the narrated Moon Path and replace the old unbuilt story placeholders as the writing reference. They are plans, not produced episodes or measured recordings.
+
+For Seasons 2–8, start with [the series roadmap](series-roadmap.md) and [cumulative reading ledger](cumulative-reading-ledger.md), then read the relevant season arc and episode brief linked there. The seven later books contain 94 planned chapters with explicit prerequisite bridges. Their plots and introduced mappings supersede the older prototype story placeholders for writing; the prototype files are not proof that a child has already been taught their broad `taught` lists. Later duration ranges are provisional and must stay shorter whenever actual engagement calls for it.
 
 ## The repeatable experience
 
@@ -21,13 +27,45 @@ The reference episode has nine scenes and thirteen turns, not a mandatory count 
 
 Reuse the narrative rhythm: **small problem → character conversation → concrete clue → player turn → narrated consequence → new story information**. Let the sound/letter change what happens. Retain humor and descriptive connective prose. End with a resolved adventure, a collected object, an unlocked chapter, and a small invitation to the next story.
 
+## Cumulative sound-to-word progression
+
+Episodes form a cumulative reading sequence across the whole series, including season boundaries. Keep a season plan showing what has already been introduced, the next sound/spelling or reading skill, selected earlier material to revisit, and words the child can now blend. Each episode brief must refer back to that plan. A new-teaching episode adds a manageable next step and explicitly models it before asking the child to use it; consolidation episodes can focus on combining and applying earlier learning.
+
+- **Review within the adventure.** Bring back earlier sounds and words in meaningful clues and actions alongside the new focus. Revisit them across later episodes, prioritizing material the child found difficult and periodically recalling older material. Fit selected review into the existing runtime budget rather than repeating every prior lesson in full.
+- **Blend as soon as the taught sounds permit.** Model pushing known sounds together, then let the child try a meaningful word. Do not wait until all letters are taught or until an episode titled “Blending.” With **m** and short **a** introduced, **am** is available; once **s** and **t** are also taught, **at, mat,** and **sat** are available. This is an illustration using the provisional opening sequence, not a requirement to teach all four sounds in one episode. A later blending episode consolidates practice already begun.
+- **Build new words from accumulated learning.** Reuse familiar sounds in different orders and combinations; revisit familiar words and introduce new decodable words using the same taught patterns. As the set grows, move into short phrases and sentences made from those patterns. Explicitly teach any necessary irregular word or untaught part before expecting the child to read it.
+- **Distinguish listening vocabulary from child reading.** The narrator and characters can use rich, sound-filled language. Hearing **moon, moss,** or **mushroom** in an /m/ story does not teach all their spellings. For every word the child is expected to decode, check that each sound/spelling has been explicitly introduced, including the current episode's new one after modeling. Keep words with untaught patterns in adult narration or shared reading with those parts supplied; do not substitute picture guessing for blending.
+- **Record teaching separately from learning evidence.** Track which mappings were introduced and which earlier ones are scheduled for review. Use actual child responses to decide where more modeling or support is needed; an episode completion does not establish that its sounds or words have been learned. Keep supported attempts separate from independent responses.
+
+Before recording, check the child-reading words against the cumulative taught set and confirm that the new focus, prior review, and earliest available word-building opportunities all appear in the episode. Preserve the story goal and the season's length target.
+
+## Length by season
+
+**Season 1: aim for 8–10 minutes per complete episode**, including narration, prompts, normal child-response time, transitions, and the ending. Optional library rereading is extra. This replaces the earlier approximately 15-minute target; the premiere's 21:27 recording is a retained production reference, not a length to repeat.
+
+Plan a small increase in episode length with each later season as the intended children grow and can comfortably stay with the story. Set the next season's target in its brief using observed engagement; the amount of increase is not fixed, and fatigue is a reason to hold or shorten the target. Do not infer readiness from completing an episode alone.
+
+Budget the whole experience before recording. For example, a nine-minute plan might reserve six and a half minutes for recorded speech, two minutes for child turns, and half a minute for transitions and the finish. These are planning allowances, not response deadlines. Use a timed expressive read-through or voice sample to derive the spoken-word budget, then check the actual recording plus a play-through with ordinary response pauses. Cut repeated explanations, extra detours, and redundant turns when over budget. Keep the essential sound practice, coherent plot, humor, resolution, and collectible; do not meet the target by rushing speech or cutting off the ending.
+
+## Write the target sound into the story
+
+When teaching a letter sound, use a deliberately disproportionate number of words that begin with or contain that **sound** throughout the narration and dialogue. Build a short word bank before drafting, then use it in the setting, props, actions, and character reactions as well as the teaching prompts. For /m/, possibilities include **mouse, map, moon, moonstone, moss, mushroom, muddy, mend, hum,** and **home**. Favor easy-to-hear initial sounds in early episodes while also including clear examples elsewhere in words.
+
+Spread these words across the story so the sound keeps returning naturally. Read aloud to check the sound itself rather than counting matching written letters. Preserve understandable prose and the characters' voices; avoid strings of alliteration that obscure the action. Keep the contrast in each sound-choice turn valid: the narrative word bank must not turn both answer objects into correct answers.
+
+## Dialogue with audible intent
+
+Frequently use descriptive speech verbs and concise adverbs that convey the intended delivery, rather than relying on repeated plain “said” attributions. Let the moment determine the tone: **exclaimed, murmured, whispered urgently, asked suspiciously, declared proudly**. For example: **“The map is moving!” Lark exclaimed.** Or: **“That mushroom moved,” Nib whispered suspiciously.** Keep speaker identity clear and the language easy for a young listener to follow.
+
+These cues belong in the spoken prose manuscript as well as the recording copy. Use separate casting/performance directions when helpful, and audition an excited line, a cautious or urgent line, and the target sound with the selected ElevenLabs voices. Listen for the intended tone and adjust the wording or direction if needed; a descriptor does not guarantee a particular performance. The current rebuild tool expects the speaker's name immediately after a quotation: **“…” Lark exclaimed urgently.** Keep that form when reusing it, or deliberately update and verify speaker parsing for another attribution structure.
+
 ## Narration first
 
-1. Draft the complete prose manuscript with dialogue attributions. Produce a clean recording document and a separate direction/casting sheet. Square-bracket performance notes and actor labels are production directions; check the recording to ensure they were not spoken aloud.
+1. Draft the complete prose manuscript to the season's total runtime budget, using the target-sound word bank and expressive dialogue attributions above. Produce a clean recording document and a separate direction/casting sheet. Square-bracket performance notes and actor labels are production directions; check the recording to ensure they were not spoken aloud.
 2. Reuse the saved narrator/Lark/Nib casting in ElevenLabs. Listen to a short sample before the full recording, especially the isolated phoneme and letter names. The final supplied recording is the story's authority: changing game text will not change recorded speech.
 3. Keep the original recording outside the web publish tree. Record its SHA-256 and decoded duration. Align the approved manuscript to the recording, then inspect every interaction cut by ear and against quiet intervals.
 4. Cut **after the spoken prompt and before the narrated outcome**. Playback waits there until the interaction is settled. Optional speaking/shared reading has a visible continue path. Touch remains available if microphone access fails.
-5. Preserve the supplied story audio in order, with contiguous source ranges and no missing or repeated passages. Split large sections at natural boundaries; the reference uses 22 MP3 files for a 21:27 recording. Use the host's current file limits when packaging.
+5. Once the manuscript and its recording meet the season's length target, preserve that approved audio in order, with contiguous source ranges and no missing or repeated passages. A shorter manuscript needs a matching revised recording and alignment; silently dropping passages from the old recording during playback is not the shortening workflow. Split large sections at natural boundaries; the retained reference uses 22 MP3 files for its original 21:27 recording. Use the host's current file limits when packaging.
 6. Derive captions, speaker tags, and stage/action cues from the audio clock. Do not add old screenplay action delays to the new narration.
 
 Retained inputs: `moon-path-manuscript.txt`, `moon-path-recording-notes.md`, `moon-path/tools/narration-alignment.json`, and `moon-path/tools/narration-edit-plan.json`. The alignment includes manuscript text and word timestamps. The plan includes source boundaries, interaction mapping, and visual cues.
@@ -43,6 +81,10 @@ To recreate this episode's audio from its original MP3, supply `--audio` and an 
 ## Reuse the visual engine
 
 - Keep the backgrounds static. Reuse camp, lagoon, woods, and river plates whenever the story allows; add a new location only when needed. Match the existing textured, warmly lit CG style. Retain identities and casting.
+- **Use original story art for props and activities.** October 31 feedback: the Season 2 premiere preview used too much vector art. Match the established warm, textured CG storybook style with original raster artwork for interactive props, enlarged mechanisms, invitation pictures, and keepsakes. Do not substitute flat SVG diagrams, emoji, or CSS shapes for story objects. Preserve live readable type, the supplied Reading.com annotation convention, finger tracks, and accessible touch/keyboard targets. Check the composite and align each hit area to the visible object or actual opening.
+- **Plan placement before generating a background.** Identify where each character stands or perches, where every prop rests or attaches, and the route of any movement. Request visible, sufficiently broad ground, banks, docks, decks, branches, or other supporting surfaces at the intended scale and perspective. Leave these areas open for separate character and prop layers.
+- Record scene anchors and foot/contact baselines against the actual plate and crop. Nib's feet must meet land, a dock, or the ferry deck; a flying Lark needs a clear flight cue. Props need sensible support or attachment. A character aboard the ferry must move with its deck, with the hull/rail occlusion in the right order. Movement starts, paths, and endpoints must all fit the scene's physical layout.
+- Inspect the **composite**, not just the empty background, at intended tablet sizes and aspect ratios. Review entrances, standing poses, walking, interactions, and moving-boat states for floating feet, standing on water, unsupported props, scale errors, and crop/occlusion problems. Adjust the plate or staging before accepting the scene.
 - Generated props are separate transparent objects. Put the next action on the object itself. Both selectable answers receive the same soft gold halo before hover; hover and keyboard focus strengthen it. Decoration does not glow like an answer.
 - Render at up to 16 frames per second. **Talking changes only the mouth**, over a fixed neutral pose. The head, hands, silhouette, scale and position do not shift. Do not switch whole generated poses for speech or idle blinking.
 - **Walking changes the body beneath a fixed head**, using a softly blended neck boundary. Mouths remain still during walking. Walking runs only during an actual travel cue and stops at its end. Reduced motion keeps state changes while skipping travel/cycles.
@@ -79,6 +121,15 @@ Run `npm run test:joyce`. It includes audio range coverage, interaction cuts, ca
 
 In a local preview with **HTTP byte-range support (206 responses)**, review a talking close/open/round sequence, a walking sequence, touch choices at rest and on focus, a cut into/out of an interaction, pause/refresh/resume mid-recording, and the ending/return link. Use `?review=1&kid=connor` for UI QA so it sends no learning evidence. Test reporting with mocked stores, not invented live child results.
 
+Before accepting a new or revised episode, check its cumulative progression: new material explicitly modeled, earlier learning reviewed, and child-reading words decodable from the taught set. Verify its season runtime against the full experience, listen for recurring target-sound words and expressive dialogue, and inspect all scene composites for supported characters and props. Include a boat's moving states when present. Record actual timing and unresolved staging issues in the episode brief; automated engine checks do not establish these qualities.
+
 Verify the complete final audio still plays, the chapter unlocks, all answers stay usable, and scene jumps cannot earn credit. Bump browser module/style query versions when changing cached files. Check the commit includes matching assets and content. Preserve unrelated work; commit/push and deployment follow the user's shipping authorization and repository conventions.
 
 The earlier failures to avoid are whole-pose speech jitter, reusing old story audio after a manuscript change, MP3 seeking without range support, action animations running on wall time while audio buffers, and marking reading complete after a few clicks.
+
+
+## Reading annotations and the Season 2 opener
+
+The saved Reading.com references use coral arches above one-sound letter teams, green bars above long vowels and soft c/g, yellow whole-word sight underlines, and finger-controlled word tracks. Keep these supports visible by default in the early seasons. A slider models sounds and never submits an answer; using its sound support must not be logged as independent decoding. Words made entirely from plain short-vowel single-letter mappings need no extra mark. Do not add a sight-word underline to a decodable word merely to decorate it.
+
+The first Season 2 production preview is [The Bag at the Door](s2e1-bag-at-the-door-production.md), served from `bag-at-the-door/`. Its clean manuscript, voice-turn CSV, accepted art prompts, five gate definitions, exact inherited mappings, and new-recording manifest template are retained beside it. It uses device narration until a new cast recording has been supplied, aligned, and reviewed. Device preview and scene-review activity send no child learning or Joyce completion events. The episode is not yet scheduled on the live Joyce board.

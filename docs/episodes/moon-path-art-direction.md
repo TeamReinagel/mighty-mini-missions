@@ -4,16 +4,22 @@ Method: built-in image generation. All final player assets are included in `dist
 
 The existing Lark and Nib portraits were identity references. The ferry concept still from the screenplay was the lighting and material reference. The background plates were generated without characters; all interactive props and character sprites are separate transparent layers.
 
+## Placement requirements after first use
+
+Connor noticed Nib standing on water or floating in some scenes on October 30, 2026. For future backgrounds and revisions, plan the complete composite before generation: open supporting surfaces for each character and prop, foot/contact baselines, movement corridors, and intended scale and perspective. The directions below include this correction; the existing pixels and stage layouts still need separate revision when applying it to the premiere.
+
+Use actual plate/crop anchors when placing layers. Check standing and walking states at intended tablet sizes and aspect ratios. Nib's feet meet land, a dock, or the ferry deck. Lark perches or stands unless the scene calls for flight. Aboard the ferry, Nib and carried objects follow the deck as it moves, with the hull/rail in front where appropriate. Resting props meet a surface; hung or held props have a visible attachment. Adjust the background or stage layout if a layer cannot sit sensibly within the scene.
+
 ## Shared background prompt
 
-Use case: illustration-story. Finished cinematic stylized CG-painted environment background plate for an original preschool cartoon. Landscape 16:9, rich tactile wood, foliage and stone, layered depth, soft warm/cool film lighting consistent with the reference. Child's eye-level camera. Open foreground stage for separately animated characters. Main details within the central 70 percent. Static environment only: no characters, animals, props, text, letters, numbers, logos, emojis or UI. The supplied image is a style reference, not an edit target.
+Use case: illustration-story. Finished cinematic stylized CG-painted environment background plate for an original preschool cartoon. Landscape 16:9, rich tactile wood, foliage and stone, layered depth, soft warm/cool film lighting consistent with the reference. Child's eye-level camera. Open foreground stage for separately animated characters: visible, broad supporting ground or dock/deck surfaces with clear contact planes, enough room for both explorers and the scene's separate props, and a continuous walkable route where travel occurs. Match the planned layer anchors, scale, and camera perspective. Main details within the central 70 percent, with supporting surfaces retained in the intended tablet crop. Static environment and fixed supporting structures only: no characters, animals, movable props, text, letters, numbers, logos, emojis or UI. The supplied image is a style reference, not an edit target.
 
 ## Background-specific directions
 
-- **camp.png:** Inviting forest explorer camp in late afternoon. Modest wooden treehouse in a thick tree at upper left, warm window light, dirt path slopes left to right across a wide clearing, distant valley, leafy canopy, low stump at right. Empty foreground for cart and explorers.
-- **lagoon.png:** Shallow teal lagoon in lush forest, broad stone-and-earth bank with empty foreground stage, stepping platforms across the water, reeds, path beyond, warm afternoon sun. Space for a separate control machine and the explorers.
-- **woods.png:** Woodland path forks around a broad low boulder. Right branch has soft moss; left branch has bare rocks and a muddy puddle. Warm shafts of light, high canopy, spacious foreground. Small interactive mushroom, flower, and rock props remain separate.
-- **river.png:** Woodland river landing at blue hour, pink-gold reflections, empty weathered dock from left foreground toward center, mossy island across the river, reeds and willow branches. Empty water on the right for a separate ferry. Cozy and safe.
+- **camp.png:** Inviting forest explorer camp in late afternoon. Modest wooden treehouse in a thick tree at upper left, warm window light, dirt path slopes left to right across a wide clearing, distant valley, leafy canopy, low stump at right. Broad visible dirt contact plane for the cart, case, and both explorers, with an open travel route.
+- **lagoon.png:** Shallow teal lagoon in lush forest, broad stone-and-earth bank with empty foreground stage, stepping platforms across the water, reeds, path beyond, warm afternoon sun. Dry bank visibly supports both explorers and a separate control machine; align any crossing route and endpoints to the stepping platforms rather than bare water.
+- **woods.png:** Woodland path forks around a broad low boulder. Right branch has soft moss; left branch has bare rocks and a muddy puddle. Warm shafts of light, high canopy, spacious foreground. Continuous visible soil/path contact plane for the explorers, cart, and separate mushroom, flower, and rock props; reserve the muddy area for the story's intended mishap.
+- **river.png:** Woodland river landing at blue hour, pink-gold reflections, empty weathered dock from left foreground toward center, mossy island across the river, reeds and willow branches. Dock wide enough in perspective for the explorers, separate book/control panel/bell-post layers, and a clear boarding edge. Empty water on the right for a separate ferry, with a planned boarding alignment and room for its deck to support Nib. Cozy and safe.
 
 ## Shared character atlas prompt
 

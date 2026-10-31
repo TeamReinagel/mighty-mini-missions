@@ -7,6 +7,7 @@
 import { createHash } from "node:crypto";
 import { helpLine, itemsFor } from "./classroom-content.mjs";
 import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
+import { scheduledBagAtDoorCard, COMPLETION_ITEM as BAG_AT_DOOR_COMPLETION } from "../../bag-at-the-door/integration.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
 import {
@@ -170,7 +171,8 @@ const EVIDENCE = {
   "monster-hunt": { game: "word-monsters", need: 6 },
   "train-set": { game: "train-set", need: 3 },
   "ghost-word-run": { game: "ghost-word-run", need: 10 },
-  "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM }
+  "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM },
+  "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION }
 };
 
 export function evidenceFor(kidId, gameId) {
@@ -674,6 +676,8 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, write });
   else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
   else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.monsters });
+  const story = scheduledBagAtDoorCard(date, kidId);
+  if (story) cards.splice(cards.findLastIndex((card) => card.part === "ela") + 1, 0, story);
   const pinned = board?.check;
   if (pinned?.stepId && rhythm !== "weekend") {
     const def = stepById(kidId, pinned.stepId);
