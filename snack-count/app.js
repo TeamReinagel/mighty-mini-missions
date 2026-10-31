@@ -1,5 +1,9 @@
+// Essential skill: planning-3 (Working carefully). The child counts the scoops and
+// serves when the sundae matches the order. Extra scoops still land, so the stand
+// never signals when to stop.
 import { fewestCoins } from "../play/rounds.mjs";
 import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam, practice } from "../play/stage.mjs";
+import { checkOrder, emptyPrompt, missPrompt, orderPrompt, placeScoops } from "./stand.mjs";
 
 const GAME = "snack-count";
 const SCOOPS = ["assets/berry.png", "assets/cocoa.png", "assets/vanilla.png"];
@@ -193,6 +197,87 @@ function chooseUnit(vessel, biggest) {
   return biggest <= 3 ? 52 : 42;
 }
 
+function prefersStill() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/** Adding never checks the order. Serving does. A miss leaves the scoops to be counted. */
+function runStand({ count, adds, back, serve, hero, counter, prompt, emptyLine, missLine, paint, onPlaced }) {
+  let made = 0;
+  const stack = [];
+  let first = true;
+  let settled = false;
+  let reviewing = false;
+  const sync = () => {
+    const locked = settled || reviewing;
+    for (const button of adds) button.disabled = locked;
+    if (back) back.disabled = locked || stack.length === 0;
+  };
+  return new Promise((resolve) => {
+    const give = () => {
+      if (settled) return;
+      if (reviewing) {
+        reviewing = false;
+        made = 0;
+        stack.length = 0;
+        serve.textContent = "Serve";
+        paint(0, {});
+        sync();
+        ui.speak(prompt);
+        return;
+      }
+      if (made === 0) {
+        first = false;
+        chime(false);
+        ui.speak(emptyLine);
+        return;
+      }
+      const verdict = checkOrder(made, count);
+      if (verdict === "exact") {
+        settled = true;
+        serve.disabled = true;
+        sync();
+        resolve(first);
+        return;
+      }
+      first = false;
+      reviewing = true;
+      serve.textContent = "Try again";
+      sync();
+      if (!prefersStill()) shake(counter);
+      chime(false);
+      ui.speak(missLine(verdict));
+    };
+    for (const button of adds) {
+      button.addEventListener("click", () => {
+        if (settled || reviewing) return;
+        const size = placeScoops(0, button.dataset.value);
+        const before = made;
+        stack.push(size);
+        made = placeScoops(made, size);
+        chime(true);
+        if (onPlaced) onPlaced(made);
+        paint(made, { plop: true, from: before });
+        sync();
+        if (document.querySelector(".line")?.textContent !== prompt) ui.speak(prompt);
+      });
+    }
+    if (back) {
+      back.addEventListener("click", () => {
+        if (settled || reviewing || stack.length === 0) return;
+        made -= stack.pop();
+        if (onPlaced) onPlaced(made);
+        paint(made, { from: made });
+        sync();
+      });
+    }
+    hero.addEventListener("click", give);
+    serve.addEventListener("click", give);
+    sync();
+    ui.speak(prompt);
+  });
+}
+
 async function buildOrder(count, names) {
   ui.scene.replaceChildren();
   const vessel = vesselFor(count);
@@ -206,53 +291,42 @@ async function buildOrder(count, names) {
   const pair = el("div", "pair");
   pair.append(hero, number, counter);
   ui.scene.append(pair);
-  let made = 0;
-  let first = true;
-  const paint = ({ plop = false, cherry = false } = {}) => {
-    counter.replaceChildren(sundae(made, vessel, buildUnit(vessel, count), { capacity: count, cherry, fresh: plop }));
+  const say = word;
+  const prompt = orderPrompt({ count, names, holder, say });
+  const unit = buildUnit(vessel, count);
+  const paint = (made, { plop = false } = {}) => {
+    counter.replaceChildren(sundae(made, vessel, unit, { capacity: Math.max(made, 1), fresh: plop }));
   };
-  paint();
-  ui.speak(names
-    ? `This card says ${word(count)}. Put that many scoops ${holder}, then tap the bunny.`
-    : `The bunny wants ${word(count)} ${count === 1 ? "scoop" : "scoops"} ${holder}. Add them, then tap the bunny.`);
-  const add = pic(SCOOPS[0], "Add a scoop", "add");
+  paint(0);
+  const add = pic(SCOOPS[0], "Add a scoop", "1");
   add.classList.add("scooper");
+  const back = el("button", "level", "Put back");
+  back.type = "button";
   const serve = el("button", "go play", "Serve");
   serve.type = "button";
   const buttons = el("div", "row");
-  buttons.append(add, serve);
+  buttons.append(add, back, serve);
   ui.scene.append(buttons);
-  await new Promise((resolve) => {
-    const give = () => {
-      if (made === count) resolve();
-      else {
-        first = false;
-        shake(serve);
-        ui.speak(`Not yet. I asked for ${word(count)}.`);
-      }
-    };
-    add.addEventListener("click", () => {
-      if (made >= count) {
-        first = false;
-        shake(add);
-        chime(false);
-        ui.speak(`That's enough. I asked for ${word(count)}.`);
-        return;
-      }
-      made += 1;
-      chime(true);
-      ui.speak(word(made));
+  const first = await runStand({
+    count,
+    adds: [add],
+    back,
+    serve,
+    hero,
+    counter,
+    prompt,
+    emptyLine: emptyPrompt({ count, names, holder, say }),
+    missLine: (verdict) => missPrompt({ verdict, count, names, holder, say }),
+    paint,
+    onPlaced: (made) => {
       add.querySelector("img").src = SCOOPS[made % SCOOPS.length];
-      paint({ plop: true });
-    });
-    hero.addEventListener("click", give);
-    serve.addEventListener("click", give);
+    }
   });
-  paint({ cherry: true });
+  counter.replaceChildren(sundae(count, vessel, unit, { capacity: count, cherry: true }));
   hero.src = "assets/bunny-happy.jpg";
   chime(true);
   ui.speak("Here you go!");
-  await new Promise((resolve) => setTimeout(resolve, 1300));
+  await wait(1300);
   return first;
 }
 
@@ -305,56 +379,39 @@ async function buildParty(count, item) {
   const counter = el("div", "counter");
   ui.scene.append(pair, counter);
   const unit = count > 40 ? 22 : 30;
-  let made = 0;
-  let first = true;
-  let served = false;
-  const paint = ({ from = made, cherry = false } = {}) => {
-    counter.replaceChildren(tray(made, unit, { from, cherry }));
+  const say = word;
+  const prompt = orderPrompt({ count, party: true, say });
+  const paint = (made, opts = {}) => {
+    counter.replaceChildren(tray(made, unit, { from: opts.from ?? made }));
   };
-  paint();
-  ui.speak(`Party order! The bunny wants ${count} scoops. Fill the dishes, then tap the bunny.`);
+  paint(0);
   const buttons = el("div", "row");
-  for (const size of item.adds) {
+  const adds = item.adds.map((size) => {
     const add = pic(ADD_ART[size], `+${size}`, String(size));
     add.classList.add("scooper");
     add.setAttribute("aria-label", `Add ${size}`);
-    add.addEventListener("click", () => {
-      if (served) return;
-      if (made + size > count) {
-        first = false;
-        shake(add);
-        chime(false);
-        ui.speak(`${made + size} is too many. Try a smaller scoop.`);
-        return;
-      }
-      const before = made;
-      made += size;
-      chime(true);
-      ui.speak(String(made));
-      paint({ from: before });
-    });
     buttons.append(add);
-  }
+    return add;
+  });
+  const back = el("button", "level", "Put back");
+  back.type = "button";
   const serve = el("button", "go play", "Serve");
   serve.type = "button";
-  buttons.append(serve);
+  buttons.append(back, serve);
   ui.scene.append(buttons);
-  await new Promise((resolve) => {
-    const give = () => {
-      if (served) return;
-      if (made === count) {
-        served = true;
-        resolve();
-        return;
-      }
-      first = false;
-      shake(serve);
-      ui.speak(`Not yet. That's ${made}. The order is ${count}.`);
-    };
-    hero.addEventListener("click", give);
-    serve.addEventListener("click", give);
+  const first = await runStand({
+    count,
+    adds,
+    back,
+    serve,
+    hero,
+    counter,
+    prompt,
+    emptyLine: emptyPrompt({ count, party: true, say }),
+    missLine: (verdict) => missPrompt({ verdict, count, party: true, say }),
+    paint
   });
-  paint({ cherry: true });
+  counter.replaceChildren(tray(count, unit, { cherry: true }));
   hero.src = "assets/bunny-happy.jpg";
   chime(true);
   ui.speak("Here you go!");

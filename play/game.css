@@ -170,3 +170,7 @@ button:disabled { opacity: .4; }
 .piles .pic { padding: 3px; border-radius: 14px; box-shadow: 0 4px 0 rgba(36, 28, 51, .2); }
 .piles .pic.small img, .piles .pic.still img { width: 42px; height: 42px; border-radius: 10px; }
 .packer .hero { width: 84px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sundae .scoop.new, .bad { animation: none; }
+}
