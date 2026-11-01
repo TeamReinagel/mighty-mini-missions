@@ -29,4 +29,7 @@ test("the next skill stays hidden until the child is using the one before it", (
   assert.equal(open(max, game("snack-count"), {}), true);
   assert.equal(open(max, game("more-or-fewer"), {}), false);
   assert.equal(open(gabi, game("today-with-joyce"), {}), true);
+  assert.equal(open(gabi, game("flower-beds"), {}), false);
+  assert.equal(open(gabi, game("flower-beds"), { "count-10": true }), true);
+  assert.equal(open(connor, game("flower-beds"), { "count-10": true }), false);
 });

@@ -104,6 +104,7 @@ export const GAME_NAMES = {
   "otter-slide": "Otter Slide",
   "color-tap": "Dino Picnic",
   "snack-count": "Sundae Stand",
+  "flower-beds": "Flower Beds",
   "more-or-fewer": "Lost Sheep",
   "pattern-park": "Dino Express",
   "block-trade": "Moon Crates",

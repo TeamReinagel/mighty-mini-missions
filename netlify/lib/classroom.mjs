@@ -99,7 +99,7 @@ export const CHAINS = {
       id: "math",
       steps: [
         step({ id: "gabi-count-10", title: "Counting to 10", strand: "gabi-count", strandName: "Counting", activity: "count", min: 1, max: 10, skill: "Counting", teach: "Tap each picture as you count.", items: 4, masteryMin: 4, masteryHits: 3 }),
-        step({ id: "gabi-count-20", title: "Counting to 20", strand: "gabi-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "These groups are a little bigger. Count each one." }),
+        step({ id: "gabi-count-20", title: "Counting to 20", strand: "gabi-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "Each bed holds ten. Fill the first bed, then count the rest." }),
         step({ id: "gabi-numbers", title: "Number names", strand: "gabi-numbers", strandName: "Numbers", activity: "numbers", skill: "Numbers", teach: "I'll show a number. You say it and tap it." }),
         step({ id: "gabi-more", title: "More and fewer", strand: "gabi-numbers", strandName: "Numbers", activity: "compare", skill: "More and fewer", teach: "Count both sides, then pick more or fewer." }),
         step({ id: "gabi-patterns", title: "Patterns", strand: "gabi-patterns", strandName: "Patterns", activity: "pattern", skill: "Patterns", teach: "Say the pattern out loud, then pick what comes next." }),
@@ -163,6 +163,7 @@ const EVIDENCE = {
   "sound-bugs": { game: "sound-bugs", need: 8 },
   "sound-teams": { game: "sound-teams", need: 8 },
   "snack-count": { game: "snack-count", need: 6 },
+  "flower-beds": { game: "flower-beds", need: 6 },
   "more-or-fewer": { game: "more-or-fewer", need: 6 },
   "pattern-park": { game: "pattern-park", need: 6 },
   "color-tap": { game: "color-tap", need: 5 },
@@ -474,6 +475,10 @@ function lessonCard(kidId, item, date, state) {
   };
 }
 
+const STEP_GAMES = {
+  "gabi-count-20": ["flower-beds", "Flower Beds", "../flower-beds/", "Play Flower Beds. Each bed holds ten flowers."]
+};
+
 const SKILL_GAMES = {
   "hear-name": ["hatch-match", "Hatch Match", "../hatch-match/", "Play Hatch Match. Match the big letter with the little letter."],
   "hear-sound": ["sound-bugs", "Jungle Jump", "../sound-bugs/", "Play Jungle Jump. The drum says a sound. Help the monkey across."],
@@ -488,7 +493,7 @@ const SKILL_GAMES = {
 };
 
 function skillCard(kidId, item, date, state) {
-  const spec = SKILL_GAMES[item.activity];
+  const spec = STEP_GAMES[item.id] || SKILL_GAMES[item.activity];
   if (!spec) return lessonCard(kidId, item, date, state);
   const [id, title, href, say] = spec;
   return {
@@ -905,6 +910,7 @@ function parentPraise(name, item) {
   const list = Array.isArray(item.items) ? item.items : [];
   const sample = list.map((entry) => entry.word || entry.item).filter(Boolean).slice(0, 3);
   const shown = sample.length ? sample.join(", ") : item.title;
+  if (item.id === "gabi-count-20") return `${name} just practiced counting to 20. Ask ${name} to count flowers in two bunches, ten and then the rest.`;
   if (item.activity === "count" || item.skill === "Counting") return `${name} just practiced ${item.title}. Ask ${name} to count a handful of snacks.`;
   if (item.activity === "regroup") return `${name} just worked on trading tens. Ask ${name} to show you ${sample[0] || "27 + 15"} with blocks.`;
   if (item.activity === "color") return `${name} just practiced colors. Ask ${name} to point to something ${shown}.`;

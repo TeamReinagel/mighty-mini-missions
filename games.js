@@ -133,6 +133,16 @@ window.MIGHTY_GAMES = [
     after: { ethan: "colors" }
   },
   {
+    id: "flower-beds",
+    title: "Flower Beds",
+    icon: "./flower-beds/assets/icon.png",
+    href: "./flower-beds/",
+    profiles: ["gabi"],
+    practices: ["counting"],
+    levels: ["prek", "k"],
+    after: { gabi: "count-10" }
+  },
+  {
     id: "more-or-fewer",
     title: "Lost Sheep",
     icon: "./more-or-fewer/assets/icon.jpg",

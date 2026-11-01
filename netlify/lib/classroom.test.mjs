@@ -312,6 +312,28 @@ test("conference asks before a new strand, a long struggle, or the end of Readin
 
 const MASTERED = { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] };
 
+test("counting past ten opens Flower Beds for Gabi", () => {
+  const early = buildDay({ kidId: "gabi", date: MONDAY });
+  assert.equal(early.cards.find((card) => card.stepId === "gabi-count-10").gameId, "snack-count");
+
+  const day = buildDay({
+    kidId: "gabi",
+    date: MONDAY,
+    state: { steps: { "gabi-count-10": MASTERED } }
+  });
+  const twenty = day.cards.find((card) => card.stepId === "gabi-count-20");
+  assert.equal(twenty.gameId, "flower-beds");
+  assert.match(twenty.href, /flower-beds\/\?kid=gabi&step=gabi-count-20/);
+  assert.match(twenty.say, /ten/);
+
+  const connor = buildDay({
+    kidId: "connor",
+    date: MONDAY,
+    state: { steps: { "connor-count-5": MASTERED, "connor-count-10": MASTERED } }
+  });
+  assert.equal(connor.cards.find((card) => card.stepId === "connor-count-20").gameId, "snack-count");
+});
+
 async function gabiReadyToAdd(store) {
   await store.setJSON("classroom/kid/gabi", {
     steps: {

@@ -38,7 +38,6 @@ const LADDERS = {
   ],
   gabi: [
     { id: "10", label: "To 10", min: 1, max: 10, flag: "count-10" },
-    { id: "20", label: "To 20", min: 11, max: 20, flag: "count-20" },
     { id: "names", label: "Names", min: 1, max: 10, flag: "numbers" }
   ]
 };
@@ -48,7 +47,6 @@ const STEPS = {
   "connor-count-10": "10",
   "connor-count-20": "20",
   "gabi-count-10": "10",
-  "gabi-count-20": "20",
   "gabi-numbers": "names"
 };
 
@@ -58,7 +56,7 @@ const ui = openGame(document.querySelector("#app"), { title: "Sundae Stand", bac
 const state = load(GAME) || { stars: {}, open: [ladder[0].id], prizes: [] };
 forceOpen(state, ladder.map((item) => item.id), STEPS[stepParam()]);
 if (!state.open?.length) state.open = [ladder[0].id];
-let level = state.open.at(-1);
+let level = [...state.open].reverse().find((id) => ladder.some((item) => item.id === id)) || ladder[0].id;
 
 function spec() {
   return ladder.find((item) => item.id === level) || ladder[0];
