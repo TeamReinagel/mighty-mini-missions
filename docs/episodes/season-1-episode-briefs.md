@@ -20,6 +20,8 @@ Each brief has a resolved local plot, a necessary contribution to the season, cu
 
 ## Episode 2 · The Apple Catcher
 
+Production update, November 1: [The Apple Catcher](s1e2-apple-catcher-production.md) is built in `apple-catcher/` with original art and the supplied 6:39.670 recording. Its estimated total is about nine minutes including child turns and feedback; actual child-paced timing remains unmeasured. It is assigned as Connor’s reading mission for Monday, November 2, 2026. Later chapters below remain authored briefs.
+
 **Story question:** Can the crew stop a tumbling crop of apples from crushing the orchard's old route box?
 
 **Opening state:** The moonstone, surviving map, journal, rope, umbrella, and wagon are at camp. The apple from episode 1 is still beside the wheel. The child has been introduced to m, without an assumption of mastery.

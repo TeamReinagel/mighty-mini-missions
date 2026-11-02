@@ -1,0 +1,967 @@
+{
+  "status": "approved",
+  "approved": true,
+  "manuscriptSHA256": "92b4933bdc5d45d72489ffae800a0f0fbbb8b61696674a5e5f7c39bb8a0ac12a",
+  "sourceSHA256": "9fd6616328369f95accd7af8a3388b4e33b677005491bee399a7cafe57662a6f",
+  "sourceName": "ElevenLabs_The_Apple_Catcher.mp3",
+  "sourceDuration": 399.67038548752834,
+  "alignmentMethod": "Offline manuscript-constrained word DTW, checked against independent local ASR word timing; degenerate or disagreeing DTW words use matched ASR timing. Physical cuts centered in independently measured -42 dB quiet intervals. Word cue times are estimates.",
+  "cutPolicy": "All 36 source ranges are contiguous and retain the entire supplied recording at normal speed. All 35 boundaries lie inside independently measured -42 dB quiet intervals of at least 100 ms, after each paragraph and before its consequence. No source passages are omitted, duplicated, or replaced.",
+  "recordingDifferences": [],
+  "entries": {
+    "an-apple-at-camp:p1": {
+      "text": "The apple was still beside the wagon wheel. It had rolled into camp after your moonstone adventure, and Nib had been guarding it very carefully. This morning, it had one small bite missing.",
+      "spokenText": "The apple was still beside the wagon wheel. It had rolled into camp after your moonstone adventure, and Nib had been guarding it very carefully. This morning, it had one small bite missing.",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 20.219909297052155,
+      "duration": 20.219909297052155,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.1,
+          "speaker": "narrator",
+          "text": "The Apple Catcher."
+        },
+        {
+          "start": 2.62,
+          "end": 4.74,
+          "speaker": "narrator",
+          "text": "Lark and Nib’s Treasure Quest."
+        },
+        {
+          "start": 4.98,
+          "end": 5.84,
+          "speaker": "narrator",
+          "text": "Season 1."
+        },
+        {
+          "start": 6.22,
+          "end": 6.92,
+          "speaker": "narrator",
+          "text": "Episode 2."
+        },
+        {
+          "start": 6.98,
+          "end": 16.06,
+          "speaker": "narrator",
+          "text": "The apple was still beside the wagon wheel. It had rolled into camp after your moonstone adventure, and Nib had been guarding it very carefully."
+        },
+        {
+          "start": 16.06,
+          "end": 19.74,
+          "speaker": "narrator",
+          "text": "This morning, it had one small bite missing."
+        }
+      ]
+    },
+    "an-apple-at-camp:p2": {
+      "text": "“An investigation,” Nib explained solemnly. “I had to find out whether it was an apple.”",
+      "spokenText": "“An investigation,” Nib explained solemnly. “I had to find out whether it was an apple.”",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 20.219909297052155,
+      "sourceEnd": 28.068707482993197,
+      "duration": 7.8487981859410425,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.355279,
+          "end": 1.260091,
+          "speaker": "nib",
+          "text": "An investigation,"
+        },
+        {
+          "start": 2.160091,
+          "end": 4.100091,
+          "speaker": "narrator",
+          "text": "Nib explained solemnly."
+        },
+        {
+          "start": 4.100091,
+          "end": 7.140091,
+          "speaker": "nib",
+          "text": "I had to find out whether it was an apple."
+        }
+      ]
+    },
+    "an-apple-at-camp:p3": {
+      "text": "Lark spread your surviving map on the explorer case. In the moonstone’s amber light, the orchard line appeared again. She packed the map, stone, journal, rope, and umbrella. Nib added the apple.",
+      "spokenText": "Lark spread your surviving map on the explorer case. In the moonstone’s amber light, the orchard line appeared again. She packed the map, stone, journal, rope, and umbrella. Nib added the apple.",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 28.068707482993197,
+      "sourceEnd": 42.72233560090703,
+      "duration": 14.653628117913833,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.590855,
+          "end": 12.451293,
+          "speaker": "narrator",
+          "text": "Lark spread your surviving map on the explorer case. In the moonstone’s amber light, the orchard line appeared again. She packed the map, stone, journal, rope, and umbrella."
+        },
+        {
+          "start": 13.151293,
+          "end": 14.251293,
+          "speaker": "narrator",
+          "text": "Nib added the apple."
+        }
+      ]
+    },
+    "an-apple-at-camp:p4": {
+      "text": "As the wagon passed the camp oak, a wheel bumped its crooked root. “That tree has its foot out,” Nib complained mildly. Lark helped him steer around it. Then you followed the apple’s clue.",
+      "spokenText": "As the wagon passed the camp oak, a wheel bumped its crooked root. “That tree has its foot out,” Nib complained mildly. Lark helped him steer around it. Then you followed the apple’s clue.",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 42.72233560090703,
+      "sourceEnd": 57.72265306122449,
+      "duration": 15.000317460317461,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.316664,
+          "end": 4.357664,
+          "speaker": "narrator",
+          "text": "As the wagon passed the camp oak, a wheel bumped its crooked root."
+        },
+        {
+          "start": 4.357664,
+          "end": 6.837664,
+          "speaker": "nib",
+          "text": "That tree has its foot out,"
+        },
+        {
+          "start": 6.837664,
+          "end": 14.457664,
+          "speaker": "narrator",
+          "text": "Nib complained mildly. Lark helped him steer around it. Then you followed the apple’s clue."
+        }
+      ]
+    },
+    "our-old-hum:p1": {
+      "text": "At the fork, Lark checked the little mark copied from your first adventure. You had met its closed-lip hum beside the lagoon. The new orchard clue could wait while you remembered the old one.",
+      "spokenText": "At the fork, Lark checked the little mark copied from your first adventure. You had met its closed-lip hum beside the lagoon. The new orchard clue could wait while you remembered the old one.",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 57.72265306122449,
+      "sourceEnd": 69.83328798185941,
+      "duration": 12.110634920634922,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.404597,
+          "end": 7.957347,
+          "speaker": "narrator",
+          "text": "At the fork, Lark checked the little mark copied from your first adventure. You had met its closed-lip hum beside the lagoon."
+        },
+        {
+          "start": 7.957347,
+          "end": 11.717347,
+          "speaker": "narrator",
+          "text": "The new orchard clue could wait while you remembered the old one."
+        }
+      ]
+    },
+    "our-old-hum:p2": {
+      "text": "“Which little letter makes our hum?” Lark asked gently.",
+      "spokenText": "“Which little letter makes our hum?” Lark asked gently.",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 69.83328798185941,
+      "sourceEnd": 75.25380952380952,
+      "duration": 5.420521541950109,
+      "source": "elevenlabs-upload",
+      "gateAfter": "review-m",
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.3449,
+          "end": 2.406712,
+          "speaker": "lark",
+          "text": "Which little letter makes our hum?"
+        },
+        {
+          "start": 3.226712,
+          "end": 4.886712,
+          "speaker": "narrator",
+          "text": "Lark asked gently."
+        }
+      ]
+    },
+    "the-broken-catcher:p1": {
+      "text": "The orchard smelled of apples and damp leaves. A wooden chute sloped between two trees. Beneath it hung a catching cloth, but one corner had come loose. Fallen apples were heaped beside an old box on a low shelf.",
+      "spokenText": "The orchard smelled of apples and damp leaves. A wooden chute sloped between two trees. Beneath it hung a catching cloth, but one corner had come loose. Fallen apples were heaped beside an old box on a low shelf.",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 75.25380952380952,
+      "sourceEnd": 90.70358276643991,
+      "duration": 15.449773242630386,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.37419,
+          "end": 10.56619,
+          "speaker": "narrator",
+          "text": "The orchard smelled of apples and damp leaves. A wooden chute sloped between two trees. Beneath it hung a catching cloth, but one corner had come loose."
+        },
+        {
+          "start": 11.28619,
+          "end": 14.82619,
+          "speaker": "narrator",
+          "text": "Fallen apples were heaped beside an old box on a low shelf."
+        }
+      ]
+    },
+    "the-broken-catcher:p2": {
+      "text": "Three more apples waited behind a wooden stop at the top of the chute. Nothing was moving now.",
+      "spokenText": "Three more apples waited behind a wooden stop at the top of the chute. Nothing was moving now.",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 90.70358276643991,
+      "sourceEnd": 97.36893424036282,
+      "duration": 6.665351473922911,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.49873,
+          "end": 6.076417,
+          "speaker": "narrator",
+          "text": "Three more apples waited behind a wooden stop at the top of the chute. Nothing was moving now."
+        }
+      ]
+    },
+    "the-broken-catcher:p3": {
+      "text": "“I am an excellent apple basket,” Nib declared proudly. He spread his little arms. One apple filled them.",
+      "spokenText": "“I am an excellent apple basket,” Nib declared proudly. He spread his little arms. One apple filled them.",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 97.36893424036282,
+      "sourceEnd": 106.97934240362812,
+      "duration": 9.610408163265305,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.543503,
+          "end": 2.851066,
+          "speaker": "nib",
+          "text": "I am an excellent apple basket,"
+        },
+        {
+          "start": 3.491066,
+          "end": 9.091066,
+          "speaker": "narrator",
+          "text": "Nib declared proudly. He spread his little arms. One apple filled them."
+        }
+      ]
+    },
+    "the-broken-catcher:p4": {
+      "text": "“You are a rather small one,” Lark observed gently. “Let’s mend the catcher before we release the next apples. We must keep that old box safe.”",
+      "spokenText": "“You are a rather small one,” Lark observed gently. “Let’s mend the catcher before we release the next apples. We must keep that old box safe.”",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 106.97934240362812,
+      "sourceEnd": 118.9015873015873,
+      "duration": 11.922244897959175,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.467783,
+          "end": 2.540658,
+          "speaker": "lark",
+          "text": "You are a rather small one,"
+        },
+        {
+          "start": 3.100658,
+          "end": 4.700658,
+          "speaker": "narrator",
+          "text": "Lark observed gently."
+        },
+        {
+          "start": 5.280658,
+          "end": 11.480658,
+          "speaker": "lark",
+          "text": "Let’s mend the catcher before we release the next apples. We must keep that old box safe."
+        }
+      ]
+    },
+    "the-start-of-apple:p1": {
+      "text": "A carved apple marked the brass catch. Beside it was a little letter with a round middle and a short stem: lowercase a. The other catch carried the m you knew.",
+      "spokenText": "A carved apple marked the brass catch. Beside it was a little letter with a round middle and a short stem: lowercase a. The other catch carried the m you knew.",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 118.9015873015873,
+      "sourceEnd": 131.02861678004535,
+      "duration": 12.127029478458056,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.371975,
+          "end": 8.698413,
+          "speaker": "narrator",
+          "text": "A carved apple marked the brass catch. Beside it was a little letter with a round middle and a short stem: lowercase a."
+        },
+        {
+          "start": 8.698413,
+          "end": 11.698413,
+          "speaker": "narrator",
+          "text": "The other catch carried the m you knew."
+        }
+      ]
+    },
+    "the-start-of-apple:p2": {
+      "text": "“Listen at the beginning of apple,” Lark invited softly. “Apple. Ant. That open little sound is the sound for this a. Listen.”",
+      "spokenText": "“Listen at the beginning of apple,” Lark invited softly. “Apple. Ant. That open little sound is the sound for this a. Listen.”",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 131.02861678004535,
+      "sourceEnd": 143.2553514739229,
+      "duration": 12.226734693877546,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": "a",
+      "cues": [
+        {
+          "start": 0.33757,
+          "end": 2.451383,
+          "speaker": "lark",
+          "text": "Listen at the beginning of apple,"
+        },
+        {
+          "start": 3.171383,
+          "end": 5.011383,
+          "speaker": "narrator",
+          "text": "Lark invited softly."
+        },
+        {
+          "start": 5.851383,
+          "end": 11.691383,
+          "speaker": "lark",
+          "text": "Apple. Ant. That open little sound is the sound for this a. Listen."
+        }
+      ]
+    },
+    "the-start-of-apple:p3": {
+      "text": "Nib put his apple in the wagon, then stretched the cloth toward the post while Lark held the frame steady. The loose corner would reach the catch if you chose its new little letter.",
+      "spokenText": "Nib put his apple in the wagon, then stretched the cloth toward the post while Lark held the frame steady. The loose corner would reach the catch if you chose its new little letter.",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 143.2553514739229,
+      "sourceEnd": 155.16675736961452,
+      "duration": 11.911405895691615,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.544649,
+          "end": 6.904649,
+          "speaker": "narrator",
+          "text": "Nib put his apple in the wagon, then stretched the cloth toward the post while Lark held the frame steady."
+        },
+        {
+          "start": 6.904649,
+          "end": 11.424649,
+          "speaker": "narrator",
+          "text": "The loose corner would reach the catch if you chose its new little letter."
+        }
+      ]
+    },
+    "the-start-of-apple:p4": {
+      "text": "“Find the little letter for the start of apple,” Lark encouraged warmly.",
+      "spokenText": "“Find the little letter for the start of apple,” Lark encouraged warmly.",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 155.16675736961452,
+      "sourceEnd": 160.9008843537415,
+      "duration": 5.734126984126988,
+      "source": "elevenlabs-upload",
+      "gateAfter": "find-a",
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.390868,
+          "end": 2.933243,
+          "speaker": "lark",
+          "text": "Find the little letter for the start of apple,"
+        },
+        {
+          "start": 2.933243,
+          "end": 5.293243,
+          "speaker": "narrator",
+          "text": "Lark encouraged warmly."
+        }
+      ]
+    },
+    "two-marks-one-loop:p1": {
+      "text": "The corner caught, but its fastening loop still dangled. Without that loop, a heavy apple could pull the cloth free again. Two wooden picture marks showed where the loop might go.",
+      "spokenText": "The corner caught, but its fastening loop still dangled. Without that loop, a heavy apple could pull the cloth free again. Two wooden picture marks showed where the loop might go.",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 160.9008843537415,
+      "sourceEnd": 173.10242630385488,
+      "duration": 12.20154195011338,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.373054,
+          "end": 7.999116,
+          "speaker": "narrator",
+          "text": "The corner caught, but its fastening loop still dangled. Without that loop, a heavy apple could pull the cloth free again."
+        },
+        {
+          "start": 8.619116,
+          "end": 11.659116,
+          "speaker": "narrator",
+          "text": "Two wooden picture marks showed where the loop might go."
+        }
+      ]
+    },
+    "two-marks-one-loop:p2": {
+      "text": "Lark named them aloud: ant and moon. Nib kept both paws on the cloth. The waiting apples stayed behind their stop.",
+      "spokenText": "Lark named them aloud: ant and moon. Nib kept both paws on the cloth. The waiting apples stayed behind their stop.",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 173.10242630385488,
+      "sourceEnd": 182.6187074829932,
+      "duration": 9.516281179138304,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.458324,
+          "end": 9.157574,
+          "speaker": "narrator",
+          "text": "Lark named them aloud: ant and moon. Nib kept both paws on the cloth. The waiting apples stayed behind their stop."
+        }
+      ]
+    },
+    "two-marks-one-loop:p3": {
+      "text": "“Which picture starts with the same little sound as apple?” Lark asked clearly. “Then fasten the loop before you let an apple down.”",
+      "spokenText": "“Which picture starts with the same little sound as apple?” Lark asked clearly. “Then fasten the loop before you let an apple down.”",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 182.6187074829932,
+      "sourceEnd": 193.1670068027211,
+      "duration": 10.548299319727903,
+      "source": "elevenlabs-upload",
+      "gateAfter": "choose-ant",
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.319918,
+          "end": 3.861293,
+          "speaker": "lark",
+          "text": "Which picture starts with the same little sound as apple?"
+        },
+        {
+          "start": 4.461293,
+          "end": 6.121293,
+          "speaker": "narrator",
+          "text": "Lark asked clearly."
+        },
+        {
+          "start": 6.841293,
+          "end": 10.041293,
+          "speaker": "lark",
+          "text": "Then fasten the loop before you let an apple down."
+        }
+      ]
+    },
+    "apples-in-the-cloth:p1": {
+      "text": "The loop held. You lifted the wooden stop, and an apple rolled down the chute into the cloth. It settled with a soft, comfortable thump. The old route box stayed safe on its shelf.",
+      "spokenText": "The loop held. You lifted the wooden stop, and an apple rolled down the chute into the cloth. It settled with a soft, comfortable thump. The old route box stayed safe on its shelf.",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 193.1670068027211,
+      "sourceEnd": 205.9436961451247,
+      "duration": 12.776689342403614,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.326993,
+          "end": 9.332993,
+          "speaker": "narrator",
+          "text": "The loop held. You lifted the wooden stop, and an apple rolled down the chute into the cloth. It settled with a soft, comfortable thump."
+        },
+        {
+          "start": 9.332993,
+          "end": 12.412993,
+          "speaker": "narrator",
+          "text": "The old route box stayed safe on its shelf."
+        }
+      ]
+    },
+    "apples-in-the-cloth:p2": {
+      "text": "“Caught!” Nib exclaimed delightedly. He clapped so hard that his empty pockets flapped.",
+      "spokenText": "“Caught!” Nib exclaimed delightedly. He clapped so hard that his empty pockets flapped.",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 205.9436961451247,
+      "sourceEnd": 213.67344671201815,
+      "duration": 7.729750566893443,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.290679,
+          "end": 0.796304,
+          "speaker": "nib",
+          "text": "Caught!"
+        },
+        {
+          "start": 1.356304,
+          "end": 7.156304,
+          "speaker": "narrator",
+          "text": "Nib exclaimed delightedly. He clapped so hard that his empty pockets flapped."
+        }
+      ]
+    },
+    "apples-in-the-cloth:p3": {
+      "text": "Lark and Nib gathered the apples from around the shelf. They put several in the picnic basket. Now the path to the box was clear, and the next apples had somewhere safe to land.",
+      "spokenText": "Lark and Nib gathered the apples from around the shelf. They put several in the picnic basket. Now the path to the box was clear, and the next apples had somewhere safe to land.",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 213.67344671201815,
+      "sourceEnd": 225.4856462585034,
+      "duration": 11.81219954648526,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.52824,
+          "end": 5.726553,
+          "speaker": "narrator",
+          "text": "Lark and Nib gathered the apples from around the shelf. They put several in the picnic basket."
+        },
+        {
+          "start": 5.726553,
+          "end": 11.286553,
+          "speaker": "narrator",
+          "text": "Now the path to the box was clear, and the next apples had somewhere safe to land."
+        }
+      ]
+    },
+    "our-first-little-word:p1": {
+      "text": "Lark opened the journal on a flat board. She placed the new a beside your familiar m. Two little letters could do something new together.",
+      "spokenText": "Lark opened the journal on a flat board. She placed the new a beside your familiar m. Two little letters could do something new together.",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 225.4856462585034,
+      "sourceEnd": 235.80131519274377,
+      "duration": 10.315668934240364,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.361479,
+          "end": 9.814354,
+          "speaker": "narrator",
+          "text": "Lark opened the journal on a flat board. She placed the new a beside your familiar m. Two little letters could do something new together."
+        }
+      ]
+    },
+    "our-first-little-word:p2": {
+      "text": "“Start with the open sound from apple,” Lark explained patiently. “Then close your lips into our hum. Keep them close together: am.”",
+      "spokenText": "“Start with the open sound from apple,” Lark explained patiently. “Then close your lips into our hum. Keep them close together: am.”",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 235.80131519274377,
+      "sourceEnd": 247.5704081632653,
+      "duration": 11.769092970521541,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.330123,
+          "end": 2.718685,
+          "speaker": "lark",
+          "text": "Start with the open sound from apple,"
+        },
+        {
+          "start": 3.238685,
+          "end": 5.218685,
+          "speaker": "narrator",
+          "text": "Lark explained patiently."
+        },
+        {
+          "start": 5.218685,
+          "end": 10.918685,
+          "speaker": "lark",
+          "text": "Then close your lips into our hum. Keep them close together: am."
+        }
+      ]
+    },
+    "our-first-little-word:p3": {
+      "text": "“I am an apple catcher,” Nib announced proudly. “A catcher who also enjoys a snack.”",
+      "spokenText": "“I am an apple catcher,” Nib announced proudly. “A catcher who also enjoys a snack.”",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 247.5704081632653,
+      "sourceEnd": 255.9384126984127,
+      "duration": 8.368004535147378,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.53278,
+          "end": 2.289592,
+          "speaker": "nib",
+          "text": "I am an apple catcher,"
+        },
+        {
+          "start": 3.009592,
+          "end": 4.169592,
+          "speaker": "narrator",
+          "text": "Nib announced proudly."
+        },
+        {
+          "start": 4.929592,
+          "end": 7.769592,
+          "speaker": "nib",
+          "text": "A catcher who also enjoys a snack."
+        }
+      ]
+    },
+    "our-first-little-word:p4": {
+      "text": "Lark pointed beneath the two letters. “Slide with me, then say am if you like,” Lark invited gently. “I’ll read the rest of our sentence.”",
+      "spokenText": "Lark pointed beneath the two letters. “Slide with me, then say am if you like,” Lark invited gently. “I’ll read the rest of our sentence.”",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 255.9384126984127,
+      "sourceEnd": 268.2757142857143,
+      "duration": 12.337301587301596,
+      "source": "elevenlabs-upload",
+      "gateAfter": "blend-am",
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.531212,
+          "end": 2.421587,
+          "speaker": "narrator",
+          "text": "Lark pointed beneath the two letters."
+        },
+        {
+          "start": 3.221587,
+          "end": 6.861587,
+          "speaker": "lark",
+          "text": "Slide with me, then say am if you like,"
+        },
+        {
+          "start": 7.501587,
+          "end": 9.281587,
+          "speaker": "narrator",
+          "text": "Lark invited gently."
+        },
+        {
+          "start": 9.281587,
+          "end": 11.521587,
+          "speaker": "lark",
+          "text": "I’ll read the rest of our sentence."
+        }
+      ]
+    },
+    "the-box-on-the-shelf:p1": {
+      "text": "The old box had a little brass lift latch and an apple carved into its lid. It was dry and undented. Nib stood beside the shelf while Lark laid your surviving map on a flat board.",
+      "spokenText": "The old box had a little brass lift latch and an apple carved into its lid. It was dry and undented. Nib stood beside the shelf while Lark laid your surviving map on a flat board.",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 268.2757142857143,
+      "sourceEnd": 281.52575963718823,
+      "duration": 13.250045351473943,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.513036,
+          "end": 7.524286,
+          "speaker": "narrator",
+          "text": "The old box had a little brass lift latch and an apple carved into its lid. It was dry and undented."
+        },
+        {
+          "start": 8.324286,
+          "end": 12.844286,
+          "speaker": "narrator",
+          "text": "Nib stood beside the shelf while Lark laid your surviving map on a flat board."
+        }
+      ]
+    },
+    "the-box-on-the-shelf:p2": {
+      "text": "“We can open it safely now,” Lark murmured eagerly. “Lift the latch. Then see where the paper inside belongs.”",
+      "spokenText": "“We can open it safely now,” Lark murmured eagerly. “Lift the latch. Then see where the paper inside belongs.”",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 281.52575963718823,
+      "sourceEnd": 291.0721768707483,
+      "duration": 9.546417233560078,
+      "source": "elevenlabs-upload",
+      "gateAfter": "fit-map",
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.331428,
+          "end": 2.09424,
+          "speaker": "lark",
+          "text": "We can open it safely now,"
+        },
+        {
+          "start": 2.09424,
+          "end": 4.55424,
+          "speaker": "narrator",
+          "text": "Lark murmured eagerly."
+        },
+        {
+          "start": 5.23424,
+          "end": 8.97424,
+          "speaker": "lark",
+          "text": "Lift the latch. Then see where the paper inside belongs."
+        }
+      ]
+    },
+    "the-first-missing-section:p1": {
+      "text": "Inside lay a folded map section and an illustrated note. Lark read it aloud. Earlier explorers had kept pieces of their worn map in route boxes, so each part would stay safe until someone came along the path.",
+      "spokenText": "Inside lay a folded map section and an illustrated note. Lark read it aloud. Earlier explorers had kept pieces of their worn map in route boxes, so each part would stay safe until someone came along the path.",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 291.0721768707483,
+      "sourceEnd": 305.8175283446712,
+      "duration": 14.74535147392288,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.304448,
+          "end": 5.607823,
+          "speaker": "narrator",
+          "text": "Inside lay a folded map section and an illustrated note. Lark read it aloud."
+        },
+        {
+          "start": 5.607823,
+          "end": 14.348448,
+          "speaker": "narrator",
+          "text": "Earlier explorers had kept pieces of their worn map in route boxes, so each part would stay safe until someone came along the path."
+        }
+      ]
+    },
+    "the-first-missing-section:p2": {
+      "text": "Your original section had four empty spaces beside it. The orchard piece fitted one. Two sections together now; three spaces still waiting.",
+      "spokenText": "Your original section had four empty spaces beside it. The orchard piece fitted one. Two sections together now; three spaces still waiting.",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 305.8175283446712,
+      "sourceEnd": 316.16526077097507,
+      "duration": 10.347732426303878,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.39691,
+          "end": 9.682472,
+          "speaker": "narrator",
+          "text": "Your original section had four empty spaces beside it. The orchard piece fitted one. Two sections together now; three spaces still waiting."
+        }
+      ]
+    },
+    "the-first-missing-section:p3": {
+      "text": "Lark passed the moonstone above the joined paper. A hidden line appeared, leading through a windy hollow to a little roofed waystation on the ridge.",
+      "spokenText": "Lark passed the moonstone above the joined paper. A hidden line appeared, leading through a windy hollow to a little roofed waystation on the ridge.",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 316.16526077097507,
+      "sourceEnd": 325.90777777777777,
+      "duration": 9.7425170068027,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.507739,
+          "end": 9.294739,
+          "speaker": "narrator",
+          "text": "Lark passed the moonstone above the joined paper. A hidden line appeared, leading through a windy hollow to a little roofed waystation on the ridge."
+        }
+      ]
+    },
+    "the-first-missing-section:p4": {
+      "text": "“Another small clue,” Lark remarked thoughtfully. “Enough for our next adventure.”",
+      "spokenText": "“Another small clue,” Lark remarked thoughtfully. “Enough for our next adventure.”",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 325.90777777777777,
+      "sourceEnd": 333.2775963718821,
+      "duration": 7.369818594104345,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.33816,
+          "end": 1.672222,
+          "speaker": "lark",
+          "text": "Another small clue,"
+        },
+        {
+          "start": 1.672222,
+          "end": 4.152222,
+          "speaker": "narrator",
+          "text": "Lark remarked thoughtfully."
+        },
+        {
+          "start": 4.752222,
+          "end": 6.772222,
+          "speaker": "lark",
+          "text": "Enough for our next adventure."
+        }
+      ]
+    },
+    "our-second-journal-page:p1": {
+      "text": "Nib drew the catcher in the journal. In his picture, every pocket held an apple. Lark wrote their new little word in the sentence, and you could join its two sounds again whenever you wished.",
+      "spokenText": "Nib drew the catcher in the journal. In his picture, every pocket held an apple. Lark wrote their new little word in the sentence, and you could join its two sounds again whenever you wished.",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 333.2775963718821,
+      "sourceEnd": 345.6061224489796,
+      "duration": 12.328526077097479,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.415654,
+          "end": 5.462404,
+          "speaker": "narrator",
+          "text": "Nib drew the catcher in the journal. In his picture, every pocket held an apple."
+        },
+        {
+          "start": 6.062404,
+          "end": 11.882404,
+          "speaker": "narrator",
+          "text": "Lark wrote their new little word in the sentence, and you could join its two sounds again whenever you wished."
+        }
+      ]
+    },
+    "our-second-journal-page:p2": {
+      "text": "They tucked the first missing section into the case beside the original map. The moonstone and journal went with it. The empty route box closed neatly on its shelf.",
+      "spokenText": "They tucked the first missing section into the case beside the original map. The moonstone and journal went with it. The empty route box closed neatly on its shelf.",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 345.6061224489796,
+      "sourceEnd": 356.4489342403628,
+      "duration": 10.842811791383212,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.364441,
+          "end": 6.993878,
+          "speaker": "narrator",
+          "text": "They tucked the first missing section into the case beside the original map. The moonstone and journal went with it."
+        },
+        {
+          "start": 6.993878,
+          "end": 10.373878,
+          "speaker": "narrator",
+          "text": "The empty route box closed neatly on its shelf."
+        }
+      ]
+    },
+    "our-second-journal-page:p3": {
+      "text": "“I am an apple catcher,” Nib repeated contentedly. He tossed his saved apple a little way up and caught it himself.",
+      "spokenText": "“I am an apple catcher,” Nib repeated contentedly. He tossed his saved apple a little way up and caught it himself.",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 356.4489342403628,
+      "sourceEnd": 365.7144897959184,
+      "duration": 9.26555555555558,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.341629,
+          "end": 2.111066,
+          "speaker": "nib",
+          "text": "I am an apple catcher,"
+        },
+        {
+          "start": 2.991066,
+          "end": 8.511066,
+          "speaker": "narrator",
+          "text": "Nib repeated contentedly. He tossed his saved apple a little way up and caught it himself."
+        }
+      ]
+    },
+    "a-gust-and-an-idea:p1": {
+      "text": "The catcher rested between the trees, fastened and ready. Your basket held apples for the road, and the ridge route was safe inside the case. The orchard’s little problem was solved.",
+      "spokenText": "The catcher rested between the trees, fastened and ready. Your basket held apples for the road, and the ridge route was safe inside the case. The orchard’s little problem was solved.",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 365.7144897959184,
+      "sourceEnd": 377.8909977324263,
+      "duration": 12.176507936507903,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.47426,
+          "end": 9.08551,
+          "speaker": "narrator",
+          "text": "The catcher rested between the trees, fastened and ready. Your basket held apples for the road, and the ridge route was safe inside the case."
+        },
+        {
+          "start": 9.08551,
+          "end": 11.72551,
+          "speaker": "narrator",
+          "text": "The orchard’s little problem was solved."
+        }
+      ]
+    },
+    "a-gust-and-an-idea:p2": {
+      "text": "A gust ran through the branches. The wagon’s small pennant fluttered. Nib looked from the pennant to the folded picnic cloth, then toward the windy hollow.",
+      "spokenText": "A gust ran through the branches. The wagon’s small pennant fluttered. Nib looked from the pennant to the folded picnic cloth, then toward the windy hollow.",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 377.8909977324263,
+      "sourceEnd": 388.29154195011336,
+      "duration": 10.40054421768707,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.332565,
+          "end": 9.869002,
+          "speaker": "narrator",
+          "text": "A gust ran through the branches. The wagon’s small pennant fluttered. Nib looked from the pennant to the folded picnic cloth, then toward the windy hollow."
+        }
+      ]
+    },
+    "a-gust-and-an-idea:p3": {
+      "text": "“I have an idea,” Nib whispered excitedly. Lark tucked the map away before the breeze could catch it. Together, you turned the wagon toward the ridge.",
+      "spokenText": "“I have an idea,” Nib whispered excitedly. Lark tucked the map away before the breeze could catch it. Together, you turned the wagon toward the ridge.",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 388.29154195011336,
+      "sourceEnd": 399.67038548752834,
+      "duration": 11.37884353741498,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "soundAfter": null,
+      "cues": [
+        {
+          "start": 0.353896,
+          "end": 1.368458,
+          "speaker": "nib",
+          "text": "I have an idea,"
+        },
+        {
+          "start": 1.948458,
+          "end": 10.528458,
+          "speaker": "narrator",
+          "text": "Nib whispered excitedly. Lark tucked the map away before the breeze could catch it. Together, you turned the wagon toward the ridge."
+        }
+      ]
+    }
+  }
+}

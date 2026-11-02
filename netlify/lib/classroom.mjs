@@ -8,6 +8,7 @@ import { createHash } from "node:crypto";
 import { helpLine, itemsFor } from "./classroom-content.mjs";
 import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
 import { scheduledBagAtDoorCard, COMPLETION_ITEM as BAG_AT_DOOR_COMPLETION } from "../../bag-at-the-door/integration.mjs";
+import { scheduledAppleCatcherCard, COMPLETION_ITEM as APPLE_CATCHER_COMPLETION } from "../../apple-catcher/integration.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
 import {
@@ -173,7 +174,8 @@ const EVIDENCE = {
   "train-set": { game: "train-set", need: 3 },
   "ghost-word-run": { game: "ghost-word-run", need: 10 },
   "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM },
-  "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION }
+  "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION },
+  "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION }
 };
 
 export function evidenceFor(kidId, gameId) {
@@ -687,6 +689,12 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   if (pinned?.stepId && rhythm !== "weekend") {
     const def = stepById(kidId, pinned.stepId);
     if (def && pinned.items?.length) cards = insertCheck(cards, checkCard(kidId, def, date, pinned.items));
+  }
+  const readingStory = scheduledAppleCatcherCard(date, kidId);
+  if (readingStory) {
+    const at = cards.findIndex((card) => card.part === "ela");
+    cards = cards.filter((card) => card.part !== "ela");
+    cards.splice(at < 0 ? 0 : at, 0, readingStory);
   }
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);

@@ -1,0 +1,338 @@
+{
+  "source": {
+    "name": "ElevenLabs_The_Apple_Catcher.mp3",
+    "sha256": "9fd6616328369f95accd7af8a3388b4e33b677005491bee399a7cafe57662a6f",
+    "duration": 399.67038548752834,
+    "sampleRate": 44100,
+    "model": "whisper-large-v3-turbo-4bit"
+  },
+  "allSourceRangesContiguous": true,
+  "allCutsInMeasuredQuiet": true,
+  "sourceCoverageSeconds": 399.67038548752834,
+  "clips": [
+    {
+      "id": "an-apple-at-camp:p1",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0,
+      "sourceEnd": 20.219909297052155,
+      "decodedDuration": 20.219909297052155,
+      "expectedDuration": 20.219909297052155,
+      "sha256": "4a86cfc2533ebc0cc07b52acd070dcd429b28769f30a6b8cd1dedaf39650a7f2"
+    },
+    {
+      "id": "an-apple-at-camp:p2",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 20.219909297052155,
+      "sourceEnd": 28.068707482993197,
+      "decodedDuration": 7.848798185941043,
+      "expectedDuration": 7.8487981859410425,
+      "sha256": "f16ed87ff0ecfea40f2a6bc6c4cbe9e09ae558f055ff3acad14b73bdd2ec3932"
+    },
+    {
+      "id": "an-apple-at-camp:p3",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 28.068707482993197,
+      "sourceEnd": 42.72233560090703,
+      "decodedDuration": 14.653628117913833,
+      "expectedDuration": 14.653628117913833,
+      "sha256": "8dc40680435ac1d0ab90ceb730f47671e6809c39564b871bf96692d61799804a"
+    },
+    {
+      "id": "an-apple-at-camp:p4",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 42.72233560090703,
+      "sourceEnd": 57.72265306122449,
+      "decodedDuration": 15.00031746031746,
+      "expectedDuration": 15.000317460317461,
+      "sha256": "685f9a1eb21b2a6559156dd5bce1c0f36a14c0d66225501a087fb7a08b1234e1"
+    },
+    {
+      "id": "our-old-hum:p1",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 57.72265306122449,
+      "sourceEnd": 69.83328798185941,
+      "decodedDuration": 12.11063492063492,
+      "expectedDuration": 12.110634920634922,
+      "sha256": "bec99e2f531f1657db1e0bc6ca337a9d2a4c71901b8920077d0974089a6c2044"
+    },
+    {
+      "id": "our-old-hum:p2",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 69.83328798185941,
+      "sourceEnd": 75.25380952380952,
+      "decodedDuration": 5.420521541950113,
+      "expectedDuration": 5.420521541950109,
+      "sha256": "ac7f2040c9eef6456b2484c15de9944f39ed7d6fd13e912ee298b56d01c45607"
+    },
+    {
+      "id": "the-broken-catcher:p1",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 75.25380952380952,
+      "sourceEnd": 90.70358276643991,
+      "decodedDuration": 15.449773242630386,
+      "expectedDuration": 15.449773242630386,
+      "sha256": "84314a0eebe8fe6165dd13a00e715898ce681c1f0493512c574c4019c96fce7a"
+    },
+    {
+      "id": "the-broken-catcher:p2",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 90.70358276643991,
+      "sourceEnd": 97.36893424036282,
+      "decodedDuration": 6.665351473922902,
+      "expectedDuration": 6.665351473922911,
+      "sha256": "bb1c031f9a0a7ed309af385a0e33581e73d5b70da19afcdcbaedaff145e8b267"
+    },
+    {
+      "id": "the-broken-catcher:p3",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 97.36893424036282,
+      "sourceEnd": 106.97934240362812,
+      "decodedDuration": 9.610408163265307,
+      "expectedDuration": 9.610408163265305,
+      "sha256": "7dc48ac15688ee6ac4cfa4d9ce3347fe8b7ca1481b45645dfcd6e2478b2e242f"
+    },
+    {
+      "id": "the-broken-catcher:p4",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 106.97934240362812,
+      "sourceEnd": 118.9015873015873,
+      "decodedDuration": 11.922244897959184,
+      "expectedDuration": 11.922244897959175,
+      "sha256": "5398880dd04c431c9a2f4ebd0d94fbb121dbed0371957f073dc281e98cff9cb3"
+    },
+    {
+      "id": "the-start-of-apple:p1",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 118.9015873015873,
+      "sourceEnd": 131.02861678004535,
+      "decodedDuration": 12.12702947845805,
+      "expectedDuration": 12.127029478458056,
+      "sha256": "136dbefdff74ac78506e6c2a16a019d253286a2a6d2ff07352ec59a0c9c6195c"
+    },
+    {
+      "id": "the-start-of-apple:p2",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 131.02861678004535,
+      "sourceEnd": 143.2553514739229,
+      "decodedDuration": 12.226734693877551,
+      "expectedDuration": 12.226734693877546,
+      "sha256": "18fda948d22b978ba1b94c2be05a6c06b195d92ab9d294a90ddce63d05714ad2"
+    },
+    {
+      "id": "the-start-of-apple:p3",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 143.2553514739229,
+      "sourceEnd": 155.16675736961452,
+      "decodedDuration": 11.91140589569161,
+      "expectedDuration": 11.911405895691615,
+      "sha256": "1267a5631947d5cd80a74df696c1d29ee55c38047589fd8477ec59c1572629bf"
+    },
+    {
+      "id": "the-start-of-apple:p4",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 155.16675736961452,
+      "sourceEnd": 160.9008843537415,
+      "decodedDuration": 5.734126984126984,
+      "expectedDuration": 5.734126984126988,
+      "sha256": "7e36110c5220799c8d86db738de3b2e332f430986e5824b37aa76fc89de9313e"
+    },
+    {
+      "id": "two-marks-one-loop:p1",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 160.9008843537415,
+      "sourceEnd": 173.10242630385488,
+      "decodedDuration": 12.201541950113379,
+      "expectedDuration": 12.20154195011338,
+      "sha256": "22088bbe9152c50935f03091b03f2aed410ed8782e2709ffcfeb25f9f425d2c8"
+    },
+    {
+      "id": "two-marks-one-loop:p2",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 173.10242630385488,
+      "sourceEnd": 182.6187074829932,
+      "decodedDuration": 9.516281179138321,
+      "expectedDuration": 9.516281179138304,
+      "sha256": "60b3e2ff70230d051ddd45895cc6fa06b54009f7f910125168b27cb6b823d130"
+    },
+    {
+      "id": "two-marks-one-loop:p3",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 182.6187074829932,
+      "sourceEnd": 193.1670068027211,
+      "decodedDuration": 10.54829931972789,
+      "expectedDuration": 10.548299319727903,
+      "sha256": "6e1741d9c1a84c9a7ee3d8f506a6f8ad7b305c58f9777735e7bb32208c7d385a"
+    },
+    {
+      "id": "apples-in-the-cloth:p1",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 193.1670068027211,
+      "sourceEnd": 205.9436961451247,
+      "decodedDuration": 12.776689342403628,
+      "expectedDuration": 12.776689342403614,
+      "sha256": "3da1bd4ca8925aa0eda0518f20a39011e1d981ab1f2cda40c2c1980437d44357"
+    },
+    {
+      "id": "apples-in-the-cloth:p2",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 205.9436961451247,
+      "sourceEnd": 213.67344671201815,
+      "decodedDuration": 7.729750566893424,
+      "expectedDuration": 7.729750566893443,
+      "sha256": "e313a5688b3b8a60ee1388d6b94b4b9123d698f440653d63afd88fcade1cdeef"
+    },
+    {
+      "id": "apples-in-the-cloth:p3",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 213.67344671201815,
+      "sourceEnd": 225.4856462585034,
+      "decodedDuration": 11.81219954648526,
+      "expectedDuration": 11.81219954648526,
+      "sha256": "489d9b64fa2dfbb30e71f4f18d69c583e5b625b1a2a32afb9937b405f0ab0cdd"
+    },
+    {
+      "id": "our-first-little-word:p1",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 225.4856462585034,
+      "sourceEnd": 235.80131519274377,
+      "decodedDuration": 10.315668934240362,
+      "expectedDuration": 10.315668934240364,
+      "sha256": "12ee2fae29715b5f408585acd0f95f309cea33ae8c2cd94012e1edbdc0806616"
+    },
+    {
+      "id": "our-first-little-word:p2",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 235.80131519274377,
+      "sourceEnd": 247.5704081632653,
+      "decodedDuration": 11.769092970521543,
+      "expectedDuration": 11.769092970521541,
+      "sha256": "c9b3b5ac4dc2f87ec1218567566f28889058f76c362ab1db043f295ec7bdb2ed"
+    },
+    {
+      "id": "our-first-little-word:p3",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 247.5704081632653,
+      "sourceEnd": 255.9384126984127,
+      "decodedDuration": 8.368004535147392,
+      "expectedDuration": 8.368004535147378,
+      "sha256": "9be61f4d530db5f55288974edc1166608967215fd7ccb7c25b684c4ed7450d11"
+    },
+    {
+      "id": "our-first-little-word:p4",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 255.9384126984127,
+      "sourceEnd": 268.2757142857143,
+      "decodedDuration": 12.337301587301587,
+      "expectedDuration": 12.337301587301596,
+      "sha256": "cc5506507ec950fd0b76855d61591b27a2d011344365b5611cf3d4233b12c045"
+    },
+    {
+      "id": "the-box-on-the-shelf:p1",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 268.2757142857143,
+      "sourceEnd": 281.52575963718823,
+      "decodedDuration": 13.250045351473922,
+      "expectedDuration": 13.250045351473943,
+      "sha256": "b76f5844aba2fe3f404bdc11d06a46552c3226cbd2973c07aa5ece7794f83f20"
+    },
+    {
+      "id": "the-box-on-the-shelf:p2",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 281.52575963718823,
+      "sourceEnd": 291.0721768707483,
+      "decodedDuration": 9.54641723356009,
+      "expectedDuration": 9.546417233560078,
+      "sha256": "0c931bbe035565ea7822e5d6f5720756a34b073f48f5b599ebcc01ee63c2916c"
+    },
+    {
+      "id": "the-first-missing-section:p1",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 291.0721768707483,
+      "sourceEnd": 305.8175283446712,
+      "decodedDuration": 14.745351473922902,
+      "expectedDuration": 14.74535147392288,
+      "sha256": "5598e5122813d7e978374c403921c8b7fdf5ba0c6f6d13d3344b5aba8a97e380"
+    },
+    {
+      "id": "the-first-missing-section:p2",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 305.8175283446712,
+      "sourceEnd": 316.16526077097507,
+      "decodedDuration": 10.347732426303855,
+      "expectedDuration": 10.347732426303878,
+      "sha256": "a7dfb6913e4515c9a79fb74f7c9d31ea1697818538f21b717bb5a437e8d7185d"
+    },
+    {
+      "id": "the-first-missing-section:p3",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 316.16526077097507,
+      "sourceEnd": 325.90777777777777,
+      "decodedDuration": 9.742517006802721,
+      "expectedDuration": 9.7425170068027,
+      "sha256": "ab6de09fbc702560c8cd239884de8a63cc8e25969edfe9ef62e75825ab3b05d4"
+    },
+    {
+      "id": "the-first-missing-section:p4",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 325.90777777777777,
+      "sourceEnd": 333.2775963718821,
+      "decodedDuration": 7.369818594104308,
+      "expectedDuration": 7.369818594104345,
+      "sha256": "28097a3520ee58b58e5f2be1067a6050918787fbecaae68d4c796a11d4fab7e2"
+    },
+    {
+      "id": "our-second-journal-page:p1",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 333.2775963718821,
+      "sourceEnd": 345.6061224489796,
+      "decodedDuration": 12.328526077097505,
+      "expectedDuration": 12.328526077097479,
+      "sha256": "beac082e462c03b849f2dce92326735a0dc4032c3e9a6a375c42c543c6c1bfb6"
+    },
+    {
+      "id": "our-second-journal-page:p2",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 345.6061224489796,
+      "sourceEnd": 356.4489342403628,
+      "decodedDuration": 10.84281179138322,
+      "expectedDuration": 10.842811791383212,
+      "sha256": "09fc390102d425c587a69ce7bba5bbef8d99c66506e0437ea2374ce23058ab40"
+    },
+    {
+      "id": "our-second-journal-page:p3",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 356.4489342403628,
+      "sourceEnd": 365.7144897959184,
+      "decodedDuration": 9.265555555555556,
+      "expectedDuration": 9.26555555555558,
+      "sha256": "423c1b98ff91b9129e0cd2974a28b24bbbd9a68994beca3e8b398366b14c641b"
+    },
+    {
+      "id": "a-gust-and-an-idea:p1",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 365.7144897959184,
+      "sourceEnd": 377.8909977324263,
+      "decodedDuration": 12.176507936507937,
+      "expectedDuration": 12.176507936507903,
+      "sha256": "155a762168d71af43e04efc0d2b3f4a7b05354f16247682a53486348ab9e4e36"
+    },
+    {
+      "id": "a-gust-and-an-idea:p2",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 377.8909977324263,
+      "sourceEnd": 388.29154195011336,
+      "decodedDuration": 10.400544217687075,
+      "expectedDuration": 10.40054421768707,
+      "sha256": "06dc4c082fca8a0ea0640a6470fbc549b91b16ca6958542ba1bbab172b3845cf"
+    },
+    {
+      "id": "a-gust-and-an-idea:p3",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 388.29154195011336,
+      "sourceEnd": 399.67038548752834,
+      "decodedDuration": 11.378843537414966,
+      "expectedDuration": 11.37884353741498,
+      "sha256": "7cf516445201c8097145dac34ff1674d94ebfaf5c94c31e72792363f9b5c353b"
+    }
+  ]
+}

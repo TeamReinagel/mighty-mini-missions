@@ -1,0 +1,297 @@
+{
+  "status": "awaiting-new-cast-recording",
+  "approved": false,
+  "manuscriptSHA256": "92b4933bdc5d45d72489ffae800a0f0fbbb8b61696674a5e5f7c39bb8a0ac12a",
+  "sourceSHA256": null,
+  "sourceDuration": null,
+  "entries": {
+    "an-apple-at-camp:p1": {
+      "file": null,
+      "text": "The apple was still beside the wagon wheel. It had rolled into camp after your moonstone adventure, and Nib had been guarding it very carefully. This morning, it had one small bite missing.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "an-apple-at-camp:p2": {
+      "file": null,
+      "text": "“An investigation,” Nib explained solemnly. “I had to find out whether it was an apple.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "an-apple-at-camp:p3": {
+      "file": null,
+      "text": "Lark spread your surviving map on the explorer case. In the moonstone’s amber light, the orchard line appeared again. She packed the map, stone, journal, rope, and umbrella. Nib added the apple.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "an-apple-at-camp:p4": {
+      "file": null,
+      "text": "As the wagon passed the camp oak, a wheel bumped its crooked root. “That tree has its foot out,” Nib complained mildly. Lark helped him steer around it. Then you followed the apple’s clue.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-old-hum:p1": {
+      "file": null,
+      "text": "At the fork, Lark checked the little mark copied from your first adventure. You had met its closed-lip hum beside the lagoon. The new orchard clue could wait while you remembered the old one.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-old-hum:p2": {
+      "file": null,
+      "text": "“Which little letter makes our hum?” Lark asked gently.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "review-m",
+      "soundAfter": null
+    },
+    "the-broken-catcher:p1": {
+      "file": null,
+      "text": "The orchard smelled of apples and damp leaves. A wooden chute sloped between two trees. Beneath it hung a catching cloth, but one corner had come loose. Fallen apples were heaped beside an old box on a low shelf.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-broken-catcher:p2": {
+      "file": null,
+      "text": "Three more apples waited behind a wooden stop at the top of the chute. Nothing was moving now.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-broken-catcher:p3": {
+      "file": null,
+      "text": "“I am an excellent apple basket,” Nib declared proudly. He spread his little arms. One apple filled them.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-broken-catcher:p4": {
+      "file": null,
+      "text": "“You are a rather small one,” Lark observed gently. “Let’s mend the catcher before we release the next apples. We must keep that old box safe.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-start-of-apple:p1": {
+      "file": null,
+      "text": "A carved apple marked the brass catch. Beside it was a little letter with a round middle and a short stem: lowercase a. The other catch carried the m you knew.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-start-of-apple:p2": {
+      "file": null,
+      "text": "“Listen at the beginning of apple,” Lark invited softly. “Apple. Ant. That open little sound is the sound for this a. Listen.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": "a"
+    },
+    "the-start-of-apple:p3": {
+      "file": null,
+      "text": "Nib put his apple in the wagon, then stretched the cloth toward the post while Lark held the frame steady. The loose corner would reach the catch if you chose its new little letter.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-start-of-apple:p4": {
+      "file": null,
+      "text": "“Find the little letter for the start of apple,” Lark encouraged warmly.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "find-a",
+      "soundAfter": null
+    },
+    "two-marks-one-loop:p1": {
+      "file": null,
+      "text": "The corner caught, but its fastening loop still dangled. Without that loop, a heavy apple could pull the cloth free again. Two wooden picture marks showed where the loop might go.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "two-marks-one-loop:p2": {
+      "file": null,
+      "text": "Lark named them aloud: ant and moon. Nib kept both paws on the cloth. The waiting apples stayed behind their stop.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "two-marks-one-loop:p3": {
+      "file": null,
+      "text": "“Which picture starts with the same little sound as apple?” Lark asked clearly. “Then fasten the loop before you let an apple down.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "choose-ant",
+      "soundAfter": null
+    },
+    "apples-in-the-cloth:p1": {
+      "file": null,
+      "text": "The loop held. You lifted the wooden stop, and an apple rolled down the chute into the cloth. It settled with a soft, comfortable thump. The old route box stayed safe on its shelf.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "apples-in-the-cloth:p2": {
+      "file": null,
+      "text": "“Caught!” Nib exclaimed delightedly. He clapped so hard that his empty pockets flapped.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "apples-in-the-cloth:p3": {
+      "file": null,
+      "text": "Lark and Nib gathered the apples from around the shelf. They put several in the picnic basket. Now the path to the box was clear, and the next apples had somewhere safe to land.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-first-little-word:p1": {
+      "file": null,
+      "text": "Lark opened the journal on a flat board. She placed the new a beside your familiar m. Two little letters could do something new together.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-first-little-word:p2": {
+      "file": null,
+      "text": "“Start with the open sound from apple,” Lark explained patiently. “Then close your lips into our hum. Keep them close together: am.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-first-little-word:p3": {
+      "file": null,
+      "text": "“I am an apple catcher,” Nib announced proudly. “A catcher who also enjoys a snack.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-first-little-word:p4": {
+      "file": null,
+      "text": "Lark pointed beneath the two letters. “Slide with me, then say am if you like,” Lark invited gently. “I’ll read the rest of our sentence.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "blend-am",
+      "soundAfter": null
+    },
+    "the-box-on-the-shelf:p1": {
+      "file": null,
+      "text": "The old box had a little brass lift latch and an apple carved into its lid. It was dry and undented. Nib stood beside the shelf while Lark laid your surviving map on a flat board.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-box-on-the-shelf:p2": {
+      "file": null,
+      "text": "“We can open it safely now,” Lark murmured eagerly. “Lift the latch. Then see where the paper inside belongs.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": "fit-map",
+      "soundAfter": null
+    },
+    "the-first-missing-section:p1": {
+      "file": null,
+      "text": "Inside lay a folded map section and an illustrated note. Lark read it aloud. Earlier explorers had kept pieces of their worn map in route boxes, so each part would stay safe until someone came along the path.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-first-missing-section:p2": {
+      "file": null,
+      "text": "Your original section had four empty spaces beside it. The orchard piece fitted one. Two sections together now; three spaces still waiting.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-first-missing-section:p3": {
+      "file": null,
+      "text": "Lark passed the moonstone above the joined paper. A hidden line appeared, leading through a windy hollow to a little roofed waystation on the ridge.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "the-first-missing-section:p4": {
+      "file": null,
+      "text": "“Another small clue,” Lark remarked thoughtfully. “Enough for our next adventure.”",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-second-journal-page:p1": {
+      "file": null,
+      "text": "Nib drew the catcher in the journal. In his picture, every pocket held an apple. Lark wrote their new little word in the sentence, and you could join its two sounds again whenever you wished.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-second-journal-page:p2": {
+      "file": null,
+      "text": "They tucked the first missing section into the case beside the original map. The moonstone and journal went with it. The empty route box closed neatly on its shelf.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "our-second-journal-page:p3": {
+      "file": null,
+      "text": "“I am an apple catcher,” Nib repeated contentedly. He tossed his saved apple a little way up and caught it himself.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "a-gust-and-an-idea:p1": {
+      "file": null,
+      "text": "The catcher rested between the trees, fastened and ready. Your basket held apples for the road, and the ridge route was safe inside the case. The orchard’s little problem was solved.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "a-gust-and-an-idea:p2": {
+      "file": null,
+      "text": "A gust ran through the branches. The wagon’s small pennant fluttered. Nib looked from the pennant to the folded picnic cloth, then toward the windy hollow.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    },
+    "a-gust-and-an-idea:p3": {
+      "file": null,
+      "text": "“I have an idea,” Nib whispered excitedly. Lark tucked the map away before the breeze could catch it. Together, you turned the wagon toward the ridge.",
+      "duration": null,
+      "cues": [],
+      "gateAfter": null,
+      "soundAfter": null
+    }
+  }
+}
