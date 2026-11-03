@@ -178,6 +178,12 @@ const EVIDENCE = {
   "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM },
   "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION },
   "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION },
+  "nest-numbers": { game: "nest-numbers", need: 4 },
+  "big-little": { game: "big-little", need: 4 },
+  "basket-sort": { game: "basket-sort", need: 4 },
+  "shape-tap": { game: "shape-tap", need: 4 },
+  "my-name": { game: "my-name", need: 4 },
+  "two-jobs": { game: "two-jobs", need: 4 },
   "lark-pockets": { game: "lark-pockets", need: 1, item: LARK_COMPLETIONS.pockets },
   "lark-ant": { game: "lark-ant", need: 1, item: LARK_COMPLETIONS.ant },
   "lark-i-am": { game: "lark-i-am", need: 1, item: LARK_COMPLETIONS["i-am"] },
@@ -202,10 +208,10 @@ const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: 
 const PART_TITLES = {
   max: { ela: "Reading", math: "Math", write: "Writing" },
   gabi: { ela: "Reading", math: "Math" },
-  connor: { ela: "Reading", math: "Counting" },
+  connor: { ela: "Reading", math: "Counting", ready: "Practice" },
   ethan: { learn: "Learn" }
 };
-const PART_ORDER = ["ela", "math", "write", "learn", "bonus"];
+const PART_ORDER = ["ela", "math", "write", "learn", "ready", "bonus"];
 const WRITERS = new Set(["max"]);
 
 function partFor(kidId, stepId) {
@@ -677,6 +683,42 @@ function pinBoard(state, kidId, date, plan) {
   return true;
 }
 
+// One kindergarten-readiness game each school day, after the story and the counting card.
+// Weekends stay on the usual bonus. The cycle is the checklist order.
+const READINESS_START = "2026-11-03";
+const READINESS = [
+  { id: "nest-numbers", title: "Nest Numbers", href: "../nest-numbers/?kid=connor", say: "Play Nest Numbers. Find the number." },
+  { id: "big-little", title: "Big or Little", href: "../big-little/?kid=connor", say: "Play Big or Little. Tap the bigger one or the smaller one." },
+  { id: "basket-sort", title: "Basket Sort", href: "../basket-sort/?kid=connor", say: "Play Basket Sort. Put it with the ones that match." },
+  { id: "shape-tap", title: "Shape Blocks", href: "../shape-tap/?kid=connor", say: "Play Shape Blocks. Tap the shape." },
+  { id: "my-name", title: "My Name", href: "../my-name/?kid=connor", say: "Play My Name. Find the card with your name." },
+  { id: "two-jobs", title: "Two Jobs", href: "../two-jobs/?kid=connor", say: "Play Two Jobs. Do the first job, then the next." }
+];
+
+function readinessGame(date) {
+  if (!date || date < READINESS_START || rhythmFor(weekdayIndex(date)) === "weekend") return null;
+  let index = -1;
+  const [year, month, day] = READINESS_START.split("-").map(Number);
+  const cursor = new Date(Date.UTC(year, month - 1, day));
+  while (cursor.toISOString().slice(0, 10) <= date) {
+    const iso = cursor.toISOString().slice(0, 10);
+    if (rhythmFor(weekdayIndex(iso)) !== "weekend") index += 1;
+    cursor.setUTCDate(cursor.getUTCDate() + 1);
+  }
+  return index < 0 ? null : READINESS[index % READINESS.length];
+}
+
+function placeReadiness(cards, kidId, date) {
+  if (kidId !== "connor") return cards;
+  const game = readinessGame(date);
+  if (!game) return cards;
+  const card = gameCard(date, game, "ready");
+  const at = cards.findIndex((entry) => entry.part === "bonus");
+  const next = cards.slice();
+  next.splice(at < 0 ? next.length : at, 0, card);
+  return next;
+}
+
 function placeLark(cards, assignment, date) {
   const at = cards.findIndex((card) => card.part === "ela");
   const next = cards.filter((card) => card.part !== "ela");
@@ -722,6 +764,7 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
       cards.splice(at < 0 ? 0 : at, 0, readingStory);
     }
   }
+  cards = placeReadiness(cards, kidId, date);
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);
   const weekdayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekday];

@@ -10,6 +10,7 @@
 window.MIGHTY_SKILLS = [
   { id: "colors-shapes", label: "Colors & shapes", kid: "Colors & shapes" },
   { id: "counting", label: "Counting & numbers", kid: "Counting" },
+  { id: "directions", label: "Following directions", kid: "Directions" },
   { id: "letters", label: "Letter names (big & little)", kid: "Letters" },
   { id: "letter-sounds", label: "Letter sounds", kid: "Letter sounds" },
   { id: "blending", label: "Sounding out words (CVC)", kid: "Sounding out" },
@@ -208,6 +209,61 @@ window.MIGHTY_GAMES = [
     after: { connor: "compare", gabi: "compare" }
   },
   {
+    id: "nest-numbers",
+    title: "Nest Numbers",
+    icon: "./nest-numbers/assets/icon.jpg",
+    href: "./nest-numbers/",
+    profiles: ["connor"],
+    practices: ["counting"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "big-little",
+    title: "Big or Little",
+    icon: "./big-little/assets/icon.jpg",
+    href: "./big-little/",
+    profiles: ["connor"],
+    practices: ["counting"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "basket-sort",
+    title: "Basket Sort",
+    icon: "./basket-sort/assets/icon.jpg",
+    href: "./basket-sort/",
+    profiles: ["connor"],
+    practices: ["colors-shapes"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "shape-tap",
+    title: "Shape Blocks",
+    icon: "./shape-tap/assets/icon.jpg",
+    href: "./shape-tap/",
+    profiles: ["connor"],
+    practices: ["colors-shapes"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "my-name",
+    title: "My Name",
+    icon: "./my-name/assets/icon.jpg",
+    href: "./my-name/",
+    profiles: ["connor"],
+    practices: ["letters"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "two-jobs",
+    title: "Two Jobs",
+    icon: "./two-jobs/assets/icon.jpg",
+    href: "./two-jobs/",
+    profiles: ["connor"],
+    practices: ["directions"],
+    homeFor: ["connor"],
+    levels: ["prek", "k"]
+  },
+  {
     id: "sound-bugs",
     title: "Jungle Jump",
     icon: "./sound-bugs/assets/icon.jpg",
@@ -263,4 +319,16 @@ window.gameOpen = function gameOpen(profile, game, flags) {
   const need = game.after?.[profile.id];
   if (need) return Boolean(flags?.[need]);
   return true;
+};
+
+// A game is on the home screen when it practices a checked skill, a later skill he has
+// opened, or it is one of the games placed there for him.
+window.gameHome = function gameHome(profile, game) {
+  if (!profile || !game) return false;
+  if (game.alwaysHome) return true;
+  if (Array.isArray(game.homeFor) && game.homeFor.includes(profile.id)) return true;
+  if (game.after && Object.prototype.hasOwnProperty.call(game.after, profile.id)) return true;
+  const practicing = new Set(profile.practicing || []);
+  return (game.practices ?? []).some((skill) => practicing.has(skill)) &&
+    (!Array.isArray(game.levels) || !profile.stage || game.levels.includes(profile.stage));
 };

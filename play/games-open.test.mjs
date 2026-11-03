@@ -32,4 +32,12 @@ test("the next skill stays hidden until the child is using the one before it", (
   assert.equal(open(gabi, game("flower-beds"), {}), false);
   assert.equal(open(gabi, game("flower-beds"), { "count-10": true }), true);
   assert.equal(open(connor, game("flower-beds"), { "count-10": true }), false);
+  assert.equal(open(connor, game("nest-numbers"), {}), true);
+  assert.equal(open(connor, game("two-jobs"), {}), true);
+  assert.equal(open(gabi, game("my-name"), {}), false);
+  assert.equal(open(max, game("shape-tap"), {}), false);
+  assert.equal(window.gameHome(connor, game("two-jobs")), true);
+  assert.equal(window.gameHome(connor, game("nest-numbers")), true);
+  assert.equal(window.gameHome(gabi, game("basket-sort")), false);
+  assert.equal(window.gameHome(ethan, game("big-little")), false);
 });

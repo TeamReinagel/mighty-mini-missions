@@ -196,13 +196,7 @@ function gamesForProfile(profile) {
   const all = (Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : []).filter((g) => profileAllowsGame(profile, g) && open(profile, g, flags));
   const sortHome = (list) => [...list].sort((a, b) => Number(Boolean(b.alwaysHome)) - Number(Boolean(a.alwaysHome)));
   if (!profile || !Array.isArray(profile.practicing)) return { home: sortHome(all), more: [] };
-  const practicing = new Set(profile.practicing);
-  const readyNow = (g) => Boolean(g.after && g.after[profile.id]);
-  const fits = (g) =>
-    g.alwaysHome ||
-    readyNow(g) ||
-    ((g.practices ?? []).some((s) => practicing.has(s)) &&
-    (!Array.isArray(g.levels) || !profile.stage || g.levels.includes(profile.stage)));
+  const fits = (g) => (typeof window.gameHome === "function" ? window.gameHome(profile, g) : false);
   const home = sortHome(all.filter(fits));
   if (!home.length) return { home: sortHome(all), more: [] };
   return { home, more: all.filter((g) => !home.includes(g)) };
@@ -215,7 +209,8 @@ function skillById(id) {
 /** The first skill on a game that this child is practicing, as the short label kids see. */
 function practiceTag(profile, game) {
   const practicing = new Set(profile?.practicing ?? []);
-  const id = (game.practices ?? []).find((s) => practicing.has(s));
+  const id = (game.practices ?? []).find((s) => practicing.has(s))
+    || (game.homeFor?.includes(profile?.id) ? game.practices?.[0] : undefined);
   return id ? skillById(id)?.kid ?? "" : "";
 }
 

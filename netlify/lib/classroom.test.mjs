@@ -130,6 +130,45 @@ test("a game card counts only after real play since it was opened", async () => 
   assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
 });
 
+test("Connor's practice card rotates from November 3 and finishes after four plays", async () => {
+  const order = [
+    ["2026-11-03", "nest-numbers"],
+    ["2026-11-04", "big-little"],
+    ["2026-11-05", "basket-sort"],
+    ["2026-11-06", "shape-tap"],
+    ["2026-11-09", "my-name"],
+    ["2026-11-10", "two-jobs"],
+    ["2026-11-11", "nest-numbers"]
+  ];
+  for (const [date, id] of order) {
+    const day = buildDay({ kidId: "connor", date });
+    const card = day.cards.find((entry) => entry.part === "ready");
+    assert.equal(card.gameId, id, date);
+    assert.match(card.href, new RegExp(`${id}/\\?kid=connor`));
+    assert.deepEqual(day.dose.parts.map((part) => part.id), ["ela", "math", "ready", "bonus"]);
+    assert.equal(day.cards.filter((entry) => entry.part === "ela").length, 1);
+    assert.equal(day.cards.some((entry) => entry.stepId === "connor-count-5"), true);
+    for (const kid of ["gabi", "max", "ethan"]) {
+      assert.equal(buildDay({ kidId: kid, date }).cards.some((entry) => entry.part === "ready"), false);
+    }
+  }
+  assert.equal(buildDay({ kidId: "connor", date: "2026-11-02" }).cards.some((entry) => entry.part === "ready"), false);
+  assert.equal(buildDay({ kidId: "connor", date: "2026-11-08" }).cards.some((entry) => entry.part === "ready"), false);
+
+  const store = memoryStore();
+  const start = "2026-11-03T15:00:00Z";
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now: at(start) });
+  const card = first.body.cards.find((entry) => entry.gameId === "nest-numbers");
+  await handleClassroom({ store, env: {}, body: { action: "open", kid: "connor", cardId: card.id }, now: at(start, 1) });
+  await logPlay(store, at(start, 30), "connor", "nest-numbers", 3);
+  const short = await finishCard(store, "connor", card.id, at(start, 40));
+  assert.equal(short.body.notYet, true);
+  assert.equal(short.body.played, 3);
+  await logPlay(store, at(start, 50), "connor", "nest-numbers", 1);
+  const done = await finishCard(store, "connor", card.id, at(start, 60));
+  assert.equal(done.body.ok, true);
+});
+
 test("Monster Hunt is checked under the name it logs, word-monsters", async () => {
   const store = memoryStore();
   const start = "2026-10-19T15:00:00Z";

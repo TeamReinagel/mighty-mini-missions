@@ -29,7 +29,7 @@ export const KIDS = [
     id: "connor",
     name: "Connor",
     age: 3,
-    where: "Today with Joyce leads letter names and sounds, and counting to 10 then 20, more and fewer, and patterns. Preschool Prep and Duck Duck Moose stay available and are not the daily assignment. Counts objects well; counts to 50 on the abacus with prompting.",
+    where: "Today with Joyce leads letter names and sounds, and counting to 10 then 20, more and fewer, and patterns. From November 3, 2026 each school day also has one practice game, rotating Nest Numbers, Big or Little, Basket Sort, Shape Blocks, My Name, and Two Jobs. Preschool Prep and Duck Duck Moose stay available and are not the daily assignment. Counts objects well; counts to 50 on the abacus with prompting.",
     note: "Kindergarten milestones are a far horizon for Connor. Suggest only the earliest, playful ones.",
     guides: [{ grade: "Kindergarten", areas: ["Reading", "Math", "Physical Fitness and Gross Motor Skills", "Life Skills", "Social-Emotional Development", "Practical Arts and Creativity"] }]
   },

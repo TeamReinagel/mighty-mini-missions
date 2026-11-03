@@ -109,6 +109,12 @@ export const GAME_NAMES = {
   "pattern-park": "Dino Express",
   "block-trade": "Moon Crates",
   "sound-bugs": "Jungle Jump",
+  "nest-numbers": "Nest Numbers",
+  "big-little": "Big or Little",
+  "basket-sort": "Basket Sort",
+  "shape-tap": "Shape Blocks",
+  "my-name": "My Name",
+  "two-jobs": "Two Jobs",
   "sound-teams": "Tide Pool",
   missions: "Missions",
   joyce: "Today with Joyce"
