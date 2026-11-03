@@ -7,6 +7,11 @@ Copy this brief, fill in the decisions for the next episode, and follow [PRODUCT
 - **Who plays / Joyce daily stop:**
 - **Academic focus and previously known material:**
 - **Cumulative sequence:** Earlier episode/season prerequisites; mappings already introduced; current new mapping/skill and how it is modeled; selected prior sounds/words to review.
+- **Required literacy core:** New sound(s), word reading, writing, and comprehension. Season 2 also includes at least two complete decodable sentences in the main story; Season 1 may omit that section.
+- **Main child-reading passage / word-by-word ledger audit / uppercase models:**
+- **Writing task / useful completion signal / support and evidence limits:**
+- **Extra non-literacy interaction count (0 or 1, including substeps):**
+- **Portrait and landscape one-screen layout plan / tested viewport sizes:**
 - **Early word-building:** Words now possible from taught sounds, including new combinations of earlier sounds; modeled blend and child turn; phrases/sentences if ready. Check every child-reading word against the taught mappings and identify any explicitly taught irregular part.
 - **Target sound / story word bank / distribution:** Use a disproportionate number of words that begin with or contain the sound across narration and dialogue. Identify recurring examples beyond the teaching prompts; preserve valid answer contrasts.
 - **Essential skill step and the story moment that practices it:**
@@ -45,9 +50,11 @@ Nib stands on land, a dock, or the ferry deck. Any flight or other unsupported p
 
 ## Child turns
 
-| Story location / reason to act | Spoken prompt | Actual objects and valid gestures | Independent first try? | Contextual wrong-choice response / help | Recorded outcome after the pause |
+| Story location / literacy category | Spoken prompt | Child action and completion signal | Independent first try? | Contextual wrong-choice response / help | Automatic narrated consequence |
 | --- | --- | --- | --- | --- | --- |
 | Fill for each meaningful turn | | | | | |
+
+After each completed response, resume its consequence automatically. No additional Continue tap. Count non-literacy actions individually, even inside a larger turn. A recording must not continue asking for an action removed from the UI.
 
 ## Recording and timeline handoff
 
@@ -63,6 +70,9 @@ Nib stands on land, a dock, or the ferry deck. Any flight or other unsupported p
 
 ## Acceptance
 
+- At most one non-literacy action; new sounds, word reading, writing and comprehension present; Season 2 main reading has at least two complete sentences audited against the cumulative ledger.
+- Successful tasks resume automatically; pause/background/refresh preserve pending transitions; no generic Continue gate.
+- Scene and current task fit portrait and landscape tablet screens wherever practical; required content remains readable and reachable.
 - Complete runtime fits the season target, with ordinary child turns included; Season 1 is 8–10 minutes.
 - Builds on the cumulative sequence; new material modeled before use; earlier sounds/words revisited; blending and words introduced as soon as possible; child-reading words checked against taught mappings, with any irregular parts explicitly taught.
 - Prose understood by ear; target-sound words recur disproportionately across the story; answer contrasts remain valid; expressive dialogue delivery checked in the recording.

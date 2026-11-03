@@ -1,0 +1,944 @@
+{
+  "status": "local-preview",
+  "approved": false,
+  "voices": {
+    "narrator": "Samantha",
+    "lark": "Karen",
+    "nib": "Daniel"
+  },
+  "rate": 140,
+  "narrationDuration": 290.8272562358277,
+  "entries": {
+    "an-idea-in-the-breeze:p1": {
+      "file": "assets/narration/01.wav",
+      "duration": 16.20453514739229,
+      "text": "The picnic cloth lay across the wagon. The apple catcher was behind you, and the first missing map section rested safely beside your original piece. The moonstone, rope, and journal were packed in the explorer case. Three spaces on the map were still empty.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 16.20453514739229,
+          "speaker": "narrator",
+          "text": "The picnic cloth lay across the wagon. The apple catcher was behind you, and the first missing map section rested safely beside your original piece. The moonstone, rope, and journal were packed in the explorer case. Three spaces on the map were still empty."
+        }
+      ],
+      "sha256": "e0763ff54721a2ead6d69fb5a922ebd45d29055a0044e5b95069f087ece61f8f"
+    },
+    "an-idea-in-the-breeze:p2": {
+      "file": "assets/narration/02.wav",
+      "duration": 6.0443083900226755,
+      "text": "A breeze slipped through the hollow. The wagon\u2019s pennant fluttered, and Nib\u2019s idea grew taller than his ears.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 6.0443083900226755,
+          "speaker": "narrator",
+          "text": "A breeze slipped through the hollow. The wagon\u2019s pennant fluttered, and Nib\u2019s idea grew taller than his ears."
+        }
+      ],
+      "sha256": "f25e2a536ec5d3f26493fb443ba07e530c2fe6c57e52e501697da102dbb5a266"
+    },
+    "an-idea-in-the-breeze:p3": {
+      "file": "assets/narration/03.wav",
+      "duration": 3.1184580498866215,
+      "text": "\u201cA sail the size of the sky!\u201d Nib announced grandly.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.79015873015873,
+          "speaker": "nib",
+          "text": "A sail the size of the sky!"
+        },
+        {
+          "start": 1.79015873015873,
+          "end": 3.1184580498866215,
+          "speaker": "narrator",
+          "text": "Nib announced grandly."
+        }
+      ],
+      "sha256": "b1c82d554646c9b0b1685669b9f89da25c0863fa1599ca292f5c222e3d153d09"
+    },
+    "an-idea-in-the-breeze:p4": {
+      "file": "assets/narration/04.wav",
+      "duration": 11.57968253968254,
+      "text": "He tied the picnic cloth to a light wooden mast while Lark set chocks beside the wheels. The wagon stayed parked on the broad, dry path. The cloth swelled above it like a very ambitious pillow.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 11.57968253968254,
+          "speaker": "narrator",
+          "text": "He tied the picnic cloth to a light wooden mast while Lark set chocks beside the wheels. The wagon stayed parked on the broad, dry path. The cloth swelled above it like a very ambitious pillow."
+        }
+      ],
+      "sha256": "a7b66ccd2370d8a21e11126b30b8f525936b3bf3cb80011d119f4a74e70fb636"
+    },
+    "an-idea-in-the-breeze:p5": {
+      "file": "assets/narration/05.wav",
+      "duration": 6.766530612244898,
+      "text": "\u201cA wagon the size of a mouse,\u201d Lark replied cautiously. She held the rope and watched the cloth pull sideways.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.760498866213152,
+          "speaker": "lark",
+          "text": "A wagon the size of a mouse,"
+        },
+        {
+          "start": 1.760498866213152,
+          "end": 6.766530612244898,
+          "speaker": "narrator",
+          "text": "Lark replied cautiously. She held the rope and watched the cloth pull sideways."
+        }
+      ],
+      "sha256": "2ddb19c61143f262fe4a7b205db8424e2d014a165ecaca96284cbf8906672304"
+    },
+    "an-idea-in-the-breeze:p6": {
+      "file": "assets/narration/06.wav",
+      "duration": 5.252380952380952,
+      "text": "Nib opened the journal to the apple page. He pointed to the little word you had joined before.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 5.252380952380952,
+          "speaker": "narrator",
+          "text": "Nib opened the journal to the apple page. He pointed to the little word you had joined before."
+        }
+      ],
+      "sha256": "5062e75549b16ad3ba4d15045a5057508dd840f966abc6c88eb5a35da2f08ed4"
+    },
+    "an-idea-in-the-breeze:p7": {
+      "file": "assets/narration/07.wav",
+      "duration": 2.376553287981859,
+      "text": "\u201cI am a sailor,\u201d Nib declared hopefully.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.9322448979591836,
+          "speaker": "nib",
+          "text": "I am a sailor,"
+        },
+        {
+          "start": 0.9322448979591836,
+          "end": 2.376553287981859,
+          "speaker": "narrator",
+          "text": "Nib declared hopefully."
+        }
+      ],
+      "sha256": "3b0b8d8991e1a8d2d5022a3a0f23f8786d7435d26c067471ecc332fbac21b0d9"
+    },
+    "an-idea-in-the-breeze:p8": {
+      "file": "assets/narration/08.wav",
+      "duration": 6.984353741496599,
+      "text": "\u201cI\u2019ll read the other words,\u201d Lark offered warmly. \u201cYou can read am. Slide its two sounds, or join them with me.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.561859410430839,
+          "speaker": "lark",
+          "text": "I\u2019ll read the other words,"
+        },
+        {
+          "start": 1.561859410430839,
+          "end": 2.9571882086167802,
+          "speaker": "narrator",
+          "text": "Lark offered warmly."
+        },
+        {
+          "start": 2.9571882086167802,
+          "end": 6.984353741496599,
+          "speaker": "lark",
+          "text": "You can read am. Slide its two sounds, or join them with me."
+        }
+      ],
+      "sha256": "9b394f0e0d33151b2cd57856259a8fa3aed57298edaa78d8dc67e1ac157d7a24"
+    },
+    "a-sound-in-the-grass:p1": {
+      "file": "assets/narration/09.wav",
+      "duration": 10.178956916099773,
+      "text": "The breeze grew stronger. Grass brushed against the wagon with a soft hiss. The wheels stayed snug beside their chocks, but the enormous sail tugged toward the side of the path.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 10.178956916099773,
+          "speaker": "narrator",
+          "text": "The breeze grew stronger. Grass brushed against the wagon with a soft hiss. The wheels stayed snug beside their chocks, but the enormous sail tugged toward the side of the path."
+        }
+      ],
+      "sha256": "57390f917e7f011031e0822c20f5f8e2ef18fc9e5d1f469d5d1dee14baee0de3"
+    },
+    "a-sound-in-the-grass:p2": {
+      "file": "assets/narration/10.wav",
+      "duration": 3.673514739229025,
+      "text": "Nib gripped his scarf. He looked at the rope, then at Lark.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.673514739229025,
+          "speaker": "narrator",
+          "text": "Nib gripped his scarf. He looked at the rope, then at Lark."
+        }
+      ],
+      "sha256": "342b099ec377bce11c37d3d604320556807076c7432c0f3325cc4700613162bd"
+    },
+    "a-sound-in-the-grass:p3": {
+      "file": "assets/narration/11.wav",
+      "duration": 3.477596371882086,
+      "text": "\u201cPerhaps the sky is a little large,\u201d Nib admitted doubtfully.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.1029478458049886,
+          "speaker": "nib",
+          "text": "Perhaps the sky is a little large,"
+        },
+        {
+          "start": 2.1029478458049886,
+          "end": 3.477596371882086,
+          "speaker": "narrator",
+          "text": "Nib admitted doubtfully."
+        }
+      ],
+      "sha256": "e4a5117830d5f1ecfdad3e9b5cd8eb6ab2d66bc27ca1e4b407079189448c6c53"
+    },
+    "a-sound-in-the-grass:p4": {
+      "file": "assets/narration/12.wav",
+      "duration": 7.727845804988662,
+      "text": "\u201cWe can make a smaller plan,\u201d Lark replied calmly. She eased the rope until the cloth stopped pulling. Nobody climbed aboard.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.7233560090702948,
+          "speaker": "lark",
+          "text": "We can make a smaller plan,"
+        },
+        {
+          "start": 1.7233560090702948,
+          "end": 7.727845804988662,
+          "speaker": "narrator",
+          "text": "Lark replied calmly. She eased the rope until the cloth stopped pulling. Nobody climbed aboard."
+        }
+      ],
+      "sha256": "c296d08f3792aed4d2a86445e09e782da585702513f29cf8857cef4a01101a39"
+    },
+    "a-sound-in-the-grass:p5": {
+      "file": "assets/narration/13.wav",
+      "duration": 7.364943310657597,
+      "text": "On the journal\u2019s empty page, Lark drew a little curving letter. It bent one way, then the other: lowercase s.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 7.364943310657597,
+          "speaker": "narrator",
+          "text": "On the journal\u2019s empty page, Lark drew a little curving letter. It bent one way, then the other: lowercase s."
+        }
+      ],
+      "sha256": "24bf3f525ea3be3b0134f45744c6649ae4b6da18d3510835e7f1b75fc160dfdf"
+    },
+    "a-sound-in-the-grass:p6": {
+      "file": "assets/narration/14.wav",
+      "duration": 11.147936507936507,
+      "text": "\u201cListen to the grass,\u201d Lark invited softly. \u201cLet a gentle stream of air make our soft hiss. No hum, and no extra little vowel. Listen to the sound, then find its letter.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.2541043083900227,
+          "speaker": "lark",
+          "text": "Listen to the grass,"
+        },
+        {
+          "start": 1.2541043083900227,
+          "end": 2.8003628117913832,
+          "speaker": "narrator",
+          "text": "Lark invited softly."
+        },
+        {
+          "start": 2.8003628117913832,
+          "end": 11.147936507936507,
+          "speaker": "lark",
+          "text": "Let a gentle stream of air make our soft hiss. No hum, and no extra little vowel. Listen to the sound, then find its letter."
+        }
+      ],
+      "sha256": "43c50228622c4f0ddc00b4047dd68e77a5b91eea768610ac0b9a70d599eb26b5"
+    },
+    "a-small-curving-mark:p1": {
+      "file": "assets/narration/15.wav",
+      "duration": 7.0403174603174605,
+      "text": "Nib held the page flat on the explorer case. Lark drew the curving mark once more, slowly enough to follow.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 7.0403174603174605,
+          "speaker": "narrator",
+          "text": "Nib held the page flat on the explorer case. Lark drew the curving mark once more, slowly enough to follow."
+        }
+      ],
+      "sha256": "a5997c9d9e7de69320314eaa5869589b23331852754d585cd683335649a348bd"
+    },
+    "a-small-curving-mark:p2": {
+      "file": "assets/narration/16.wav",
+      "duration": 3.931020408163265,
+      "text": "\u201cIt looks as if it knows a bend in the path,\u201d Nib observed thoughtfully.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.5331519274376415,
+          "speaker": "nib",
+          "text": "It looks as if it knows a bend in the path,"
+        },
+        {
+          "start": 2.5331519274376415,
+          "end": 3.931020408163265,
+          "speaker": "narrator",
+          "text": "Nib observed thoughtfully."
+        }
+      ],
+      "sha256": "b3ba5cd6e37e63e50b601980eba3bde23b084d25dc65b4523228056af37d9028"
+    },
+    "a-small-curving-mark:p3": {
+      "file": "assets/narration/17.wav",
+      "duration": 7.079365079365079,
+      "text": "\u201cWe\u2019ll keep it beside today\u2019s picture,\u201d Lark suggested gently. \u201cCurve round, then curve back. Write our new s.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.1760997732426306,
+          "speaker": "lark",
+          "text": "We\u2019ll keep it beside today\u2019s picture,"
+        },
+        {
+          "start": 2.1760997732426306,
+          "end": 3.745578231292517,
+          "speaker": "narrator",
+          "text": "Lark suggested gently."
+        },
+        {
+          "start": 3.745578231292517,
+          "end": 7.079365079365079,
+          "speaker": "lark",
+          "text": "Curve round, then curve back. Write our new s."
+        }
+      ],
+      "sha256": "4c801a76e59e35b2c8c4b93d6738fe9f9e694cddfb477f242f3cfc42f305f481"
+    },
+    "something-under-the-shelter:p1": {
+      "file": "assets/narration/18.wav",
+      "duration": 11.66920634920635,
+      "text": "Beside the path, a low supply shelter held a folded mat and an empty cloth sack. A shallow patch of dry sand lay nearby. Lark named both objects aloud. Mat. Sack.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 11.66920634920635,
+          "speaker": "narrator",
+          "text": "Beside the path, a low supply shelter held a folded mat and an empty cloth sack. A shallow patch of dry sand lay nearby. Lark named both objects aloud. Mat. Sack."
+        }
+      ],
+      "sha256": "77c0ecd963019bbe5bb7e279ceb610889ca350d6249b65132d3cb8229d7923b8"
+    },
+    "something-under-the-shelter:p2": {
+      "file": "assets/narration/19.wav",
+      "duration": 8.003945578231292,
+      "text": "Nib considered sitting on the mat until the wind changed its mind. Then he looked at the empty sack, the sand, and the wagon\u2019s low frame.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 8.003945578231292,
+          "speaker": "narrator",
+          "text": "Nib considered sitting on the mat until the wind changed its mind. Then he looked at the empty sack, the sand, and the wagon\u2019s low frame."
+        }
+      ],
+      "sha256": "c0daa3b822dc74a276e5bc206bf96e301c5f38027c24a425beac435fabbc28d1"
+    },
+    "something-under-the-shelter:p3": {
+      "file": "assets/narration/20.wav",
+      "duration": 3.786666666666667,
+      "text": "\u201cSomething small could help something tall,\u201d Nib murmured hopefully.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.4236281179138324,
+          "speaker": "nib",
+          "text": "Something small could help something tall,"
+        },
+        {
+          "start": 2.4236281179138324,
+          "end": 3.786666666666667,
+          "speaker": "narrator",
+          "text": "Nib murmured hopefully."
+        }
+      ],
+      "sha256": "fb5661f4aaaa62c846e52d6003760c4302f0bef83377229b1c57de6e595a87f7"
+    },
+    "something-under-the-shelter:p4": {
+      "file": "assets/narration/21.wav",
+      "duration": 7.421269841269841,
+      "text": "\u201cLet\u2019s begin with the sound,\u201d Lark invited warmly. \u201cMat. Sack. Which one starts with the soft hiss we just learned?\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.5327437641723356,
+          "speaker": "lark",
+          "text": "Let\u2019s begin with the sound,"
+        },
+        {
+          "start": 1.5327437641723356,
+          "end": 3.0673922902494333,
+          "speaker": "narrator",
+          "text": "Lark invited warmly."
+        },
+        {
+          "start": 3.0673922902494333,
+          "end": 7.421269841269841,
+          "speaker": "lark",
+          "text": "Mat. Sack. Which one starts with the soft hiss we just learned?"
+        }
+      ],
+      "sha256": "17d3efa44506ff3ef203b6d9d7e37d8d4840a81353fb118f9bada304a0ba9ef3"
+    },
+    "a-sack-with-a-job:p1": {
+      "file": "assets/narration/22.wav",
+      "duration": 13.748344671201814,
+      "text": "Lark brought the sack to a flat spot beside the wagon. She folded its top outward so the opening stayed wide. A stitched line showed how much sand it needed. The sack would rest low against the frame, with a rope loop to hold it.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 13.748344671201814,
+          "speaker": "narrator",
+          "text": "Lark brought the sack to a flat spot beside the wagon. She folded its top outward so the opening stayed wide. A stitched line showed how much sand it needed. The sack would rest low against the frame, with a rope loop to hold it."
+        }
+      ],
+      "sha256": "181529ff67a301b6799bff868f49fcd954e68ad29317bbbc01fb64b4d3f43cc6"
+    },
+    "a-sack-with-a-job:p2": {
+      "file": "assets/narration/23.wav",
+      "duration": 4.93891156462585,
+      "text": "Nib scooped a little sand into it. The base spread into a soft, sturdy shape.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 4.93891156462585,
+          "speaker": "narrator",
+          "text": "Nib scooped a little sand into it. The base spread into a soft, sturdy shape."
+        }
+      ],
+      "sha256": "a8517b3785626d8b744e164571be88b1681ddbd8286677d733c65095a25fb09c"
+    },
+    "a-sack-with-a-job:p3": {
+      "file": "assets/narration/24.wav",
+      "duration": 4.513741496598639,
+      "text": "\u201cA sensible sack,\u201d Nib declared approvingly. \u201cIt knows where the ground is.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.3025396825396824,
+          "speaker": "nib",
+          "text": "A sensible sack,"
+        },
+        {
+          "start": 1.3025396825396824,
+          "end": 2.79328798185941,
+          "speaker": "narrator",
+          "text": "Nib declared approvingly."
+        },
+        {
+          "start": 2.79328798185941,
+          "end": 4.513741496598639,
+          "speaker": "nib",
+          "text": "It knows where the ground is."
+        }
+      ],
+      "sha256": "202c82e08ea323e950d2bb82c833eb0c2219fabb3f1ff1d838be96f2e71ae1cc"
+    },
+    "a-sack-with-a-job:p4": {
+      "file": "assets/narration/25.wav",
+      "duration": 7.806213151927437,
+      "text": "\u201cFill it just to the stitched line,\u201d Lark encouraged gently. \u201cThen I\u2019ll secure its loop. The wagon will keep waiting while we work.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.9212698412698412,
+          "speaker": "lark",
+          "text": "Fill it just to the stitched line,"
+        },
+        {
+          "start": 1.9212698412698412,
+          "end": 3.4559183673469387,
+          "speaker": "narrator",
+          "text": "Lark encouraged gently."
+        },
+        {
+          "start": 3.4559183673469387,
+          "end": 7.806213151927437,
+          "speaker": "lark",
+          "text": "Then I\u2019ll secure its loop. The wagon will keep waiting while we work."
+        }
+      ],
+      "sha256": "a278e13bfe9ab7efb10395632d965d01af66e979d48fcad96abbabdec23459b2"
+    },
+    "less-sail-more-sense:p1": {
+      "file": "assets/narration/26.wav",
+      "duration": 12.930521541950114,
+      "text": "The filled sack settled low beside the explorer case. Lark fastened its loop to the wagon\u2019s frame. Nib folded the enormous cloth down and tied it into a small sail. Every fold made the mast look less surprised.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 12.930521541950114,
+          "speaker": "narrator",
+          "text": "The filled sack settled low beside the explorer case. Lark fastened its loop to the wagon\u2019s frame. Nib folded the enormous cloth down and tied it into a small sail. Every fold made the mast look less surprised."
+        }
+      ],
+      "sha256": "a0a24c360e8c1fe10ba5f8ede030aaf90bf94dd0a7e9405f7221231d89418c08"
+    },
+    "less-sail-more-sense:p2": {
+      "file": "assets/narration/27.wav",
+      "duration": 11.328344671201814,
+      "text": "The next breeze pressed against the little triangle. Lark tested the rope. The sack stayed low. The wheels stayed level. The small sail helped without pulling the parked wagon sideways.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 11.328344671201814,
+          "speaker": "narrator",
+          "text": "The next breeze pressed against the little triangle. Lark tested the rope. The sack stayed low. The wheels stayed level. The small sail helped without pulling the parked wagon sideways."
+        }
+      ],
+      "sha256": "4a615940c7e00426986399e5ce4b58b3b789cd580d0eeda0a9cfcb514a08ca1f"
+    },
+    "less-sail-more-sense:p3": {
+      "file": "assets/narration/28.wav",
+      "duration": 4.509251700680272,
+      "text": "Nib studied his first enormous plan, now folded into something useful.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 4.509251700680272,
+          "speaker": "narrator",
+          "text": "Nib studied his first enormous plan, now folded into something useful."
+        }
+      ],
+      "sha256": "765acf36730a0aa26b12af4fefcd3ad2398e71472233811bd726135f0c868aa0"
+    },
+    "less-sail-more-sense:p4": {
+      "file": "assets/narration/29.wav",
+      "duration": 3.9807256235827664,
+      "text": "\u201cStill splendid,\u201d Nib decided contentedly. \u201cJust less sky.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.0558730158730159,
+          "speaker": "nib",
+          "text": "Still splendid,"
+        },
+        {
+          "start": 1.0558730158730159,
+          "end": 2.7323809523809524,
+          "speaker": "narrator",
+          "text": "Nib decided contentedly."
+        },
+        {
+          "start": 2.7323809523809524,
+          "end": 3.9807256235827664,
+          "speaker": "nib",
+          "text": "Just less sky."
+        }
+      ],
+      "sha256": "cb633825b96f9fe9ad09fbeb0fbfa63d7f76df2aaa6c786f1530d04ef7308009"
+    },
+    "less-sail-more-sense:p5": {
+      "file": "assets/narration/30.wav",
+      "duration": 7.165260770975057,
+      "text": "Lark showed the two versions in the journal: the great billowing cloth, and the small folded sail beside the low sand sack.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 7.165260770975057,
+          "speaker": "narrator",
+          "text": "Lark showed the two versions in the journal: the great billowing cloth, and the small folded sail beside the low sand sack."
+        }
+      ],
+      "sha256": "1687bedc69d146ee52a020ae0952df124344db3a384690f17cc3cf532882b648"
+    },
+    "less-sail-more-sense:p6": {
+      "file": "assets/narration/31.wav",
+      "duration": 3.722358276643991,
+      "text": "\u201cWhich sail helped our wagon stay steady?\u201d Lark asked gently.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.44312925170068,
+          "speaker": "lark",
+          "text": "Which sail helped our wagon stay steady?"
+        },
+        {
+          "start": 2.44312925170068,
+          "end": 3.722358276643991,
+          "speaker": "narrator",
+          "text": "Lark asked gently."
+        }
+      ],
+      "sha256": "d30672f831f1c4b3f32b2df2b4c9f7e3df8596b0cd55e58b149f77ebe13cf808"
+    },
+    "up-to-the-ridge:p1": {
+      "file": "assets/narration/32.wav",
+      "duration": 14.617233560090703,
+      "text": "With the test finished, Lark removed the chocks. Nib took the handle while Lark guided the rope. Together, they brought the wagon up the broad path. The little sail helped when the breeze followed them. When it did not, your friends simply pulled.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 14.617233560090703,
+          "speaker": "narrator",
+          "text": "With the test finished, Lark removed the chocks. Nib took the handle while Lark guided the rope. Together, they brought the wagon up the broad path. The little sail helped when the breeze followed them. When it did not, your friends simply pulled."
+        }
+      ],
+      "sha256": "ebf4b0aae6603391341c89bbae5ca2914e90a2397e31b36f0dc5b6c8ddc6bbdc"
+    },
+    "up-to-the-ridge:p2": {
+      "file": "assets/narration/33.wav",
+      "duration": 11.139954648526077,
+      "text": "At the ridge waystation, they parked beneath the shelter and set the chocks beside the wheels again. The case was safe. The first map piece was safe. Nothing new had been added to the map.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 11.139954648526077,
+          "speaker": "narrator",
+          "text": "At the ridge waystation, they parked beneath the shelter and set the chocks beside the wheels again. The case was safe. The first map piece was safe. Nothing new had been added to the map."
+        }
+      ],
+      "sha256": "ac41e4842c0ebe1aa5820cd53f4fbd69c6fc3c5a782c0f1d62d0c870f2dc87d6"
+    },
+    "up-to-the-ridge:p3": {
+      "file": "assets/narration/34.wav",
+      "duration": 10.996780045351475,
+      "text": "Lark drew the little sail and the sand sack on your next journal page. Your new s curled beside the picture. She read the connecting words aloud, and you could join am again whenever you wanted.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 10.996780045351475,
+          "speaker": "narrator",
+          "text": "Lark drew the little sail and the sand sack on your next journal page. Your new s curled beside the picture. She read the connecting words aloud, and you could join am again whenever you wanted."
+        }
+      ],
+      "sha256": "e70cb9538a07228d7d868670940e3537de3443300a3461bc7fe9dd7a2e84fd54"
+    },
+    "up-to-the-ridge:p4": {
+      "file": "assets/narration/35.wav",
+      "duration": 5.878684807256236,
+      "text": "\u201cSmall sail. Sensible sack. Splendid sailing,\u201d Nib murmured with satisfaction.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.993197278911565,
+          "speaker": "nib",
+          "text": "Small sail. Sensible sack. Splendid sailing,"
+        },
+        {
+          "start": 3.993197278911565,
+          "end": 5.878684807256236,
+          "speaker": "narrator",
+          "text": "Nib murmured with satisfaction."
+        }
+      ],
+      "sha256": "5f39ddc4a10976dc00e5bf430be625d3dbb37558735082d69eafb73fe8146e4f"
+    },
+    "up-to-the-ridge:p5": {
+      "file": "assets/narration/36.wav",
+      "duration": 8.726213151927437,
+      "text": "A soft tapping came from beneath the roof. Nib put one paw on the little table. Its far end rose a tiny way, then settled with another tap.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 8.726213151927437,
+          "speaker": "narrator",
+          "text": "A soft tapping came from beneath the roof. Nib put one paw on the little table. Its far end rose a tiny way, then settled with another tap."
+        }
+      ],
+      "sha256": "96fdf1944d74f037512e08bf69bc974a5c6855c838296c4902c87a1d8dbea0ac"
+    },
+    "up-to-the-ridge:p6": {
+      "file": "assets/narration/37.wav",
+      "duration": 3.834467120181406,
+      "text": "\u201cThat table has an idea, too,\u201d Nib whispered suspiciously.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.2624489795918366,
+          "speaker": "nib",
+          "text": "That table has an idea, too,"
+        },
+        {
+          "start": 2.2624489795918366,
+          "end": 3.834467120181406,
+          "speaker": "narrator",
+          "text": "Nib whispered suspiciously."
+        }
+      ],
+      "sha256": "009a0e4df95445db61f89678a64accb27a6a144b03054ba5a42b8ee2cf4de393"
+    },
+    "up-to-the-ridge:p7": {
+      "file": "assets/narration/38.wav",
+      "duration": 10.160861678004535,
+      "text": "Lark smiled and set the journal safely on the flat floor. The wagon was steady, the windy hollow was behind you, and the tapping table could wait for your next adventure.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 10.160861678004535,
+          "speaker": "narrator",
+          "text": "Lark smiled and set the journal safely on the flat floor. The wagon was steady, the windy hollow was behind you, and the tapping table could wait for your next adventure."
+        }
+      ],
+      "sha256": "5fb200ba2a6ddd11d97c48b7a298f6cb382f03721e0c752a0e60e242d982a3e1"
+    }
+  },
+  "support": {
+    "Read am. Slide its sounds, or read with Lark.": {
+      "file": "assets/narration/support-01.wav",
+      "duration": 3.3666666666666667,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.3666666666666667,
+          "speaker": "lark",
+          "text": "Read am. Slide its sounds, or read with Lark."
+        }
+      ]
+    },
+    "Am. Our little word can travel with us.": {
+      "file": "assets/narration/support-02.wav",
+      "duration": 2.6186848072562356,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.6186848072562356,
+          "speaker": "lark",
+          "text": "Am. Our little word can travel with us."
+        }
+      ]
+    },
+    "Which letter makes the soft hiss we heard in the grass?": {
+      "file": "assets/narration/support-03.wav",
+      "duration": 2.930657596371882,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.930657596371882,
+          "speaker": "lark",
+          "text": "Which letter makes the soft hiss we heard in the grass?"
+        }
+      ]
+    },
+    "Our soft hiss goes with s.": {
+      "file": "assets/narration/support-04.wav",
+      "duration": 1.7986848072562358,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.7986848072562358,
+          "speaker": "lark",
+          "text": "Our soft hiss goes with s."
+        }
+      ]
+    },
+    "That is our closed-lip hum. The new sound lets air hiss gently through.": {
+      "file": "assets/narration/support-05.wav",
+      "duration": 4.234240362811791,
+      "cues": [
+        {
+          "start": 0,
+          "end": 4.234240362811791,
+          "speaker": "lark",
+          "text": "That is our closed-lip hum. The new sound lets air hiss gently through."
+        }
+      ]
+    },
+    "Write s: curve round, then curve back.": {
+      "file": "assets/narration/support-06.wav",
+      "duration": 2.9486167800453513,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.9486167800453513,
+          "speaker": "lark",
+          "text": "Write s: curve round, then curve back."
+        }
+      ]
+    },
+    "Your s curls across our journal page.": {
+      "file": "assets/narration/support-07.wav",
+      "duration": 2.494512471655329,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.494512471655329,
+          "speaker": "lark",
+          "text": "Your s curls across our journal page."
+        }
+      ]
+    },
+    "Listen: mat. Sack. Which starts with our soft hiss?": {
+      "file": "assets/narration/support-08.wav",
+      "duration": 4.191428571428571,
+      "cues": [
+        {
+          "start": 0,
+          "end": 4.191428571428571,
+          "speaker": "lark",
+          "text": "Listen: mat. Sack. Which starts with our soft hiss?"
+        }
+      ]
+    },
+    "Sack starts with our soft hiss. Lark brings it to the wagon.": {
+      "file": "assets/narration/support-09.wav",
+      "duration": 3.879455782312925,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.879455782312925,
+          "speaker": "lark",
+          "text": "Sack starts with our soft hiss. Lark brings it to the wagon."
+        }
+      ]
+    },
+    "Mat begins with our hum. Listen to the beginning of sack.": {
+      "file": "assets/narration/support-10.wav",
+      "duration": 3.3341496598639457,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.3341496598639457,
+          "speaker": "lark",
+          "text": "Mat begins with our hum. Listen to the beginning of sack."
+        }
+      ]
+    },
+    "Slide the sand up to the line on the sack.": {
+      "file": "assets/narration/support-11.wav",
+      "duration": 2.3699773242630386,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.3699773242630386,
+          "speaker": "lark",
+          "text": "Slide the sand up to the line on the sack."
+        }
+      ]
+    },
+    "The sack is filled. Lark ties it low to the wagon.": {
+      "file": "assets/narration/support-12.wav",
+      "duration": 3.170204081632653,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.170204081632653,
+          "speaker": "lark",
+          "text": "The sack is filled. Lark ties it low to the wagon."
+        }
+      ]
+    },
+    "Which sail helped our wagon stay steady?": {
+      "file": "assets/narration/support-13.wav",
+      "duration": 2.44312925170068,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.44312925170068,
+          "speaker": "lark",
+          "text": "Which sail helped our wagon stay steady?"
+        }
+      ]
+    },
+    "The small sail and low sand sack helped the wagon stay steady.": {
+      "file": "assets/narration/support-14.wav",
+      "duration": 3.750702947845805,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.750702947845805,
+          "speaker": "lark",
+          "text": "The small sail and low sand sack helped the wagon stay steady."
+        }
+      ]
+    },
+    "The huge cloth pulled sideways. Remember the smaller folded sail and the sand sack.": {
+      "file": "assets/narration/support-15.wav",
+      "duration": 5.341269841269841,
+      "cues": [
+        {
+          "start": 0,
+          "end": 5.341269841269841,
+          "speaker": "lark",
+          "text": "The huge cloth pulled sideways. Remember the smaller folded sail and the sand sack."
+        }
+      ]
+    },
+    "am": {
+      "file": "assets/narration/support-16.wav",
+      "duration": 0.42439909297052153,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.42439909297052153,
+          "speaker": "lark",
+          "text": "am"
+        }
+      ]
+    },
+    "m": {
+      "file": "assets/narration/support-17.wav",
+      "duration": 0.3672108843537415,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.3672108843537415,
+          "speaker": "lark",
+          "text": "m"
+        }
+      ]
+    },
+    "a": {
+      "file": "assets/narration/support-18.wav",
+      "duration": 0.3886167800453515,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.3886167800453515,
+          "speaker": "lark",
+          "text": "a"
+        }
+      ]
+    },
+    "s": {
+      "file": "assets/narration/support-19.wav",
+      "duration": 0.4365986394557823,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.4365986394557823,
+          "speaker": "lark",
+          "text": "s"
+        }
+      ]
+    },
+    "mat": {
+      "file": "assets/narration/support-20.wav",
+      "duration": 0.46453514739229024,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.46453514739229024,
+          "speaker": "lark",
+          "text": "mat"
+        }
+      ]
+    },
+    "sack": {
+      "file": "assets/narration/support-21.wav",
+      "duration": 0.5626757369614512,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.5626757369614512,
+          "speaker": "lark",
+          "text": "sack"
+        }
+      ]
+    }
+  },
+  "note": "Temporary installed Mac voices. Not the approved Lark and Nib cast. Never eligible for learning or classroom completion credit."
+}

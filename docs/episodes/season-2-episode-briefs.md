@@ -10,7 +10,9 @@ Write narrated connective prose between attributed dialogue. Each outline below 
 
 R = review before a hint; M = modeled/guided teaching; A = application before answer-revealing help; S = ungraded story action. A newly demonstrated answer is supported practice, not independent decoding. A word-label choice shows recognition; a tap does not prove oral reading. Speech stays optional and has a touch-supported continuation. Never invent a response the child did not give.
 
-Each chapter has a short review, a model of its focus, and three story applications below. Combine adjacent actions at natural gates when that improves pacing; the five rows are a writing plan, not a compulsory minimum test count. Record first responses only where they change the next moment. Help responds to the actual choice and keeps the next attempt available. Playback cuts after the prompt and before its outcome.
+**November 3 revision:** Every Season 2 chapter must contain new sound teaching, word reading, writing, at least two complete decodable sentences in the main episode, and comprehension of that text. Follow the reading-first standard in [PRODUCTION.md](PRODUCTION.md). Old S rows below are plot consequences to narrate or animate unless selected as the episode's one extra non-literacy activity. They are not additional required taps. Settle every completed task and resume its narrated consequence automatically, with no Continue button. Use one task per tablet screen; landscape pairs the scene and task side by side.
+
+Each episode's original five-row outline remains a story planning reference. Before scripting or recording it, replace extra story manipulations with the required literacy core. Use the scope and cumulative ledger for the actual passage and word targets; do not introduce article a, pronoun I, or other later spellings early merely to make a sentence easier to write. Keep modeled reading and writing separate from independent first responses. The essential-skill moment belongs within the reading work or single extra activity.
 
 ## Episode 1 · The Bag at the Door
 
@@ -82,13 +84,15 @@ Each chapter has a short review, a model of its focus, and three story applicati
 
 ### Child turns
 
-| Gate | Prompt / visible action | Kind | Specific feedback and consequence |
+| Gate | Child task | Literacy role | Automatic consequence |
 | --- | --- | --- | --- |
-| 2.2.1 | Offer a brief opening review: am; i/a in known words. Use a relevant object or text before a hint. | R | Allow the first response; then isolate the particular sound, spelling, or text detail that caused difficulty. Use that response to choose support. |
-| 2.2.2 | Demonstrate the stated teaching/strategy with **fin** and a visible worked example; invite a guided try. | M | Keep the same example visible, reduce the step, and re-model rather than marking an echo as independent. |
-| 2.2.3 | Read the clue fin and choose its matching waymarker | A: applying the vowel contrast | Keep f/n fixed and revisit the middle sound; the fan alcove remains a harmless wrong turn. |
-| 2.2.4 | Follow the supported path beside the fin marker | S | The whole crew and bag travel along the bank, not over the creek. |
-| 2.2.5 | Add the correct fork picture to the courier note | S | The route book records the path that was actually used. |
+| 2.2.1 | Review am | word reading | Resume the fork scene |
+| 2.2.2 | Hear f, then choose f | new sound | Keep the new mapping |
+| 2.2.3 | Read fan/fin and choose fin | word reading | Crew follows the fish route |
+| 2.2.4 | Write f | writing | Resume the strap check |
+| 2.2.5 | Read fit/fin and choose fit | word reading | Strap lies flat |
+| 2.2.6 | Read Sam ran. Sam sat. Pip did fan Sam. Pip sat. | sentence reading | Open the question after the passage |
+| 2.2.7 | Choose who used the fan | comprehension | Resume the approach to the creek |
 
 **Dialogue anchor:** “The fan is giving very lively directions,” Nib insisted. “Our word has a little i,” Lark observed gently.
 

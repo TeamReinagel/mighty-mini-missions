@@ -1,0 +1,159 @@
+{
+  "approved": false,
+  "status": "awaiting-cast-recording",
+  "manuscriptSHA256": "99b30a3b46c64326ff9bd52c89367f15a2417c1575e27c7638ceb72dd89ca86b",
+  "entries": {
+    "an-idea-in-the-breeze:p1": {
+      "text": "The picnic cloth lay across the wagon. The apple catcher was behind you, and the first missing map section rested safely beside your original piece. The moonstone, rope, and journal were packed in the explorer case. Three spaces on the map were still empty.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p2": {
+      "text": "A breeze slipped through the hollow. The wagon\u2019s pennant fluttered, and Nib\u2019s idea grew taller than his ears.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p3": {
+      "text": "\u201cA sail the size of the sky!\u201d Nib announced grandly.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p4": {
+      "text": "He tied the picnic cloth to a light wooden mast while Lark set chocks beside the wheels. The wagon stayed parked on the broad, dry path. The cloth swelled above it like a very ambitious pillow.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p5": {
+      "text": "\u201cA wagon the size of a mouse,\u201d Lark replied cautiously. She held the rope and watched the cloth pull sideways.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p6": {
+      "text": "Nib opened the journal to the apple page. He pointed to the little word you had joined before.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p7": {
+      "text": "\u201cI am a sailor,\u201d Nib declared hopefully.",
+      "gateAfter": null
+    },
+    "an-idea-in-the-breeze:p8": {
+      "text": "\u201cI\u2019ll read the other words,\u201d Lark offered warmly. \u201cYou can read am. Slide its two sounds, or join them with me.\u201d",
+      "gateAfter": "review-am"
+    },
+    "a-sound-in-the-grass:p1": {
+      "text": "The breeze grew stronger. Grass brushed against the wagon with a soft hiss. The wheels stayed snug beside their chocks, but the enormous sail tugged toward the side of the path.",
+      "gateAfter": null
+    },
+    "a-sound-in-the-grass:p2": {
+      "text": "Nib gripped his scarf. He looked at the rope, then at Lark.",
+      "gateAfter": null
+    },
+    "a-sound-in-the-grass:p3": {
+      "text": "\u201cPerhaps the sky is a little large,\u201d Nib admitted doubtfully.",
+      "gateAfter": null
+    },
+    "a-sound-in-the-grass:p4": {
+      "text": "\u201cWe can make a smaller plan,\u201d Lark replied calmly. She eased the rope until the cloth stopped pulling. Nobody climbed aboard.",
+      "gateAfter": null
+    },
+    "a-sound-in-the-grass:p5": {
+      "text": "On the journal\u2019s empty page, Lark drew a little curving letter. It bent one way, then the other: lowercase s.",
+      "gateAfter": null
+    },
+    "a-sound-in-the-grass:p6": {
+      "text": "\u201cListen to the grass,\u201d Lark invited softly. \u201cLet a gentle stream of air make our soft hiss. No hum, and no extra little vowel. Listen to the sound, then find its letter.\u201d",
+      "gateAfter": "new-s"
+    },
+    "a-small-curving-mark:p1": {
+      "text": "Nib held the page flat on the explorer case. Lark drew the curving mark once more, slowly enough to follow.",
+      "gateAfter": null
+    },
+    "a-small-curving-mark:p2": {
+      "text": "\u201cIt looks as if it knows a bend in the path,\u201d Nib observed thoughtfully.",
+      "gateAfter": null
+    },
+    "a-small-curving-mark:p3": {
+      "text": "\u201cWe\u2019ll keep it beside today\u2019s picture,\u201d Lark suggested gently. \u201cCurve round, then curve back. Write our new s.\u201d",
+      "gateAfter": "write-s"
+    },
+    "something-under-the-shelter:p1": {
+      "text": "Beside the path, a low supply shelter held a folded mat and an empty cloth sack. A shallow patch of dry sand lay nearby. Lark named both objects aloud. Mat. Sack.",
+      "gateAfter": null
+    },
+    "something-under-the-shelter:p2": {
+      "text": "Nib considered sitting on the mat until the wind changed its mind. Then he looked at the empty sack, the sand, and the wagon\u2019s low frame.",
+      "gateAfter": null
+    },
+    "something-under-the-shelter:p3": {
+      "text": "\u201cSomething small could help something tall,\u201d Nib murmured hopefully.",
+      "gateAfter": null
+    },
+    "something-under-the-shelter:p4": {
+      "text": "\u201cLet\u2019s begin with the sound,\u201d Lark invited warmly. \u201cMat. Sack. Which one starts with the soft hiss we just learned?\u201d",
+      "gateAfter": "find-sack"
+    },
+    "a-sack-with-a-job:p1": {
+      "text": "Lark brought the sack to a flat spot beside the wagon. She folded its top outward so the opening stayed wide. A stitched line showed how much sand it needed. The sack would rest low against the frame, with a rope loop to hold it.",
+      "gateAfter": null
+    },
+    "a-sack-with-a-job:p2": {
+      "text": "Nib scooped a little sand into it. The base spread into a soft, sturdy shape.",
+      "gateAfter": null
+    },
+    "a-sack-with-a-job:p3": {
+      "text": "\u201cA sensible sack,\u201d Nib declared approvingly. \u201cIt knows where the ground is.\u201d",
+      "gateAfter": null
+    },
+    "a-sack-with-a-job:p4": {
+      "text": "\u201cFill it just to the stitched line,\u201d Lark encouraged gently. \u201cThen I\u2019ll secure its loop. The wagon will keep waiting while we work.\u201d",
+      "gateAfter": "fill-sack"
+    },
+    "less-sail-more-sense:p1": {
+      "text": "The filled sack settled low beside the explorer case. Lark fastened its loop to the wagon\u2019s frame. Nib folded the enormous cloth down and tied it into a small sail. Every fold made the mast look less surprised.",
+      "gateAfter": null
+    },
+    "less-sail-more-sense:p2": {
+      "text": "The next breeze pressed against the little triangle. Lark tested the rope. The sack stayed low. The wheels stayed level. The small sail helped without pulling the parked wagon sideways.",
+      "gateAfter": null
+    },
+    "less-sail-more-sense:p3": {
+      "text": "Nib studied his first enormous plan, now folded into something useful.",
+      "gateAfter": null
+    },
+    "less-sail-more-sense:p4": {
+      "text": "\u201cStill splendid,\u201d Nib decided contentedly. \u201cJust less sky.\u201d",
+      "gateAfter": null
+    },
+    "less-sail-more-sense:p5": {
+      "text": "Lark showed the two versions in the journal: the great billowing cloth, and the small folded sail beside the low sand sack.",
+      "gateAfter": null
+    },
+    "less-sail-more-sense:p6": {
+      "text": "\u201cWhich sail helped our wagon stay steady?\u201d Lark asked gently.",
+      "gateAfter": "check-story"
+    },
+    "up-to-the-ridge:p1": {
+      "text": "With the test finished, Lark removed the chocks. Nib took the handle while Lark guided the rope. Together, they brought the wagon up the broad path. The little sail helped when the breeze followed them. When it did not, your friends simply pulled.",
+      "gateAfter": null
+    },
+    "up-to-the-ridge:p2": {
+      "text": "At the ridge waystation, they parked beneath the shelter and set the chocks beside the wheels again. The case was safe. The first map piece was safe. Nothing new had been added to the map.",
+      "gateAfter": null
+    },
+    "up-to-the-ridge:p3": {
+      "text": "Lark drew the little sail and the sand sack on your next journal page. Your new s curled beside the picture. She read the connecting words aloud, and you could join am again whenever you wanted.",
+      "gateAfter": null
+    },
+    "up-to-the-ridge:p4": {
+      "text": "\u201cSmall sail. Sensible sack. Splendid sailing,\u201d Nib murmured with satisfaction.",
+      "gateAfter": null
+    },
+    "up-to-the-ridge:p5": {
+      "text": "A soft tapping came from beneath the roof. Nib put one paw on the little table. Its far end rose a tiny way, then settled with another tap.",
+      "gateAfter": null
+    },
+    "up-to-the-ridge:p6": {
+      "text": "\u201cThat table has an idea, too,\u201d Nib whispered suspiciously.",
+      "gateAfter": null
+    },
+    "up-to-the-ridge:p7": {
+      "text": "Lark smiled and set the journal safely on the flat floor. The wagon was steady, the windy hollow was behind you, and the tapping table could wait for your next adventure.",
+      "gateAfter": null
+    }
+  }
+}

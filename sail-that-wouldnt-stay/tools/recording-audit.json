@@ -1,0 +1,356 @@
+{
+  "source": {
+    "name": "ElevenLabs_s1e3-sail-that-wouldnt-stay-manuscript.mp3",
+    "sha256": "42df828e562acba46dce5771f1aa3bce4173f7841f1a1d7b87acd3a97b91156f",
+    "duration": 379.1534240362812,
+    "sampleRate": 44100,
+    "model": "whisper-large-v3-turbo-4bit"
+  },
+  "allSourceRangesContiguous": true,
+  "allCutsInMeasuredQuiet": true,
+  "sourceCoverageSeconds": 379.1534240362812,
+  "clips": [
+    {
+      "id": "an-idea-in-the-breeze:p1",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0.0,
+      "sourceEnd": 24.39154195011338,
+      "decodedDuration": 24.39154195011338,
+      "expectedDuration": 24.39154195011338,
+      "sha256": "8ebf770b8f4739749850f31d02fec63643f6ab03f35c0a5b8860010bfa4aeb62"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p2",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 24.39154195011338,
+      "sourceEnd": 31.904126984126986,
+      "decodedDuration": 7.512585034013606,
+      "expectedDuration": 7.512585034013606,
+      "sha256": "a18bfe52b9467f2a715a6a8b8083f1d84aeef538a564176f36b68cc6e74884ac"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p3",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 31.904126984126986,
+      "sourceEnd": 37.56444444444445,
+      "decodedDuration": 5.660317460317461,
+      "expectedDuration": 5.660317460317461,
+      "sha256": "5973bdf30f7a342339da9b816ee97512d0419d314bb0366b996db2c2be6f69ea"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p4",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 37.56444444444445,
+      "sourceEnd": 51.018956916099775,
+      "decodedDuration": 13.45451247165533,
+      "expectedDuration": 13.45451247165533,
+      "sha256": "0bb996652706b76e6e116a5b6bc606adb194d4af69f16867fc6d4d624a9aae8e"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p5",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 51.018956916099775,
+      "sourceEnd": 60.35378684807256,
+      "decodedDuration": 9.33482993197279,
+      "expectedDuration": 9.33482993197279,
+      "sha256": "91ef858dcc0d6fd36917a8c8235990756e2dce947fb8df149dbe06748435dff6"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p6",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 60.35378684807256,
+      "sourceEnd": 66.67258503401361,
+      "decodedDuration": 6.318798185941043,
+      "expectedDuration": 6.318798185941043,
+      "sha256": "449c84e1a802d7dc694e58fefb5d90f924e73a3b3770c249c1ec59cedb552413"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p7",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 66.67258503401361,
+      "sourceEnd": 71.23154195011338,
+      "decodedDuration": 4.558956916099773,
+      "expectedDuration": 4.558956916099773,
+      "sha256": "dba871b937315f2f1ccf83f900ca067788e643b3406bd43970ab3c6343a39921"
+    },
+    {
+      "id": "an-idea-in-the-breeze:p8",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 71.23154195011338,
+      "sourceEnd": 81.25496598639455,
+      "decodedDuration": 10.02342403628118,
+      "expectedDuration": 10.02342403628118,
+      "sha256": "19aa30b8f3203003199b93c29e794f4b380dd92c656a7fa95f59f1a983378edd"
+    },
+    {
+      "id": "a-sound-in-the-grass:p1",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 81.25496598639455,
+      "sourceEnd": 93.66458049886621,
+      "decodedDuration": 12.409614512471656,
+      "expectedDuration": 12.409614512471656,
+      "sha256": "4c3d56e1e3224ac6388d35dfbd87ed46bb3448719cc508202cab09ffb3d2b013"
+    },
+    {
+      "id": "a-sound-in-the-grass:p2",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 93.66458049886621,
+      "sourceEnd": 98.64562358276643,
+      "decodedDuration": 4.981043083900227,
+      "expectedDuration": 4.981043083900227,
+      "sha256": "ec81f7527a1533f295c7e17dad8957808101158e08dcfcb2e5773f2bfe24bcb1"
+    },
+    {
+      "id": "a-sound-in-the-grass:p3",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 98.64562358276643,
+      "sourceEnd": 104.82643990929705,
+      "decodedDuration": 6.180816326530612,
+      "expectedDuration": 6.180816326530612,
+      "sha256": "ccd21b2c25f90a3d9f4f59516f52f2be9a8b031243b119e7b2536654158c9d49"
+    },
+    {
+      "id": "a-sound-in-the-grass:p4",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 104.82643990929705,
+      "sourceEnd": 115.48204081632653,
+      "decodedDuration": 10.655600907029479,
+      "expectedDuration": 10.655600907029479,
+      "sha256": "e4f56a15fb5b8d9af9782cfeb8504f8211125c3bf100b6b56a1315a37086c4ec"
+    },
+    {
+      "id": "a-sound-in-the-grass:p5",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 115.48204081632653,
+      "sourceEnd": 124.48791383219955,
+      "decodedDuration": 9.005873015873016,
+      "expectedDuration": 9.005873015873016,
+      "sha256": "e41f227976908d7fecc37c842e19ffd95f1e748300dcb1e92572c3fa2f4672f6"
+    },
+    {
+      "id": "a-sound-in-the-grass:p6",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 124.48791383219955,
+      "sourceEnd": 139.47587301587302,
+      "decodedDuration": 14.98795918367347,
+      "expectedDuration": 14.98795918367347,
+      "sha256": "dfd91554095b444f58f559dd0c77e7fdcd8d85f63012e818b958a2e25a885e5f"
+    },
+    {
+      "id": "a-small-curving-mark:p1",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 139.47587301587302,
+      "sourceEnd": 147.47079365079364,
+      "decodedDuration": 7.994920634920635,
+      "expectedDuration": 7.994920634920635,
+      "sha256": "4c67e78d0984d2dde7da4e2b05d65db9507fd1c8ca7feb20d02ac84b28c3e81a"
+    },
+    {
+      "id": "a-small-curving-mark:p2",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 147.47079365079364,
+      "sourceEnd": 153.5397732426304,
+      "decodedDuration": 6.068979591836735,
+      "expectedDuration": 6.068979591836735,
+      "sha256": "a09eb817fe12166ca0d42e7bbf233a6efb8c11b5a34cf6e26ec486ea111c15f9"
+    },
+    {
+      "id": "a-small-curving-mark:p3",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 153.5397732426304,
+      "sourceEnd": 164.2598185941043,
+      "decodedDuration": 10.720045351473923,
+      "expectedDuration": 10.720045351473923,
+      "sha256": "37b650888029d337f0ca1f1d0dd1e780cf6a1c736769f69b2ba99a349228a048"
+    },
+    {
+      "id": "something-under-the-shelter:p1",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 164.2598185941043,
+      "sourceEnd": 178.1863038548753,
+      "decodedDuration": 13.926485260770976,
+      "expectedDuration": 13.926485260770976,
+      "sha256": "506ce4b4f9f7e424a35192c962afe8bc9af80dfae385a3bc534b541b7606d4bc"
+    },
+    {
+      "id": "something-under-the-shelter:p2",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 178.1863038548753,
+      "sourceEnd": 187.92238095238096,
+      "decodedDuration": 9.73607709750567,
+      "expectedDuration": 9.73607709750567,
+      "sha256": "8dd6db0e6826f20f06b14e1e72e7e66f6fa09971e152518c9425a5b960e93643"
+    },
+    {
+      "id": "something-under-the-shelter:p3",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 187.92238095238096,
+      "sourceEnd": 193.87471655328798,
+      "decodedDuration": 5.95233560090703,
+      "expectedDuration": 5.95233560090703,
+      "sha256": "26ca1ebbb36337a79b75b803ac1b401a2caf31fdc9da0cf356cdef167d0b444b"
+    },
+    {
+      "id": "something-under-the-shelter:p4",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 193.87471655328798,
+      "sourceEnd": 204.6361678004535,
+      "decodedDuration": 10.761451247165533,
+      "expectedDuration": 10.761451247165533,
+      "sha256": "d993d8521dcfb24599adf732707750b2d37934e09c500deacd7ffdbacdc905fd"
+    },
+    {
+      "id": "a-sack-with-a-job:p1",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 204.6361678004535,
+      "sourceEnd": 219.86700680272108,
+      "decodedDuration": 15.230839002267574,
+      "expectedDuration": 15.230839002267574,
+      "sha256": "415b67dba59e3262a8fc676fcb713439bfd457f4b24fca1f67b2086626e17c73"
+    },
+    {
+      "id": "a-sack-with-a-job:p2",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 219.86700680272108,
+      "sourceEnd": 225.9119954648526,
+      "decodedDuration": 6.044988662131519,
+      "expectedDuration": 6.044988662131519,
+      "sha256": "8d5da53e5096e80d8dd09c43458489fb81486440dcc5233a8dbb10bff91a13c4"
+    },
+    {
+      "id": "a-sack-with-a-job:p3",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 225.9119954648526,
+      "sourceEnd": 233.0104761904762,
+      "decodedDuration": 7.098480725623583,
+      "expectedDuration": 7.098480725623583,
+      "sha256": "1fe0c1598571e3066354ad086952fcc0b90b3ffb2bf24a2b62cce52b5511b557"
+    },
+    {
+      "id": "a-sack-with-a-job:p4",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 233.0104761904762,
+      "sourceEnd": 243.80873015873016,
+      "decodedDuration": 10.798253968253968,
+      "expectedDuration": 10.798253968253968,
+      "sha256": "c400058306ae2613d4ce71b3de8668a5e4e70d45a6fc2c4e6759af95206af6fa"
+    },
+    {
+      "id": "less-sail-more-sense:p1",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 243.80873015873016,
+      "sourceEnd": 259.5546485260771,
+      "decodedDuration": 15.745918367346938,
+      "expectedDuration": 15.745918367346938,
+      "sha256": "62fc081b3bebb3acafc8c23d237f1ccdb361e298aa62b53e89b9db3e56458e2c"
+    },
+    {
+      "id": "less-sail-more-sense:p2",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 259.5546485260771,
+      "sourceEnd": 272.5567120181406,
+      "decodedDuration": 13.002063492063492,
+      "expectedDuration": 13.002063492063492,
+      "sha256": "b6d64943a593cdace7426b3a9ee7f376d94e1374ad83becfc03c25b07c57ce48"
+    },
+    {
+      "id": "less-sail-more-sense:p3",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 272.5567120181406,
+      "sourceEnd": 278.2718140589569,
+      "decodedDuration": 5.715102040816326,
+      "expectedDuration": 5.715102040816326,
+      "sha256": "346f78f7f59cb5d6aa7380661e93889dd54d14f3ac90d2bf3cf661bce92ba138"
+    },
+    {
+      "id": "less-sail-more-sense:p4",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 278.2718140589569,
+      "sourceEnd": 285.6209977324263,
+      "decodedDuration": 7.349183673469388,
+      "expectedDuration": 7.349183673469388,
+      "sha256": "eaaa88fc1ef4cdd7107041859b7ec2019e931630a03948be0fb4f84e2d7e68a7"
+    },
+    {
+      "id": "less-sail-more-sense:p5",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 285.6209977324263,
+      "sourceEnd": 294.4921315192744,
+      "decodedDuration": 8.871133786848073,
+      "expectedDuration": 8.871133786848073,
+      "sha256": "1ffa55617f15b12710641bddc4e8040e1b26b7885804a4424b1182022889c2f5"
+    },
+    {
+      "id": "less-sail-more-sense:p6",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 294.4921315192744,
+      "sourceEnd": 300.18680272108844,
+      "decodedDuration": 5.694671201814059,
+      "expectedDuration": 5.694671201814059,
+      "sha256": "6dc3e9a8b71925a473bdf138c78cc1a16e591a76d6144da3c913736d2d84b675"
+    },
+    {
+      "id": "up-to-the-ridge:p1",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 300.18680272108844,
+      "sourceEnd": 316.6715192743764,
+      "decodedDuration": 16.48471655328798,
+      "expectedDuration": 16.48471655328798,
+      "sha256": "13d242234bc94c1a312f81fb8c0baa0f6407b1defd5fcca65f052e6a69441969"
+    },
+    {
+      "id": "up-to-the-ridge:p2",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 316.6715192743764,
+      "sourceEnd": 328.8639002267574,
+      "decodedDuration": 12.192380952380953,
+      "expectedDuration": 12.192380952380953,
+      "sha256": "a0efbc07080e722c59d7b2fffb2d2dae34d36158aaa46728fc77bddfba11c9cd"
+    },
+    {
+      "id": "up-to-the-ridge:p3",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 328.8639002267574,
+      "sourceEnd": 342.0791609977324,
+      "decodedDuration": 13.215260770975057,
+      "expectedDuration": 13.215260770975057,
+      "sha256": "789c386293832989786aed5680c97e47c0e6337bf2937d342fb884c7a7c27267"
+    },
+    {
+      "id": "up-to-the-ridge:p4",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 342.0791609977324,
+      "sourceEnd": 350.71430839002267,
+      "decodedDuration": 8.63514739229025,
+      "expectedDuration": 8.63514739229025,
+      "sha256": "65e32bf90da8145a2fa7fb75b6e74b28aa542d70d10eea64adb3f92557801d6f"
+    },
+    {
+      "id": "up-to-the-ridge:p5",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 350.71430839002267,
+      "sourceEnd": 361.53331065759636,
+      "decodedDuration": 10.819002267573696,
+      "expectedDuration": 10.819002267573696,
+      "sha256": "fe41893da70ec2e136b390fc4996eb74cd2ecb26d19b41501ca1f966b2ca10d4"
+    },
+    {
+      "id": "up-to-the-ridge:p6",
+      "file": "assets/narration/37.mp3",
+      "sourceStart": 361.53331065759636,
+      "sourceEnd": 367.53630385487526,
+      "decodedDuration": 6.0029931972789115,
+      "expectedDuration": 6.0029931972789115,
+      "sha256": "745d3d86270164c7650b8d721898a931af5afa9690704d5a307cbca367b77721"
+    },
+    {
+      "id": "up-to-the-ridge:p7",
+      "file": "assets/narration/38.mp3",
+      "sourceStart": 367.53630385487526,
+      "sourceEnd": 379.1534240362812,
+      "decodedDuration": 11.617120181405896,
+      "expectedDuration": 11.617120181405896,
+      "sha256": "4fb761bbfaec031b0718c137555e6729fdaf3429966fa4e0a06c957bc3ad00f3"
+    }
+  ]
+}

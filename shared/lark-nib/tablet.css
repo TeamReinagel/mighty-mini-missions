@@ -1,0 +1,24 @@
+/* Keep the scene and the single current task together without hiding required content. */
+main{min-height:100svh}body.in-story main{height:100svh;display:grid;grid-template-rows:52px minmax(0,32svh) minmax(0,1fr)}
+body.in-story header{height:52px}body.in-story .stage-wrap{aspect-ratio:auto;min-height:0}body.in-story #world{object-fit:contain}
+body.in-story #story{padding:12px 24px 16px;min-height:0;display:flex;flex-direction:column;overflow:auto}
+body.in-story #caption{font-size:clamp(19px,2.4vw,24px);line-height:1.42;min-height:0;margin:0 0 10px}
+body.in-story .controls{margin-top:auto;padding-top:10px;gap:8px}body.in-story .controls button{min-height:44px}
+body.in-story #turn{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}body.in-story #feedback{padding:8px 12px;margin:8px 0 0;line-height:1.3;font-size:16px}
+body.in-story .choice-row{padding:0;gap:14px}body.in-story .word-choice{min-height:150px}body.in-story .model-buttons{margin-top:8px;flex-wrap:wrap}
+body.in-story .mechanism{max-height:280px;width:min(100%,440px);margin:auto}body.in-story .latch-art{max-height:280px;width:auto;max-width:100%;height:min(34svh,280px);aspect-ratio:3/2}
+body.in-story .map-work{max-height:320px}body.in-story .map-board{width:min(75%,400px)}body.in-story .map-piece{max-width:140px}
+body.in-story .adult-note,body.in-story .step-note{font-size:13px;line-height:1.3;margin:6px 0}
+.writing-activity,.sentence-activity{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;margin:auto}
+.activity-instruction{font-size:17px!important;line-height:1.3!important;margin:0!important;text-align:center}
+.writing-canvas{width:min(100%,360px);height:auto;max-height:260px;object-fit:contain;border-radius:18px;background:#fffdf6;border:2px solid #c9cfba}
+.activity-actions{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}.typing-alternative{font-size:15px}.typing-alternative input{font:700 24px Nunito,system-ui;width:48px;min-height:44px;text-align:center;border:2px solid #71836a;border-radius:10px}
+.child-sentence{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:14px 0!important}.sentence-word{font-size:clamp(30px,5vw,46px);line-height:1.2;padding:6px;background:transparent;border:0;border-radius:6px;min-height:52px;color:#211b50}.reading-count{font-size:14px!important;margin:0!important;color:#58715e}
+.sentence-track{width:min(90%,480px);height:52px;accent-color:#173d38;touch-action:none;cursor:ew-resize}.comprehension-choices{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}.comprehension-choices button{font-size:22px;min-height:68px;min-width:120px}
+body.in-story .packing-recap{display:flex;justify-content:center;gap:8px;height:65px}.packing-recap img{width:70px;object-fit:contain}
+@media(orientation:landscape) and (min-width:700px){body.in-story main{max-width:none;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:52px minmax(0,1fr)}body.in-story header{grid-column:1/-1}body.in-story .stage-wrap{height:100%;display:flex;align-items:center}body.in-story #story{grid-column:2;grid-row:2;padding:14px 18px}body.in-story #caption{font-size:19px}body.in-story .glyphs{font-size:42px;min-height:90px}body.in-story .model .glyphs{min-height:108px;padding-top:18px}body.in-story .read-word{padding-bottom:34px}body.in-story .word-choice{min-width:125px;min-height:134px}body.in-story .latch-art{height:min(45svh,270px)}body.in-story .mechanism{max-height:240px;width:min(100%,360px)}body.in-story .writing-canvas{width:290px;max-height:210px}.activity-instruction{font-size:15px!important}body.in-story .child-sentence{margin:4px 0!important}.sentence-word{font-size:34px}body.in-story #feedback{font-size:14px}}
+@media(max-width:600px){body.in-story #story{padding:12px 16px}body.in-story .series{font-size:11px}body.in-story header{padding:6px 10px}.activity-instruction{font-size:16px!important}}
+body.in-story .stage-wrap{display:flex;align-items:center;justify-content:center}body.in-story .stage-wrap canvas{width:100%;height:auto;aspect-ratio:1672/940}
+.comprehension-choices .answer-art{display:block;width:150px;height:120px;object-fit:contain;margin:auto}.comprehension-choices .answer-label{display:block;font-size:16px;line-height:1.2;padding-top:6px}.comprehension-choices .props-answer{width:150px;height:120px;position:relative;overflow:hidden}.props-answer img{position:absolute;width:600px;height:480px;max-width:none}
+/* AppleStage retains its plate ratio inline outside play; constrain it to its grid cell in play. */
+body.in-story .stage-wrap{width:100%;min-width:0;aspect-ratio:auto!important}

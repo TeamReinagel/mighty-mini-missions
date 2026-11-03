@@ -1,0 +1,938 @@
+{
+  "status": "approved",
+  "approved": true,
+  "manuscriptSHA256": "a6a5c210f90df5a1774e310e13ed04a4ea10c4299b42bf7c2d869675182f918f",
+  "sourceSHA256": "b52383ce8c74f9feffd4370604143c7f049dfbe2bbaf2021f36c7ce2de323529",
+  "sourceName": "ElevenLabs_s2e2-fan-at-the-fork-manuscript.mp3",
+  "sourceDuration": 391.31535147392293,
+  "alignmentMethod": "Offline exact-text DTW for every spoken paragraph; physical boundaries centered in independently measured -42dB quiet intervals. Word times are model estimates.",
+  "cutPolicy": "Near the center of the longest measured quiet interval; a cut may move less than 2 ms within that silence to avoid the MP3 decoder’s 47-sample tail floor. Complete contiguous source ranges are retained.",
+  "recordingDifferences": [
+    {
+      "paragraph": "preamble",
+      "manuscript": "",
+      "recording": "The Fan at the Fork. Lark and Nib’s Treasure Quest. Season 2. Episode 2.",
+      "check": "Added spoken introduction retained in the first clip and explicitly captioned."
+    }
+  ],
+  "entries": {
+    "a-bag-that-travels:p1": {
+      "text": "The library door was behind you now. Nib’s courier bag swung gently against his scarf. Its strap wore the soft pad from your first delivery adventure. Inside, three invitations rested in three separate pockets. Reed Hut, the Mill, and Fern Lodge were still waiting for their letters.",
+      "spokenText": "The library door was behind you now. Nib’s courier bag swung gently against his scarf. Its strap wore the soft pad from your first delivery adventure. Inside, three invitations rested in three separate pockets. Reed Hut, the Mill, and Fern Lodge were still waiting for their letters.",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0.0,
+      "sourceEnd": 26.707301587301586,
+      "duration": 26.707301587301586,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.4,
+          "speaker": "narrator",
+          "text": "The Fan at the Fork."
+        },
+        {
+          "start": 1.72,
+          "end": 3.82,
+          "speaker": "narrator",
+          "text": "Lark and Nib’s Treasure Quest."
+        },
+        {
+          "start": 4.1,
+          "end": 6.08,
+          "speaker": "narrator",
+          "text": "Season 2. Episode 2."
+        },
+        {
+          "start": 6.1,
+          "end": 16.44,
+          "speaker": "narrator",
+          "text": "The library door was behind you now. Nib’s courier bag swung gently against his scarf. Its strap wore the soft pad from your first delivery adventure."
+        },
+        {
+          "start": 16.44,
+          "end": 26.24,
+          "speaker": "narrator",
+          "text": "Inside, three invitations rested in three separate pockets. Reed Hut, the Mill, and Fern Lodge were still waiting for their letters."
+        }
+      ]
+    },
+    "a-bag-that-travels:p2": {
+      "text": "“A dependable bag,” Nib declared proudly. He inspected the doorway tag once more, although the doorway was already far away.",
+      "spokenText": "“A dependable bag,” Nib declared proudly. He inspected the doorway tag once more, although the doorway was already far away.",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 26.707301587301586,
+      "sourceEnd": 36.89256235827664,
+      "duration": 10.185260770975058,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.298135,
+          "end": 1.732698,
+          "speaker": "nib",
+          "text": "A dependable bag,"
+        },
+        {
+          "start": 1.732698,
+          "end": 9.772698,
+          "speaker": "narrator",
+          "text": "Nib declared proudly. He inspected the doorway tag once more, although the doorway was already far away."
+        }
+      ]
+    },
+    "a-bag-that-travels:p3": {
+      "text": "“And a whole woodland ahead,” Lark replied brightly. She opened the route book on a flat stone. Its first direction named the fork beneath the ferns. You followed a dry path, with the bag between your friends.",
+      "spokenText": "“And a whole woodland ahead,” Lark replied brightly. She opened the route book on a flat stone. Its first direction named the fork beneath the ferns. You followed a dry path, with the bag between your friends.",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 36.89256235827664,
+      "sourceEnd": 52.384625850340136,
+      "duration": 15.492063492063492,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.343813,
+          "end": 2.207438,
+          "speaker": "lark",
+          "text": "And a whole woodland ahead,"
+        },
+        {
+          "start": 2.207438,
+          "end": 10.947438,
+          "speaker": "narrator",
+          "text": "Lark replied brightly. She opened the route book on a flat stone. Its first direction named the fork beneath the ferns."
+        },
+        {
+          "start": 10.947438,
+          "end": 15.067438,
+          "speaker": "narrator",
+          "text": "You followed a dry path, with the bag between your friends."
+        }
+      ]
+    },
+    "a-bag-that-travels:p4": {
+      "text": "Nib’s steps grew brisk. He was eager to make the first delivery. Lark paused beside a familiar little word on the first journal page.",
+      "spokenText": "Nib’s steps grew brisk. He was eager to make the first delivery. Lark paused beside a familiar little word on the first journal page.",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 52.384625850340136,
+      "sourceEnd": 61.864875283446715,
+      "duration": 9.480249433106575,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.250936,
+          "end": 8.935374,
+          "speaker": "narrator",
+          "text": "Nib’s steps grew brisk. He was eager to make the first delivery. Lark paused beside a familiar little word on the first journal page."
+        }
+      ]
+    },
+    "a-bag-that-travels:p5": {
+      "text": "“Before our new clue, here is a word we already know,” Lark invited gently. “Read am. Slide its two sounds if you want to.”",
+      "spokenText": "“Before our new clue, here is a word we already know,” Lark invited gently. “Read am. Slide its two sounds if you want to.”",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 61.864875283446715,
+      "sourceEnd": 72.97802721088435,
+      "duration": 11.113151927437642,
+      "source": "elevenlabs-upload",
+      "gateAfter": "review-am",
+      "cues": [
+        {
+          "start": 0.300563,
+          "end": 4.115125,
+          "speaker": "lark",
+          "text": "Before our new clue, here is a word we already know,"
+        },
+        {
+          "start": 4.115125,
+          "end": 6.375125,
+          "speaker": "narrator",
+          "text": "Lark invited gently."
+        },
+        {
+          "start": 6.375125,
+          "end": 10.455125,
+          "speaker": "lark",
+          "text": "Read am. Slide its two sounds if you want to."
+        }
+      ]
+    },
+    "two-important-posts:p1": {
+      "text": "At the fork stood two wooden posts. One held a carved fish, with a splendid fin rising from its back. The other carried a small wooden fan. Four broad blades turned whenever the breeze slipped between the trees.",
+      "spokenText": "At the fork stood two wooden posts. One held a carved fish, with a splendid fin rising from its back. The other carried a small wooden fan. Four broad blades turned whenever the breeze slipped between the trees.",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 72.97802721088435,
+      "sourceEnd": 88.64072562358277,
+      "duration": 15.662698412698413,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.54791,
+          "end": 10.341973,
+          "speaker": "narrator",
+          "text": "At the fork stood two wooden posts. One held a carved fish, with a splendid fin rising from its back. The other carried a small wooden fan."
+        },
+        {
+          "start": 10.341973,
+          "end": 15.161973,
+          "speaker": "narrator",
+          "text": "Four broad blades turned whenever the breeze slipped between the trees."
+        }
+      ]
+    },
+    "two-important-posts:p2": {
+      "text": "Nib watched the fan turn. He took a step toward its path.",
+      "spokenText": "Nib watched the fan turn. He took a step toward its path.",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 88.64072562358277,
+      "sourceEnd": 93.55700680272109,
+      "duration": 4.916281179138322,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.395336,
+          "end": 4.299274,
+          "speaker": "narrator",
+          "text": "Nib watched the fan turn. He took a step toward its path."
+        }
+      ]
+    },
+    "two-important-posts:p3": {
+      "text": "“Very lively directions,” Nib remarked approvingly. “That one must be important.”",
+      "spokenText": "“Very lively directions,” Nib remarked approvingly. “That one must be important.”",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 93.55700680272109,
+      "sourceEnd": 101.4446485260771,
+      "duration": 7.887641723356009,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.573368,
+          "end": 2.242993,
+          "speaker": "nib",
+          "text": "Very lively directions,"
+        },
+        {
+          "start": 2.242993,
+          "end": 4.782993,
+          "speaker": "narrator",
+          "text": "Nib remarked approvingly."
+        },
+        {
+          "start": 4.782993,
+          "end": 7.162993,
+          "speaker": "nib",
+          "text": "That one must be important."
+        }
+      ]
+    },
+    "two-important-posts:p4": {
+      "text": "“It is moving,” Lark observed thoughtfully. “But movement doesn’t tell us which path the book names.”",
+      "spokenText": "“It is moving,” Lark observed thoughtfully. “But movement doesn’t tell us which path the book names.”",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 101.4446485260771,
+      "sourceEnd": 110.0940589569161,
+      "duration": 8.649410430839001,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.491414,
+          "end": 1.415351,
+          "speaker": "lark",
+          "text": "It is moving,"
+        },
+        {
+          "start": 1.415351,
+          "end": 3.935351,
+          "speaker": "narrator",
+          "text": "Lark observed thoughtfully."
+        },
+        {
+          "start": 3.935351,
+          "end": 7.875351,
+          "speaker": "lark",
+          "text": "But movement doesn’t tell us which path the book names."
+        }
+      ]
+    },
+    "two-important-posts:p5": {
+      "text": "She rested the open book on the stone. Both little labels began with the same new letter: f. Lark showed its tall curved line and its short line across.",
+      "spokenText": "She rested the open book on the stone. Both little labels began with the same new letter: f. Lark showed its tall curved line and its short line across.",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 110.0940589569161,
+      "sourceEnd": 122.80727891156462,
+      "duration": 12.713219954648526,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.479566,
+          "end": 7.065941,
+          "speaker": "narrator",
+          "text": "She rested the open book on the stone. Both little labels began with the same new letter: f."
+        },
+        {
+          "start": 7.065941,
+          "end": 11.925941,
+          "speaker": "narrator",
+          "text": "Lark showed its tall curved line and its short line across."
+        }
+      ]
+    },
+    "two-important-posts:p6": {
+      "text": "“Listen to the start of fan,” Lark invited softly. “Touch your top teeth to your lower lip. Let the air flow gently. No hum, and no extra little vowel. Listen to our sound, then find its letter.”",
+      "spokenText": "“Listen to the start of fan,” Lark invited softly. “Touch your top teeth to your lower lip. Let the air flow gently. No hum, and no extra little vowel. Listen to our sound, then find its letter.”",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 122.80727891156462,
+      "sourceEnd": 139.5139455782313,
+      "duration": 16.706666666666667,
+      "source": "elevenlabs-upload",
+      "gateAfter": "new-f",
+      "cues": [
+        {
+          "start": 0.524846,
+          "end": 2.452721,
+          "speaker": "lark",
+          "text": "Listen to the start of fan,"
+        },
+        {
+          "start": 2.452721,
+          "end": 4.892721,
+          "speaker": "narrator",
+          "text": "Lark invited softly."
+        },
+        {
+          "start": 4.892721,
+          "end": 16.112721,
+          "speaker": "lark",
+          "text": "Touch your top teeth to your lower lip. Let the air flow gently. No hum, and no extra little vowel. Listen to our sound, then find its letter."
+        }
+      ]
+    },
+    "a-small-middle-matters:p1": {
+      "text": "Lark set f beside the a and n you knew. She joined the sounds into fan. Then she changed just the middle letter. The little i from pin made fin.",
+      "spokenText": "Lark set f beside the a and n you knew. She joined the sounds into fan. Then she changed just the middle letter. The little i from pin made fin.",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 139.5139455782313,
+      "sourceEnd": 152.9654648526077,
+      "duration": 13.451519274376418,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.420616,
+          "end": 9.546054,
+          "speaker": "narrator",
+          "text": "Lark set f beside the a and n you knew. She joined the sounds into fan. Then she changed just the middle letter."
+        },
+        {
+          "start": 9.546054,
+          "end": 12.726054,
+          "speaker": "narrator",
+          "text": "The little i from pin made fin."
+        }
+      ]
+    },
+    "a-small-middle-matters:p2": {
+      "text": "Nib looked from one label to the other. The beginnings matched. So did the endings. Only the small middle was different.",
+      "spokenText": "Nib looked from one label to the other. The beginnings matched. So did the endings. Only the small middle was different.",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 152.9654648526077,
+      "sourceEnd": 161.6618820861678,
+      "duration": 8.69641723356009,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.49841,
+          "end": 8.174535,
+          "speaker": "narrator",
+          "text": "Nib looked from one label to the other. The beginnings matched. So did the endings. Only the small middle was different."
+        }
+      ]
+    },
+    "a-small-middle-matters:p3": {
+      "text": "“I nearly followed the biggest moving thing,” Nib admitted sheepishly.",
+      "spokenText": "“I nearly followed the biggest moving thing,” Nib admitted sheepishly.",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 161.6618820861678,
+      "sourceEnd": 168.04238095238094,
+      "duration": 6.380498866213152,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.357556,
+          "end": 3.158118,
+          "speaker": "nib",
+          "text": "I nearly followed the biggest moving thing,"
+        },
+        {
+          "start": 3.158118,
+          "end": 5.778118,
+          "speaker": "narrator",
+          "text": "Nib admitted sheepishly."
+        }
+      ]
+    },
+    "a-small-middle-matters:p4": {
+      "text": "“We can read the whole word,” Lark reminded him warmly. “Our book names fin. Read both labels, and choose fin for our route.”",
+      "spokenText": "“We can read the whole word,” Lark reminded him warmly. “Our book names fin. Read both labels, and choose fin for our route.”",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 168.04238095238094,
+      "sourceEnd": 179.21705215419502,
+      "duration": 11.174671201814059,
+      "source": "elevenlabs-upload",
+      "gateAfter": "choose-fin",
+      "cues": [
+        {
+          "start": 0.564306,
+          "end": 2.177619,
+          "speaker": "lark",
+          "text": "We can read the whole word,"
+        },
+        {
+          "start": 2.177619,
+          "end": 4.817619,
+          "speaker": "narrator",
+          "text": "Lark reminded him warmly."
+        },
+        {
+          "start": 4.817619,
+          "end": 10.377619,
+          "speaker": "lark",
+          "text": "Our book names fin. Read both labels, and choose fin for our route."
+        }
+      ]
+    },
+    "the-quiet-marker:p1": {
+      "text": "The little i settled the question. Lark pointed to the fish’s fin. Its path curved around the fern bank, away from the fan’s short viewing alcove. The crew stayed on dry ground. No one needed to cross the creek here.",
+      "spokenText": "The little i settled the question. Lark pointed to the fish’s fin. Its path curved around the fern bank, away from the fan’s short viewing alcove. The crew stayed on dry ground. No one needed to cross the creek here.",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 179.21705215419502,
+      "sourceEnd": 194.54190476190476,
+      "duration": 15.32485260770975,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.234011,
+          "end": 10.082948,
+          "speaker": "narrator",
+          "text": "The little i settled the question. Lark pointed to the fish’s fin. Its path curved around the fern bank, away from the fan’s short viewing alcove."
+        },
+        {
+          "start": 10.082948,
+          "end": 14.742948,
+          "speaker": "narrator",
+          "text": "The crew stayed on dry ground. No one needed to cross the creek here."
+        }
+      ]
+    },
+    "the-quiet-marker:p2": {
+      "text": "Nib gave the fan a courteous bow before leaving.",
+      "spokenText": "Nib gave the fan a courteous bow before leaving.",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 194.54190476190476,
+      "sourceEnd": 198.39836734693878,
+      "duration": 3.8564625850340137,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.537032,
+          "end": 3.258095,
+          "speaker": "narrator",
+          "text": "Nib gave the fan a courteous bow before leaving."
+        }
+      ]
+    },
+    "the-quiet-marker:p3": {
+      "text": "“Excellent spinning,” Nib told it sincerely. “Different destination.”",
+      "spokenText": "“Excellent spinning,” Nib told it sincerely. “Different destination.”",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 198.39836734693878,
+      "sourceEnd": 205.1804081632653,
+      "duration": 6.78204081632653,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.436883,
+          "end": 1.581633,
+          "speaker": "nib",
+          "text": "Excellent spinning,"
+        },
+        {
+          "start": 1.581633,
+          "end": 3.941633,
+          "speaker": "narrator",
+          "text": "Nib told it sincerely."
+        },
+        {
+          "start": 3.941633,
+          "end": 6.201633,
+          "speaker": "nib",
+          "text": "Different destination."
+        }
+      ]
+    },
+    "the-quiet-marker:p4": {
+      "text": "At a low resting stone, Lark opened your courier journal. She drew the fish post and left space beneath it for the new letter.",
+      "spokenText": "At a low resting stone, Lark opened your courier journal. She drew the fish post and left space beneath it for the new letter.",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 205.1804081632653,
+      "sourceEnd": 213.65827664399092,
+      "duration": 8.477868480725624,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.340592,
+          "end": 8.019592,
+          "speaker": "narrator",
+          "text": "At a low resting stone, Lark opened your courier journal. She drew the fish post and left space beneath it for the new letter."
+        }
+      ]
+    },
+    "the-quiet-marker:p5": {
+      "text": "“We can keep our f beside today’s clue,” Lark suggested gently. “Curve over, go down, then add the short line across. Write f on our page.”",
+      "spokenText": "“We can keep our f beside today’s clue,” Lark suggested gently. “Curve over, go down, then add the short line across. Write f on our page.”",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 213.65827664399092,
+      "sourceEnd": 226.70678004535148,
+      "duration": 13.048503401360545,
+      "source": "elevenlabs-upload",
+      "gateAfter": "write-f",
+      "cues": [
+        {
+          "start": 0.358786,
+          "end": 3.941723,
+          "speaker": "lark",
+          "text": "We can keep our f beside today’s clue,"
+        },
+        {
+          "start": 3.941723,
+          "end": 5.281723,
+          "speaker": "narrator",
+          "text": "Lark suggested gently."
+        },
+        {
+          "start": 5.281723,
+          "end": 12.401723,
+          "speaker": "lark",
+          "text": "Curve over, go down, then add the short line across. Write f on our page."
+        }
+      ]
+    },
+    "a-flat-strap:p1": {
+      "text": "Nib lowered the bag onto the dry path before adjusting its strap. One edge had folded over near the soft pad. He smoothed the fold instead of tugging at it.",
+      "spokenText": "Nib lowered the bag onto the dry path before adjusting its strap. One edge had folded over near the soft pad. He smoothed the fold instead of tugging at it.",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 226.70678004535148,
+      "sourceEnd": 237.78414965986394,
+      "duration": 11.077369614512472,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.528783,
+          "end": 7.41322,
+          "speaker": "narrator",
+          "text": "Nib lowered the bag onto the dry path before adjusting its strap. One edge had folded over near the soft pad."
+        },
+        {
+          "start": 7.41322,
+          "end": 10.747845,
+          "speaker": "narrator",
+          "text": "He smoothed the fold instead of tugging at it."
+        }
+      ]
+    },
+    "a-flat-strap:p2": {
+      "text": "Lark watched the strap settle flat. The bag still had room for every invitation. A tiny word on the journal’s checking strip ended with t. Nib studied it carefully.",
+      "spokenText": "Lark watched the strap settle flat. The bag still had room for every invitation. A tiny word on the journal’s checking strip ended with t. Nib studied it carefully.",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 237.78414965986394,
+      "sourceEnd": 250.40274376417233,
+      "duration": 12.61859410430839,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.32935,
+          "end": 9.69585,
+          "speaker": "narrator",
+          "text": "Lark watched the strap settle flat. The bag still had room for every invitation. A tiny word on the journal’s checking strip ended with t."
+        },
+        {
+          "start": 9.69585,
+          "end": 11.93585,
+          "speaker": "narrator",
+          "text": "Nib studied it carefully."
+        }
+      ]
+    },
+    "a-flat-strap:p3": {
+      "text": "“Our last sound matters, too,” Nib remembered proudly.",
+      "spokenText": "“Our last sound matters, too,” Nib remembered proudly.",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 250.40274376417233,
+      "sourceEnd": 255.85113378684807,
+      "duration": 5.448390022675737,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.524131,
+          "end": 2.397256,
+          "speaker": "nib",
+          "text": "Our last sound matters, too,"
+        },
+        {
+          "start": 2.397256,
+          "end": 4.817256,
+          "speaker": "narrator",
+          "text": "Nib remembered proudly."
+        }
+      ]
+    },
+    "a-flat-strap:p4": {
+      "text": "“It does,” Lark agreed warmly. “Read the whole little word. Find fit.”",
+      "spokenText": "“It does,” Lark agreed warmly. “Read the whole little word. Find fit.”",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 255.85113378684807,
+      "sourceEnd": 263.42156462585035,
+      "duration": 7.570430839002268,
+      "source": "elevenlabs-upload",
+      "gateAfter": "find-fit",
+      "cues": [
+        {
+          "start": 0.464741,
+          "end": 1.068866,
+          "speaker": "lark",
+          "text": "It does,"
+        },
+        {
+          "start": 1.068866,
+          "end": 3.508866,
+          "speaker": "narrator",
+          "text": "Lark agreed warmly."
+        },
+        {
+          "start": 3.508866,
+          "end": 7.108866,
+          "speaker": "lark",
+          "text": "Read the whole little word. Find fit."
+        }
+      ]
+    },
+    "a-story-for-the-rest:p1": {
+      "text": "The strap fitted comfortably again. Lark rested while Nib drew a very small story on the spare half of the page. His drawings showed two little mice called Sam and Pip, and a hand fan.",
+      "spokenText": "The strap fitted comfortably again. Lark rested while Nib drew a very small story on the spare half of the page. His drawings showed two little mice called Sam and Pip, and a hand fan.",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 263.42156462585035,
+      "sourceEnd": 277.17047619047617,
+      "duration": 13.74891156462585,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.324497,
+          "end": 8.138435,
+          "speaker": "narrator",
+          "text": "The strap fitted comfortably again. Lark rested while Nib drew a very small story on the spare half of the page."
+        },
+        {
+          "start": 8.138435,
+          "end": 13.338435,
+          "speaker": "narrator",
+          "text": "His drawings showed two little mice called Sam and Pip, and a hand fan."
+        }
+      ]
+    },
+    "a-story-for-the-rest:p2": {
+      "text": "“A story about a fan,” Nib announced contentedly. “A fan that has no opinions about directions.”",
+      "spokenText": "“A story about a fan,” Nib announced contentedly. “A fan that has no opinions about directions.”",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 277.17047619047617,
+      "sourceEnd": 286.09668934240364,
+      "duration": 8.926213151927438,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.285524,
+          "end": 2.189524,
+          "speaker": "nib",
+          "text": "A story about a fan,"
+        },
+        {
+          "start": 2.189524,
+          "end": 4.589524,
+          "speaker": "narrator",
+          "text": "Nib announced contentedly."
+        },
+        {
+          "start": 4.589524,
+          "end": 8.069524,
+          "speaker": "nib",
+          "text": "A fan that has no opinions about directions."
+        }
+      ]
+    },
+    "a-story-for-the-rest:p3": {
+      "text": "Lark showed you the names before the reading. Capital S made the same sound as little s. Capital P made the same sound as little p. You already knew every sound in the words below.",
+      "spokenText": "Lark showed you the names before the reading. Capital S made the same sound as little s. Capital P made the same sound as little p. You already knew every sound in the words below.",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 286.09668934240364,
+      "sourceEnd": 299.3061678004535,
+      "duration": 13.209478458049887,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.560373,
+          "end": 9.483311,
+          "speaker": "narrator",
+          "text": "Lark showed you the names before the reading. Capital S made the same sound as little s. Capital P made the same sound as little p."
+        },
+        {
+          "start": 9.483311,
+          "end": 12.663311,
+          "speaker": "narrator",
+          "text": "You already knew every sound in the words below."
+        }
+      ]
+    },
+    "a-story-for-the-rest:p4": {
+      "text": "“You can read this part yourself,” Lark invited gently. “Take each sentence in turn. Let your finger follow underneath, and tap a word if you want help.”",
+      "spokenText": "“You can read this part yourself,” Lark invited gently. “Take each sentence in turn. Let your finger follow underneath, and tap a word if you want help.”",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 299.3061678004535,
+      "sourceEnd": 311.34297052154193,
+      "duration": 12.036802721088435,
+      "source": "elevenlabs-upload",
+      "gateAfter": "read-note",
+      "cues": [
+        {
+          "start": 0.338395,
+          "end": 1.953832,
+          "speaker": "lark",
+          "text": "You can read this part yourself,"
+        },
+        {
+          "start": 1.953832,
+          "end": 4.393832,
+          "speaker": "narrator",
+          "text": "Lark invited gently."
+        },
+        {
+          "start": 4.393832,
+          "end": 11.513832,
+          "speaker": "lark",
+          "text": "Take each sentence in turn. Let your finger follow underneath, and tap a word if you want help."
+        }
+      ]
+    },
+    "what-the-page-tells:p1": {
+      "text": "The little story had running, resting, and a helpful fan. Nib looked at his picture again. This time the picture could wait. The words told who had done each job.",
+      "spokenText": "The little story had running, resting, and a helpful fan. Nib looked at his picture again. This time the picture could wait. The words told who had done each job.",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 311.34297052154193,
+      "sourceEnd": 323.42784580498864,
+      "duration": 12.084875283446712,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.446467,
+          "end": 8.637029,
+          "speaker": "narrator",
+          "text": "The little story had running, resting, and a helpful fan. Nib looked at his picture again. This time the picture could wait."
+        },
+        {
+          "start": 8.637029,
+          "end": 11.657029,
+          "speaker": "narrator",
+          "text": "The words told who had done each job."
+        }
+      ]
+    },
+    "what-the-page-tells:p2": {
+      "text": "“Who used the fan in our little story?” Lark asked gently. “You can look back at the sentences.”",
+      "spokenText": "“Who used the fan in our little story?” Lark asked gently. “You can look back at the sentences.”",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 323.42784580498864,
+      "sourceEnd": 331.4928344671202,
+      "duration": 8.064988662131519,
+      "source": "elevenlabs-upload",
+      "gateAfter": "check-note",
+      "cues": [
+        {
+          "start": 0.397092,
+          "end": 2.652154,
+          "speaker": "lark",
+          "text": "Who used the fan in our little story?"
+        },
+        {
+          "start": 2.652154,
+          "end": 4.932154,
+          "speaker": "narrator",
+          "text": "Lark asked gently."
+        },
+        {
+          "start": 4.932154,
+          "end": 7.252154,
+          "speaker": "lark",
+          "text": "You can look back at the sentences."
+        }
+      ]
+    },
+    "the-pot-beside-the-water:p1": {
+      "text": "Lark tucked the finished fork page into the route book. No new map section appeared. You had something more useful for today: the right path, a comfortable strap, and a clear record of the way you came.",
+      "spokenText": "Lark tucked the finished fork page into the route book. No new map section appeared. You had something more useful for today: the right path, a comfortable strap, and a clear record of the way you came.",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 331.4928344671202,
+      "sourceEnd": 344.9473469387755,
+      "duration": 13.45451247165533,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.437103,
+          "end": 5.307166,
+          "speaker": "narrator",
+          "text": "Lark tucked the finished fork page into the route book. No new map section appeared."
+        },
+        {
+          "start": 5.307166,
+          "end": 13.027166,
+          "speaker": "narrator",
+          "text": "You had something more useful for today: the right path, a comfortable strap, and a clear record of the way you came."
+        }
+      ]
+    },
+    "the-pot-beside-the-water:p2": {
+      "text": "The ferns thinned. Ahead, the creek flashed between pale stones. The path ended on a broad dry bank. A little clay pot stood on a low stump, and a reed-roofed hut waited across the water.",
+      "spokenText": "The ferns thinned. Ahead, the creek flashed between pale stones. The path ended on a broad dry bank. A little clay pot stood on a low stump, and a reed-roofed hut waited across the water.",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 344.9473469387755,
+      "sourceEnd": 359.3708843537415,
+      "duration": 14.423537414965987,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.313153,
+          "end": 8.172653,
+          "speaker": "narrator",
+          "text": "The ferns thinned. Ahead, the creek flashed between pale stones. The path ended on a broad dry bank."
+        },
+        {
+          "start": 8.172653,
+          "end": 13.952653,
+          "speaker": "narrator",
+          "text": "A little clay pot stood on a low stump, and a reed-roofed hut waited across the water."
+        }
+      ]
+    },
+    "the-pot-beside-the-water:p3": {
+      "text": "“Our first stop is getting nearer,” Lark murmured eagerly.",
+      "spokenText": "“Our first stop is getting nearer,” Lark murmured eagerly.",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 359.3708843537415,
+      "sourceEnd": 364.508253968254,
+      "duration": 5.137369614512472,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.316303,
+          "end": 2.349116,
+          "speaker": "lark",
+          "text": "Our first stop is getting nearer,"
+        },
+        {
+          "start": 2.349116,
+          "end": 4.729116,
+          "speaker": "narrator",
+          "text": "Lark murmured eagerly."
+        }
+      ]
+    },
+    "the-pot-beside-the-water:p4": {
+      "text": "Nib counted the bag’s pockets with one careful paw. Three invitations. All safe. None delivered yet.",
+      "spokenText": "Nib counted the bag’s pockets with one careful paw. Three invitations. All safe. None delivered yet.",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 364.508253968254,
+      "sourceEnd": 372.88875283446714,
+      "duration": 8.380498866213152,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.387871,
+          "end": 8.051746,
+          "speaker": "narrator",
+          "text": "Nib counted the bag’s pockets with one careful paw. Three invitations. All safe. None delivered yet."
+        }
+      ]
+    },
+    "the-pot-beside-the-water:p5": {
+      "text": "“First fork found,” Nib declared proudly. “First delivery still to come.”",
+      "spokenText": "“First fork found,” Nib declared proudly. “First delivery still to come.”",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 372.88875283446714,
+      "sourceEnd": 380.30149659863946,
+      "duration": 7.412743764172336,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.26481,
+          "end": 1.631247,
+          "speaker": "nib",
+          "text": "First fork found,"
+        },
+        {
+          "start": 1.631247,
+          "end": 3.931247,
+          "speaker": "narrator",
+          "text": "Nib declared proudly."
+        },
+        {
+          "start": 3.931247,
+          "end": 6.831247,
+          "speaker": "nib",
+          "text": "First delivery still to come."
+        }
+      ]
+    },
+    "the-pot-beside-the-water:p6": {
+      "text": "A breeze stirred the reeds. Behind you, the wooden fan kept turning beside its own path. Ahead, the quiet little pot held the next clue.",
+      "spokenText": "A breeze stirred the reeds. Behind you, the wooden fan kept turning beside its own path. Ahead, the quiet little pot held the next clue.",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 380.30149659863946,
+      "sourceEnd": 391.31535147392293,
+      "duration": 11.013854875283446,
+      "source": "elevenlabs-upload",
+      "gateAfter": null,
+      "cues": [
+        {
+          "start": 0.475253,
+          "end": 10.238503,
+          "speaker": "narrator",
+          "text": "A breeze stirred the reeds. Behind you, the wooden fan kept turning beside its own path. Ahead, the quiet little pot held the next clue."
+        }
+      ]
+    }
+  }
+}

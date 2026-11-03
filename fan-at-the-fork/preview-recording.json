@@ -1,0 +1,1054 @@
+{
+  "status": "local-preview",
+  "approved": false,
+  "voices": {
+    "narrator": "Samantha",
+    "lark": "Karen",
+    "nib": "Daniel"
+  },
+  "rate": 140,
+  "narrationDuration": 296.3029931972789,
+  "entries": {
+    "a-bag-that-travels:p1": {
+      "file": "assets/narration/01.wav",
+      "duration": 17.841541950113378,
+      "text": "The library door was behind you now. Nib\u2019s courier bag swung gently against his scarf. Its strap wore the soft pad from your first delivery adventure. Inside, three invitations rested in three separate pockets. Reed Hut, the Mill, and Fern Lodge were still waiting for their letters.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 17.841541950113378,
+          "speaker": "narrator",
+          "text": "The library door was behind you now. Nib\u2019s courier bag swung gently against his scarf. Its strap wore the soft pad from your first delivery adventure. Inside, three invitations rested in three separate pockets. Reed Hut, the Mill, and Fern Lodge were still waiting for their letters."
+        }
+      ],
+      "sha256": "50d9729bc3e2189b65ebc5a1032b42bb866fc2ec9aafe558cf56e28bcfc324ac"
+    },
+    "a-bag-that-travels:p2": {
+      "file": "assets/narration/02.wav",
+      "duration": 7.913378684807256,
+      "text": "\u201cA dependable bag,\u201d Nib declared proudly. He inspected the doorway tag once more, although the doorway was already far away.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.174829931972789,
+          "speaker": "nib",
+          "text": "A dependable bag,"
+        },
+        {
+          "start": 1.174829931972789,
+          "end": 7.913378684807256,
+          "speaker": "narrator",
+          "text": "Nib declared proudly. He inspected the doorway tag once more, although the doorway was already far away."
+        }
+      ],
+      "sha256": "35df7387fdb2330f93d778e5d2b1a492af7564ee36f636be6a64cb0cded7435c"
+    },
+    "a-bag-that-travels:p3": {
+      "file": "assets/narration/03.wav",
+      "duration": 12.43546485260771,
+      "text": "\u201cAnd a whole woodland ahead,\u201d Lark replied brightly. She opened the route book on a flat stone. Its first direction named the fork beneath the ferns. You followed a dry path, with the bag between your friends.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.3922448979591837,
+          "speaker": "lark",
+          "text": "And a whole woodland ahead,"
+        },
+        {
+          "start": 1.3922448979591837,
+          "end": 12.43546485260771,
+          "speaker": "narrator",
+          "text": "Lark replied brightly. She opened the route book on a flat stone. Its first direction named the fork beneath the ferns. You followed a dry path, with the bag between your friends."
+        }
+      ],
+      "sha256": "96c15fc0e2f918d67415730a60ef1553515388c8ff00c152bf3ae21d6910193b"
+    },
+    "a-bag-that-travels:p4": {
+      "file": "assets/narration/04.wav",
+      "duration": 8.131746031746031,
+      "text": "Nib\u2019s steps grew brisk. He was eager to make the first delivery. Lark paused beside a familiar little word on the first journal page.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 8.131746031746031,
+          "speaker": "narrator",
+          "text": "Nib\u2019s steps grew brisk. He was eager to make the first delivery. Lark paused beside a familiar little word on the first journal page."
+        }
+      ],
+      "sha256": "d47ebb5ebcd725bac28a2f2ee4fe9f2984024d5e20aeab2ab768c5a7a42e3495"
+    },
+    "a-bag-that-travels:p5": {
+      "file": "assets/narration/05.wav",
+      "duration": 7.929251700680272,
+      "text": "\u201cBefore our new clue, here is a word we already know,\u201d Lark invited gently. \u201cRead am. Slide its two sounds if you want to.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.318185941043084,
+          "speaker": "lark",
+          "text": "Before our new clue, here is a word we already know,"
+        },
+        {
+          "start": 3.318185941043084,
+          "end": 4.783174603174603,
+          "speaker": "narrator",
+          "text": "Lark invited gently."
+        },
+        {
+          "start": 4.783174603174603,
+          "end": 7.929251700680272,
+          "speaker": "lark",
+          "text": "Read am. Slide its two sounds if you want to."
+        }
+      ],
+      "sha256": "c44b8cc14a0070889da25566c254d3cc9eeeabf40c97b8291667685bd3a556d8"
+    },
+    "two-important-posts:p1": {
+      "file": "assets/narration/06.wav",
+      "duration": 12.800362811791382,
+      "text": "At the fork stood two wooden posts. One held a carved fish, with a splendid fin rising from its back. The other carried a small wooden fan. Four broad blades turned whenever the breeze slipped between the trees.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 12.800362811791382,
+          "speaker": "narrator",
+          "text": "At the fork stood two wooden posts. One held a carved fish, with a splendid fin rising from its back. The other carried a small wooden fan. Four broad blades turned whenever the breeze slipped between the trees."
+        }
+      ],
+      "sha256": "62caf3df97fac9e64d990efad3439946c3ea9371baf4a868f27d19c6640b3f83"
+    },
+    "two-important-posts:p2": {
+      "file": "assets/narration/07.wav",
+      "duration": 3.673514739229025,
+      "text": "Nib watched the fan turn. He took a step toward its path.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.673514739229025,
+          "speaker": "narrator",
+          "text": "Nib watched the fan turn. He took a step toward its path."
+        }
+      ],
+      "sha256": "9423b1a37e4e042ac848223c9eef8c0c7a9b13651790b06e5705a6cdab3da9a0"
+    },
+    "two-important-posts:p3": {
+      "file": "assets/narration/08.wav",
+      "duration": 5.180498866213152,
+      "text": "\u201cVery lively directions,\u201d Nib remarked approvingly. \u201cThat one must be important.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.9173242630385487,
+          "speaker": "nib",
+          "text": "Very lively directions,"
+        },
+        {
+          "start": 1.9173242630385487,
+          "end": 3.373242630385487,
+          "speaker": "narrator",
+          "text": "Nib remarked approvingly."
+        },
+        {
+          "start": 3.373242630385487,
+          "end": 5.180498866213152,
+          "speaker": "nib",
+          "text": "That one must be important."
+        }
+      ],
+      "sha256": "30432c61282d7091a500c1ae14fbcbee6dc7227db8393ad01d8df6d779c4287c"
+    },
+    "two-important-posts:p4": {
+      "file": "assets/narration/09.wav",
+      "duration": 5.639591836734693,
+      "text": "\u201cIt is moving,\u201d Lark observed thoughtfully. \u201cBut movement doesn\u2019t tell us which path the book names.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.8409070294784581,
+          "speaker": "lark",
+          "text": "It is moving,"
+        },
+        {
+          "start": 0.8409070294784581,
+          "end": 2.3871655328798185,
+          "speaker": "narrator",
+          "text": "Lark observed thoughtfully."
+        },
+        {
+          "start": 2.3871655328798185,
+          "end": 5.639591836734693,
+          "speaker": "lark",
+          "text": "But movement doesn\u2019t tell us which path the book names."
+        }
+      ],
+      "sha256": "31cb8c700e90e24630c684f477b2effc634962dc88b48abc8b2c7e84e34087f3"
+    },
+    "two-important-posts:p5": {
+      "file": "assets/narration/10.wav",
+      "duration": 9.121133786848073,
+      "text": "She rested the open book on the stone. Both little labels began with the same new letter: f. Lark showed its tall curved line and its short line across.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 9.121133786848073,
+          "speaker": "narrator",
+          "text": "She rested the open book on the stone. Both little labels began with the same new letter: f. Lark showed its tall curved line and its short line across."
+        }
+      ],
+      "sha256": "d6a79e2aea57d3d45d38dcd956328cbda5e6180b82eb431445346f884c4a6ff6"
+    },
+    "two-important-posts:p6": {
+      "file": "assets/narration/11.wav",
+      "duration": 12.755600907029478,
+      "text": "\u201cListen to the start of fan,\u201d Lark invited softly. \u201cTouch your top teeth to your lower lip. Let the air flow gently. No hum, and no extra little vowel. Listen to our sound, then find its letter.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.683673469387755,
+          "speaker": "lark",
+          "text": "Listen to the start of fan,"
+        },
+        {
+          "start": 1.683673469387755,
+          "end": 3.2299319727891156,
+          "speaker": "narrator",
+          "text": "Lark invited softly."
+        },
+        {
+          "start": 3.2299319727891156,
+          "end": 12.755600907029478,
+          "speaker": "lark",
+          "text": "Touch your top teeth to your lower lip. Let the air flow gently. No hum, and no extra little vowel. Listen to our sound, then find its letter."
+        }
+      ],
+      "sha256": "9d7e3a47a411261f1c61aaee7ba302f9a50f1dd50189765d67ba7fa951c8ec8c"
+    },
+    "a-small-middle-matters:p1": {
+      "file": "assets/narration/12.wav",
+      "duration": 8.756054421768708,
+      "text": "Lark set f beside the a and n you knew. She joined the sounds into fan. Then she changed just the middle letter. The little i from pin made fin.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 8.756054421768708,
+          "speaker": "narrator",
+          "text": "Lark set f beside the a and n you knew. She joined the sounds into fan. Then she changed just the middle letter. The little i from pin made fin."
+        }
+      ],
+      "sha256": "f47c360a6218f1cd6baf6a34f3d0a5cb4121ae7bdff521cda032f6ee214a9814"
+    },
+    "a-small-middle-matters:p2": {
+      "file": "assets/narration/13.wav",
+      "duration": 7.121587301587302,
+      "text": "Nib looked from one label to the other. The beginnings matched. So did the endings. Only the small middle was different.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 7.121587301587302,
+          "speaker": "narrator",
+          "text": "Nib looked from one label to the other. The beginnings matched. So did the endings. Only the small middle was different."
+        }
+      ],
+      "sha256": "7686473ab738dfd71defe74d42bda667f5c3b07df313640184ad4a9ebb6f915e"
+    },
+    "a-small-middle-matters:p3": {
+      "file": "assets/narration/14.wav",
+      "duration": 3.9798639455782316,
+      "text": "\u201cI nearly followed the biggest moving thing,\u201d Nib admitted sheepishly.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.5123356009070297,
+          "speaker": "nib",
+          "text": "I nearly followed the biggest moving thing,"
+        },
+        {
+          "start": 2.5123356009070297,
+          "end": 3.9798639455782316,
+          "speaker": "narrator",
+          "text": "Nib admitted sheepishly."
+        }
+      ],
+      "sha256": "e1dca3e69c419e338fe50e2430220488f459fbbf5eabffbd6a46dcb980978a00"
+    },
+    "a-small-middle-matters:p4": {
+      "file": "assets/narration/15.wav",
+      "duration": 7.611292517006803,
+      "text": "\u201cWe can read the whole word,\u201d Lark reminded him warmly. \u201cOur book names fin. Read both labels, and choose fin for our route.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.3634467120181406,
+          "speaker": "lark",
+          "text": "We can read the whole word,"
+        },
+        {
+          "start": 1.3634467120181406,
+          "end": 3.072244897959184,
+          "speaker": "narrator",
+          "text": "Lark reminded him warmly."
+        },
+        {
+          "start": 3.072244897959184,
+          "end": 7.611292517006803,
+          "speaker": "lark",
+          "text": "Our book names fin. Read both labels, and choose fin for our route."
+        }
+      ],
+      "sha256": "e295ba47d5cc698551662870b7aa4ee8ad13734887c98ed55ffad3eb47ab2c7d"
+    },
+    "the-quiet-marker:p1": {
+      "file": "assets/narration/16.wav",
+      "duration": 13.406530612244898,
+      "text": "The little i settled the question. Lark pointed to the fish\u2019s fin. Its path curved around the fern bank, away from the fan\u2019s short viewing alcove. The crew stayed on dry ground. No one needed to cross the creek here.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 13.406530612244898,
+          "speaker": "narrator",
+          "text": "The little i settled the question. Lark pointed to the fish\u2019s fin. Its path curved around the fern bank, away from the fan\u2019s short viewing alcove. The crew stayed on dry ground. No one needed to cross the creek here."
+        }
+      ],
+      "sha256": "65fb7f222edbbd2766bd1841fd5a78ede4b66c2a714717511d7b8cf876a37ed6"
+    },
+    "the-quiet-marker:p2": {
+      "file": "assets/narration/17.wav",
+      "duration": 2.733015873015873,
+      "text": "Nib gave the fan a courteous bow before leaving.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.733015873015873,
+          "speaker": "narrator",
+          "text": "Nib gave the fan a courteous bow before leaving."
+        }
+      ],
+      "sha256": "5d27b5ea66e04877fde5164d371a5ef0234bb5636eb01263030ad40cbda7271e"
+    },
+    "the-quiet-marker:p3": {
+      "file": "assets/narration/18.wav",
+      "duration": 4.1879818594104306,
+      "text": "\u201cExcellent spinning,\u201d Nib told it sincerely. \u201cDifferent destination.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.14,
+          "speaker": "nib",
+          "text": "Excellent spinning,"
+        },
+        {
+          "start": 1.14,
+          "end": 2.6191383219954645,
+          "speaker": "narrator",
+          "text": "Nib told it sincerely."
+        },
+        {
+          "start": 2.6191383219954645,
+          "end": 4.1879818594104306,
+          "speaker": "nib",
+          "text": "Different destination."
+        }
+      ],
+      "sha256": "ef07050af2f3402649fe2c62f3966299664824cfc089cc4a6eb51ba4770be2a2"
+    },
+    "the-quiet-marker:p4": {
+      "file": "assets/narration/19.wav",
+      "duration": 7.378503401360544,
+      "text": "At a low resting stone, Lark opened your courier journal. She drew the fish post and left space beneath it for the new letter.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 7.378503401360544,
+          "speaker": "narrator",
+          "text": "At a low resting stone, Lark opened your courier journal. She drew the fish post and left space beneath it for the new letter."
+        }
+      ],
+      "sha256": "17eb0d016ca66c086fa94fe196ae79f0f608193c476c30759d88cab3966ae0a7"
+    },
+    "the-quiet-marker:p5": {
+      "file": "assets/narration/20.wav",
+      "duration": 9.076235827664398,
+      "text": "\u201cWe can keep our f beside today\u2019s clue,\u201d Lark suggested gently. \u201cCurve over, go down, then add the short line across. Write f on our page.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.4314739229024944,
+          "speaker": "lark",
+          "text": "We can keep our f beside today\u2019s clue,"
+        },
+        {
+          "start": 2.4314739229024944,
+          "end": 4.000952380952381,
+          "speaker": "narrator",
+          "text": "Lark suggested gently."
+        },
+        {
+          "start": 4.000952380952381,
+          "end": 9.076235827664398,
+          "speaker": "lark",
+          "text": "Curve over, go down, then add the short line across. Write f on our page."
+        }
+      ],
+      "sha256": "eb769203686db941826c43a48c8b88238b81bc90be81f6decb7c00ecf8213e67"
+    },
+    "a-flat-strap:p1": {
+      "file": "assets/narration/21.wav",
+      "duration": 9.408752834467121,
+      "text": "Nib lowered the bag onto the dry path before adjusting its strap. One edge had folded over near the soft pad. He smoothed the fold instead of tugging at it.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 9.408752834467121,
+          "speaker": "narrator",
+          "text": "Nib lowered the bag onto the dry path before adjusting its strap. One edge had folded over near the soft pad. He smoothed the fold instead of tugging at it."
+        }
+      ],
+      "sha256": "ac6b0f4c8e6686ee1375c4d6f77899cd3a065c080bfb7b4ac42d07d515d65c08"
+    },
+    "a-flat-strap:p2": {
+      "file": "assets/narration/22.wav",
+      "duration": 9.789342403628117,
+      "text": "Lark watched the strap settle flat. The bag still had room for every invitation. A tiny word on the journal\u2019s checking strip ended with t. Nib studied it carefully.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 9.789342403628117,
+          "speaker": "narrator",
+          "text": "Lark watched the strap settle flat. The bag still had room for every invitation. A tiny word on the journal\u2019s checking strip ended with t. Nib studied it carefully."
+        }
+      ],
+      "sha256": "988dee9ff1a7bb5d9f42c408dc116602efadaae0c6c3a5de279f424d4d364073"
+    },
+    "a-flat-strap:p3": {
+      "file": "assets/narration/23.wav",
+      "duration": 3.86140589569161,
+      "text": "\u201cOur last sound matters, too,\u201d Nib remembered proudly.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.4983673469387755,
+          "speaker": "nib",
+          "text": "Our last sound matters, too,"
+        },
+        {
+          "start": 2.4983673469387755,
+          "end": 3.86140589569161,
+          "speaker": "narrator",
+          "text": "Nib remembered proudly."
+        }
+      ],
+      "sha256": "be5621b1183a00e845a221b4c21de9281fd92b2026c892a0024761c11dfc1acb"
+    },
+    "a-flat-strap:p4": {
+      "file": "assets/narration/24.wav",
+      "duration": 4.360770975056689,
+      "text": "\u201cIt does,\u201d Lark agreed warmly. \u201cRead the whole little word. Find fit.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.6203628117913832,
+          "speaker": "lark",
+          "text": "It does,"
+        },
+        {
+          "start": 0.6203628117913832,
+          "end": 1.9808616780045352,
+          "speaker": "narrator",
+          "text": "Lark agreed warmly."
+        },
+        {
+          "start": 1.9808616780045352,
+          "end": 4.360770975056689,
+          "speaker": "lark",
+          "text": "Read the whole little word. Find fit."
+        }
+      ],
+      "sha256": "56f616d3217fd3aa504d40b0413ac1f79a525be8f19c06ba1b515f7b44bed008"
+    },
+    "a-story-for-the-rest:p1": {
+      "file": "assets/narration/25.wav",
+      "duration": 11.339954648526078,
+      "text": "The strap fitted comfortably again. Lark rested while Nib drew a very small story on the spare half of the page. His drawings showed two little mice called Sam and Pip, and a hand fan.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 11.339954648526078,
+          "speaker": "narrator",
+          "text": "The strap fitted comfortably again. Lark rested while Nib drew a very small story on the spare half of the page. His drawings showed two little mice called Sam and Pip, and a hand fan."
+        }
+      ],
+      "sha256": "0620f628dcba04252fd7448a19bc288a87a5209153a5db0cd1c3386405182872"
+    },
+    "a-story-for-the-rest:p2": {
+      "file": "assets/narration/26.wav",
+      "duration": 6.30172335600907,
+      "text": "\u201cA story about a fan,\u201d Nib announced contentedly. \u201cA fan that has no opinions about directions.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.5579591836734694,
+          "speaker": "nib",
+          "text": "A story about a fan,"
+        },
+        {
+          "start": 1.5579591836734694,
+          "end": 3.1415873015873017,
+          "speaker": "narrator",
+          "text": "Nib announced contentedly."
+        },
+        {
+          "start": 3.1415873015873017,
+          "end": 6.30172335600907,
+          "speaker": "nib",
+          "text": "A fan that has no opinions about directions."
+        }
+      ],
+      "sha256": "7cd75c66d3e062c885dc8bdbaf5e2b540a53862f5e477733aa31031a978fce54"
+    },
+    "a-story-for-the-rest:p3": {
+      "file": "assets/narration/27.wav",
+      "duration": 10.346621315192744,
+      "text": "Lark showed you the names before the reading. Capital S made the same sound as little s. Capital P made the same sound as little p. You already knew every sound in the words below.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 10.346621315192744,
+          "speaker": "narrator",
+          "text": "Lark showed you the names before the reading. Capital S made the same sound as little s. Capital P made the same sound as little p. You already knew every sound in the words below."
+        }
+      ],
+      "sha256": "2489e20d1f33d7739da8a4ec5a67df0ea245da3c1d352006e70315d53efc0d8d"
+    },
+    "a-story-for-the-rest:p4": {
+      "file": "assets/narration/28.wav",
+      "duration": 9.658140589569161,
+      "text": "\u201cYou can read this part yourself,\u201d Lark invited gently. \u201cTake each sentence in turn. Let your finger follow underneath, and tap a word if you want help.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.030249433106576,
+          "speaker": "lark",
+          "text": "You can read this part yourself,"
+        },
+        {
+          "start": 2.030249433106576,
+          "end": 3.4952380952380953,
+          "speaker": "narrator",
+          "text": "Lark invited gently."
+        },
+        {
+          "start": 3.4952380952380953,
+          "end": 9.658140589569161,
+          "speaker": "lark",
+          "text": "Take each sentence in turn. Let your finger follow underneath, and tap a word if you want help."
+        }
+      ],
+      "sha256": "3f091f51bdf42b14fb5278860dc02fad645aeba5366754a4baa3b13c0ec01236"
+    },
+    "what-the-page-tells:p1": {
+      "file": "assets/narration/29.wav",
+      "duration": 10.028027210884353,
+      "text": "The little story had running, resting, and a helpful fan. Nib looked at his picture again. This time the picture could wait. The words told who had done each job.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 10.028027210884353,
+          "speaker": "narrator",
+          "text": "The little story had running, resting, and a helpful fan. Nib looked at his picture again. This time the picture could wait. The words told who had done each job."
+        }
+      ],
+      "sha256": "7af9563582e1228ed6dd7154d217e49fe186c6f9ec376d6aba6bb05df6356dd6"
+    },
+    "what-the-page-tells:p2": {
+      "file": "assets/narration/30.wav",
+      "duration": 5.530294784580499,
+      "text": "\u201cWho used the fan in our little story?\u201d Lark asked gently. \u201cYou can look back at the sentences.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.209251700680272,
+          "speaker": "lark",
+          "text": "Who used the fan in our little story?"
+        },
+        {
+          "start": 2.209251700680272,
+          "end": 3.4884807256235826,
+          "speaker": "narrator",
+          "text": "Lark asked gently."
+        },
+        {
+          "start": 3.4884807256235826,
+          "end": 5.530294784580499,
+          "speaker": "lark",
+          "text": "You can look back at the sentences."
+        }
+      ],
+      "sha256": "7bb3c2656d0afac1b07fee94460be4d816a295295273dd51e8ae58eb4e7722e2"
+    },
+    "the-pot-beside-the-water:p1": {
+      "file": "assets/narration/31.wav",
+      "duration": 12.424807256235828,
+      "text": "Lark tucked the finished fork page into the route book. No new map section appeared. You had something more useful for today: the right path, a comfortable strap, and a clear record of the way you came.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 12.424807256235828,
+          "speaker": "narrator",
+          "text": "Lark tucked the finished fork page into the route book. No new map section appeared. You had something more useful for today: the right path, a comfortable strap, and a clear record of the way you came."
+        }
+      ],
+      "sha256": "f31a1c54c979bc6f308ff28b8e6e73aecedf8d5ce4356aa4e36a80cc94c6c6ed"
+    },
+    "the-pot-beside-the-water:p2": {
+      "file": "assets/narration/32.wav",
+      "duration": 11.711473922902494,
+      "text": "The ferns thinned. Ahead, the creek flashed between pale stones. The path ended on a broad dry bank. A little clay pot stood on a low stump, and a reed-roofed hut waited across the water.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 11.711473922902494,
+          "speaker": "narrator",
+          "text": "The ferns thinned. Ahead, the creek flashed between pale stones. The path ended on a broad dry bank. A little clay pot stood on a low stump, and a reed-roofed hut waited across the water."
+        }
+      ],
+      "sha256": "04e5b521294f0c39677b37e91b7600c099820ead38e8f01f6c70a2f99a29f9f1"
+    },
+    "the-pot-beside-the-water:p3": {
+      "file": "assets/narration/33.wav",
+      "duration": 3.402902494331066,
+      "text": "\u201cOur first stop is getting nearer,\u201d Lark murmured eagerly.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.042403628117914,
+          "speaker": "lark",
+          "text": "Our first stop is getting nearer,"
+        },
+        {
+          "start": 2.042403628117914,
+          "end": 3.402902494331066,
+          "speaker": "narrator",
+          "text": "Lark murmured eagerly."
+        }
+      ],
+      "sha256": "9bad982a9905e38d27d303f19f0ca88d0e8f4c25b9c45fbf1ba5efffb585bbbf"
+    },
+    "the-pot-beside-the-water:p4": {
+      "file": "assets/narration/34.wav",
+      "duration": 6.982267573696145,
+      "text": "Nib counted the bag\u2019s pockets with one careful paw. Three invitations. All safe. None delivered yet.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 6.982267573696145,
+          "speaker": "narrator",
+          "text": "Nib counted the bag\u2019s pockets with one careful paw. Three invitations. All safe. None delivered yet."
+        }
+      ],
+      "sha256": "7c811e99afd41193b983df93f15874cbd36382eb78938b3c1c962d2f4c5f0640"
+    },
+    "the-pot-beside-the-water:p5": {
+      "file": "assets/narration/35.wav",
+      "duration": 4.826802721088435,
+      "text": "\u201cFirst fork found,\u201d Nib declared proudly. \u201cFirst delivery still to come.\u201d",
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.5054421768707482,
+          "speaker": "nib",
+          "text": "First fork found,"
+        },
+        {
+          "start": 1.5054421768707482,
+          "end": 2.8685714285714283,
+          "speaker": "narrator",
+          "text": "Nib declared proudly."
+        },
+        {
+          "start": 2.8685714285714283,
+          "end": 4.826802721088435,
+          "speaker": "nib",
+          "text": "First delivery still to come."
+        }
+      ],
+      "sha256": "fa7c84a95a16920b413c0a4e93df3b2f0232f8d7855454c66029a44f371c583a"
+    },
+    "the-pot-beside-the-water:p6": {
+      "file": "assets/narration/36.wav",
+      "duration": 8.65655328798186,
+      "text": "A breeze stirred the reeds. Behind you, the wooden fan kept turning beside its own path. Ahead, the quiet little pot held the next clue.",
+      "cues": [
+        {
+          "start": 0,
+          "end": 8.65655328798186,
+          "speaker": "narrator",
+          "text": "A breeze stirred the reeds. Behind you, the wooden fan kept turning beside its own path. Ahead, the quiet little pot held the next clue."
+        }
+      ],
+      "sha256": "bbdd4c715130a8ddfc4387638c075ac226bb2e04f776bef9c573ea7681b0fdfe"
+    }
+  },
+  "support": {
+    "Read am. Slide the sounds, or read with Lark.": {
+      "file": "assets/narration/support-01.wav",
+      "duration": 3.2970068027210884,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.2970068027210884,
+          "speaker": "lark",
+          "text": "Read am. Slide the sounds, or read with Lark."
+        }
+      ]
+    },
+    "Our little word is still with us.": {
+      "file": "assets/narration/support-02.wav",
+      "duration": 1.7753741496598638,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.7753741496598638,
+          "speaker": "lark",
+          "text": "Our little word is still with us."
+        }
+      ]
+    },
+    "Which letter makes the soft air sound at the start of fan?": {
+      "file": "assets/narration/support-03.wav",
+      "duration": 3.255827664399093,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.255827664399093,
+          "speaker": "lark",
+          "text": "Which letter makes the soft air sound at the start of fan?"
+        }
+      ]
+    },
+    "The soft air sound goes with f.": {
+      "file": "assets/narration/support-04.wav",
+      "duration": 1.962766439909297,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.962766439909297,
+          "speaker": "lark",
+          "text": "The soft air sound goes with f."
+        }
+      ]
+    },
+    "That is our closed-lip hum. Let air pass between your top teeth and lower lip.": {
+      "file": "assets/narration/support-05.wav",
+      "duration": 4.768299319727891,
+      "cues": [
+        {
+          "start": 0,
+          "end": 4.768299319727891,
+          "speaker": "lark",
+          "text": "That is our closed-lip hum. Let air pass between your top teeth and lower lip."
+        }
+      ]
+    },
+    "Read both labels. Find fin for our route.": {
+      "file": "assets/narration/support-06.wav",
+      "duration": 3.0416780045351475,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.0416780045351475,
+          "speaker": "lark",
+          "text": "Read both labels. Find fin for our route."
+        }
+      ]
+    },
+    "Fin. The fish waymarker shows our route.": {
+      "file": "assets/narration/support-07.wav",
+      "duration": 2.75718820861678,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.75718820861678,
+          "speaker": "lark",
+          "text": "Fin. The fish waymarker shows our route."
+        }
+      ]
+    },
+    "Keep f and n. Listen to the middle: the short i in pin.": {
+      "file": "assets/narration/support-08.wav",
+      "duration": 3.3337868480725623,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.3337868480725623,
+          "speaker": "lark",
+          "text": "Keep f and n. Listen to the middle: the short i in pin."
+        }
+      ]
+    },
+    "Write f: curve over, down, then across.": {
+      "file": "assets/narration/support-09.wav",
+      "duration": 3.2489342403628116,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.2489342403628116,
+          "speaker": "lark",
+          "text": "Write f: curve over, down, then across."
+        }
+      ]
+    },
+    "Your f is on the courier page.": {
+      "file": "assets/narration/support-10.wav",
+      "duration": 1.9024036281179137,
+      "cues": [
+        {
+          "start": 0,
+          "end": 1.9024036281179137,
+          "speaker": "lark",
+          "text": "Your f is on the courier page."
+        }
+      ]
+    },
+    "Read the whole word. Find fit.": {
+      "file": "assets/narration/support-11.wav",
+      "duration": 2.1244897959183673,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.1244897959183673,
+          "speaker": "lark",
+          "text": "Read the whole word. Find fit."
+        }
+      ]
+    },
+    "Fit. The strap lies flat without a twist.": {
+      "file": "assets/narration/support-12.wav",
+      "duration": 2.9429478458049885,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.9429478458049885,
+          "speaker": "lark",
+          "text": "Fit. The strap lies flat without a twist."
+        }
+      ]
+    },
+    "That ends with n. Listen to the quick t at the end of fit.": {
+      "file": "assets/narration/support-13.wav",
+      "duration": 2.9202721088435375,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.9202721088435375,
+          "speaker": "lark",
+          "text": "That ends with n. Listen to the quick t at the end of fit."
+        }
+      ]
+    },
+    "Read Nib\u2019s small story. S and s, and P and p, make the same little sounds.": {
+      "file": "assets/narration/support-14.wav",
+      "duration": 5.74671201814059,
+      "cues": [
+        {
+          "start": 0,
+          "end": 5.74671201814059,
+          "speaker": "lark",
+          "text": "Read Nib\u2019s small story. S and s, and P and p, make the same little sounds."
+        }
+      ]
+    },
+    "You reached the end of the little story.": {
+      "file": "assets/narration/support-15.wav",
+      "duration": 2.053469387755102,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.053469387755102,
+          "speaker": "lark",
+          "text": "You reached the end of the little story."
+        }
+      ]
+    },
+    "Who used the fan in the little story?": {
+      "file": "assets/narration/support-16.wav",
+      "duration": 2.186031746031746,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.186031746031746,
+          "speaker": "lark",
+          "text": "Who used the fan in the little story?"
+        }
+      ]
+    },
+    "Pip used the fan. Sam had been running.": {
+      "file": "assets/narration/support-17.wav",
+      "duration": 2.6140136054421768,
+      "cues": [
+        {
+          "start": 0,
+          "end": 2.6140136054421768,
+          "speaker": "lark",
+          "text": "Pip used the fan. Sam had been running."
+        }
+      ]
+    },
+    "Read the sentence with fan again. Who did fan Sam?": {
+      "file": "assets/narration/support-18.wav",
+      "duration": 3.5507936507936506,
+      "cues": [
+        {
+          "start": 0,
+          "end": 3.5507936507936506,
+          "speaker": "lark",
+          "text": "Read the sentence with fan again. Who did fan Sam?"
+        }
+      ]
+    },
+    "fan": {
+      "file": "assets/narration/support-19.wav",
+      "duration": 0.6093424036281179,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.6093424036281179,
+          "speaker": "lark",
+          "text": "fan"
+        }
+      ]
+    },
+    "fin": {
+      "file": "assets/narration/support-20.wav",
+      "duration": 0.5512925170068027,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.5512925170068027,
+          "speaker": "lark",
+          "text": "fin"
+        }
+      ]
+    },
+    "fit": {
+      "file": "assets/narration/support-21.wav",
+      "duration": 0.5512925170068027,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.5512925170068027,
+          "speaker": "lark",
+          "text": "fit"
+        }
+      ]
+    },
+    "am": {
+      "file": "assets/narration/support-22.wav",
+      "duration": 0.42439909297052153,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.42439909297052153,
+          "speaker": "lark",
+          "text": "am"
+        }
+      ]
+    },
+    "pad": {
+      "file": "assets/narration/support-23.wav",
+      "duration": 0.44290249433106577,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.44290249433106577,
+          "speaker": "lark",
+          "text": "pad"
+        }
+      ]
+    },
+    "Sam": {
+      "file": "assets/narration/support-24.wav",
+      "duration": 0.5975056689342404,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.5975056689342404,
+          "speaker": "lark",
+          "text": "Sam"
+        }
+      ]
+    },
+    "ran": {
+      "file": "assets/narration/support-25.wav",
+      "duration": 0.571156462585034,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.571156462585034,
+          "speaker": "lark",
+          "text": "ran"
+        }
+      ]
+    },
+    "sat": {
+      "file": "assets/narration/support-26.wav",
+      "duration": 0.5626757369614512,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.5626757369614512,
+          "speaker": "lark",
+          "text": "sat"
+        }
+      ]
+    },
+    "Pip": {
+      "file": "assets/narration/support-27.wav",
+      "duration": 0.44290249433106577,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.44290249433106577,
+          "speaker": "lark",
+          "text": "Pip"
+        }
+      ]
+    },
+    "did": {
+      "file": "assets/narration/support-28.wav",
+      "duration": 0.4249433106575964,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.4249433106575964,
+          "speaker": "lark",
+          "text": "did"
+        }
+      ]
+    },
+    "m": {
+      "file": "assets/narration/support-29.wav",
+      "duration": 0.3672108843537415,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.3672108843537415,
+          "speaker": "lark",
+          "text": "m"
+        }
+      ]
+    },
+    "f": {
+      "file": "assets/narration/support-30.wav",
+      "duration": 0.4365532879818594,
+      "cues": [
+        {
+          "start": 0,
+          "end": 0.4365532879818594,
+          "speaker": "lark",
+          "text": "f"
+        }
+      ]
+    }
+  },
+  "note": "Temporary installed Mac voices. Not the approved Lark and Nib cast. Never eligible for learning or classroom completion credit."
+}

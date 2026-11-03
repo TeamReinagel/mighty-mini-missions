@@ -1,0 +1,338 @@
+{
+  "source": {
+    "name": "ElevenLabs_s2e2-fan-at-the-fork-manuscript.mp3",
+    "sha256": "b52383ce8c74f9feffd4370604143c7f049dfbe2bbaf2021f36c7ce2de323529",
+    "duration": 391.31535147392293,
+    "sampleRate": 44100,
+    "model": "whisper-large-v3-turbo-4bit"
+  },
+  "allSourceRangesContiguous": true,
+  "allCutsInMeasuredQuiet": true,
+  "sourceCoverageSeconds": 391.3153514739229,
+  "clips": [
+    {
+      "id": "a-bag-that-travels:p1",
+      "file": "assets/narration/01.mp3",
+      "sourceStart": 0.0,
+      "sourceEnd": 26.707301587301586,
+      "decodedDuration": 26.707301587301586,
+      "expectedDuration": 26.707301587301586,
+      "sha256": "2cb69c93318d9eab4b66c9cfba84b24208e41ef658859accbe150f49e69a90bb"
+    },
+    {
+      "id": "a-bag-that-travels:p2",
+      "file": "assets/narration/02.mp3",
+      "sourceStart": 26.707301587301586,
+      "sourceEnd": 36.89256235827664,
+      "decodedDuration": 10.185260770975058,
+      "expectedDuration": 10.185260770975058,
+      "sha256": "0cf94e2e88e0bd8d6379043fc715bb10cd729cf51b48262806f421bcb0a9dd62"
+    },
+    {
+      "id": "a-bag-that-travels:p3",
+      "file": "assets/narration/03.mp3",
+      "sourceStart": 36.89256235827664,
+      "sourceEnd": 52.384625850340136,
+      "decodedDuration": 15.492063492063492,
+      "expectedDuration": 15.492063492063492,
+      "sha256": "b6cf5f5c4949c50acbd024ed7b27c3439fbdf85d6be091810b77e81b6c837e43"
+    },
+    {
+      "id": "a-bag-that-travels:p4",
+      "file": "assets/narration/04.mp3",
+      "sourceStart": 52.384625850340136,
+      "sourceEnd": 61.864875283446715,
+      "decodedDuration": 9.480249433106575,
+      "expectedDuration": 9.480249433106575,
+      "sha256": "75b5890e3226c3dd8f63e708bcc3f6ec8df9f40af9dcf9064f5a285636d2af09"
+    },
+    {
+      "id": "a-bag-that-travels:p5",
+      "file": "assets/narration/05.mp3",
+      "sourceStart": 61.864875283446715,
+      "sourceEnd": 72.97802721088435,
+      "decodedDuration": 11.113151927437642,
+      "expectedDuration": 11.113151927437642,
+      "sha256": "03edb72ca18ba86ec65765793aece3d5a27a740a0b6ece11651fc0a8c2974dde"
+    },
+    {
+      "id": "two-important-posts:p1",
+      "file": "assets/narration/06.mp3",
+      "sourceStart": 72.97802721088435,
+      "sourceEnd": 88.64072562358277,
+      "decodedDuration": 15.662698412698413,
+      "expectedDuration": 15.662698412698413,
+      "sha256": "08639fd3b05505be7e0e01d72c3a7c8b223d9b55852bf47ffa0825b29be77216"
+    },
+    {
+      "id": "two-important-posts:p2",
+      "file": "assets/narration/07.mp3",
+      "sourceStart": 88.64072562358277,
+      "sourceEnd": 93.55700680272109,
+      "decodedDuration": 4.916281179138322,
+      "expectedDuration": 4.916281179138322,
+      "sha256": "3cbb2ab00bc127a5fcac4e763a49c38b53e239ea97d8c3f82dac780360ebbe15"
+    },
+    {
+      "id": "two-important-posts:p3",
+      "file": "assets/narration/08.mp3",
+      "sourceStart": 93.55700680272109,
+      "sourceEnd": 101.4446485260771,
+      "decodedDuration": 7.887641723356009,
+      "expectedDuration": 7.887641723356009,
+      "sha256": "710094473803e35f04a911e7186b2ab30c5d038f8624383d11b53685d7b0dc38"
+    },
+    {
+      "id": "two-important-posts:p4",
+      "file": "assets/narration/09.mp3",
+      "sourceStart": 101.4446485260771,
+      "sourceEnd": 110.0940589569161,
+      "decodedDuration": 8.649410430839001,
+      "expectedDuration": 8.649410430839001,
+      "sha256": "10320c1ff795a5941f8dae4f0ab34ebb7646be021fa2b560916d4871abab5ac8"
+    },
+    {
+      "id": "two-important-posts:p5",
+      "file": "assets/narration/10.mp3",
+      "sourceStart": 110.0940589569161,
+      "sourceEnd": 122.80727891156462,
+      "decodedDuration": 12.713219954648526,
+      "expectedDuration": 12.713219954648526,
+      "sha256": "6301b8d291da26d4c2a63124420462dd8c1ebd1df5dab0a19b355fcc692bb15c"
+    },
+    {
+      "id": "two-important-posts:p6",
+      "file": "assets/narration/11.mp3",
+      "sourceStart": 122.80727891156462,
+      "sourceEnd": 139.5139455782313,
+      "decodedDuration": 16.706666666666667,
+      "expectedDuration": 16.706666666666667,
+      "sha256": "f1e211097390643a17f0a08c704a4811017ba37ced729981d46f4256b225b5bc"
+    },
+    {
+      "id": "a-small-middle-matters:p1",
+      "file": "assets/narration/12.mp3",
+      "sourceStart": 139.5139455782313,
+      "sourceEnd": 152.9654648526077,
+      "decodedDuration": 13.451519274376418,
+      "expectedDuration": 13.451519274376418,
+      "sha256": "76e041eaf64612f8f47220d2a0cab91d04bfaf18faf9024a1a054c5b94d40649"
+    },
+    {
+      "id": "a-small-middle-matters:p2",
+      "file": "assets/narration/13.mp3",
+      "sourceStart": 152.9654648526077,
+      "sourceEnd": 161.6618820861678,
+      "decodedDuration": 8.69641723356009,
+      "expectedDuration": 8.69641723356009,
+      "sha256": "0ff5687b09175ddbcc4c2daf44dc2e95f8a3304937f146928c06cd74b4a9183b"
+    },
+    {
+      "id": "a-small-middle-matters:p3",
+      "file": "assets/narration/14.mp3",
+      "sourceStart": 161.6618820861678,
+      "sourceEnd": 168.04238095238094,
+      "decodedDuration": 6.380498866213152,
+      "expectedDuration": 6.380498866213152,
+      "sha256": "88980a7e4eeab5de9bfa3e8e83943bdea42a6410dbd9c670898c89fb14c34193"
+    },
+    {
+      "id": "a-small-middle-matters:p4",
+      "file": "assets/narration/15.mp3",
+      "sourceStart": 168.04238095238094,
+      "sourceEnd": 179.21705215419502,
+      "decodedDuration": 11.174671201814059,
+      "expectedDuration": 11.174671201814059,
+      "sha256": "b9e45c64ba3fc56d54848151a6a81bb3b076c8f6aa5c565fc449ed021a7a7802"
+    },
+    {
+      "id": "the-quiet-marker:p1",
+      "file": "assets/narration/16.mp3",
+      "sourceStart": 179.21705215419502,
+      "sourceEnd": 194.54190476190476,
+      "decodedDuration": 15.32485260770975,
+      "expectedDuration": 15.32485260770975,
+      "sha256": "ed9b54075f5b29c4bf549a405a68de42d2542dc2964d536ad64e3086f4305cad"
+    },
+    {
+      "id": "the-quiet-marker:p2",
+      "file": "assets/narration/17.mp3",
+      "sourceStart": 194.54190476190476,
+      "sourceEnd": 198.39836734693878,
+      "decodedDuration": 3.8564625850340137,
+      "expectedDuration": 3.8564625850340137,
+      "sha256": "5aaa076860d0545ddf3396b423a5c52db2a6735cf4bf2e5e629d4eb25d50055b"
+    },
+    {
+      "id": "the-quiet-marker:p3",
+      "file": "assets/narration/18.mp3",
+      "sourceStart": 198.39836734693878,
+      "sourceEnd": 205.1804081632653,
+      "decodedDuration": 6.78204081632653,
+      "expectedDuration": 6.78204081632653,
+      "sha256": "639547af9786d323059c54492c96ee949d2d24b5c277b134d252ca7cfad16a0d"
+    },
+    {
+      "id": "the-quiet-marker:p4",
+      "file": "assets/narration/19.mp3",
+      "sourceStart": 205.1804081632653,
+      "sourceEnd": 213.65827664399092,
+      "decodedDuration": 8.477868480725624,
+      "expectedDuration": 8.477868480725624,
+      "sha256": "0316a93be2aee12e7031b504e2771f2cf9f85f45b75562af54d6e18354353cb3"
+    },
+    {
+      "id": "the-quiet-marker:p5",
+      "file": "assets/narration/20.mp3",
+      "sourceStart": 213.65827664399092,
+      "sourceEnd": 226.70678004535148,
+      "decodedDuration": 13.048503401360545,
+      "expectedDuration": 13.048503401360545,
+      "sha256": "0a81a46cf4eda032f0a98d0d087757ccee745ba01d6a2d7c4b503af08dc991bc"
+    },
+    {
+      "id": "a-flat-strap:p1",
+      "file": "assets/narration/21.mp3",
+      "sourceStart": 226.70678004535148,
+      "sourceEnd": 237.78414965986394,
+      "decodedDuration": 11.077369614512472,
+      "expectedDuration": 11.077369614512472,
+      "sha256": "5b5da9409e1c9f4b074b3fe9f269f7ade964188994f17c5d88e547bc883cc91d"
+    },
+    {
+      "id": "a-flat-strap:p2",
+      "file": "assets/narration/22.mp3",
+      "sourceStart": 237.78414965986394,
+      "sourceEnd": 250.40274376417233,
+      "decodedDuration": 12.61859410430839,
+      "expectedDuration": 12.61859410430839,
+      "sha256": "01cae8febcd547f29e42c6fe902f16d6a0339c36d71bd7066d212e075830fcfa"
+    },
+    {
+      "id": "a-flat-strap:p3",
+      "file": "assets/narration/23.mp3",
+      "sourceStart": 250.40274376417233,
+      "sourceEnd": 255.85113378684807,
+      "decodedDuration": 5.448390022675737,
+      "expectedDuration": 5.448390022675737,
+      "sha256": "b27a2c9e68b4f456a167ffcdd1d1ba09f2665beb3b4242cf23b857191af31217"
+    },
+    {
+      "id": "a-flat-strap:p4",
+      "file": "assets/narration/24.mp3",
+      "sourceStart": 255.85113378684807,
+      "sourceEnd": 263.42156462585035,
+      "decodedDuration": 7.570430839002268,
+      "expectedDuration": 7.570430839002268,
+      "sha256": "f1df5ae6b6671c14c06c078cea4fee6a92a448fd36823dbb18aea0f2e397e902"
+    },
+    {
+      "id": "a-story-for-the-rest:p1",
+      "file": "assets/narration/25.mp3",
+      "sourceStart": 263.42156462585035,
+      "sourceEnd": 277.17047619047617,
+      "decodedDuration": 13.74891156462585,
+      "expectedDuration": 13.74891156462585,
+      "sha256": "3c6c160326c2f3d772675495f8c9ec6f5d2fc75c7f1c2a6cae80ae161aea6353"
+    },
+    {
+      "id": "a-story-for-the-rest:p2",
+      "file": "assets/narration/26.mp3",
+      "sourceStart": 277.17047619047617,
+      "sourceEnd": 286.09668934240364,
+      "decodedDuration": 8.926213151927438,
+      "expectedDuration": 8.926213151927438,
+      "sha256": "f7970445171d3f9f7f3ceb19d53331921242c34567d765d2855be19b23dc5314"
+    },
+    {
+      "id": "a-story-for-the-rest:p3",
+      "file": "assets/narration/27.mp3",
+      "sourceStart": 286.09668934240364,
+      "sourceEnd": 299.3061678004535,
+      "decodedDuration": 13.209478458049887,
+      "expectedDuration": 13.209478458049887,
+      "sha256": "c10fff0fc61d22cbae4bce82b902dceff396f7c251220e20ea663b2b1afcd694"
+    },
+    {
+      "id": "a-story-for-the-rest:p4",
+      "file": "assets/narration/28.mp3",
+      "sourceStart": 299.3061678004535,
+      "sourceEnd": 311.34297052154193,
+      "decodedDuration": 12.036802721088435,
+      "expectedDuration": 12.036802721088435,
+      "sha256": "be79e1d4c8bf700527b34ad3447a6b256860ed05509aee25b6ac09375bb4b1fa"
+    },
+    {
+      "id": "what-the-page-tells:p1",
+      "file": "assets/narration/29.mp3",
+      "sourceStart": 311.34297052154193,
+      "sourceEnd": 323.42784580498864,
+      "decodedDuration": 12.084875283446712,
+      "expectedDuration": 12.084875283446712,
+      "sha256": "249298becaca15c87e038ece3625c17c9ca11010acfe752a2cd8cf26753b71d7"
+    },
+    {
+      "id": "what-the-page-tells:p2",
+      "file": "assets/narration/30.mp3",
+      "sourceStart": 323.42784580498864,
+      "sourceEnd": 331.4928344671202,
+      "decodedDuration": 8.064988662131519,
+      "expectedDuration": 8.064988662131519,
+      "sha256": "fe1390d40bec3f03589d4225109b1f5895da50827422779026e8249ac7c9c98f"
+    },
+    {
+      "id": "the-pot-beside-the-water:p1",
+      "file": "assets/narration/31.mp3",
+      "sourceStart": 331.4928344671202,
+      "sourceEnd": 344.9473469387755,
+      "decodedDuration": 13.45451247165533,
+      "expectedDuration": 13.45451247165533,
+      "sha256": "8a646f586d9f47cbba77917b3b8a6ef37c49a7717b394e3934a14c061fef4fa6"
+    },
+    {
+      "id": "the-pot-beside-the-water:p2",
+      "file": "assets/narration/32.mp3",
+      "sourceStart": 344.9473469387755,
+      "sourceEnd": 359.3708843537415,
+      "decodedDuration": 14.423537414965987,
+      "expectedDuration": 14.423537414965987,
+      "sha256": "cb241996eb4080d6c9a9ba64058dfb397828642810129dcbbf785bf5145c6401"
+    },
+    {
+      "id": "the-pot-beside-the-water:p3",
+      "file": "assets/narration/33.mp3",
+      "sourceStart": 359.3708843537415,
+      "sourceEnd": 364.508253968254,
+      "decodedDuration": 5.137369614512472,
+      "expectedDuration": 5.137369614512472,
+      "sha256": "544d85ff181c77b9d957c750c555036ce7e0a4a8a70a3587783756d045836509"
+    },
+    {
+      "id": "the-pot-beside-the-water:p4",
+      "file": "assets/narration/34.mp3",
+      "sourceStart": 364.508253968254,
+      "sourceEnd": 372.88875283446714,
+      "decodedDuration": 8.380498866213152,
+      "expectedDuration": 8.380498866213152,
+      "sha256": "a7b0f79e55f3992520d7d20ad97a4e9c93cf6c8d708913a8af21baa57f09d5de"
+    },
+    {
+      "id": "the-pot-beside-the-water:p5",
+      "file": "assets/narration/35.mp3",
+      "sourceStart": 372.88875283446714,
+      "sourceEnd": 380.30149659863946,
+      "decodedDuration": 7.412743764172336,
+      "expectedDuration": 7.412743764172336,
+      "sha256": "b304b8b4848e8008e047322062239fb9efed1e7bbb9d321413562fcae50ffaa0"
+    },
+    {
+      "id": "the-pot-beside-the-water:p6",
+      "file": "assets/narration/36.mp3",
+      "sourceStart": 380.30149659863946,
+      "sourceEnd": 391.31535147392293,
+      "decodedDuration": 11.013854875283446,
+      "expectedDuration": 11.013854875283446,
+      "sha256": "d26ac7a4808be593b609d03fc1dba497e9b9f902d1eb4059f1b17fb8f2ed37b5"
+    }
+  ]
+}

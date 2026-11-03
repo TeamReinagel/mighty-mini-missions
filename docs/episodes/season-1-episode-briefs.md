@@ -1,5 +1,8 @@
 # The Map Pieces: Episode Briefs
 
+
+**November 3 production rule:** Include new sound teaching, available word reading, writing, and story comprehension. A separate sentence/story-reading section is optional in Season 1. Allow at most one extra non-literacy interaction, including extra opening/repair/collection substeps. Narrate or animate the others. Completed tasks resume the story automatically; no additional Continue tap. See [PRODUCTION.md](PRODUCTION.md) for the tablet layout and evidence requirements. Older turn tables remain plot references and must be adapted before production.
+
 Lark & Nib’s Treasure Quest · Season 1 · October 30, 2026
 
 These nine briefs develop the [season story plan](season-1-story-plan.md) into individual stories ready for prose drafting. They continue the **narrated** Moon Path, whose ending reveals the orchard and sends a rolling apple into camp. They do not continue the older sun-path screenplay prototype.
@@ -76,13 +79,14 @@ Production update, November 1: [The Apple Catcher](s1e2-apple-catcher-production
 
 ### Child turns
 
-| Gate | Prompt and action | Kind | Feedback / narrated consequence |
+| Gate | Child task | Literacy role | Automatic consequence |
 | --- | --- | --- | --- |
-| 3.1 | Revisit the printed **am** in the last journal page; offer oral reading or supported sound joining | R | Model only after the attempt; no spoken response is inferred from pressing Continue |
-| 3.2 | Model /s/, then touch s among s and m | M | Contrast the moving-air hiss with the closed-lip hum |
-| 3.3 | Name sack and mat pictures: “Find the thing that starts with /s/.” Touch sack | A: initial-sound discrimination | “Mat starts with /m/. Listen to sack.” The empty sack is brought beside the wagon |
-| 3.4 | Fill the sack to its clear line and secure its loop to the wagon | S | A soft thump and the settled wagon show the ballast working |
-| 3.5 | Choose the small folded sail rather than the still-oversized cloth | S: practical application | The large cloth pulls sideways during a brief safe test; fold it smaller and try again |
+| 3.1 | Read am with optional sound slide | word reading | Resume the sail story |
+| 3.2 | Hear s, then choose s among s/m | new sound | Keep the new sound on the page |
+| 3.3 | Write s with the guided form | writing | Resume the supply-shelter scene |
+| 3.4 | Hear mat/sack, then choose the /s/ object | sound application | Crew brings the sack |
+| 3.5 | Fill the sack to its line | one extra story action | Crew ties it low and folds the sail |
+| 3.6 | Choose which sail helped the wagon stay steady | comprehension | Resume the safe journey to the ridge |
 
 **Dialogue anchors:** “A sail the size of the sky!” Nib announced grandly. “A wagon the size of a mouse,” Lark replied cautiously. At the ridge: “Small sail. Sensible sack. Splendid sailing,” Nib murmured with satisfaction.
 
