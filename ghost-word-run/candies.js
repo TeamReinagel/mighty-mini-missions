@@ -1,80 +1,72 @@
 (() => {
   "use strict";
 
-  // 7 adorable, distinct candy varieties using ultra-polished, cute 3D assets:
-  // 1. Rainbow Swirl Lollipop (candy_swirl_pop.png)
-  // 2. Halloween Candy Corn (candy_corn.png)
-  // 3. Pink Strawberry Twist (candy_twist_pink.png)
-  // 4. Emerald Gummy Bear (candy_gummy_bear.png)
-  // 5. Royal Purple & Gold Truffle (candy_chocolate_truffle.png)
-  // 6. Orange & Lemon Citrus Twist (candy_twist_citrus.png)
-  // 7. Spooky Cute Pumpkin Sugar Drop (candy_pumpkin_drop.png)
-
+  // Seven Christmas gifts. Legacy IDs preserve saved progress.
   const CANDIES = [
     {
       id: "swirl-pop",
-      name: "Rainbow Swirl Pop",
-      src: "assets/candy_swirl_pop.png"
+      name: "Ruby Ribbon Gift",
+      src: "assets/christmas/gift_0.svg"
     },
     {
       id: "candy-corn",
-      name: "Candy Corn",
-      src: "assets/candy_corn.png"
+      name: "Evergreen Gift",
+      src: "assets/christmas/gift_1.svg"
     },
     {
       id: "twist-pink",
-      name: "Strawberry Twist",
-      src: "assets/candy_twist_pink.png"
+      name: "Snowflake Gift",
+      src: "assets/christmas/gift_2.svg"
     },
     {
       id: "gummy-bear",
-      name: "Emerald Gummy Bear",
-      src: "assets/candy_gummy_bear.png"
+      name: "Golden Gift",
+      src: "assets/christmas/gift_3.svg"
     },
     {
       id: "chocolate-truffle",
-      name: "Purple Gold Truffle",
-      src: "assets/candy_chocolate_truffle.png"
+      name: "Berry Gift",
+      src: "assets/christmas/gift_4.svg"
     },
     {
       id: "twist-citrus",
-      name: "Citrus Twist",
-      src: "assets/candy_twist_citrus.png"
+      name: "Winter Blue Gift",
+      src: "assets/christmas/gift_5.svg"
     },
     {
       id: "pumpkin-drop",
-      name: "Pumpkin Sugar Drop",
-      src: "assets/candy_pumpkin_drop.png"
+      name: "Candy Cane Gift",
+      src: "assets/christmas/gift_6.svg"
     }
   ];
 
-  // Trick-or-Treat Street houses. sign: where the door's sign panel sits, as % of the image (center x, center y).
+  // Christmas Village houses. sign: where the door's sign panel sits, as % of the image (center x, center y).
   const HOUSE_LIST = [
-    { src: "assets/house_purple.png", ratio: 420 / 330, sign: [49.6, 66.3] },
-    { src: "assets/house_orange.png", ratio: 420 / 367, sign: [49.4, 66.4] },
-    { src: "assets/house_green.png", ratio: 420 / 334, sign: [49.4, 72.9] }
+    { src: "assets/christmas/cottage_0.svg", ratio: 300 / 260, sign: [50.5, 72] },
+    { src: "assets/christmas/cottage_1.svg", ratio: 300 / 260, sign: [50.5, 72] },
+    { src: "assets/christmas/cottage_2.svg", ratio: 300 / 260, sign: [50.5, 72] }
   ];
   const HOUSES = HOUSE_LIST.map((h) => h.src);
 
   const GHOST_ASSETS = {
-    normal: "assets/ghost_normal.png",
-    happy: "assets/ghost_happy.png",
-    wobble: "assets/ghost_wobble.png",
-    missed: "assets/ghost_wobble.png"
+    normal: "assets/christmas/snowman_normal.svg",
+    happy: "assets/christmas/snowman_happy.svg",
+    wobble: "assets/christmas/snowman_wobble.svg",
+    missed: "assets/christmas/snowman_wobble.svg"
   };
 
-  // Each costume is a complete picture of Boo dressed up; it replaces all three plain poses,
+  // Each costume is a complete picture of Snowy dressed up; it replaces all three plain poses,
   // and the player's correct/missed animations carry the expression instead.
-  // Unlocked in this order on Trick-or-Treat Street. Ids are stored in saved progress, so keep them stable.
+  // Unlocked in this order in Christmas Village. Ids are stored in saved progress, so keep them stable.
   const COSTUMES = [
-    { id: "pumpkin-cap", name: "Pumpkin Hat", spoken: "a pumpkin hat costume", src: "assets/boo_pumpkin_cap.png" },
-    { id: "witch-hat", name: "Little Witch", spoken: "a witch costume", src: "assets/boo_witch.png" },
-    { id: "cat-ears", name: "Kitty Cat", spoken: "a kitty cat costume", src: "assets/boo_cat.png" },
-    { id: "crown", name: "Royal King", spoken: "a king costume", src: "assets/boo_king.png" },
-    { id: "pirate-hat", name: "Pirate Captain", spoken: "a pirate costume", src: "assets/boo_pirate.png" },
-    { id: "wizard-hat", name: "Wizard", spoken: "a wizard costume", src: "assets/boo_wizard.png" },
-    { id: "top-hat", name: "Fancy Top Hat", spoken: "a fancy top hat costume", src: "assets/boo_top_hat.png" },
-    { id: "bat-wings", name: "Little Bat", spoken: "a bat costume", src: "assets/boo_bat.png" }
+    { id: "pumpkin-cap", name: "Elf Hat", spoken: "an elf hat outfit", src: "assets/christmas/outfit_elf.svg" },
+    { id: "witch-hat", name: "Winter Knit", spoken: "a winter knit outfit", src: "assets/christmas/outfit_winter.svg" },
+    { id: "cat-ears", name: "Reindeer", spoken: "a reindeer outfit", src: "assets/christmas/outfit_reindeer.svg" },
+    { id: "crown", name: "Christmas Crown", spoken: "a Christmas crown outfit", src: "assets/christmas/outfit_crown.svg" },
+    { id: "pirate-hat", name: "Festive Scarf", spoken: "a festive scarf outfit", src: "assets/christmas/outfit_scarf.svg" },
+    { id: "wizard-hat", name: "Starlight Hat", spoken: "a starlight hat outfit", src: "assets/christmas/outfit_star.svg" },
+    { id: "top-hat", name: "Snowman Top Hat", spoken: "a snowman top hat outfit", src: "assets/christmas/outfit_top.svg" },
+    { id: "bat-wings", name: "Cozy Earmuffs", spoken: "a cozy earmuffs outfit", src: "assets/christmas/outfit_earmuffs.svg" }
   ];
 
   let wornCostumeId = null;
@@ -99,28 +91,28 @@
     return getCandySVG(idx, size);
   }
 
-  // Boo the Ghost with expressive high-polish character states: normal, happy, and wobble,
+  // Snowy the Snowman with expressive snowman states: normal, happy, and wobble,
   // wearing his current costume unless a costume id (or "none") is passed.
   function getGhostSVG(expression = "normal", size = 72, costumeId = wornCostumeId) {
     const costume = COSTUMES.find((c) => c.id === costumeId);
     const src = costume ? costume.src : (GHOST_ASSETS[expression] || GHOST_ASSETS.normal);
     const height = Math.round(size * 1.05);
-    const label = costume ? `Boo the Ghost dressed as ${costume.name}` : `Boo the Ghost (${expression})`;
+    const label = costume ? `Snowy the Snowman dressed as ${costume.name}` : `Snowy the Snowman (${expression})`;
     return `<img class="ghost-img ghost-svg ghost-${expression}" src="${src}" width="${size}" height="${height}" alt="${label}" draggable="false" />`;
   }
 
-  // Plump Jack-o'-Lantern Pumpkin Candy Bucket for the in-game HUD
+  // Christmas gift sack for the in-game HUD
   function getPumpkinBucketSVG(size = 48) {
     const width = size;
     const height = Math.round(size * 1.08);
-    return `<img class="pumpkin-bucket-img pumpkin-bucket-svg" src="assets/pumpkin_bucket.png" width="${width}" height="${height}" alt="Pumpkin Candy Bucket" draggable="false" />`;
+    return `<img class="pumpkin-bucket-img pumpkin-bucket-svg" src="assets/christmas/sack.svg" width="${width}" height="${height}" alt="Christmas Gift Sack" draggable="false" />`;
   }
 
-  // Glorious overflowing Jack-o'-Lantern bucket piled high with sweets for the end celebration
+  // Gift-filled Christmas sack for the end screen
   function getPumpkinBucketOverflowSVG(size = 210) {
     const width = size;
     const height = Math.round(size * 1.12);
-    return `<img class="pumpkin-bucket-overflow-img big-bucket-img" src="assets/pumpkin_bucket_overflow.png" width="${width}" height="${height}" alt="Overflowing Candy Bucket" draggable="false" />`;
+    return `<img class="pumpkin-bucket-overflow-img big-bucket-img" src="assets/christmas/sack_full.svg" width="${width}" height="${height}" alt="Sack Full of Christmas Gifts" draggable="false" />`;
   }
 
   function getPumpkinBucketBackSVG(size = 154) {
@@ -131,13 +123,13 @@
     return "";
   }
 
-  // Preload all polished cute image assets for smooth zero-latency rendering
+  // Preload the Christmas art before play.
   function preloadAllAssets() {
     const allUrls = [
       ...Object.values(GHOST_ASSETS),
-      "assets/pumpkin_bucket.png",
-      "assets/pumpkin_bucket_overflow.png",
-      "assets/candy_heart_restore.png",
+      "assets/christmas/sack.svg",
+      "assets/christmas/sack_full.svg",
+      "assets/christmas/heart.svg",
       ...CANDIES.map(c => c.src),
       ...COSTUMES.map(c => c.src),
       ...HOUSES

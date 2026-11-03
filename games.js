@@ -68,7 +68,7 @@ window.MIGHTY_GAMES = [
   },
   {
     id: "ghost-word-run",
-    title: "Ghost Word Run",
+    title: "Christmas Word Run",
     icon: "./ghost-word-run/icons/icon-192.png",
     href: "./ghost-word-run/",
     practices: ["sight-words", "rhyming"],

@@ -154,7 +154,7 @@ const GAMES = {
   coins: { id: "coin-record-run", title: "Coin Record Run", href: "../coin-record-run/", say: "Play Coin Record Run. See how far you can get, then come back and tap I played." },
   monsters: { id: "monster-hunt", title: "Monster Hunt", href: "../word-monsters/", say: "Play Monster Hunt, then come back and tap I played." },
   train: { id: "train-set", title: "Train Set", href: "../train-set/", say: "Play with the trains, then come back and tap I played." },
-  ghost: { id: "ghost-word-run", title: "Ghost Word Run", href: "../ghost-word-run/", say: "Play Ghost Word Run, then come back and tap I played." }
+  ghost: { id: "ghost-word-run", title: "Christmas Word Run", href: "../ghost-word-run/", say: "Play Christmas Word Run, then come back and tap I played." }
 };
 
 // A game card is done once this many answers from that game reach the progress log after the

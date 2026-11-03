@@ -308,7 +308,7 @@ select {
   position: relative;
   width: 22px;
   height: 24px;
-  background: url("assets/candy_corn.png") center / contain no-repeat;
+  background: url("assets/christmas/gift_1.svg") center / contain no-repeat;
   filter: drop-shadow(0 0 5px rgba(251, 191, 36, .85));
   transition: all .35s cubic-bezier(.2,.8,.3,1.3);
 }
@@ -970,7 +970,7 @@ select {
   }
 }
 
-/* ---------- Trick-or-Treat Street ---------- */
+/* ---------- Christmas Village ---------- */
 .street-screen {
   display: flex;
   flex-direction: column;
@@ -1164,7 +1164,7 @@ select {
   from { transform: scale(.3) rotate(-12deg); opacity: 0; }
 }
 
-/* ---------- Boo's closet ---------- */
+/* ---------- Snowy's closet ---------- */
 .closet-button { position: relative; }
 .closet-count {
   margin-left: 6px;
@@ -1439,4 +1439,115 @@ select {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+/* Christmas skin. Existing layout and saved-progress identifiers stay shared. */
+:root {
+  --night: #103b40;
+  --night-light: #1d5c5b;
+  --purple: #26735f;
+  --orange: #dc4f5b;
+  --cream: #fff9e9;
+  --mint: #a2e4c4;
+  --ink: #173f46;
+}
+.home-screen {
+  overflow-y: auto;
+  touch-action: pan-y;
+  padding-top: max(22px, env(safe-area-inset-top));
+  background: url("assets/christmas/winter_edges.svg") center bottom / cover no-repeat,
+    radial-gradient(ellipse at 50% 25%, #2d6d66 0, transparent 62%),
+    linear-gradient(180deg, #10383e, #1d5c59);
+}
+.home-screen::after {
+  position: fixed;
+  bottom: -110px;
+  height: 170px;
+  background: #dfefeb;
+  box-shadow: 0 -14px 0 #bad9d4;
+  pointer-events: none;
+}
+.home-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 7px;
+  background: repeating-linear-gradient(115deg, #d84b59 0 16px, #fff5d9 16px 32px);
+}
+.home-ghost { width: 100px; height: 105px; margin-top: 0; animation: none; }
+.moon { width: 55px; height: 55px; top: 43px; right: 12%; background: #ffedbc; box-shadow: 0 0 45px #ffdf8b35; }
+h1 { max-width: 520px; font-size: clamp(39px, 10.5vw, 65px); text-shadow: 0 4px 0 #16504d, 0 8px 20px #06282d66; }
+.home-copy { max-width: 410px; font-size: 17px; margin: 12px 0 16px; }
+.eyebrow, .street-title, .prize-name, .closet-power-name, .closet-power strong, .trail-line strong { color: #ffe1a0; }
+.setup-card { border-color: #84b4a67a; background: #103e3eeb; box-shadow: 0 18px 35px #062b3440; }
+.setup-card label, .voice-setting label { color: #d4eee2; }
+select { color: #fffaf0; border-color: #77ad9c; background: #205b51; }
+.primary-button { color: #fffdf3; background: linear-gradient(#e9636a, #c9344b); box-shadow: 0 5px 0 #8e2439; }
+.primary-button:active { box-shadow: 0 2px 0 #8e2439; }
+.secondary-button { border-color: #8cbeae80; background: #ffffff0b; }
+button:focus-visible, a:focus-visible, select:focus-visible { outline: 3px solid #ffe09a; outline-offset: 4px; }
+.text-button, .help-tip, .trail-line, .closet-power p, .prize-power, .street-hint, .voice-hint { color: #d6e9df; }
+.grownup-note { max-width: 440px; color: #d1e6d9; padding-bottom: 22px; line-height: 1.4; }
+.home-link, .round-button { background: #153e42; border-color: #73a99d; }
+.map-strip { border-color: #8dba9e80; background: #174c46; }
+.map-progress { background: #0c3837; }
+.map-progress-fill { background: linear-gradient(90deg, #d15159, #ffd389); }
+.map-strip-next, .map-summary, .map-start { color: #d4e7de; }
+.map-strip-go { color: #ffe2a0; }
+.game-screen, .street-screen { background: #092d34; }
+.game-hud, .street-actions { background: #103e40; }
+.chances-track { border-color: #639d8d; background: #143e3e; }
+.chance-label { color: #c4e6d6; }
+.chance-token { background-image: url("assets/christmas/heart.svg"); filter: none; }
+.chance-token.warning { animation: none; filter: drop-shadow(0 0 3px #f7c3b3); }
+.prompt-card { color: #224b46; background: #fff9e9; }
+.prompt-card strong { color: #aa2d43; }
+.prompt-card button { background: #dcece3; }
+.hear-icon span { background: #286a56; }
+.hear-icon span::before, .hear-icon span::after { border-right-color: #286a56; }
+.game-world {
+  background: url("assets/christmas/winter_edges.svg") center bottom / 100% 100% no-repeat,
+    linear-gradient(180deg, #296663, #174b52);
+}
+.path { background: linear-gradient(90deg, #e4f2e50c, #d9eee522, #e4f2e50c); }
+.path::before, .path::after { background: repeating-linear-gradient(to bottom, #deeddf 0 12px, transparent 12px 25px); opacity: .2; animation: none; }
+.word-gate { border-color: #d14754; background: #fffbee; color: #183e43; box-shadow: 0 7px 0 #823544, 0 10px 18px #0a2f3a40; }
+.word-gate.correct-gate { border-color: #a1e0b8; background: #edfff0; box-shadow: 0 6px 0 #3a8064; }
+.word-gate.wrong-gate { background: #d4e3dc; }
+.gate-candy-wrap, .player .ghost-img, .player::before, .star, .street-boo .ghost-img, .big-bucket-img, .street-go-button, .map-boo { animation: none !important; }
+.player.correct, .player.missed { animation-duration: .35s; }
+.player.missed { filter: none; }
+.drag-hint { background: #103d41dd; white-space: nowrap; }
+.modal, .pause-overlay { background: #062d33de; }
+.modal-card, .pause-overlay > div { background: #174c49; border-color: #659c86; }
+.modal-card li .step-number { color: #fff9e9; background: #b9384c; }
+.end-screen { overflow-y: auto; touch-action: pan-y; background: radial-gradient(ellipse at 50% 30%, #467e6440, transparent 60%), #103d40; }
+.street-world { background: url("assets/christmas/winter_edges.svg") center / cover no-repeat, linear-gradient(#215957, #42746a); }
+.street-ground { background: linear-gradient(#f2f8ed 0 12px, #c8e2dd 12px, #9bc7c0); }
+.street-moon { width: 44px; height: 44px; opacity: .8; }
+.door-word { color: #214b43; border-color: #2a6e57; background: #fff9e6; }
+.closet-item.wearing { border-color: #ffdc90; background: #dcc78320; }
+.closet-count { color: #173f46; background: #ffe1a0; }
+.closet-power { background: #fff4c40c; }
+.map-road { background: linear-gradient(90deg, transparent calc(50% - 22px), #c5dcd0 calc(50% - 22px), #c5dcd0 calc(50% + 22px), transparent calc(50% + 22px)), #174d45; }
+.map-label strong { color: #b1c7bd; }
+.map-label span { color: #a1bfb1; }
+@media (max-height: 760px) {
+  .home-ghost { width: 66px; height: 68px; }
+  .home-screen { padding-top: 17px; }
+  .home-copy { margin: 8px 0 12px; font-size: 16px; }
+  .setup-card { padding: 15px; }
+  .grownup-note { margin-top: 10px; }
+}
+@media (max-width: 430px) {
+  .game-hud { gap: 5px; padding-inline: 6px; }
+  .chances-track { padding: 0 7px; gap: 5px; }
+  .chance-tokens { gap: 3px; }
+  .chance-token { width: 18px; }
+  .chance-label { font-size: 10px; }
+  .bucket-score { min-width: 62px; gap: 3px; font-size: 20px; }
+  .mini-bucket { width: 40px; }
+  .round-button { width: 35px; height: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
 }

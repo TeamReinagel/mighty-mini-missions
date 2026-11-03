@@ -43,7 +43,7 @@
 
   const wordsInRange = (from, to) => SIGHT_WORDS_300.slice(from - 1, to);
 
-  // Ghost Word Run "Tricky Words" fill: Reading.com Parent Scope & Sequence words
+  // Christmas Word Run "Tricky Words" fill: Reading.com Parent Scope & Sequence words
   // introduced in lessons 97 back through 94 (most recent first), capped at 30.
   // Source: https://www.reading.com/uploads/parent_scope_and_sequence.pdf
   const TRICKY_FILL_WORDS = [
@@ -75,7 +75,7 @@
     ["which", "witch"]
   ];
 
-  // Trick-or-Treat Street rhyming: words in a family rhyme with each other and with no other family.
+  // Christmas Village rhyming: words in a family rhyme with each other and with no other family.
   // Only sight words and short words Max can sound out. Homophones inside a family (no/know) are
   // never used as prompt and answer together.
   const RHYME_FAMILIES = [
@@ -136,7 +136,8 @@
   const sightWordLevels = [
     {
       id: "moonlit-meadow",
-      name: "Moonlit Meadow",
+      historyName: "Moonlit Meadow",
+      name: "Snowflake Meadow",
       description: "Words 1-50 - 2 paths",
       minChoices: 2,
       maxChoices: 2,
@@ -144,7 +145,8 @@
     },
     {
       id: "pumpkin-path",
-      name: "Pumpkin Path",
+      historyName: "Pumpkin Path",
+      name: "Candy Cane Lane",
       description: "Words 51-100 - up to 3 paths",
       minChoices: 2,
       maxChoices: 3,
@@ -152,7 +154,8 @@
     },
     {
       id: "bat-cave",
-      name: "Bat Cave",
+      historyName: "Bat Cave",
+      name: "Reindeer Ridge",
       description: "Words 101-150 - up to 3 paths",
       minChoices: 2,
       maxChoices: 3,
@@ -160,7 +163,8 @@
     },
     {
       id: "haunted-hill",
-      name: "Haunted Hill",
+      historyName: "Haunted Hill",
+      name: "Gingerbread Hill",
       description: "Words 151-200 - 3 paths",
       minChoices: 3,
       maxChoices: 3,
@@ -168,7 +172,8 @@
     },
     {
       id: "graveyard-grand-tour",
-      name: "Graveyard Grand Tour",
+      historyName: "Graveyard Grand Tour",
+      name: "Christmas Grand Tour",
       description: "All of words 1-200 mixed - 3 paths",
       minChoices: 3,
       maxChoices: 3,
@@ -176,7 +181,8 @@
     },
     {
       id: "witchs-woods",
-      name: "Witch's Woods",
+      historyName: "Witch's Woods",
+      name: "Evergreen Woods",
       description: "Stretch words 201-250 - 3 paths",
       minChoices: 3,
       maxChoices: 3,
@@ -184,7 +190,8 @@
     },
     {
       id: "midnight-mansion",
-      name: "Midnight Mansion",
+      historyName: "Midnight Mansion",
+      name: "Santa's Workshop",
       description: "Stretch words 251-300 - 3 paths",
       minChoices: 3,
       maxChoices: 3,

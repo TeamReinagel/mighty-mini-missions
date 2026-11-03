@@ -1,6 +1,9 @@
 (() => {
   "use strict";
 
+  // listening-1: listen for a spoken sight word, then steer through its matching gate.
+  // Legacy game, level and costume IDs retain existing learning history and unlocks.
+
   const STORE_KEY = "mightyMini.ghostWordRun.v1";
   const MUSIC_STORE_KEY = "mightyMini.ghostWordRun.musicMuted";
   const content = window.GHOST_RUN_CONTENT;
@@ -48,41 +51,41 @@
   const closetModal = $("closetModal");
   const closetGrid = $("closetGrid");
 
-  // A run earns Trick-or-Treat Street when it scores at least this share of the trail's best.
+  // A run earns Christmas Village when it scores at least this share of the trail's best.
   const STREET_SCORE_SHARE = 0.9;
   // The visit's one costume hides behind a random correct door among the first few.
   const COSTUME_DOOR_MIN = 5;
   const COSTUME_DOOR_MAX = 10;
 
-  // Costume powers. Each beats plain Boo by roughly 10-15% on average, and each is strongest for
+  // Costume powers. Each beats plain Snowy by roughly 10-15% on average, and each is strongest for
   // a different kind of run, so the best pick depends on the trail. Keep the numbers in sync
   // with tools/balance_sim.py and re-run it after any change.
   const POWERS = {
-    "pumpkin-cap": { name: "Harvest Bonus", text: "Every 5th right word adds 1 bonus candy.", tip: "Good on any trail.", harvestEvery: 5 },
-    "witch-hat": { name: "Slow Spell", text: "The trail speeds up more slowly.", tip: "Best when the trail gets too fast.", ramp: 0.84 },
-    "cat-ears": { name: "Nine Lives", text: "Start with 4 chances instead of 3.", tip: "Best on a new trail.", maxChances: 4 },
-    "crown": { name: "Royal Riches", text: "5 right in a row earns 5 candies, but there is no 3-in-a-row bonus.", tip: "Best on trails you know well.", streakEvery: 5, streakPay: 5 },
-    "pirate-hat": { name: "Treasure Hearts", text: "A heart caught when you have all your chances is worth 3 candies.", tip: "Best when you hardly ever miss.", fullHeartCandy: 3 },
-    "wizard-hat": { name: "Magic Shield", text: "A shield blocks one miss. It comes back after 8 right words.", tip: "Best while you are learning the words.", shieldRecharge: 8 },
-    "top-hat": { name: "Showtime", text: "On your last chance, every right word earns 2 extra candies.", tip: "Best for big comebacks.", lastChanceBonus: 2 },
-    "bat-wings": { name: "Heart Radar", text: "Hearts are much easier to catch.", tip: "Best when you need hearts back.", catchReach: 0.32 }
+    "pumpkin-cap": { name: "Gift Bonus", text: "Every 5th right word adds 1 bonus gift.", tip: "Good on any trail.", harvestEvery: 5 },
+    "witch-hat": { name: "Snow Drift", text: "The trail speeds up more slowly.", tip: "Best when the trail gets too fast.", ramp: 0.84 },
+    "cat-ears": { name: "Reindeer Cheer", text: "Start with 4 chances instead of 3.", tip: "Best on a new trail.", maxChances: 4 },
+    "crown": { name: "Royal Riches", text: "5 right in a row earns 5 gifts, but there is no 3-in-a-row bonus.", tip: "Best on trails you know well.", streakEvery: 5, streakPay: 5 },
+    "pirate-hat": { name: "Giving Hearts", text: "A heart caught when you have all your chances is worth 3 gifts.", tip: "Best when you hardly ever miss.", fullHeartCandy: 3 },
+    "wizard-hat": { name: "Starlight Shield", text: "A shield blocks one miss. It comes back after 8 right words.", tip: "Best while you are learning the words.", shieldRecharge: 8 },
+    "top-hat": { name: "Snow Show", text: "On your last chance, every right word earns 2 extra gifts.", tip: "Best for big comebacks.", lastChanceBonus: 2 },
+    "bat-wings": { name: "Cozy Hearts", text: "Hearts are much easier to catch.", tip: "Best when you need hearts back.", catchReach: 0.32 }
   };
   const BASE_CATCH_REACH = 0.22;
 
-  // Boo's neighborhood map: each house lights up when lifetime candy (runs + street treats)
+  // Snowy's neighborhood map: each house lights up when lifetime candy (runs + street treats)
   // reaches its number. Early houses come every run or two; later ones take a week of play.
   const MAP_HOUSES = [
-    [10, "Pumpkin Cottage"], [25, "Bat Barn"], [50, "Moonbeam House"], [80, "Candy Corn Corner"],
-    [120, "Spider Hollow"], [160, "Owl Tower"], [200, "Lollipop Lane"], [250, "Black Cat Inn"],
-    [300, "Cauldron Cabin"], [375, "Gumdrop Garden"], [450, "Lantern Lodge"], [525, "Broomstick Barn"],
-    [600, "Toffee Treehouse"], [700, "Skeleton Shack"], [800, "Caramel Castle"], [900, "Foggy Farmhouse"],
-    [1000, "Witch's Workshop"], [1150, "Mummy Manor"], [1300, "Starlight Steeple"], [1500, "Grand Haunted Mansion"]
+    [10, "Holly Cottage"], [25, "Reindeer Barn"], [50, "Snowflake House"], [80, "Candy Cane Corner"],
+    [120, "Snowdrop Hollow"], [160, "Robin Tower"], [200, "Lollipop Lane"], [250, "Red Mitten Inn"],
+    [300, "Cocoa Cabin"], [375, "Gumdrop Garden"], [450, "Lantern Lodge"], [525, "Sleigh Barn"],
+    [600, "Toffee Treehouse"], [700, "Gingerbread House"], [800, "Caramel Castle"], [900, "Frosty Farmhouse"],
+    [1000, "Santa's Workshop"], [1150, "Mistletoe Manor"], [1300, "Starlight Steeple"], [1500, "Grand Christmas Lodge"]
   ].map(([candy, name]) => ({ candy, name }));
   const housesLit = (totalCandy) => MAP_HOUSES.filter((house) => totalCandy >= house.candy).length;
   // Rounds at or past this count as "the trail got fast" when suggesting a costume.
   const FAST_ROUND = 20;
 
-  // Trick-or-Treat Street visit; lives outside `state` because it starts after the run ends.
+  // Christmas Village visit; lives outside `state` because it starts after the run ends.
   let street = null;
 
   let state = null;
@@ -241,7 +244,7 @@
     updateMusicButtonUI();
   }
 
-  // Initialize visual SVGs for cute ghost and jack-o'-lantern buckets
+  // Initialize the snowman and Christmas gift sacks.
   if (candies) {
     candies.setCostume(loadSaved().wearing);
     if (homeGhost) homeGhost.innerHTML = candies.getGhostSVG("normal", 84);
@@ -293,7 +296,8 @@
     maxChoices: 3,
     words: trickyWords(savedTricky())
   };
-  category.levels.push(trickyLevel);
+  // Open on the personalized list; the fixed word trails remain available.
+  category.levels.unshift(trickyLevel);
 
   async function refreshTricky() {
     if (trickyKid === "unknown" || !/^https?:$/.test(location.protocol)) return;
@@ -514,7 +518,7 @@
     pickup.style.transform = `translate(-50%, ${y}px)`;
     pickup.innerHTML = `
       <span class="pickup-glow"></span>
-      <img class="pickup-img" src="assets/candy_heart_restore.png" width="48" height="42" alt="Restore Chance Heart" draggable="false" />
+      <img class="pickup-img" src="assets/christmas/heart.svg" width="48" height="42" alt="Restore Chance Heart" draggable="false" />
     `;
     pickupsWrap.appendChild(pickup);
     state.pickups.push({
@@ -541,7 +545,7 @@
       state.candy += bonus;
       state.displayedCandy += bonus;
       candyScore.textContent = String(state.displayedCandy);
-      showFeedback(bonus > 1 ? `Treasure heart! +${bonus} candies!` : "Heart bonus! +1 candy!");
+      showFeedback(bonus > 1 ? `Treasure heart! +${bonus} gifts!` : "Heart bonus! +1 gift!");
     }
     updateRunBadges();
   }
@@ -570,7 +574,7 @@
       text = `Royal streak ${state.streak % p.streakEvery}/${p.streakEvery}`;
     } else if (p.lastChanceBonus) {
       ready = state.chances === 1;
-      text = ready ? "Showtime is on!" : "Showtime: last chance";
+      text = ready ? "Snow Show is on!" : "Snow Show: last chance";
     }
     powerBadge.textContent = text;
     powerBadge.classList.toggle("ready", ready);
@@ -588,7 +592,7 @@
     try {
       step(now);
     } catch (error) {
-      console.error("Ghost Word Run frame error:", error);
+      console.error("Christmas Word Run frame error:", error);
       if (state?.running) frameId = requestAnimationFrame(tick);
     }
   }
@@ -687,7 +691,7 @@
     const correct = selectedWord === row.target;
     window.MightyProgress?.log({
       game: "ghost-word-run",
-      skill: `Sight words: ${state.level.name} (${state.level.description.split(" - ")[0]})`,
+      skill: `Sight words: ${state.level.historyName || state.level.name} (${state.level.description.split(" - ")[0]})`,
       item: row.target,
       correct,
       extra: correct ? undefined : { picked: selectedWord }
@@ -711,15 +715,15 @@
       const onStreak = state.streak % streakEvery === 0;
       let earned = onStreak ? (p.streakPay || 2) : 1;
       let message = onStreak
-        ? `${p.streakEvery ? "Royal streak" : "Sweet streak"}! +${earned} candies!`
-        : "Sweet! +1 candy!";
+        ? `${p.streakEvery ? "Royal streak" : "Sweet streak"}! +${earned} gifts!`
+        : "A gift! +1";
       if (p.lastChanceBonus && state.chances === 1) {
         earned += p.lastChanceBonus;
-        message = `Showtime! +${earned} candies!`;
+        message = `Snow Show! +${earned} gifts!`;
       }
       if (p.harvestEvery && state.correctTotal % p.harvestEvery === 0) {
         earned += 1;
-        message = `Harvest bonus! +${earned} candies!`;
+        message = `Gift bonus! +${earned} gifts!`;
       }
       if (p.shieldRecharge && !state.shield && ++state.shieldCount >= p.shieldRecharge) {
         state.shield = true;
@@ -793,7 +797,7 @@
     }
   }
 
-  // Trick-or-Treat Street: a reward visit after a run that scores within 90% of the trail's best.
+  // Christmas Village: a reward visit after a run that scores within 90% of the trail's best.
   // It practices rhyming: Max hears a word and knocks on the door whose word rhymes with it.
   // He can knock as long as he likes; wrong doors cost nothing, and one correct door per visit
   // hides a new costume.
@@ -945,7 +949,7 @@
     localStorage.setItem(STORE_KEY, JSON.stringify(saved));
     if (housesLit(saved.totalCandy) > litBefore) {
       const house = MAP_HOUSES[housesLit(saved.totalCandy) - 1];
-      window.setTimeout(() => showFeedback(`${house.name} lit up on Boo's map!`, streetFeedback), 700);
+      window.setTimeout(() => showFeedback(`${house.name} lit up on Snowy's map!`, streetFeedback), 700);
     }
     const visit = street;
     for (let i = 0; i < amount; i++) {
@@ -1347,7 +1351,7 @@
 
     const litNow = housesLit(saved.totalCandy);
     $("endMapLine").textContent = litNow > litBefore
-      ? `New on Boo's map: ${MAP_HOUSES[litNow - 1].name}${litNow - litBefore > 1 ? ` and ${litNow - litBefore - 1} more` : ""}!`
+      ? `New on Snowy's map: ${MAP_HOUSES[litNow - 1].name}${litNow - litBefore > 1 ? ` and ${litNow - litBefore - 1} more` : ""}!`
       : "";
     $("endMapLine").classList.toggle("hidden", litNow <= litBefore);
 
@@ -1365,14 +1369,14 @@
       if (isNewRecord && state.candy > 0) {
         endBestLine.textContent = `New record! Beat previous best of ${prevBest}!`;
       } else {
-        endBestLine.textContent = `Trail Record: ${saved.bestByLevel[state.level.id]} candies`;
+        endBestLine.textContent = `Trail Record: ${saved.bestByLevel[state.level.id]} gifts`;
       }
     }
 
     if (state.candy >= 20) {
-      $("endMessage").textContent = "Legendary flying! Boo's pumpkin is overflowing with sweet treats!";
+      $("endMessage").textContent = "Legendary flying! Snowy's sack is overflowing with Christmas gifts!";
     } else if (state.candy >= 10) {
-      $("endMessage").textContent = "Incredible run! Boo collected a massive stash of candy!";
+      $("endMessage").textContent = "Incredible run! Snowy collected a sack of Christmas gifts!";
     } else if (state.candy >= 5) {
       $("endMessage").textContent = "Great flying! You spotted lots of tricky words on the path!";
     } else {
@@ -1382,8 +1386,8 @@
     const earnedStreet = state.candy > 0 && state.candy >= prevBest * STREET_SCORE_SHARE;
     $("streetInvite").classList.toggle("hidden", !earnedStreet);
     $("streetInviteText").textContent = isNewRecord
-      ? "A new best! Boo earned a trip to Trick-or-Treat Street!"
-      : "So close to your best! Boo earned a trip to Trick-or-Treat Street!";
+      ? "A new best! Snowy earned a trip to Christmas Village!"
+      : "So close to your best! Snowy earned a trip to Christmas Village!";
     $("againButton").classList.toggle("primary-button", !earnedStreet);
     $("againButton").classList.toggle("secondary-button", earnedStreet);
 
@@ -1414,7 +1418,7 @@
   }
 
   function costumeName(id) {
-    return candies?.costumes.find((c) => c.id === id)?.name || "Just Boo";
+    return candies?.costumes.find((c) => c.id === id)?.name || "Just Snowy";
   }
 
   // One line on the end screen showing what the worn costume's power did this run.
@@ -1423,26 +1427,26 @@
     if (!p.name) return "";
     if (p.shieldRecharge) {
       return state.shieldSaves
-        ? `Magic Shield blocked ${state.shieldSaves} ${state.shieldSaves === 1 ? "miss" : "misses"}!`
-        : "Magic Shield was ready, but you didn't need it!";
+        ? `Starlight Shield blocked ${state.shieldSaves} ${state.shieldSaves === 1 ? "miss" : "misses"}!`
+        : "Starlight Shield was ready, but you didn't need it!";
     }
     if (p.maxChances) {
       return state.chancesLost >= 3 && state.round > 0
-        ? "Nine Lives gave you an extra chance to keep flying!"
-        : "Nine Lives kept a spare chance ready for you.";
+        ? "Reindeer Cheer gave you an extra chance to keep flying!"
+        : "Reindeer Cheer kept a spare chance ready for you.";
     }
     if (p.ramp) {
       const elapsed = (performance.now() - state.startTime) / 1000;
       const normal = state.round * 9 + elapsed * 1.3;
       const slower = Math.round((normal * (1 - p.ramp)) / (145 + normal) * 100);
-      return `Slow Spell made the trail ${slower}% slower by the end!`;
+      return `Snow Drift made the trail ${slower}% slower by the end!`;
     }
     if (p.catchReach) {
-      return `Heart Radar helped you catch ${state.heartsCaught} ${state.heartsCaught === 1 ? "heart" : "hearts"}!`;
+      return `Cozy Hearts helped you catch ${state.heartsCaught} ${state.heartsCaught === 1 ? "heart" : "hearts"}!`;
     }
-    if (state.powerCandy > 0) return `${p.name} earned ${state.powerCandy} bonus ${state.powerCandy === 1 ? "candy" : "candies"}!`;
+    if (state.powerCandy > 0) return `${p.name} earned ${state.powerCandy} bonus ${state.powerCandy === 1 ? "gift" : "gifts"}!`;
     if (p.streakEvery) return "Royal Riches pays off on long streaks. Try it on a trail you know well!";
-    if (p.lastChanceBonus) return "Showtime starts on your last chance. Keep going to make a comeback!";
+    if (p.lastChanceBonus) return "Snow Show starts on your last chance. Keep going to make a comeback!";
     return "";
   }
 
@@ -1468,7 +1472,7 @@
     const owned = ideas.filter((id) => saved.costumes.includes(id));
     if (owned.includes(saved.wearing)) return `${reason} ${costumeName(saved.wearing)} is a great pick.`;
     if (owned.length) return `${reason} Try ${owned.slice(0, 2).map(costumeName).join(" or ")}.`;
-    if (saved.costumes.includes("pumpkin-cap") && saved.wearing !== "pumpkin-cap") return `${reason} Pumpkin Hat helps on any trail.`;
+    if (saved.costumes.includes("pumpkin-cap") && saved.wearing !== "pumpkin-cap") return `${reason} Elf Hat helps on any trail.`;
     return "";
   }
 
@@ -1479,9 +1483,9 @@
     const trailGoal = $("trailGoal");
     if (best) {
       const bestWith = level.id in saved.bestCostumeByLevel ? ` as ${costumeName(saved.bestCostumeByLevel[level.id])}` : "";
-      trailGoal.innerHTML = `Best: <strong>${best}</strong>${bestWith}. Get <strong>${Math.ceil(best * STREET_SCORE_SHARE)}</strong> for Trick-or-Treat Street.`;
+      trailGoal.innerHTML = `Best: <strong>${best}</strong>${bestWith}. Get <strong>${Math.ceil(best * STREET_SCORE_SHARE)}</strong> for Christmas Village.`;
     } else {
-      trailGoal.innerHTML = "Get any candy to visit <strong>Trick-or-Treat Street</strong>!";
+      trailGoal.innerHTML = "Get any gift to visit <strong>Christmas Village</strong>!";
     }
     const power = POWERS[saved.wearing];
     $("wearingLine").innerHTML = power
@@ -1500,7 +1504,7 @@
     $("mapStripFill").style.width = next ? `${Math.round(((total - prevMark) / (next.candy - prevMark)) * 100)}%` : "100%";
     $("mapStripNext").textContent = next
       ? `${lit} of ${MAP_HOUSES.length} houses lit. ${next.candy - total} more for ${next.name}!`
-      : `All ${MAP_HOUSES.length} houses lit! Boo is the Candy Champion!`;
+      : `All ${MAP_HOUSES.length} houses lit! Snowy is the Christmas Champion!`;
     if (candies && !$("mapStripBucket").firstChild) $("mapStripBucket").innerHTML = candies.getPumpkinBucketSVG(44);
   }
 
@@ -1509,11 +1513,11 @@
     const lit = housesLit(saved.totalCandy);
     const next = MAP_HOUSES[lit];
     $("mapSummary").textContent = next
-      ? `${lit} of ${MAP_HOUSES.length} houses lit. ${next.candy - saved.totalCandy} more candies to light ${next.name}!`
-      : "Every house is lit! Boo is the Candy Champion!";
+      ? `${lit} of ${MAP_HOUSES.length} houses lit. ${next.candy - saved.totalCandy} more gifts to light ${next.name}!`
+      : "Every house is lit! Snowy is the Christmas Champion!";
 
     const stats = [
-      [saved.totalCandy.toLocaleString(), "candies"],
+      [saved.totalCandy.toLocaleString(), "gifts"],
       [saved.wordsRead.toLocaleString(), "words read"],
       [saved.doorsOpened.toLocaleString(), "rhymes"],
       [`${saved.costumes.length}/${candies ? candies.costumes.length : 8}`, "costumes"]
@@ -1533,7 +1537,7 @@
         <div class="map-house">${houseArt ? `<img src="${houseArt.src}" alt="" draggable="false" />` : ""}</div>
         <div class="map-label">
           <strong>${isLit || isNext ? house.name : "???"}</strong>
-          <span>${isLit ? "Lit up!" : `${house.candy.toLocaleString()} candies`}</span>
+          <span>${isLit ? "Lit up!" : `${house.candy.toLocaleString()} gifts`}</span>
         </div>
         ${index === Math.max(0, lit - 1) && lit ? `<div class="map-boo">${candies ? candies.getGhostSVG("happy", 46) : ""}</div>` : ""}
       `;
@@ -1542,7 +1546,7 @@
     if (!lit) {
       const start = document.createElement("div");
       start.className = "map-start";
-      start.innerHTML = `${candies ? candies.getGhostSVG("normal", 46) : ""}<span>Boo starts here! Collect candy to light the first house.</span>`;
+      start.innerHTML = `${candies ? candies.getGhostSVG("normal", 46) : ""}<span>Snowy starts here! Collect gifts to light the first house.</span>`;
       road.prepend(start);
     }
   }
@@ -1602,7 +1606,7 @@
   function renderCloset() {
     const saved = loadSaved();
     closetGrid.replaceChildren();
-    [{ id: null, name: "Just Boo" }, ...candies.costumes].forEach((costume) => {
+    [{ id: null, name: "Just Snowy" }, ...candies.costumes].forEach((costume) => {
       const unlocked = !costume.id || saved.costumes.includes(costume.id);
       const item = document.createElement("button");
       item.type = "button";
@@ -1630,7 +1634,7 @@
     const worn = POWERS[saved.wearing];
     $("closetPower").innerHTML = worn
       ? `<strong>${costumeName(saved.wearing)}: ${worn.name}</strong><p>${worn.text}</p><p class="power-tip">${worn.tip}</p>`
-      : "<strong>Just Boo</strong><p>No power. Tap a costume to see what it does.</p>";
+      : "<strong>Just Snowy</strong><p>No power. Tap a costume to see what it does.</p>";
   }
 
   updateClosetCount();

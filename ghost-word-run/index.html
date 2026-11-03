@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#17102f" />
-    <title>Ghost Word Run</title>
+    <meta name="theme-color" content="#103b40" />
+    <title>Christmas Word Run</title>
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="icon" href="icons/icon-192.png" />
     <link rel="apple-touch-icon" href="icons/icon-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=19" />
+    <link rel="stylesheet" href="styles.css?v=christmas1" />
   </head>
   <body>
     <main id="app">
@@ -19,14 +19,14 @@
         <a class="home-link" href="../" aria-label="Back to Mighty Mini Missions">&#8962;</a>
         <div class="moon" aria-hidden="true"></div>
         <div id="homeGhost" class="home-ghost" aria-hidden="true"></div>
-        <p class="eyebrow">A Mighty Mini Game</p>
-        <h1>Ghost Word Run</h1>
-        <p class="home-copy">Listen for the word. Guide Boo through the matching gate and fill the pumpkin with candy!</p>
+        <p class="eyebrow">A Mighty Mini Christmas</p>
+        <h1>Christmas Word Run</h1>
+        <p class="home-copy">Listen for the word. Guide Snowy through the matching gate and fill the sack with gifts!</p>
 
-        <button id="mapButton" class="map-strip" type="button" aria-label="Open Boo's neighborhood map">
+        <button id="mapButton" class="map-strip" type="button" aria-label="Open Snowy's neighborhood map">
           <span id="mapStripBucket" class="map-strip-bucket" aria-hidden="true"></span>
           <span class="map-strip-text">
-            <strong><span id="mapStripCandy">0</span> candies</strong>
+            <strong><span id="mapStripCandy">0</span> gifts</strong>
             <span class="map-progress"><span id="mapStripFill" class="map-progress-fill"></span></span>
             <span id="mapStripNext" class="map-strip-next"></span>
           </span>
@@ -40,13 +40,13 @@
           <p id="wearingLine" class="trail-line wearing-line"></p>
           <p id="trailTip" class="trail-line trail-tip"></p>
           <button id="startButton" class="primary-button" type="button">Start flying <span>&rarr;</span></button>
-          <button id="closetButton" class="secondary-button closet-button" type="button">Boo's Costumes <span id="closetCount" class="closet-count"></span></button>
+          <button id="closetButton" class="secondary-button closet-button" type="button">Snowy's Costumes <span id="closetCount" class="closet-count"></span></button>
           <button id="howButton" class="text-button" type="button">How to play</button>
         </div>
-        <p class="grownup-note">Fly &amp; collect candy &middot; Costume powers &middot; Great runs unlock Trick-or-Treat Street &middot; No ads</p>
+        <p class="grownup-note">Fly &amp; collect gifts &middot; Costume powers &middot; Great runs unlock Christmas Village &middot; No ads</p>
       </section>
 
-      <section id="gameScreen" class="screen game-screen hidden" aria-label="Ghost Word Run game">
+      <section id="gameScreen" class="screen game-screen hidden" aria-label="Christmas Word Run game">
         <header class="game-hud">
           <button id="quitButton" class="round-button" type="button" aria-label="Leave game">&#8962;</button>
           <div id="chancesTrack" class="chances-track" role="status" aria-label="3 chances left">
@@ -58,7 +58,7 @@
               <span class="chance-token active hidden" id="chance4" title="Chance 4"></span>
             </div>
           </div>
-          <div class="bucket-score" aria-label="Candy collected">
+          <div class="bucket-score" aria-label="Gifts collected">
             <div id="miniBucket" class="mini-bucket" aria-hidden="true">
               <div id="miniBucketBody" class="mini-bucket-body"></div>
               <span id="bucketCandies" class="bucket-candies"></span>
@@ -87,22 +87,22 @@
           </div>
           <div id="pickups" class="pickups"></div>
           <div id="rows" class="rows"></div>
-          <div id="player" class="player ghost" aria-label="Boo the ghost"></div>
+          <div id="player" class="player ghost" aria-label="Snowy the snowman"></div>
           <div id="feedback" class="feedback" aria-live="polite"></div>
-          <div class="drag-hint" id="dragHint">Drag Boo side to side</div>
+          <div class="drag-hint" id="dragHint">Drag Snowy side to side</div>
         </div>
       </section>
 
       <section id="endScreen" class="screen end-screen hidden">
         <div id="celebrationCandy" class="celebration-candy" aria-hidden="true"></div>
         <p class="eyebrow">Trail complete!</p>
-        <h2>Sweet flying!</h2>
+        <h2>Merry flying!</h2>
         <div class="big-bucket" aria-hidden="true">
           <div id="bigBucketBack" class="big-bucket-back"></div>
           <div id="bigBucketCandies" class="big-bucket-candies"></div>
           <div id="bigBucketFront" class="big-bucket-front"></div>
         </div>
-        <p class="total-line"><strong id="endCandy">0</strong> candies collected!</p>
+        <p class="total-line"><strong id="endCandy">0</strong> gifts collected!</p>
         <p id="endBestLine" class="end-best-line"></p>
         <p id="endMessage" class="end-message"></p>
         <p id="endMapLine" class="end-map-line hidden"></p>
@@ -110,16 +110,16 @@
         <p id="endTipLine" class="end-tip-line hidden"></p>
         <div id="streetInvite" class="street-invite hidden">
           <p id="streetInviteText"></p>
-          <button id="streetButton" class="primary-button street-go-button" type="button">Go trick-or-treating <span>&rarr;</span></button>
+          <button id="streetButton" class="primary-button street-go-button" type="button">Visit Christmas Village <span>&rarr;</span></button>
         </div>
         <button id="againButton" class="primary-button" type="button">Fly again</button>
         <button id="chooseButton" class="secondary-button" type="button">Choose another trail</button>
       </section>
 
-      <section id="streetScreen" class="screen street-screen hidden" aria-label="Trick-or-Treat Street">
+      <section id="streetScreen" class="screen street-screen hidden" aria-label="Christmas Village">
         <header class="game-hud street-hud">
-          <button id="streetHomeButton" class="round-button" type="button" aria-label="Leave Trick-or-Treat Street">&#8962;</button>
-          <p class="street-title">Trick-or-Treat Street!</p>
+          <button id="streetHomeButton" class="round-button" type="button" aria-label="Leave Christmas Village">&#8962;</button>
+          <p class="street-title">Christmas Village!</p>
           <div class="bucket-score" aria-label="Treats collected on the street">
             <div id="streetBucket" class="mini-bucket" aria-hidden="true"></div>
             <strong id="streetTreats">0</strong>
@@ -153,10 +153,10 @@
           <h2 id="helpTitle">How to play</h2>
           <ol>
             <li><span class="step-number">1</span><p>Listen for the sight word.</p></li>
-            <li><span class="step-number">2</span><p>Drag Boo left or right to line up.</p></li>
-            <li><span class="step-number">3</span><p>Fly through the matching word to collect the sweet candy!</p></li>
+            <li><span class="step-number">2</span><p>Drag Snowy left or right to line up.</p></li>
+            <li><span class="step-number">3</span><p>Fly through the matching word to collect a Christmas gift!</p></li>
           </ol>
-          <p class="help-tip">Keep flying and collecting candies as the trail gets faster and faster! You have 3 chances. If you miss a word, look out for small glowing winged hearts floating between gates to restore a missed chance! Finish a run within 90% of your best and Boo gets to go trick-or-treating: knock on the door whose word rhymes for candy, and find one new costume each visit. Each costume has a special power, and different powers help on different trails, so choose wisely to reach your goal!</p>
+          <p class="help-tip">Keep flying and collecting gifts as the trail gets faster and faster! You have 3 chances. If you miss a word, look out for small glowing winged hearts floating between gates to restore a missed chance! Finish a run within 90% of your best and Snowy gets to go visiting Christmas Village: knock on the door whose word rhymes for gifts, and find one new costume each visit. Each costume has a special power, and different powers help on different trails, so choose wisely to reach your goal!</p>
           <div class="voice-setting">
             <label for="voiceSelect">Grown-ups: reading voice</label>
             <div class="voice-row">
@@ -171,19 +171,19 @@
 
       <div id="prizeOverlay" class="modal prize-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="prizeTitle">
         <div class="modal-card prize-card">
-          <p class="eyebrow">Trick or treat!</p>
+          <p class="eyebrow">Merry Christmas!</p>
           <h2 id="prizeTitle">You found a costume!</h2>
           <div id="prizeShow" class="prize-show" aria-hidden="true"></div>
           <p id="prizeName" class="prize-name"></p>
           <p id="prizePower" class="prize-power"></p>
-          <button id="prizeButton" class="primary-button" type="button">Keep trick-or-treating <span>&rarr;</span></button>
+          <button id="prizeButton" class="primary-button" type="button">Keep exploring <span>&rarr;</span></button>
         </div>
       </div>
 
       <div id="mapModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="mapTitle">
         <div class="modal-card map-card">
           <button id="closeMapButton" class="modal-close" type="button" aria-label="Close">&times;</button>
-          <h2 id="mapTitle">Boo's Neighborhood</h2>
+          <h2 id="mapTitle">Snowy's Neighborhood</h2>
           <p id="mapSummary" class="map-summary"></p>
           <div id="mapStats" class="map-stats"></div>
           <div id="mapRoad" class="map-road"></div>
@@ -193,25 +193,25 @@
       <div id="closetModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="closetTitle">
         <div class="modal-card closet-card">
           <button id="closeClosetButton" class="modal-close" type="button" aria-label="Close">&times;</button>
-          <h2 id="closetTitle">Boo's Costumes</h2>
+          <h2 id="closetTitle">Snowy's Costumes</h2>
           <div id="closetGrid" class="closet-grid"></div>
           <div id="closetPower" class="closet-power" aria-live="polite"></div>
-          <p class="help-tip">Every costume has a power. Pick the one that fits the trail! Find new costumes on Trick-or-Treat Street.</p>
+          <p class="help-tip">Every costume has a power. Pick the one that fits the trail! Find new costumes in Christmas Village.</p>
         </div>
       </div>
 
       <div id="pauseOverlay" class="pause-overlay hidden">
         <div>
           <div id="pauseGhost" class="pause-ghost" aria-hidden="true"></div>
-          <h2>Taking a boo-break?</h2>
+          <h2>Taking a snow break?</h2>
           <button id="resumeButton" class="primary-button" type="button">Keep flying</button>
           <button id="pauseQuitButton" class="text-button" type="button">Leave trail</button>
         </div>
       </div>
     </main>
-    <script src="content.js?v=21"></script>
-    <script src="candies.js?v=21"></script>
-    <script src="../progress.js?v=21"></script>
-    <script src="app.js?v=21"></script>
+    <script src="content.js?v=christmas1"></script>
+    <script src="candies.js?v=christmas1"></script>
+    <script src="../progress.js?v=christmas1"></script>
+    <script src="app.js?v=christmas2"></script>
   </body>
 </html>

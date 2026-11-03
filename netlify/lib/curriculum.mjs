@@ -10,7 +10,7 @@ export const STRANDS = [
   },
   {
     id: "early-literacy",
-    name: "Letters to reading (Monster Hunt, Hatch Match, Otter Slide, then Ghost Word Run)",
+    name: "Letters to reading (Monster Hunt, Hatch Match, Otter Slide, then Christmas Word Run)",
     steps: [
       "Letters A to Z",
       "Big & little letters",
@@ -96,7 +96,7 @@ export function curriculumText() {
 
 export const GAME_NAMES = {
   "word-monsters": "Monster Hunt",
-  "ghost-word-run": "Ghost Word Run",
+  "ghost-word-run": "Christmas Word Run",
   "coin-record-run": "Coin Record Run",
   "monster-maker": "Monster Maker",
   "train-set": "Train Set",
