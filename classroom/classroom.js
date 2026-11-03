@@ -9,6 +9,7 @@ const app = document.querySelector("#app");
 const params = new URLSearchParams(location.search);
 let kid = params.get("kid") || storedKid();
 let day = null;
+const warmedStories = new Set();
 let card = null;
 let index = 0;
 let promptIndex = 0;
@@ -197,6 +198,16 @@ function showKids() {
   app.append(grid);
 }
 
+function warmStory(current) {
+  for (const card of current?.cards || []) {
+    for (const href of card.prefetch || []) {
+      if (warmedStories.has(href)) continue;
+      warmedStories.add(href);
+      fetch(href, { priority: "low" }).catch(() => {});
+    }
+  }
+}
+
 async function load() {
   if (!KIDS.some((child) => child.id === kid)) {
     showKids();
@@ -205,6 +216,7 @@ async function load() {
   app.replaceChildren(header("Today with Joyce", "Getting today's missions..."));
   try {
     day = await api("today");
+    warmStory(day);
     document.documentElement.style.setProperty("--kid", day.color || "#7c6cf0");
     renderBoard();
     if (!day.dose?.complete) say(day.greeting);
@@ -1245,6 +1257,7 @@ async function finish(status, retried = false) {
     const finishedId = card.id;
     const finishing = status === "done" || status === "eased";
     day = await api("today");
+    warmStory(day);
     hush();
     if (!finishing) {
       renderBoard();

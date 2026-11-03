@@ -1,3 +1,5 @@
+import {storyAsset} from '../shared/story-cache.mjs';
+
 export function validOffset(value,duration){
   return Number.isFinite(value)&&value>0&&Number.isFinite(duration)
     ?Math.min(value,Math.max(0,duration-.15)):0;
@@ -26,7 +28,7 @@ export class VoicePlayer{
     if(!entry){this.onError(new Error('Missing recording'),line);return;}
     const serial=this.serial,seek=validOffset(offset,entry.duration);
     this.active={line,entry};this.lastCue=null;this.failed=false;
-    this.audio.src=new URL(entry.file,this.baseURL).href;
+    this.audio.src=storyAsset(new URL(entry.file,this.baseURL).href);
     this.audio.playbackRate=entry.source==='elevenlabs-upload'?1:.95;
     this.audio.preservesPitch=true;
     return new Promise(resolve=>{

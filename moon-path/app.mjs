@@ -4,6 +4,7 @@ import {StoryStage,PROP} from './stage.mjs?v=mouth-layers-v3';
 import {STORAGE_KEY,freshProgress,readProgress,firstTry,heardChoice,formatTime,tracePoints,advanceTrace,validateLocation} from './logic.mjs?v=narrated-v2';
 import {VoicePlayer} from './voice-player.mjs';
 import {episodeChild,childStorage,episodeReporter} from './integration.mjs';
+import {storyAsset} from '../shared/story-cache.mjs';
 
 const $=s=>document.querySelector(s), byId=id=>document.getElementById(id);
 const theatre=byId('theatre'),interaction=byId('interaction');
@@ -177,7 +178,7 @@ function buildRoute(beat,choose){
   const art=document.createElement('canvas');art.width=800;art.height=600;stage.paintMap(art);panel.append(art);
   panel.insertAdjacentHTML('beforeend','<svg class="route-line" viewBox="0 0 800 600" preserveAspectRatio="none"><path d="M160 450 C270 430 300 280 400 300 S540 140 640 150" fill="none" stroke="#775334" stroke-width="7" stroke-dasharray="5 17" stroke-linecap="round"/></svg>');
   const nodes=[{name:'Lagoon',img:'lagoon',x:20,y:75},{name:'Woods',img:'woods',x:50,y:50},{name:'River',img:'river',x:80,y:25}];
-  const buttons=[];nodes.forEach((n,i)=>{const b=document.createElement('button');b.className='route-node';b.dataset.choice=n.img;b.style.left=n.x+'%';b.style.top=n.y+'%';b.setAttribute('aria-label',n.name+' landmark');const img=new Image();img.src=`assets/${n.img}.png`;img.alt='';b.append(img);b.addEventListener('click',()=>hit(i));panel.append(b);buttons.push(b);const label=document.createElement('span');label.className='route-name';label.textContent=n.name;label.style.left=n.x+'%';label.style.top=(n.y+14)+'%';panel.append(label);});
+  const buttons=[];nodes.forEach((n,i)=>{const b=document.createElement('button');b.className='route-node';b.dataset.choice=n.img;b.style.left=n.x+'%';b.style.top=n.y+'%';b.setAttribute('aria-label',n.name+' landmark');const img=new Image();img.src=storyAsset(`assets/${n.img}.png`);img.alt='';b.append(img);b.addEventListener('click',()=>hit(i));panel.append(b);buttons.push(b);const label=document.createElement('span');label.className='route-name';label.textContent=n.name;label.style.left=n.x+'%';label.style.top=(n.y+14)+'%';panel.append(label);});
   const refresh=()=>buttons.forEach((b,i)=>{b.classList.toggle('active',i===mem.route);b.classList.toggle('done',i<mem.route);});
   const hit=i=>{if(i!==mem.route){effect('wood');return;}mem.route++;save();panel.dataset.routeProgress=mem.route;effect('latch');refresh();if(mem.route===3)choose('river');};
   let down=false;panel.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;down=true;panel.setPointerCapture(e.pointerId);});panel.addEventListener('pointermove',e=>{if(!down||mem.route>=3)return;const r=panel.getBoundingClientRect(),n=nodes[mem.route];if(Math.hypot((e.clientX-r.left)/r.width*100-n.x,(e.clientY-r.top)/r.height*100-n.y)<14)hit(mem.route);});panel.addEventListener('pointerup',()=>down=false);

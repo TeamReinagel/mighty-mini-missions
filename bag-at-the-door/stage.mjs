@@ -1,11 +1,12 @@
 import {StoryStage,splitAtlas} from '../moon-path/stage.mjs';
 import {prepareCharacterFrames} from '../moon-path/character-motion.mjs';
+import {storyAsset} from '../shared/story-cache.mjs';
 
 export class DoorStage extends StoryStage {
   constructor(canvas){super(canvas);this.visual='packed';this.packed=[];this.speaker=null;}
   async load(onProgress=()=>{}){
     const names=['library','camp','courier-bag','lark-talk','nib-talk','lark-walk','nib-walk','latch-closeup','strap-loop','felt-pad','invitation-hut','invitation-mill','invitation-fern','doorway-tag','reading-label'];let n=0;
-    await Promise.all(names.map(async name=>{const img=new Image();img.src=new URL(`assets/${name}.png`,import.meta.url).href;await img.decode();this.images[name]=img;onProgress(++n,names.length);}));
+    await Promise.all(names.map(async name=>{const img=new Image();img.src=storyAsset(new URL(`assets/${name}.png`,import.meta.url).href);await img.decode();this.images[name]=img;onProgress(++n,names.length);}));
     for(const name of ['lark','nib']){const frames=prepareCharacterFrames(name,splitAtlas(this.images[`${name}-talk`],true),splitAtlas(this.images[`${name}-walk`],true));this.frames[`${name}-talk`]=frames.talk;this.frames[`${name}-walk`]=frames.walk;}
     this.ready=true;
   }

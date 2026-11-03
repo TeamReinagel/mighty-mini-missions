@@ -1,5 +1,6 @@
 import {voiceParts} from './episode.mjs?v=apple-cast-1';
 import {VoicePlayer} from '../moon-path/voice-player.mjs';
+import {storyAsset} from '../shared/story-cache.mjs';
 import {validateRecording} from './recording.mjs?v=apple-cast-1';
 // The supplied cast recording is enabled only after its own source ranges and cues validate.
 export const RECORDING={status:'awaiting-new-cast-recording',approved:false,entries:{}};
@@ -42,7 +43,7 @@ export class Narrator {
     if(!/^[am]$/.test(letter))return this.read(letter,'support-word');
     this.stop();const gen=this.generation;
     return new Promise(resolve=>{
-      this.settle=resolve;const audio=new Audio(new URL(`assets/audio/${letter}.wav`,import.meta.url).href);this.preview=audio;
+      this.settle=resolve;const audio=new Audio(storyAsset(new URL(`assets/audio/${letter}.wav`,import.meta.url).href));this.preview=audio;
       audio.onended=()=>{if(gen===this.generation){this.settle=null;resolve('ended');}};
       audio.onerror=()=>{if(gen===this.generation){this.settle=null;this.onFailure(new Error('Sound recording unavailable'));resolve('unavailable');}};
       audio.play().catch(()=>{if(gen===this.generation){this.settle=null;resolve('unavailable');}});

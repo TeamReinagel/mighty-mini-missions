@@ -79,7 +79,7 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   assert.equal(buildDay({ kidId: "max", date: "2026-10-24" }).cards.some((card) => card.kind === "write"), false);
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
-  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Reading", "Counting", "Bonus"]);
+  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Counting", "Reading", "Bonus"]);
   const story = connor.cards.find((card) => card.gameId === "moon-path");
   assert.equal(story.part, "ela");
   assert.match(story.href, /moon-path\/\?kid=connor/);
@@ -145,7 +145,7 @@ test("Connor's practice card rotates from November 3 and finishes after four pla
     const card = day.cards.find((entry) => entry.part === "ready");
     assert.equal(card.gameId, id, date);
     assert.match(card.href, new RegExp(`${id}/\\?kid=connor`));
-    assert.deepEqual(day.dose.parts.map((part) => part.id), ["ela", "math", "ready", "bonus"]);
+    assert.deepEqual(day.dose.parts.map((part) => part.id), ["math", "ela", "ready", "bonus"]);
     assert.equal(day.cards.filter((entry) => entry.part === "ela").length, 1);
     assert.equal(day.cards.some((entry) => entry.stepId === "connor-count-5"), true);
     for (const kid of ["gabi", "max", "ethan"]) {

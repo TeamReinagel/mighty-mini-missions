@@ -79,3 +79,20 @@
   for = "/missions.json"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Story art and voice clips. The address includes ?v= from shared/story-cache.mjs.
+# Bump STORY_ASSET_REV when one of these files changes.
+[[headers]]
+  for = "/moon-path/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/apple-catcher/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/bag-at-the-door/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

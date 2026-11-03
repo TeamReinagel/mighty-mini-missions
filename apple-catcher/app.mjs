@@ -3,6 +3,7 @@ import {freshState,restore,respond,addHelp,completeGate,releaseApple,placeMap,ca
 import {AppleStage} from './stage.mjs?v=apple-cast-1';
 import {Narrator,RECORDING} from './narration.mjs?v=apple-cast-1';
 import {readingWord} from './reading.mjs';
+import {storyAsset} from '../shared/story-cache.mjs';
 
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 const child=['max','gabi','connor','ethan'].includes(params.get('kid'))?params.get('kid'):null,review=params.get('review')==='1';
@@ -16,7 +17,7 @@ const save=()=>{try{localStorage.setItem(storageKey,JSON.stringify(state));}catc
 const stop=()=>{run++;resumeRecorded=false;voice.stop();};
 const node=(tag,cls='',text='')=>{const n=document.createElement(tag);n.className=cls;n.textContent=text;return n;};
 const button=(text,fn,cls='')=>{const b=node('button',cls,text);b.type='button';b.onclick=fn;return b;};
-const art=(name,alt='',cls='')=>{const i=node('img',cls);i.src=`./assets/${name}.png`;i.alt=alt;i.draggable=false;return i;};
+const art=(name,alt='',cls='')=>{const i=node('img',cls);i.src=storyAsset(`./assets/${name}.png`);i.alt=alt;i.draggable=false;return i;};
 const say=text=>voice.read(text,'support');
 let effects;
 function storySound(cloth=false){

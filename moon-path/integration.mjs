@@ -1,3 +1,5 @@
+import {openingPictures} from '../shared/story-cache.mjs';
+
 export const GAME_ID='moon-path';
 export const COMPLETION_ITEM='moon-path:episode-complete';
 const KIDS=new Set(['max','gabi','connor','ethan']);
@@ -6,7 +8,8 @@ export function moonPathCard(date,kidId){
   return {id:`${date}:game:${GAME_ID}`,kind:'game',part:'ela',gameId:GAME_ID,
     title:'The Moon Path',href:`../moon-path/?kid=${encodeURIComponent(kidId)}`,
     say:'Lark and Nib have a missing map. Help them find the moonstone.',
-    goal:'Finish the adventure, then come back',skill:'Letter sounds'};
+    goal:'Finish the adventure, then come back',skill:'Letter sounds',
+    prefetch:openingPictures('moon-path',['camp','props','lark-talk','nib-talk','lark-walk','nib-walk'])};
 }
 
 export function episodeChild(query,active){

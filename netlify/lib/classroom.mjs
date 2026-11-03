@@ -9,7 +9,6 @@ import { helpLine, itemsFor } from "./classroom-content.mjs";
 import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
 import { scheduledBagAtDoorCard, COMPLETION_ITEM as BAG_AT_DOOR_COMPLETION } from "../../bag-at-the-door/integration.mjs";
 import { scheduledAppleCatcherCard, COMPLETION_ITEM as APPLE_CATCHER_COMPLETION } from "../../apple-catcher/integration.mjs";
-import { COMPLETIONS as LARK_COMPLETIONS } from "../../lark-play/logic.mjs";
 import { larkAssignment } from "../../lark-play/plan.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
@@ -183,12 +182,7 @@ const EVIDENCE = {
   "basket-sort": { game: "basket-sort", need: 4 },
   "shape-tap": { game: "shape-tap", need: 4 },
   "my-name": { game: "my-name", need: 4 },
-  "two-jobs": { game: "two-jobs", need: 4 },
-  "lark-pockets": { game: "lark-pockets", need: 1, item: LARK_COMPLETIONS.pockets },
-  "lark-ant": { game: "lark-ant", need: 1, item: LARK_COMPLETIONS.ant },
-  "lark-i-am": { game: "lark-i-am", need: 1, item: LARK_COMPLETIONS["i-am"] },
-  "lark-folio": { game: "lark-folio", need: 1, item: LARK_COMPLETIONS.folio },
-  "lark-strap": { game: "lark-strap", need: 1, item: LARK_COMPLETIONS.strap }
+  "two-jobs": { game: "two-jobs", need: 4 }
 };
 
 export function evidenceFor(kidId, gameId) {
@@ -212,6 +206,9 @@ const PART_TITLES = {
   ethan: { learn: "Learn" }
 };
 const PART_ORDER = ["ela", "math", "write", "learn", "ready", "bonus"];
+const LARK_EPISODES = new Set(["moon-path", "apple-catcher", "bag-at-the-door"]);
+// Counting or math is mission 1. The story is mission 2, so its pictures can arrive during mission 1.
+const LARK_PART_ORDER = ["math", "ela", "write", "learn", "ready", "bonus"];
 const WRITERS = new Set(["max"]);
 
 function partFor(kidId, stepId) {
@@ -601,7 +598,8 @@ function markDone(cards, state, date) {
 // A part is done when each of its cards is done. The bonus is done when any one of its choices is.
 export function doseOf(kidId, cards) {
   const titles = { ...(PART_TITLES[kidId] || {}), bonus: "Bonus" };
-  const parts = PART_ORDER
+  const order = cards.some((card) => LARK_EPISODES.has(card.gameId)) ? LARK_PART_ORDER : PART_ORDER;
+  const parts = order
     .filter((id) => cards.some((card) => card.part === id))
     .map((id) => {
       const mine = cards.filter((card) => card.part === id);

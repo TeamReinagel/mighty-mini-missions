@@ -3,6 +3,7 @@ import {freshState,restore,addHelp,respond,completeGate,canFinish,canReport} fro
 import {readingWord} from './reading.mjs';
 import {DoorStage} from './stage.mjs?v=original-art-4';
 import {Narrator,RECORDING} from './narration.mjs?v=cast-1';
+import {storyAsset} from '../shared/story-cache.mjs';
 
 const $=id=>document.getElementById(id),params=new URLSearchParams(location.search);
 const child=['max','gabi','connor','ethan'].includes(params.get('kid'))?params.get('kid'):null;
@@ -19,7 +20,7 @@ const joyceBase=['localhost','127.0.0.1'].includes(location.hostname)?'https://m
 for(const id of ['joyce-return','finish-return'])$(id).href=`${joyceBase}${child?`?kid=${encodeURIComponent(child)}`:''}`;
 function button(text,fn,cls=''){const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=text;b.addEventListener('click',fn);return b;}
 function node(tag,cls='',text=''){const n=document.createElement(tag);n.className=cls;n.textContent=text;return n;}
-function artwork(name,alt='',cls=''){const img=document.createElement('img');img.src=`./assets/${name}.png`;img.alt=alt;img.className=cls;img.draggable=false;return img;}
+function artwork(name,alt='',cls=''){const img=document.createElement('img');img.src=storyAsset(`./assets/${name}.png`);img.alt=alt;img.className=cls;img.draggable=false;return img;}
 function reportAttempt(attempt){
   // Device narration and scene review are rehearsal only. Never create child evidence from this preview.
   if(!attempt||!child||review||state.reviewed||!voice.ready)return;
@@ -86,7 +87,7 @@ const PICTURES={hut:{art:'invitation-hut',name:'reed hut'},mill:{art:'invitation
 function renderPacking(root,id){
   root.replaceChildren();selectedMail=null;
   const board=node('div','pack-board'),mail=node('div','mail-row'),bag=node('div','bag-pockets');
-  const img=document.createElement('img');img.src='./assets/courier-bag.png';img.alt='Courier bag with three front pockets';bag.append(img);
+  const img=document.createElement('img');img.src=storyAsset('./assets/courier-bag.png');img.alt='Courier bag with three front pockets';bag.append(img);
   const choose=k=>{selectedMail=k;for(const b of mail.children)b.classList.toggle('selected',b.dataset.mail===k);};
   const drop=k=>{
     if(!selectedMail){feedback('Pick an invitation, then its matching pocket.');return;}

@@ -1,4 +1,5 @@
 import {prepareCharacterFrames} from './character-motion.mjs?v=mouth-layers-v3';
+import {storyAsset} from '../shared/story-cache.mjs';
 const IMAGE_NAMES=['camp','lagoon','woods','river','lark-talk','nib-talk','lark-walk','nib-walk','props'];
 export const PROP={wagon:0,case:1,openCase:2,map:3,book:4,lantern:5,boat:6,umbrella:7,mushroom:8,moss:9,flower:10,rock:11,machine:12,bells:13,treasure:14,apple:15};
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -33,7 +34,7 @@ export class StoryStage{
     this.tick=this.tick.bind(this);requestAnimationFrame(this.tick);
   }
   async load(onProgress=()=>{}){
-    let n=0;await Promise.all(IMAGE_NAMES.map(async name=>{const img=new Image();img.decoding='async';img.src=`assets/${name}.png`;await img.decode();this.images[name]=img;onProgress(++n,IMAGE_NAMES.length);}));
+    let n=0;await Promise.all(IMAGE_NAMES.map(async name=>{const img=new Image();img.decoding='async';img.src=storyAsset(`assets/${name}.png`);await img.decode();this.images[name]=img;onProgress(++n,IMAGE_NAMES.length);}));
     for(const name of ['lark','nib']){
       const frames=prepareCharacterFrames(name,splitAtlas(this.images[`${name}-talk`],true),splitAtlas(this.images[`${name}-walk`],true));
       this.frames[`${name}-talk`]=frames.talk;this.frames[`${name}-walk`]=frames.walk;
