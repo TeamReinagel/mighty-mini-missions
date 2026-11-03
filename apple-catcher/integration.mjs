@@ -2,7 +2,7 @@ export const GAME_ID='apple-catcher';
 export const COMPLETION_ITEM='apple-catcher:episode-complete';
 export const SCHEDULE={kidId:'connor',date:'2026-11-02'};
 
-// One requested reading mission, replacing the usual reading card on this date only.
+// Kept for direct callers. Today with Joyce assigns the episode from lark-play/plan.mjs.
 export function scheduledAppleCatcherCard(date,kidId){
  if(date!==SCHEDULE.date||kidId!==SCHEDULE.kidId)return null;
  return appleCatcherCard(date,kidId);

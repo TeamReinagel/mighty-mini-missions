@@ -1,0 +1,63 @@
+body { background: #2a2118; }
+
+h1, .line, .who, .home { color: #fffaf2; }
+
+.scene.lark {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255, 236, 196, .35), transparent 42%),
+    linear-gradient(#8eaf73, #6d8f5c 55%, #c4a574 55%);
+  color: #241c33;
+  align-content: center;
+  justify-items: center;
+}
+
+.drawing { display: block; width: min(180px, 46vw); margin-inline: auto; }
+.lark-choice .drawing { width: 72px; }
+.drawing svg { width: 100%; height: auto; display: block; }
+
+.lark-choice {
+  min-width: 112px;
+  min-height: 112px;
+  padding: 10px 12px 12px;
+}
+
+.lark-choice .cap { font-size: 1rem; margin-top: 4px; }
+.letter-mark {
+  display: block;
+  text-align: center;
+  font-family: "Chalkboard SE", "Comic Sans MS", Verdana, sans-serif;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.word {
+  display: block;
+  min-width: 88px;
+  font-family: "Chalkboard SE", "Comic Sans MS", Verdana, sans-serif;
+  font-size: 3.2rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.word .last { color: #9a3412; }
+
+.built { display: flex; gap: 8px; justify-content: center; }
+
+.tile {
+  min-width: 64px;
+  min-height: 72px;
+  border-radius: 16px;
+  background: #fffaf2;
+  color: #241c33;
+  display: grid;
+  place-items: center;
+  font-family: "Chalkboard SE", "Comic Sans MS", Verdana, sans-serif;
+  font-size: 2.4rem;
+  box-shadow: 0 6px 0 rgba(36, 28, 51, .18);
+}
+
+.tile.blank { background: transparent; box-shadow: none; border: 3px dashed rgba(255, 250, 242, .9); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bad { animation: none; }
+}

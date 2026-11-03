@@ -58,6 +58,51 @@ window.MIGHTY_GAMES = [
     levels: ["prek", "k"]
   },
   {
+    id: "lark-pockets",
+    title: "Two Pockets",
+    icon: "./lark-play/icon.svg",
+    href: "./lark-play/?play=pockets",
+    profiles: ["connor"],
+    practices: ["letter-sounds"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "lark-ant",
+    title: "Apple or Moon",
+    icon: "./lark-play/icon.svg",
+    href: "./lark-play/?play=ant",
+    profiles: ["connor"],
+    practices: ["letter-sounds"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "lark-i-am",
+    title: "I Am",
+    icon: "./lark-play/icon.svg",
+    href: "./lark-play/?play=i-am",
+    profiles: ["connor"],
+    practices: ["letter-sounds"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "lark-folio",
+    title: "Map or Mat",
+    icon: "./lark-play/icon.svg",
+    href: "./lark-play/?play=folio",
+    profiles: ["gabi"],
+    practices: ["blending"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "lark-strap",
+    title: "Pad the Strap",
+    icon: "./lark-play/icon.svg",
+    href: "./lark-play/?play=strap",
+    profiles: ["gabi"],
+    practices: ["blending"],
+    levels: ["prek", "k"]
+  },
+  {
     id: "monster-hunt",
     title: "Monster Hunt",
     icon: "./word-monsters/icons/icon-192.png",

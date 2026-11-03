@@ -9,7 +9,7 @@ test('The Apple Catcher replaces Connor’s reading mission on November 2 only',
  assert.equal(day.weekday,'Monday');
  assert.deepEqual(day.cards.map(c=>c.id),[
   '2026-11-02:game:apple-catcher','2026-11-02:game:snack-count:connor-count-5',
-  '2026-11-02:game:monster-hunt','2026-11-02:move:Build a tower'
+  '2026-11-02:game:monster-hunt','2026-11-02:move:Apple catcher line'
  ]);
  const story=day.cards.find(c=>c.gameId==='apple-catcher');
  assert.equal(day.cards.filter(c=>c.part==='ela').length,1);

@@ -9,6 +9,8 @@ import { helpLine, itemsFor } from "./classroom-content.mjs";
 import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
 import { scheduledBagAtDoorCard, COMPLETION_ITEM as BAG_AT_DOOR_COMPLETION } from "../../bag-at-the-door/integration.mjs";
 import { scheduledAppleCatcherCard, COMPLETION_ITEM as APPLE_CATCHER_COMPLETION } from "../../apple-catcher/integration.mjs";
+import { COMPLETIONS as LARK_COMPLETIONS } from "../../lark-play/logic.mjs";
+import { larkAssignment } from "../../lark-play/plan.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
 import {
@@ -175,7 +177,12 @@ const EVIDENCE = {
   "ghost-word-run": { game: "ghost-word-run", need: 10 },
   "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM },
   "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION },
-  "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION }
+  "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION },
+  "lark-pockets": { game: "lark-pockets", need: 1, item: LARK_COMPLETIONS.pockets },
+  "lark-ant": { game: "lark-ant", need: 1, item: LARK_COMPLETIONS.ant },
+  "lark-i-am": { game: "lark-i-am", need: 1, item: LARK_COMPLETIONS["i-am"] },
+  "lark-folio": { game: "lark-folio", need: 1, item: LARK_COMPLETIONS.folio },
+  "lark-strap": { game: "lark-strap", need: 1, item: LARK_COMPLETIONS.strap }
 };
 
 export function evidenceFor(kidId, gameId) {
@@ -670,6 +677,19 @@ function pinBoard(state, kidId, date, plan) {
   return true;
 }
 
+function placeLark(cards, assignment, date) {
+  const at = cards.findIndex((card) => card.part === "ela");
+  const next = cards.filter((card) => card.part !== "ela");
+  next.splice(at < 0 ? 0 : Math.min(at, next.length), 0, assignment.card);
+  if (!assignment.handsOn) return next;
+  return next.map((card) => card.kind !== "move" ? card : {
+    ...card,
+    id: `${date}:move:${assignment.handsOn.title}`,
+    title: assignment.handsOn.title,
+    say: assignment.handsOn.say
+  });
+}
+
 export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan() }) {
   const kid = CLASS_KIDS[kidId];
   if (!kid) return null;
@@ -683,18 +703,24 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, write });
   else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
   else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.monsters });
-  const story = scheduledBagAtDoorCard(date, kidId);
-  if (story) cards.splice(cards.findLastIndex((card) => card.part === "ela") + 1, 0, story);
+  const lark = larkAssignment(kidId, date);
+  if (!lark) {
+    const story = scheduledBagAtDoorCard(date, kidId);
+    if (story) cards.splice(cards.findLastIndex((card) => card.part === "ela") + 1, 0, story);
+  }
   const pinned = board?.check;
   if (pinned?.stepId && rhythm !== "weekend") {
     const def = stepById(kidId, pinned.stepId);
     if (def && pinned.items?.length) cards = insertCheck(cards, checkCard(kidId, def, date, pinned.items));
   }
-  const readingStory = scheduledAppleCatcherCard(date, kidId);
-  if (readingStory) {
-    const at = cards.findIndex((card) => card.part === "ela");
-    cards = cards.filter((card) => card.part !== "ela");
-    cards.splice(at < 0 ? 0 : at, 0, readingStory);
+  if (lark) cards = placeLark(cards, lark, date);
+  else {
+    const readingStory = scheduledAppleCatcherCard(date, kidId);
+    if (readingStory) {
+      const at = cards.findIndex((card) => card.part === "ela");
+      cards = cards.filter((card) => card.part !== "ela");
+      cards.splice(at < 0 ? 0 : at, 0, readingStory);
+    }
   }
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);

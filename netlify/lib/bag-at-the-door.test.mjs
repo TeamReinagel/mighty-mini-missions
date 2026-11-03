@@ -4,12 +4,12 @@ import {buildDay,handleClassroom,memoryStore} from './classroom.mjs';
 import {COMPLETION_ITEM,SCHEDULE} from '../../bag-at-the-door/integration.mjs';
 import {EPISODE} from '../../bag-at-the-door/episode.mjs';
 
-test('Gabi gets the episode alongside her existing missions on November 2 only',()=>{
+test('Gabi’s November 2 reading is the episode, with math and a bonus still beside it',()=>{
  const day=buildDay({kidId:'gabi',date:SCHEDULE.date});
  assert.equal(day.weekday,'Monday');
  assert.deepEqual(day.cards.map(c=>c.id),[
-  '2026-11-02:game:otter-slide:gabi-cvc-a','2026-11-02:game:bag-at-the-door',
-  '2026-11-02:game:snack-count:gabi-count-10','2026-11-02:game:monster-hunt','2026-11-02:move:Sound hunt'
+  '2026-11-02:game:bag-at-the-door',
+  '2026-11-02:game:snack-count:gabi-count-10','2026-11-02:game:monster-hunt','2026-11-02:move:Three invitations'
  ]);
  const story=day.cards.find(c=>c.gameId==='bag-at-the-door');assert.equal(story.part,'ela');
  assert.equal(story.href,'../bag-at-the-door/?kid=gabi');assert.equal(COMPLETION_ITEM,EPISODE.completionItem);
@@ -32,6 +32,6 @@ test('The mission checkmark needs Gabi’s exact completed episode after opening
  await events(9,[completion]);assert.equal((await done(10)).body.ok,true);
  const after=await call({action:'today'},11);
  assert.equal(after.body.cards.find(c=>c.gameId==='bag-at-the-door').done,true);
- assert.equal(after.body.dose.parts.find(p=>p.id==='ela').done,false);
+ assert.equal(after.body.dose.parts.find(p=>p.id==='ela').done,true);
  assert.deepEqual((await store.get('classroom/kid/gabi',{type:'json'})).steps,before);
 });

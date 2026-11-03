@@ -4,7 +4,7 @@ Lark & Nib’s Treasure Quest · The Map Pieces · Season 1 Episode 2
 
 ## Build status
 
-Playable local production preview with five child turns, original orchard/prop artwork, canonical character masks, isolated short a and m recordings, bookmarks, collection and shared journal page. The supplied ElevenLabs recording is integrated with this episode’s own word alignment, 36 contiguous clips, timed captions and narrator/Lark/Nib cues. No new voice generation or external transcription was used. The classroom assigns it as Connor’s reading mission for Monday, November 2, 2026 only, replacing the usual reading card.
+Playable local production preview with five child turns, original orchard/prop artwork, canonical character masks, isolated short a and m recordings, bookmarks, collection and shared journal page. The supplied ElevenLabs recording is integrated with this episode’s own word alignment, 36 contiguous clips, timed captions and narrator/Lark/Nib cues. No new voice generation or external transcription was used. From November 2, 2026, the classroom uses it as Connor’s reading mission on story days in the rotation in [the two-week plan](two-week-plan-2026-11-02.md).
 
 ## Story and continuity
 
@@ -122,4 +122,4 @@ Real HTMLMediaElement playback in an isolated Chromium review session passed all
 
 ## Monday mission assignment
 
-At the parent’s request, The Apple Catcher replaces Connor’s normal reading card on November 2, 2026 only. Counting and bonus choices remain in place. The assignment also replaces a pinned reading check for that day without changing letter mastery or the next day’s progression. Other children and dates retain their existing missions. The completion rule requires Connor’s `apple-catcher:episode-complete` event with `extra.completed: true`, received after he opens the mission. A practice response, another child’s completion, another episode, or an earlier completion does not count.
+At the parent’s request, The Apple Catcher is Connor’s story-day reading card from November 2, 2026, alternating with the short journal game I Am. Counting and bonus choices remain in place. The assignment replaces a pinned reading check on those days without changing letter mastery. The completion rule requires Connor’s `apple-catcher:episode-complete` event with `extra.completed: true`, received after he opens the mission. A practice response, another child’s completion, another episode, or an earlier completion does not count. The calendar is [the two-week plan](two-week-plan-2026-11-02.md).

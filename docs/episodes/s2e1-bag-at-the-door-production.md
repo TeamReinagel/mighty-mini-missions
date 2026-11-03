@@ -4,7 +4,7 @@ Season 2 of Lark & Nib’s Treasure Quest · Through the Woods · Episode 1
 
 ## Build status
 
-The prose, five child turns, word sliders, retained letter-sound recordings, generated library and bag assets, cast layers, local bookmarks, collection tag, and rereadable chapter are implemented. The supplied ElevenLabs recording is integrated as 56 paragraph clips with 114 timed caption/speaker cues. Story playback uses that recording; short unrecorded help, feedback, and optional word models use device speech. The retained isolated phoneme recordings remain in use. The episode is assigned to Gabi’s Monday, November 2, 2026 missions alongside her normal reading and math. This is a one-time assignment. Its checkmark requires the exact completed-episode event after opening, for Gabi.
+The prose, five child turns, word sliders, retained letter-sound recordings, generated library and bag assets, cast layers, local bookmarks, collection tag, and rereadable chapter are implemented. The supplied ElevenLabs recording is integrated as 56 paragraph clips with 114 timed caption/speaker cues. Story playback uses that recording; short unrecorded help, feedback, and optional word models use device speech. The retained isolated phoneme recordings remain in use. From November 2, 2026, the episode is Gabi’s reading card on story days, alternating with Pad the Strap, in place of that day’s Otter Slide card. Math stays beside it. The calendar is [the two-week plan](two-week-plan-2026-11-02.md). Its checkmark requires the exact completed-episode event after opening, for Gabi.
 
 ## Story and teaching
 
