@@ -41,32 +41,34 @@
   ];
 
   // Christmas Village houses. sign: where the door's sign panel sits, as % of the image (center x, center y).
+  // ratio is the picture's width / height, used as the door's aspect-ratio.
+  // sign is the center of the plain door, as a percent of the picture.
   const HOUSE_LIST = [
-    { src: "assets/christmas/cottage_0.svg", ratio: 300 / 260, sign: [50.5, 72] },
-    { src: "assets/christmas/cottage_1.svg", ratio: 300 / 260, sign: [50.5, 72] },
-    { src: "assets/christmas/cottage_2.svg", ratio: 300 / 260, sign: [50.5, 72] }
+    { src: "assets/christmas/cottage_0.png", ratio: "625 / 800", sign: [51, 68] },
+    { src: "assets/christmas/cottage_1.png", ratio: "729 / 800", sign: [50, 74] },
+    { src: "assets/christmas/cottage_2.png", ratio: "705 / 800", sign: [50, 72] }
   ];
   const HOUSES = HOUSE_LIST.map((h) => h.src);
 
   const GHOST_ASSETS = {
-    normal: "assets/christmas/snowman_normal.svg",
-    happy: "assets/christmas/snowman_happy.svg",
-    wobble: "assets/christmas/snowman_wobble.svg",
-    missed: "assets/christmas/snowman_wobble.svg"
+    normal: "assets/christmas/snowman_normal.png",
+    happy: "assets/christmas/snowman_happy.png",
+    wobble: "assets/christmas/snowman_wobble.png",
+    missed: "assets/christmas/snowman_wobble.png"
   };
 
   // Each costume is a complete picture of Snowy dressed up; it replaces all three plain poses,
   // and the player's correct/missed animations carry the expression instead.
   // Unlocked in this order in Christmas Village. Ids are stored in saved progress, so keep them stable.
   const COSTUMES = [
-    { id: "pumpkin-cap", name: "Elf Hat", spoken: "an elf hat outfit", src: "assets/christmas/outfit_elf.svg" },
-    { id: "witch-hat", name: "Winter Knit", spoken: "a winter knit outfit", src: "assets/christmas/outfit_winter.svg" },
-    { id: "cat-ears", name: "Reindeer", spoken: "a reindeer outfit", src: "assets/christmas/outfit_reindeer.svg" },
-    { id: "crown", name: "Christmas Crown", spoken: "a Christmas crown outfit", src: "assets/christmas/outfit_crown.svg" },
-    { id: "pirate-hat", name: "Festive Scarf", spoken: "a festive scarf outfit", src: "assets/christmas/outfit_scarf.svg" },
-    { id: "wizard-hat", name: "Starlight Hat", spoken: "a starlight hat outfit", src: "assets/christmas/outfit_star.svg" },
-    { id: "top-hat", name: "Snowman Top Hat", spoken: "a snowman top hat outfit", src: "assets/christmas/outfit_top.svg" },
-    { id: "bat-wings", name: "Cozy Earmuffs", spoken: "a cozy earmuffs outfit", src: "assets/christmas/outfit_earmuffs.svg" }
+    { id: "pumpkin-cap", name: "Santa Hat", spoken: "a Santa hat", src: "assets/christmas/outfit_elf.png" },
+    { id: "witch-hat", name: "Christmas Sweater", spoken: "a Christmas sweater", src: "assets/christmas/outfit_winter.png" },
+    { id: "cat-ears", name: "Reindeer", spoken: "a reindeer outfit", src: "assets/christmas/outfit_reindeer.png" },
+    { id: "crown", name: "Gift Bow", spoken: "a gift bow", src: "assets/christmas/outfit_crown.png" },
+    { id: "pirate-hat", name: "Candy Cane Scarf", spoken: "a candy cane scarf", src: "assets/christmas/outfit_scarf.png" },
+    { id: "wizard-hat", name: "Star Cap", spoken: "a star cap", src: "assets/christmas/outfit_star.png" },
+    { id: "top-hat", name: "Holly Top Hat", spoken: "a holly top hat", src: "assets/christmas/outfit_top.png" },
+    { id: "bat-wings", name: "Earmuffs", spoken: "earmuffs", src: "assets/christmas/outfit_earmuffs.png" }
   ];
 
   let wornCostumeId = null;
@@ -105,14 +107,14 @@
   function getPumpkinBucketSVG(size = 48) {
     const width = size;
     const height = Math.round(size * 1.08);
-    return `<img class="pumpkin-bucket-img pumpkin-bucket-svg" src="assets/christmas/sack.svg" width="${width}" height="${height}" alt="Christmas Gift Sack" draggable="false" />`;
+    return `<img class="pumpkin-bucket-img pumpkin-bucket-svg" src="assets/christmas/sack.png" width="${width}" height="${height}" alt="Christmas Gift Sack" draggable="false" />`;
   }
 
   // Gift-filled Christmas sack for the end screen
   function getPumpkinBucketOverflowSVG(size = 210) {
     const width = size;
     const height = Math.round(size * 1.12);
-    return `<img class="pumpkin-bucket-overflow-img big-bucket-img" src="assets/christmas/sack_full.svg" width="${width}" height="${height}" alt="Sack Full of Christmas Gifts" draggable="false" />`;
+    return `<img class="pumpkin-bucket-overflow-img big-bucket-img" src="assets/christmas/sack_full.png" width="${width}" height="${height}" alt="Sack Full of Christmas Gifts" draggable="false" />`;
   }
 
   function getPumpkinBucketBackSVG(size = 154) {
@@ -127,8 +129,8 @@
   function preloadAllAssets() {
     const allUrls = [
       ...Object.values(GHOST_ASSETS),
-      "assets/christmas/sack.svg",
-      "assets/christmas/sack_full.svg",
+      "assets/christmas/sack.png",
+      "assets/christmas/sack_full.png",
       "assets/christmas/heart.svg",
       ...CANDIES.map(c => c.src),
       ...COSTUMES.map(c => c.src),

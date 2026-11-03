@@ -64,7 +64,7 @@
     "pumpkin-cap": { name: "Gift Bonus", text: "Every 5th right word adds 1 bonus gift.", tip: "Good on any trail.", harvestEvery: 5 },
     "witch-hat": { name: "Snow Drift", text: "The trail speeds up more slowly.", tip: "Best when the trail gets too fast.", ramp: 0.84 },
     "cat-ears": { name: "Reindeer Cheer", text: "Start with 4 chances instead of 3.", tip: "Best on a new trail.", maxChances: 4 },
-    "crown": { name: "Royal Riches", text: "5 right in a row earns 5 gifts, but there is no 3-in-a-row bonus.", tip: "Best on trails you know well.", streakEvery: 5, streakPay: 5 },
+    "crown": { name: "Present Streak", text: "5 right in a row earns 5 gifts, but there is no 3-in-a-row bonus.", tip: "Best on trails you know well.", streakEvery: 5, streakPay: 5 },
     "pirate-hat": { name: "Giving Hearts", text: "A heart caught when you have all your chances is worth 3 gifts.", tip: "Best when you hardly ever miss.", fullHeartCandy: 3 },
     "wizard-hat": { name: "Starlight Shield", text: "A shield blocks one miss. It comes back after 8 right words.", tip: "Best while you are learning the words.", shieldRecharge: 8 },
     "top-hat": { name: "Snow Show", text: "On your last chance, every right word earns 2 extra gifts.", tip: "Best for big comebacks.", lastChanceBonus: 2 },
@@ -92,9 +92,9 @@
   let frameId = 0;
   let lastFrame = 0;
   let pointerActive = false;
-  let lastClientX = null;  // Crossfade Music Player: Seamlessly loops with a 2-second overlap fade out/in
+  let lastClientX = null;  // Crossfade Music Player: Seamlessly loops with a 3-second overlap fade out/in
   class CrossfadeMusicPlayer {
-    constructor(src, { targetVolume = 0.28, overlap = 2.0 } = {}) {
+    constructor(src, { targetVolume = 0.28, overlap = 3.0 } = {}) {
       this.src = src;
       this.targetVolume = targetVolume;
       this.overlap = overlap;
@@ -170,7 +170,7 @@
       if (!cur.duration || isNaN(cur.duration)) return;
 
       const timeLeft = cur.duration - cur.currentTime;
-      // When 2 seconds remain, begin 2-second crossfade loop!
+      // When the overlap remains, begin the crossfade loop.
       if (timeLeft <= this.overlap && timeLeft > 0) {
         this.startCrossfade();
       }
@@ -219,9 +219,9 @@
     }
   }
 
-  const music = new CrossfadeMusicPlayer("trick-or-treat-fun.m4a", {
+  const music = new CrossfadeMusicPlayer("sleigh-bells-waltz.mp3", {
     targetVolume: 0.28,
-    overlap: 2.0
+    overlap: 3.0
   });
 
   const MUSIC_ON_SVG = `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`;
@@ -863,7 +863,7 @@
       house.className = "street-house";
       house.dataset.word = word;
       house.setAttribute("aria-label", `Door that says ${word}`);
-      house.style.aspectRatio = `1 / ${art.ratio}`;
+      house.style.aspectRatio = art.ratio;
       house.innerHTML = `
         <img class="house-img" src="${art.src}" alt="" draggable="false" />
         <span class="door-word" style="left:${art.sign[0]}%;top:${art.sign[1]}%">${word}</span>
@@ -1472,7 +1472,7 @@
     const owned = ideas.filter((id) => saved.costumes.includes(id));
     if (owned.includes(saved.wearing)) return `${reason} ${costumeName(saved.wearing)} is a great pick.`;
     if (owned.length) return `${reason} Try ${owned.slice(0, 2).map(costumeName).join(" or ")}.`;
-    if (saved.costumes.includes("pumpkin-cap") && saved.wearing !== "pumpkin-cap") return `${reason} Elf Hat helps on any trail.`;
+    if (saved.costumes.includes("pumpkin-cap") && saved.wearing !== "pumpkin-cap") return `${reason} Santa Hat helps on any trail.`;
     return "";
   }
 
@@ -1554,10 +1554,11 @@
   function makeCandyRain() {
     const holder = $("celebrationCandy");
     holder.replaceChildren();
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 14; i++) {
       const candy = document.createElement("span");
       candy.className = "candy-rain-piece";
-      candy.style.left = `${Math.random() * 92}%`;
+      const edge = 1 + Math.random() * 12;
+      candy.style.left = i % 2 === 0 ? `${edge}%` : `${87 + Math.random() * 10}%`;
       candy.style.animationDelay = `${Math.random() * 2.5}s`;
       candy.style.animationDuration = `${2.3 + Math.random() * 1.6}s`;
       const size = 32 + Math.floor(Math.random() * 14);

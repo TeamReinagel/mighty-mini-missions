@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "gwr-christmas-v2";
+const VERSION = "gwr-christmas-v5";
 const CORE = [
   "./",
   "index.html",
@@ -13,11 +13,11 @@ const CORE = [
   "icons/icon-512.png",
   "icons/icon-maskable-512.png",
   "assets/christmas/winter_edges.svg",
-  "assets/christmas/snowman_normal.svg",
-  "assets/christmas/snowman_happy.svg",
-  "assets/christmas/snowman_wobble.svg",
-  "assets/christmas/sack.svg",
-  "assets/christmas/sack_full.svg",
+  "assets/christmas/snowman_normal.png",
+  "assets/christmas/snowman_happy.png",
+  "assets/christmas/snowman_wobble.png",
+  "assets/christmas/sack.png",
+  "assets/christmas/sack_full.png",
   "assets/christmas/gift_0.svg",
   "assets/christmas/gift_1.svg",
   "assets/christmas/gift_2.svg",
@@ -26,18 +26,18 @@ const CORE = [
   "assets/christmas/gift_5.svg",
   "assets/christmas/gift_6.svg",
   "assets/christmas/heart.svg",
-  "assets/christmas/cottage_0.svg",
-  "assets/christmas/cottage_1.svg",
-  "assets/christmas/cottage_2.svg",
-  "assets/christmas/outfit_elf.svg",
-  "assets/christmas/outfit_winter.svg",
-  "assets/christmas/outfit_reindeer.svg",
-  "assets/christmas/outfit_crown.svg",
-  "assets/christmas/outfit_scarf.svg",
-  "assets/christmas/outfit_star.svg",
-  "assets/christmas/outfit_top.svg",
-  "assets/christmas/outfit_earmuffs.svg",
-  "trick-or-treat-fun.m4a"
+  "assets/christmas/cottage_0.png",
+  "assets/christmas/cottage_1.png",
+  "assets/christmas/cottage_2.png",
+  "assets/christmas/outfit_elf.png",
+  "assets/christmas/outfit_winter.png",
+  "assets/christmas/outfit_reindeer.png",
+  "assets/christmas/outfit_crown.png",
+  "assets/christmas/outfit_scarf.png",
+  "assets/christmas/outfit_star.png",
+  "assets/christmas/outfit_top.png",
+  "assets/christmas/outfit_earmuffs.png",
+  "sleigh-bells-waltz.mp3"
 ];
 
 self.addEventListener("install", (event) => {

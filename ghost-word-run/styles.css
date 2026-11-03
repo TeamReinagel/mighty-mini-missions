@@ -819,12 +819,18 @@ select {
 .modal-card h2, .pause-overlay h2 { margin-bottom: 20px; font-size: 32px; }
 .modal-close {
   position: absolute;
-  top: 9px;
-  right: 10px;
+  z-index: 5;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
   border: 0;
   color: #fff;
   background: transparent;
   font-size: 34px;
+  line-height: 1;
 }
 
 .modal-card ol {
@@ -874,13 +880,15 @@ select {
 
 .big-bucket {
   position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 220px;
-  height: 240px;
-  margin: 20px 0 12px;
-  overflow: visible;
+  width: min(200px, 48vw);
+  height: min(168px, 24vh);
+  margin: 8px 0 6px;
+  overflow: hidden;
   filter: drop-shadow(0 16px 24px rgba(0,0,0,.45));
 }
 
@@ -896,9 +904,11 @@ select {
 .big-bucket-back .pumpkin-bucket-svg,
 .big-bucket-back .pumpkin-bucket-overflow-img,
 .big-bucket-back .big-bucket-img {
+  position: absolute;
+  inset: 0;
   display: block;
-  width: 220px;
-  height: 240px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   animation: bucketSway 3.2s ease-in-out infinite alternate;
 }
@@ -944,8 +954,35 @@ select {
   100% { transform: translateY(-4px) rotate(var(--candy-r, 0deg)); }
 }
 
+.celebration-candy {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.end-screen > :not(.celebration-candy) {
+  position: relative;
+  z-index: 2;
+}
+
+.total-line,
+.end-best-line,
+.end-message,
+.end-map-line,
+.end-power-line,
+.end-tip-line {
+  width: min(100% - 28px, 440px);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 4px 14px;
+  border-radius: 14px;
+  background: rgba(8, 40, 44, .9);
+}
+
 .end-best-line {
-  margin: -6px 0 14px;
+  margin: 4px auto 8px;
   color: #fde047;
   font-family: "Fredoka", sans-serif;
   font-size: 19px;
@@ -1015,7 +1052,10 @@ select {
 }
 .street-invite p {
   margin: 0 0 10px;
+  padding: 4px 14px;
+  border-radius: 14px;
   color: #ffd27a;
+  background: rgba(8, 40, 44, .9);
   font-family: "Fredoka", sans-serif;
   font-size: 18px;
 }
@@ -1075,6 +1115,7 @@ select {
   display: block;
   width: 100%;
   height: 100%;
+  object-fit: contain;
   pointer-events: none;
 }
 
@@ -1406,16 +1447,16 @@ select {
 .voice-hint { margin: 8px 0 0; color: #b9aedb; font-size: 12px; line-height: 1.35; }
 
 .end-map-line {
-  width: min(100%, 420px);
-  margin: -4px 0 10px;
+  width: min(100% - 28px, 440px);
+  margin: 4px auto 8px;
   color: #ffd27a;
   font-family: "Fredoka", sans-serif;
   font-size: 17px;
 }
 
 .end-power-line, .end-tip-line {
-  width: min(100%, 420px);
-  margin: -4px 0 10px;
+  width: min(100% - 28px, 440px);
+  margin: 4px auto 8px;
   font-size: 16px;
   line-height: 1.35;
 }
