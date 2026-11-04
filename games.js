@@ -63,8 +63,17 @@ window.MIGHTY_GAMES = [
     title: "Monster Hunt",
     icon: "./word-monsters/icons/icon-192.png",
     href: "./word-monsters/",
+    archive: true,
     practices: ["colors-shapes", "counting", "letters", "letter-sounds"],
     levels: ["toddler", "prek", "k"]
+  },
+  {
+    id: "lost-helpers",
+    title: "The Lost Helpers",
+    icon: "./lost-helpers/assets/icon.jpg",
+    href: "./lost-helpers/",
+    practices: ["colors-shapes", "counting", "letters", "letter-sounds", "sight-words", "rhyming", "math-facts", "money"],
+    levels: ["toddler", "prek", "k", "1st", "2nd"]
   },
   {
     id: "ghost-word-run",

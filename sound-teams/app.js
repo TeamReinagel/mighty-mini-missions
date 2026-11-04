@@ -1,4 +1,5 @@
 import { teamRound } from "../play/rounds.mjs";
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, load, save, fresh, stepParam } from "../play/stage.mjs";
 
 const GAME = "sound-teams";
@@ -15,20 +16,11 @@ forceOpen(state, LEVELS.map((item) => item.id), STEPS[stepParam()]);
 if (!state.open?.length) state.open = ["sh"];
 let level = state.open.at(-1);
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.[level]?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("The crab is looking for letter teams.");
-  levelRow(ui.scene, LEVELS, state, level, (id) => { level = id; lobby(); });
-  const hero = document.createElement("img");
-  hero.className = "hero";
-  hero.src = "assets/crab.jpg";
-  hero.alt = "";
-  const play = el("button", "go play", "Search the pool");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  ui.scene.append(hero, play);
+function levels(scene, redraw) {
+  levelRow(scene, LEVELS, state, level, (id) => {
+    level = id;
+    redraw();
+  });
 }
 
 function shell(word) {
@@ -139,7 +131,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "A new letter team washed in." : clean ? "The crab kept a pearl." : "The pool is still full of shells.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round, rest: levels });

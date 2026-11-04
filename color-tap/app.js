@@ -1,3 +1,4 @@
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, el, load, save, fresh } from "../play/stage.mjs";
 
 const GAME = "color-tap";
@@ -23,21 +24,6 @@ function pickColor() {
   return FOODS[Math.floor(rng() * FOODS.length)].id;
 }
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.scene.classList.remove("picnic");
-  ui.stars(state.stars?.[level]?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("The little dino is hungry.");
-  const hero = document.createElement("img");
-  hero.className = "hero";
-  hero.src = "assets/dino.jpg";
-  hero.alt = "";
-  const play = el("button", "go play", "Start the picnic");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  ui.scene.append(hero, play);
-}
 
 async function feed(color) {
   ui.scene.replaceChildren();
@@ -132,7 +118,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "A new picnic friend can come next time." : clean ? "The dino saved you a flower." : "The dino is still hungry.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round });

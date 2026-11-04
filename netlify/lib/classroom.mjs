@@ -17,6 +17,7 @@ import {
   nextSchoolDay, noticeLine, reportView, scoreCheck, skillMap
 } from "./skills.mjs";
 import { post } from "./slack.mjs";
+import { ROUND_LENGTH } from "../../play/round-length.mjs";
 
 export const CLASS_KIDS = {
   max: { name: "Max", age: 5, color: "#4fa3ff", picture: "../avatars/max.jpg" },
@@ -148,11 +149,14 @@ export const CHAINS = {
   ]
 };
 
+const oneRound = (title) => `Play one round of ${title}. Then come back and tap I'm done.`;
+
 const GAMES = {
-  otter: { id: "otter-slide", title: "Otter Slide", href: "../otter-slide/", say: "Play Otter Slide. Slide the sounds together, then come back and tap I played." },
-  hatch: { id: "hatch-match", title: "Hatch Match", href: "../hatch-match/", say: "Play Hatch Match. Match the big letter with the little letter, then come back and tap I played." },
+  otter: { id: "otter-slide", title: "Otter Slide", href: "../otter-slide/", say: oneRound("Otter Slide") },
+  hatch: { id: "hatch-match", title: "Hatch Match", href: "../hatch-match/", say: oneRound("Hatch Match") },
   coins: { id: "coin-record-run", title: "Coin Record Run", href: "../coin-record-run/", say: "Play Coin Record Run. See how far you can get, then come back and tap I played." },
-  monsters: { id: "monster-hunt", title: "Monster Hunt", href: "../word-monsters/", say: "Play Monster Hunt, then come back and tap I played." },
+  monsters: { id: "monster-hunt", title: "Monster Hunt", href: "../word-monsters/", say: oneRound("Monster Hunt") },
+  helpers: { id: "lost-helpers", title: "The Lost Helpers", href: "../lost-helpers/", say: oneRound("The Lost Helpers") },
   train: { id: "train-set", title: "Train Set", href: "../train-set/", say: "Play with the trains, then come back and tap I played." },
   ghost: { id: "ghost-word-run", title: "Christmas Word Run", href: "../ghost-word-run/", say: "Play Christmas Word Run, then come back and tap I played." }
 };
@@ -160,29 +164,30 @@ const GAMES = {
 // A game card is done once this many answers from that game reach the progress log after the
 // card was opened. `game` is the name the game logs under, which is not always the card's id.
 const EVIDENCE = {
-  "otter-slide": { game: "otter-slide", need: 8 },
-  "hatch-match": { game: "hatch-match", need: 8 },
-  "sound-bugs": { game: "sound-bugs", need: 8 },
-  "sound-teams": { game: "sound-teams", need: 8 },
-  "snack-count": { game: "snack-count", need: 6 },
-  "flower-beds": { game: "flower-beds", need: 6 },
-  "more-or-fewer": { game: "more-or-fewer", need: 6 },
-  "pattern-park": { game: "pattern-park", need: 6 },
-  "color-tap": { game: "color-tap", need: 5 },
-  "block-trade": { game: "block-trade", need: 5 },
-  "coin-record-run": { game: "coin-record-run", need: 3 },
-  "monster-hunt": { game: "word-monsters", need: 6 },
-  "train-set": { game: "train-set", need: 3 },
-  "ghost-word-run": { game: "ghost-word-run", need: 10 },
+  "otter-slide": { game: "otter-slide", need: ROUND_LENGTH["otter-slide"] },
+  "hatch-match": { game: "hatch-match", need: ROUND_LENGTH["hatch-match"] },
+  "sound-bugs": { game: "sound-bugs", need: ROUND_LENGTH["sound-bugs"] },
+  "sound-teams": { game: "sound-teams", need: ROUND_LENGTH["sound-teams"] },
+  "snack-count": { game: "snack-count", need: ROUND_LENGTH["snack-count"] },
+  "flower-beds": { game: "flower-beds", need: ROUND_LENGTH["flower-beds"] },
+  "more-or-fewer": { game: "more-or-fewer", need: ROUND_LENGTH["more-or-fewer"] },
+  "pattern-park": { game: "pattern-park", need: ROUND_LENGTH["pattern-park"] },
+  "color-tap": { game: "color-tap", need: ROUND_LENGTH["color-tap"] },
+  "block-trade": { game: "block-trade", need: ROUND_LENGTH["block-trade"] },
+  "coin-record-run": { game: "coin-record-run", need: ROUND_LENGTH["coin-record-run"] },
+  "monster-hunt": { game: "word-monsters", need: ROUND_LENGTH["monster-hunt"] },
+  "lost-helpers": { game: "lost-helpers", need: ROUND_LENGTH["lost-helpers"] },
+  "train-set": { game: "train-set", need: ROUND_LENGTH["train-set"] },
+  "ghost-word-run": { game: "ghost-word-run", need: ROUND_LENGTH["ghost-word-run"] },
   "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM },
   "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION },
   "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION },
-  "nest-numbers": { game: "nest-numbers", need: 4 },
-  "big-little": { game: "big-little", need: 4 },
-  "basket-sort": { game: "basket-sort", need: 4 },
-  "shape-tap": { game: "shape-tap", need: 4 },
-  "my-name": { game: "my-name", need: 4 },
-  "two-jobs": { game: "two-jobs", need: 4 }
+  "nest-numbers": { game: "nest-numbers", need: ROUND_LENGTH["nest-numbers"] },
+  "big-little": { game: "big-little", need: ROUND_LENGTH["big-little"] },
+  "basket-sort": { game: "basket-sort", need: ROUND_LENGTH["basket-sort"] },
+  "shape-tap": { game: "shape-tap", need: ROUND_LENGTH["shape-tap"] },
+  "my-name": { game: "my-name", need: ROUND_LENGTH["my-name"] },
+  "two-jobs": { game: "two-jobs", need: ROUND_LENGTH["two-jobs"] }
 };
 
 export function evidenceFor(kidId, gameId) {
@@ -193,8 +198,8 @@ export function evidenceFor(kidId, gameId) {
 
 const FREE = {
   max: [GAMES.coins, GAMES.ghost],
-  gabi: [GAMES.otter, GAMES.monsters],
-  connor: [GAMES.monsters, GAMES.hatch],
+  gabi: [GAMES.otter, GAMES.helpers],
+  connor: [GAMES.helpers, GAMES.hatch],
   ethan: [GAMES.train]
 };
 
@@ -488,20 +493,20 @@ function lessonCard(kidId, item, date, state) {
 }
 
 const STEP_GAMES = {
-  "gabi-count-20": ["flower-beds", "Flower Beds", "../flower-beds/", "Play Flower Beds. Each bed holds ten flowers."]
+  "gabi-count-20": ["flower-beds", "Flower Beds", "../flower-beds/", oneRound("Flower Beds")]
 };
 
 const SKILL_GAMES = {
-  "hear-name": ["hatch-match", "Hatch Match", "../hatch-match/", "Play Hatch Match. Match the big letter with the little letter."],
-  "hear-sound": ["sound-bugs", "Jungle Jump", "../sound-bugs/", "Play Jungle Jump. The drum says a sound. Help the monkey across."],
-  cvc: ["otter-slide", "Otter Slide", "../otter-slide/", "Play Otter Slide. Slide the sounds together."],
-  digraph: ["sound-teams", "Tide Pool", "../sound-teams/", "Play Tide Pool. Catch the shell with the letter team."],
-  count: ["snack-count", "Sundae Stand", "../snack-count/", "Play Sundae Stand. Build the scoops the bunny asked for."],
-  numbers: ["snack-count", "Sundae Stand", "../snack-count/", "Play Sundae Stand. Match the number card to the sundae."],
-  compare: ["more-or-fewer", "Lost Sheep", "../more-or-fewer/", "Play Lost Sheep. Which pen has more, and who wandered off?"],
-  pattern: ["pattern-park", "Dino Express", "../pattern-park/", "Play Dino Express. Build the train that repeats."],
-  color: ["color-tap", "Dino Picnic", "../color-tap/", "Play Dino Picnic. Feed the dino and set the blanket."],
-  regroup: ["block-trade", "Moon Crates", "../block-trade/", "Play Moon Crates. Trade 10 rocks for a crate, then launch."]
+  "hear-name": ["hatch-match", "Hatch Match", "../hatch-match/", oneRound("Hatch Match")],
+  "hear-sound": ["sound-bugs", "Jungle Jump", "../sound-bugs/", oneRound("Jungle Jump")],
+  cvc: ["otter-slide", "Otter Slide", "../otter-slide/", oneRound("Otter Slide")],
+  digraph: ["sound-teams", "Tide Pool", "../sound-teams/", oneRound("Tide Pool")],
+  count: ["snack-count", "Sundae Stand", "../snack-count/", oneRound("Sundae Stand")],
+  numbers: ["snack-count", "Sundae Stand", "../snack-count/", oneRound("Sundae Stand")],
+  compare: ["more-or-fewer", "Lost Sheep", "../more-or-fewer/", oneRound("Lost Sheep")],
+  pattern: ["pattern-park", "Dino Express", "../pattern-park/", oneRound("Dino Express")],
+  color: ["color-tap", "Dino Picnic", "../color-tap/", oneRound("Dino Picnic")],
+  regroup: ["block-trade", "Moon Crates", "../block-trade/", oneRound("Moon Crates")]
 };
 
 function skillCard(kidId, item, date, state) {
@@ -591,7 +596,8 @@ function markDone(cards, state, date) {
     ...card,
     done: done.has(card.id) || eased.has(card.id),
     eased: eased.has(card.id),
-    skipped: skipped.has(card.id)
+    skipped: skipped.has(card.id),
+    opened: Boolean(day.opened?.[card.id])
   }));
 }
 
@@ -685,12 +691,12 @@ function pinBoard(state, kidId, date, plan) {
 // Weekends stay on the usual bonus. The cycle is the checklist order.
 const READINESS_START = "2026-11-03";
 const READINESS = [
-  { id: "nest-numbers", title: "Nest Numbers", href: "../nest-numbers/?kid=connor", say: "Play Nest Numbers. Find the number." },
-  { id: "big-little", title: "Big or Little", href: "../big-little/?kid=connor", say: "Play Big or Little. Tap the bigger one or the smaller one." },
-  { id: "basket-sort", title: "Basket Sort", href: "../basket-sort/?kid=connor", say: "Play Basket Sort. Put it with the ones that match." },
-  { id: "shape-tap", title: "Shape Blocks", href: "../shape-tap/?kid=connor", say: "Play Shape Blocks. Tap the shape." },
-  { id: "my-name", title: "My Name", href: "../my-name/?kid=connor", say: "Play My Name. Find the card with your name." },
-  { id: "two-jobs", title: "Two Jobs", href: "../two-jobs/?kid=connor", say: "Play Two Jobs. Do the first job, then the next." }
+  { id: "nest-numbers", title: "Nest Numbers", href: "../nest-numbers/?kid=connor", say: oneRound("Nest Numbers") },
+  { id: "big-little", title: "Big or Little", href: "../big-little/?kid=connor", say: oneRound("Big or Little") },
+  { id: "basket-sort", title: "Basket Sort", href: "../basket-sort/?kid=connor", say: oneRound("Basket Sort") },
+  { id: "shape-tap", title: "Shape Blocks", href: "../shape-tap/?kid=connor", say: oneRound("Shape Blocks") },
+  { id: "my-name", title: "My Name", href: "../my-name/?kid=connor", say: oneRound("My Name") },
+  { id: "two-jobs", title: "Two Jobs", href: "../two-jobs/?kid=connor", say: oneRound("Two Jobs") }
 ];
 
 function readinessGame(date) {
@@ -742,7 +748,7 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   let cards = [];
   if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, write });
   else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
-  else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.monsters });
+  else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.helpers });
   const lark = larkAssignment(kidId, date);
   if (!lark) {
     const story = scheduledBagAtDoorCard(date, kidId);
@@ -816,7 +822,7 @@ function pairCards({ kidId, date, state, plan, rhythm, game }) {
     ? [moonPathCard(date, kidId), ...(counting ? [skillCard(kidId, counting, date, state)] : [])]
     : found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
   let bonus = game;
-  if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.monsters : GAMES.otter;
+  if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.helpers : GAMES.otter;
   cards.push(gameCard(date, bonus, "bonus"), moveCard(kidId, date, "bonus"));
   return cards;
 }
@@ -860,18 +866,31 @@ function maxCards({ date, state, plan, rhythm, write }) {
   ];
 }
 
+function shiftDay(day, by) {
+  const [year, month, date] = day.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, date + by)).toISOString().slice(0, 10);
+}
+
 // Counts answers the progress log received from one game after `since`. Event keys start with
 // the time the server received them, so a tablet's clock cannot make old play look new.
+// A story finish is different: Chicago evening is already the next UTC date, so the note can
+// sit in the other folder. Once the card has been opened, today's finish counts.
 async function playedSince(store, kidId, game, since, now, completionItem) {
   const from = Date.parse(since || "") || 0;
   if (completionItem && !from) return 0;
-  const days = new Set([new Date(from || now.getTime()).toISOString().slice(0, 10), now.toISOString().slice(0, 10)]);
+  const missionDay = localDate({}, now);
+  const days = completionItem
+    ? new Set([shiftDay(missionDay, -1), missionDay, shiftDay(missionDay, 1)])
+    : new Set([new Date(from || now.getTime()).toISOString().slice(0, 10), now.toISOString().slice(0, 10)]);
   let played = 0;
   for (const day of days) {
     const { blobs = [] } = (await store.list({ prefix: `events/${day}/` })) || {};
     for (const { key } of blobs) {
       const received = Number(String(key).split("/")[2]?.split("-")[0]);
-      if (!(received >= from)) continue;
+      if (!Number.isFinite(received)) continue;
+      if (completionItem) {
+        if (localDate({}, new Date(received)) !== missionDay) continue;
+      } else if (!(received >= from)) continue;
       const events = await store.get(key, { type: "json" });
       for (const event of Array.isArray(events) ? events : []) {
         if (event?.kid === kidId && event.game === game && (!completionItem || (event.item === completionItem && event.extra?.completed === true))) played += 1;

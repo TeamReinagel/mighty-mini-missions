@@ -1,4 +1,5 @@
-import { el, fresh, load, openGame, record, levelRow } from "./stage.mjs";
+import { fresh, load, openGame, record, levelRow } from "./stage.mjs";
+import { runRounds } from "./set.mjs";
 
 export function mountLadder({ root, game, title, background, ladder, play, skill, prizeSrc, win, keep }) {
   const rng = fresh();
@@ -6,31 +7,14 @@ export function mountLadder({ root, game, title, background, ladder, play, skill
   const state = load(game) || { stars: {}, open: [ladder[0].id], prizes: [] };
   if (!state.open?.length) state.open = [ladder[0].id];
   let level = [...state.open].reverse().find((id) => ladder.some((item) => item.id === id)) || ladder[0].id;
+  let pending = null;
+  let farewell = "That round is done.";
 
   function spec() {
     return ladder.find((item) => item.id === level) || ladder[0];
   }
 
-  function lobby() {
-    ui.scene.replaceChildren();
-    ui.stars(state.stars?.[level]?.streak || 0);
-    ui.prizes(state.prizes);
-    ui.speak(spec().hello);
-    const hero = document.createElement("img");
-    hero.className = "hero";
-    hero.src = prizeSrc;
-    hero.alt = "";
-    const go = el("button", "go play", spec().go || "Play");
-    go.type = "button";
-    go.addEventListener("click", () => round());
-    ui.scene.append(hero, go);
-    levelRow(ui.scene, ladder, state, level, (id) => {
-      level = id;
-      lobby();
-    });
-  }
-
-  async function round() {
+  async function one() {
     const current = spec();
     const result = await play({ rng, ui, spec: current });
     const clean = result === true || result?.clean === true;
@@ -46,9 +30,30 @@ export function mountLadder({ root, game, title, background, ladder, play, skill
     });
     ui.stars(state.stars?.[level]?.streak || 0);
     ui.prizes(state.prizes);
-    ui.speak(opened ? "The next one is ready." : clean ? win : keep);
-    setTimeout(lobby, 1000);
+    if (opened && current.next) pending = current.next;
+    ui.speak(clean ? win : keep);
   }
 
-  lobby();
+  runRounds({
+    ui,
+    game,
+    play: one,
+    line: () => farewell,
+    before() {
+      pending = null;
+      farewell = "That round is done.";
+    },
+    after() {
+      if (!pending) return;
+      level = pending;
+      pending = null;
+      farewell = "The next one is ready. That round is done.";
+    },
+    rest(scene, redraw) {
+      levelRow(scene, ladder, state, level, (id) => {
+        level = id;
+        redraw();
+      });
+    }
+  });
 }

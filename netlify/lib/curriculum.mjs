@@ -5,12 +5,12 @@
 export const STRANDS = [
   {
     id: "early-concepts",
-    name: "Colors, shapes and size (Monster Hunt, Train Set)",
+    name: "Colors, shapes and size (The Lost Helpers, Train Set, Monster Hunt)",
     steps: ["Colors & Shapes", "More Colors", "Tricky Shapes", "Big & Small"]
   },
   {
     id: "early-literacy",
-    name: "Letters to reading (Monster Hunt, Hatch Match, Otter Slide, then Christmas Word Run)",
+    name: "Letters to reading (The Lost Helpers, Hatch Match, Otter Slide, then Christmas Word Run)",
     steps: [
       "Letters A to Z",
       "Big & little letters",
@@ -46,7 +46,7 @@ export const STRANDS = [
   },
   {
     id: "math",
-    name: "Number sense and math facts (Monster Hunt numbers, then Monster Maker)",
+    name: "Number sense and math facts (The Lost Helpers, then Monster Maker)",
     steps: [
       "Numbers 1 to 10",
       "Counting objects (Pre-K)",
@@ -96,6 +96,7 @@ export function curriculumText() {
 
 export const GAME_NAMES = {
   "word-monsters": "Monster Hunt",
+  "lost-helpers": "The Lost Helpers",
   "ghost-word-run": "Christmas Word Run",
   "coin-record-run": "Coin Record Run",
   "monster-maker": "Monster Maker",

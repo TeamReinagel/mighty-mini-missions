@@ -1,4 +1,5 @@
 import { SOUND, SOUND_GROUPS, soundRound } from "../play/rounds.mjs";
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, load, save, fresh, stepParam } from "../play/stage.mjs";
 
 const GAME = "sound-bugs";
@@ -30,16 +31,11 @@ function animal(letter, face) {
   return button;
 }
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.[level]?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("The jungle drum is ready.");
-  levelRow(ui.scene, LEVELS, state, level, (id) => { level = id; lobby(); });
-  const play = el("button", "go play", "Cross the stream");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  ui.scene.append(play);
+function levels(scene, redraw) {
+  levelRow(scene, LEVELS, state, level, (id) => {
+    level = id;
+    redraw();
+  });
 }
 
 async function dance(item) {
@@ -130,7 +126,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "New animals are in the next part of the jungle." : clean ? "The monkey made it across." : "The stream is still there.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round, rest: levels });

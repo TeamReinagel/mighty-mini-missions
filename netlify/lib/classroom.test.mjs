@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CVC, itemsFor, wordParts } from "./classroom-content.mjs";
 import {
-  applyAttempt, buildDay, conferencePackage, decidePlan, dropLastNoteSpots, handleClassroom, isMastered,
+  applyAttempt, buildDay, conferencePackage, decidePlan, dropLastNoteSpots, evidenceFor, handleClassroom, isMastered,
   memoryStore, noteSignal, recordNoteSteps, rhythmFor, setEssentialOff, stepById, weekdayIndex
 } from "./classroom.mjs";
 
@@ -51,7 +51,7 @@ test("regrouping opens as Block Trade", () => {
   const lesson = day.cards.find((card) => card.stepId === "max-regroup-show");
   assert.equal(lesson.gameId, "block-trade");
   assert.match(lesson.href, /block-trade/);
-  assert.match(lesson.say, /Trade 10/);
+  assert.match(lesson.say, /one round of Moon Crates/);
   const items = itemsFor(stepById("max", "max-regroup-show"), MONDAY, []);
   for (const item of items) {
     assert.ok((item.a % 10) + (item.b % 10) >= 10);
@@ -117,13 +117,13 @@ test("a game card counts only after real play since it was opened", async () => 
   assert.equal(tooSoon.body.notYet, true);
   assert.equal(tooSoon.body.played, 0);
 
-  await logPlay(store, at(start, 60), "gabi", "otter-slide", 5);
+  await logPlay(store, at(start, 60), "gabi", "otter-slide", 4);
   await logPlay(store, at(start, 70), "max", "otter-slide", 5);
   const short = await finishCard(store, "gabi", otter.id, at(start, 80));
   assert.equal(short.body.notYet, true);
-  assert.equal(short.body.played, 5);
+  assert.equal(short.body.played, 4);
 
-  await logPlay(store, at(start, 120), "gabi", "otter-slide", 3);
+  await logPlay(store, at(start, 120), "gabi", "otter-slide", 1);
   const played = await finishCard(store, "gabi", otter.id, at(start, 130));
   assert.equal(played.body.ok, true);
   const after = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now: at(start, 140) });
@@ -145,6 +145,7 @@ test("Connor's practice card rotates from November 3 and finishes after four pla
     const card = day.cards.find((entry) => entry.part === "ready");
     assert.equal(card.gameId, id, date);
     assert.match(card.href, new RegExp(`${id}/\\?kid=connor`));
+    assert.match(card.say, /Play one round of /);
     assert.deepEqual(day.dose.parts.map((part) => part.id), ["math", "ela", "ready", "bonus"]);
     assert.equal(day.cards.filter((entry) => entry.part === "ela").length, 1);
     assert.equal(day.cards.some((entry) => entry.stepId === "connor-count-5"), true);
@@ -169,16 +170,25 @@ test("Connor's practice card rotates from November 3 and finishes after four pla
   assert.equal(done.body.ok, true);
 });
 
-test("Monster Hunt is checked under the name it logs, word-monsters", async () => {
+test("The Lost Helpers is checked under the name it logs, lost-helpers", async () => {
   const store = memoryStore();
   const start = "2026-10-19T15:00:00Z";
   const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now: at(start) });
-  const hunt = first.body.cards.find((card) => card.gameId === "monster-hunt");
+  const hunt = first.body.cards.find((card) => card.gameId === "lost-helpers");
   assert.equal(hunt.part, "bonus");
   await handleClassroom({ store, env: {}, body: { action: "open", kid: "connor", cardId: hunt.id }, now: at(start, 1) });
-  await logPlay(store, at(start, 30), "connor", "word-monsters", 6);
+  await logPlay(store, at(start, 30), "connor", "lost-helpers", 4);
   const done = await finishCard(store, "connor", hunt.id, at(start, 40));
   assert.equal(done.body.ok, true);
+});
+
+test("an old Monster Hunt card still looks for word-monsters answers", async () => {
+  const rule = evidenceFor("connor", "monster-hunt");
+  assert.equal(rule.game, "word-monsters");
+  assert.equal(rule.need, 6);
+  const helpers = evidenceFor("connor", "lost-helpers");
+  assert.equal(helpers.game, "lost-helpers");
+  assert.equal(helpers.need, 4);
 });
 
 test("Max's reading counts only when he reports a new lesson today", async () => {
@@ -363,7 +373,7 @@ test("counting past ten opens Flower Beds for Gabi", () => {
   const twenty = day.cards.find((card) => card.stepId === "gabi-count-20");
   assert.equal(twenty.gameId, "flower-beds");
   assert.match(twenty.href, /flower-beds\/\?kid=gabi&step=gabi-count-20/);
-  assert.match(twenty.say, /ten/);
+  assert.match(twenty.say, /one round of Flower Beds/);
 
   const connor = buildDay({
     kidId: "connor",

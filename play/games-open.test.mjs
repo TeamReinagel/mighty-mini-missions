@@ -40,4 +40,8 @@ test("the next skill stays hidden until the child is using the one before it", (
   assert.equal(window.gameHome(connor, game("nest-numbers")), true);
   assert.equal(window.gameHome(gabi, game("basket-sort")), false);
   assert.equal(window.gameHome(ethan, game("big-little")), false);
+  assert.equal(game("monster-hunt").archive, true);
+  assert.equal(open(connor, game("lost-helpers"), {}), true);
+  assert.equal(window.gameHome(max, game("lost-helpers")), true);
+  assert.equal(window.gameHome(connor, game("lost-helpers")), true);
 });

@@ -1,4 +1,5 @@
 import { addWithTrade, subWithTrade } from "../play/rounds.mjs";
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam } from "../play/stage.mjs";
 
 const GAME = "block-trade";
@@ -50,28 +51,11 @@ function looseRock() {
   return holder;
 }
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.[level]?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("Pip runs the moon cargo base. Ten rocks fill one crate.");
-  levelRow(ui.scene, LEVELS, state, level, (id) => { level = id; lobby(); });
-  const pip = image("assets/pip.jpg", "hero");
-  const play = el("button", "go play", "Start a mission");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  ui.scene.append(pip, play);
-}
-
-/** A short story card before each mission, so the numbers belong to someone. */
-function story(text, src) {
-  ui.scene.replaceChildren();
-  const tale = el("p", "tale", text);
-  const go = el("button", "go play", "Let's go");
-  go.type = "button";
-  ui.scene.append(image(src, "hero"), tale, go);
-  ui.speak(text);
-  return new Promise((resolve) => go.addEventListener("click", () => resolve(), { once: true }));
+function levels(scene, redraw) {
+  levelRow(scene, LEVELS, state, level, (id) => {
+    level = id;
+    redraw();
+  });
 }
 
 function pile(name, total) {
@@ -87,7 +71,6 @@ function pile(name, total) {
 
 async function addRound(problem) {
   const { a, b } = problem;
-  await story(`Moon Base A dug up ${a} rocks. Moon Base B dug up ${b} rocks. Pip wants them all on one rocket.`, "assets/pip.jpg");
   ui.scene.replaceChildren();
   const eq = el("p", "eq", `${a} + ${b}`);
   const left = pile("Base A", a);
@@ -192,7 +175,6 @@ async function subRound(problem) {
   const onesA = a % 10;
   const tensB = Math.floor(b / 10);
   const onesB = b % 10;
-  await story(`Rusty the rover drove up to the moon base. It needs ${b} rocks for the museum. The pad has ${a} rocks.`, "assets/rover.jpg");
   ui.scene.replaceChildren();
   const eq = el("p", "eq", `${a} − ${b}`);
   const step = el("p", "tale", "");
@@ -364,7 +346,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "Pip says the next mission is on the map." : clean ? "Pip pinned a rocket patch on your suit." : "The rocks are still on the moon. Try again.");
   save(GAME, state);
-  setTimeout(lobby, 1400);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round, rest: levels });

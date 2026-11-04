@@ -2,6 +2,7 @@
 // serves when the sundae matches the order. Extra scoops still land, so the stand
 // never signals when to stop.
 import { fewestCoins } from "../play/rounds.mjs";
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam, practice } from "../play/stage.mjs";
 import { checkOrder, emptyPrompt, missPrompt, orderPrompt, placeScoops } from "./stand.mjs";
 
@@ -169,20 +170,11 @@ function tray(count, unit, { from = count, cherry = false } = {}) {
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.[level]?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak(spec().adds ? "Party orders are in. A full dish holds ten scoops." : "A bunny is at the counter.");
-  const hero = document.createElement("img");
-  hero.className = "hero";
-  hero.src = "assets/bunny.jpg";
-  hero.alt = "";
-  const play = el("button", "go play", "Open the shop");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  levelRow(ui.scene, ladder, state, level, (id) => { level = id; lobby(); });
-  ui.scene.append(hero, play);
+function levels(scene, redraw) {
+  levelRow(scene, ladder, state, level, (id) => {
+    level = id;
+    redraw();
+  });
 }
 
 function buildUnit(vessel, count) {
@@ -501,7 +493,6 @@ async function partyRound() {
   ui.prizes(state.prizes);
   ui.speak(opened && next && !wasOpen ? "A bigger party is ready." : clean ? "The bunny left a cherry." : "The shop is still open.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
 async function round() {
@@ -527,7 +518,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "The next order is ready." : clean ? "The bunny left a cherry." : "The shop is still open.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round, rest: levels });

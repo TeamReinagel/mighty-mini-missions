@@ -1,3 +1,4 @@
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, el, load, save, fresh } from "../play/stage.mjs";
 
 const GAME = "pattern-park";
@@ -15,20 +16,6 @@ function pair() {
   return [copy[0], copy[1]];
 }
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.line?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("The dino train is at the station.");
-  const hero = document.createElement("img");
-  hero.className = "hero";
-  hero.src = "assets/stego.jpg";
-  hero.alt = "";
-  const play = el("button", "go play", "Start the train");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  ui.scene.append(hero, play);
-}
 
 function car(dino) {
   return pic(dino.src, dino.name, dino.id);
@@ -138,7 +125,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "A longer track is ready." : clean ? "The train got a stamp." : "The cars rolled back. The track is still here.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round });

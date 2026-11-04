@@ -193,13 +193,15 @@ function readyFlags(profile) {
 function gamesForProfile(profile) {
   const flags = readyFlags(profile);
   const open = typeof window.gameOpen === "function" ? window.gameOpen : () => true;
-  const all = (Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : []).filter((g) => profileAllowsGame(profile, g) && open(profile, g, flags));
+  const catalog = Array.isArray(window.MIGHTY_GAMES) ? window.MIGHTY_GAMES : [];
+  const live = catalog.filter((g) => !g.archive && profileAllowsGame(profile, g) && open(profile, g, flags));
+  const archive = catalog.filter((g) => g.archive && profileAllowsGame(profile, g) && open(profile, g, flags));
   const sortHome = (list) => [...list].sort((a, b) => Number(Boolean(b.alwaysHome)) - Number(Boolean(a.alwaysHome)));
-  if (!profile || !Array.isArray(profile.practicing)) return { home: sortHome(all), more: [] };
+  if (!profile || !Array.isArray(profile.practicing)) return { home: sortHome(live), more: [], archive };
   const fits = (g) => (typeof window.gameHome === "function" ? window.gameHome(profile, g) : false);
-  const home = sortHome(all.filter(fits));
-  if (!home.length) return { home: sortHome(all), more: [] };
-  return { home, more: all.filter((g) => !home.includes(g)) };
+  const home = sortHome(live.filter(fits));
+  if (!home.length) return { home: sortHome(live), more: [], archive };
+  return { home, more: live.filter((g) => !home.includes(g)), archive };
 }
 
 function skillById(id) {
@@ -637,6 +639,9 @@ async function main() {
   const hubMore = $("hubMore");
   const moreGamesButton = $("moreGamesButton");
   const moreGrid = $("moreGrid");
+  const hubArchive = document.getElementById("hubArchive");
+  const archiveGamesButton = document.getElementById("archiveGamesButton");
+  const archiveGrid = document.getElementById("archiveGrid");
   const profileIndicator = $("profileIndicator");
   const profileAvatar = $("profileAvatar");
   const profileName = $("profileName");
@@ -787,9 +792,16 @@ async function main() {
     hubMore.classList.toggle("open", open);
   }
 
+  function setArchiveOpen(open) {
+    if (!archiveGrid || !archiveGamesButton || !hubArchive) return;
+    archiveGrid.classList.toggle("hidden", !open);
+    archiveGamesButton.setAttribute("aria-expanded", String(open));
+    hubArchive.classList.toggle("open", open);
+  }
+
   function renderHub() {
     const p = getActiveProfile();
-    const { home, more } = gamesForProfile(p);
+    const { home, more, archive = [] } = gamesForProfile(p);
     hub.dataset.stage = p?.stage ?? "";
     hubAvatar.innerHTML = avatarHtml(p);
     hubHeading.textContent = p ? `Hi, ${p.name}!` : "Pick a game";
@@ -811,6 +823,16 @@ async function main() {
     hubMore.classList.toggle("hidden", moreGrid.children.length === 0);
     setMoreOpen(false);
 
+    if (archiveGrid && hubArchive) {
+      archiveGrid.innerHTML = "";
+      for (const activity of archive) {
+        const tile = hubTile(activity, "");
+        if (tile) archiveGrid.appendChild(tile);
+      }
+      hubArchive.classList.toggle("hidden", archiveGrid.children.length === 0);
+      setArchiveOpen(false);
+    }
+
     viewBadgesButton.classList.toggle("hidden", !p || loadCompletions(p.id).length === 0);
   }
 
@@ -818,6 +840,12 @@ async function main() {
     const open = moreGrid.classList.contains("hidden");
     setMoreOpen(open);
     if (open) moreGamesButton.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  archiveGamesButton?.addEventListener("click", () => {
+    const open = archiveGrid.classList.contains("hidden");
+    setArchiveOpen(open);
+    if (open) archiveGamesButton.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   function openHub() {

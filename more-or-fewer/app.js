@@ -1,3 +1,4 @@
+import { runRounds } from "../play/set.mjs";
 import { openGame, pic, chime, shake, record, el, load, save, fresh, word } from "../play/stage.mjs";
 
 const GAME = "more-or-fewer";
@@ -5,20 +6,6 @@ const rng = fresh();
 const ui = openGame(document.querySelector("#app"), { title: "Lost Sheep", background: "assets/bg.jpg" });
 const state = load(GAME) || { stars: {}, open: ["field"], prizes: [] };
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.field?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("The sheep are out in the field.");
-  const hero = document.createElement("img");
-  hero.className = "hero";
-  hero.src = "assets/sheep.jpg";
-  hero.alt = "";
-  const play = el("button", "go play", "Check the pens");
-  play.type = "button";
-  play.addEventListener("click", () => round());
-  ui.scene.append(hero, play);
-}
 
 function herd(parent, count) {
   for (let i = 0; i < count; i += 1) {
@@ -157,7 +144,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(opened ? "The next field is ready." : clean ? "That sheep came home." : "The farmer is still counting.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round });

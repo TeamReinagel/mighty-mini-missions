@@ -1,6 +1,7 @@
 // Essential skill: planning-3 (Working carefully). She counts the flowers and taps the
 // watering can when the beds match the card. Extra flowers still go in the next pot,
 // so the garden never signals when to stop.
+import { runRounds } from "../play/set.mjs";
 import { openGame, chime, shake, record, el, load, save, fresh, word } from "../play/stage.mjs";
 import { gardenEmpty, gardenMiss, gardenPrompt, gardenRemind, nearby, shape, splitBeds } from "./beds.mjs";
 
@@ -69,20 +70,6 @@ function orderSize() {
   return 10 + Math.floor(rng() * 11);
 }
 
-function lobby() {
-  ui.scene.replaceChildren();
-  ui.stars(state.stars?.beds?.streak || 0);
-  ui.prizes(state.prizes);
-  ui.speak("A full bed holds ten. Tap the seed.");
-  const model = el("div", "garden stack-beds");
-  model.append(bed(10, 0, { next: false, fresh: -1 }));
-  const play = el("button", "seed");
-  play.type = "button";
-  play.setAttribute("aria-label", "Seed");
-  play.append(picture("assets/seed.png"));
-  play.addEventListener("click", () => round());
-  ui.scene.append(model, play);
-}
 
 function prefersStill() {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -221,7 +208,6 @@ async function round() {
   ui.prizes(state.prizes);
   ui.speak(clean ? "A flower for the shelf." : "The beds are still open.");
   save(GAME, state);
-  setTimeout(lobby, 1100);
 }
 
-lobby();
+runRounds({ ui, game: GAME, play: round });
