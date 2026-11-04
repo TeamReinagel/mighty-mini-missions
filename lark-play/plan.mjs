@@ -7,6 +7,7 @@
 
 import { appleCatcherCard } from "../apple-catcher/integration.mjs";
 import { bagAtDoorCard } from "../bag-at-the-door/integration.mjs";
+import { episodeCard as sailCard } from "../sail-that-wouldnt-stay/integration.mjs";
 
 export const LARK_START = "2026-11-02";
 
@@ -73,6 +74,8 @@ function cardFor(kidId, date, kind, index) {
 }
 
 export function larkAssignment(kidId, date) {
+  // Stephanie's one-day assignment replaces the Moon Path fallback, not the recurring plan.
+  if (kidId === "connor" && date === "2026-11-04") return { card: sailCard(date, kidId), handsOn: null };
   if (kidId !== "connor" && kidId !== "gabi") return null;
   const kind = role(date);
   if (!kind) return null;

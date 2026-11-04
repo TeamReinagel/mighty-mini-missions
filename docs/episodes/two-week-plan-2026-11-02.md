@@ -6,11 +6,13 @@ Monday, Wednesday, and Friday can hold a produced episode. The Apple Catcher and
 
 The same pattern continues after November 13. A new episode fills that child's empty story slot in `lark-play/plan.mjs`.
 
+Stephanie assigned Season 1, Episode 3, **The Sail That Wouldn’t Stay**, to Connor for November 4 only, replacing The Moon Path. His other missions and the recurring plan stay the same.
+
 | Day | Connor | Hands-on | Gabi | Hands-on |
 | --- | --- | --- | --- | --- |
 | Mon Nov 2 | The Apple Catcher | Tell someone, "I am an apple catcher." | The Bag at the Door | Fold three papers and put them in a bag. |
 | Tue Nov 3 | The Moon Path | The usual move card | Otter Slide | The usual move card |
-| Wed Nov 4 | The Moon Path | The usual move card | Otter Slide | The usual move card |
+| Wed Nov 4 | The Sail That Wouldn’t Stay (S1E3) | The usual move card | Otter Slide | The usual move card |
 | Thu Nov 5 | The Moon Path | The usual move card | Otter Slide | The usual move card |
 | Fri Nov 6 | The Apple Catcher | Same as Monday | The Bag at the Door | Same as Monday |
 | Mon Nov 9 | The Moon Path | The usual move card | Otter Slide | The usual move card |
