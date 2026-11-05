@@ -1,12 +1,11 @@
 // Essential skill: listening-1. The child listens to the opening story and to each spoken find.
-import { openGame, pic, chime, shake, el, kid, load, save, fresh, practice } from "../play/stage.mjs";
+import { openGame, pic, chime, shake, el, kid, load, save, fresh, practice, say, afterLine, quiet } from "../play/stage.mjs";
 import { roundsFor } from "../play/round-length.mjs";
 import { SHOPS, STORY, NEED, defaultState, shopOpen, makeFind, noteStreak } from "./shops.mjs";
 import { runTrace } from "./trace.mjs";
 
 const GAME = "lost-helpers";
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-const VOICE_BY_KID = { ethan: "coral", connor: "marin", gabi: "marin", max: "ash" };
 
 const who = kid();
 const rng = fresh();
@@ -25,67 +24,24 @@ if (who.id === "max") {
 }
 save(GAME, state);
 
-const clipCache = new Map();
-let clipPlayer = null;
-let spoken = 0;
 const storyAudio = new Audio(new URL("assets/story.mp3", import.meta.url).href);
 storyAudio.preload = "auto";
 
+// Lines play through the games' shared voice (../play/kit.mjs): one player that iPads allow,
+// lines saved on the tablet, and each line finishing before the next one starts. Natural voice
+// only here; if the server cannot say a line, the picture still carries the find.
 function stopVoice() {
-  spoken += 1;
-  if (clipPlayer) {
-    try { clipPlayer.pause(); } catch { /* already stopped */ }
-    clipPlayer = null;
-  }
+  quiet();
   try { storyAudio.pause(); } catch { /* ok */ }
   try { storyAudio.currentTime = 0; } catch { /* ok */ }
 }
 
-async function fetchNaturalClip(text, voiceName) {
-  const key = `${voiceName}:${text}`;
-  if (clipCache.has(key)) return clipCache.get(key);
-  const control = new AbortController();
-  const timer = setTimeout(() => control.abort(), 10000);
-  try {
-    const res = await fetch("/api/classroom", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "speak", kid: who.id, voice: voiceName, text }),
-      signal: control.signal
-    });
-    const data = res.ok ? await res.json() : null;
-    if (data?.audioBase64) {
-      const src = `data:audio/mpeg;base64,${data.audioBase64}`;
-      clipCache.set(key, src);
-      return src;
-    }
-  } catch { /* natural voice only; captions stay */ } finally {
-    clearTimeout(timer);
-  }
-  return "";
-}
-
-async function naturalSay(text) {
-  if (!text) return;
+function naturalSay(text, { force = false } = {}) {
+  if (!text) return Promise.resolve();
   const line = document.querySelector(".line");
   if (line) line.textContent = text;
-  const mine = ++spoken;
-  if (clipPlayer) {
-    try { clipPlayer.pause(); } catch { /* already stopped */ }
-    clipPlayer = null;
-  }
   try { storyAudio.pause(); } catch { /* ok */ }
-  const src = await fetchNaturalClip(text, VOICE_BY_KID[who.id] || "marin");
-  if (mine !== spoken) return;
-  if (!src) return; // natural voice only; the picture still carries the find
-  await new Promise((resolve) => {
-    const audio = new Audio(src);
-    clipPlayer = audio;
-    const done = () => { if (clipPlayer === audio) clipPlayer = null; resolve(); };
-    audio.onended = done;
-    audio.onerror = done;
-    audio.play().catch(done);
-  });
+  return say(text, { device: false, force });
 }
 
 ui.speak = naturalSay;
@@ -259,16 +215,16 @@ async function visitShop(shop) {
       save(GAME, state);
       if (clean && !rec.home) {
         ui.speak("They darted off again. Find them once more.");
-        await wait(700);
+        await afterLine(700);
       } else if (!clean) {
         ui.speak("They slipped away. Try that find again next.");
-        await wait(700);
+        await afterLine(700);
       } else if (rec.home && i === count - 1) {
         ui.speak("They curled up and stayed.");
-        await wait(800);
+        await afterLine(800);
       } else if (rec.home) {
         ui.speak("Home for good.");
-        await wait(600);
+        await afterLine(600);
       } else {
         await wait(450);
       }
@@ -385,7 +341,7 @@ function wireStreetStart() {
         return;
       }
       const text = document.querySelector(".line")?.textContent?.trim();
-      if (text) naturalSay(text);
+      if (text) naturalSay(text, { force: true });
       else playStory();
     });
   }

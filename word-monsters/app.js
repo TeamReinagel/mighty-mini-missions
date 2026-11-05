@@ -262,6 +262,7 @@
       // Safari drops speech that doesn't start inside a tap until one utterance has, and the
       // first question is spoken well after the map tap, so warm it up on the first touch.
       const unlock = () => {
+        Clips.wake();
         const u = new SpeechSynthesisUtterance(" ");
         u.volume = 0;
         speechSynthesis.speak(u);
@@ -323,11 +324,21 @@
       } catch (e) {}
     },
     has(w) { return this.urls.has(w); },
+    // One player for every recording. Safari on an iPad lets a player that played once during a
+    // tap play again later, so the first tap wakes it with a blink of silence.
+    player: null,
+    wake() {
+      if (this.player) return;
+      this.player = new Audio("data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAACAgICAgICAgA==");
+      this.player.play().catch(() => {});
+    },
     play(w) {
-      if (this.current) { this.current.pause(); this.current = null; }
       const url = this.urls.get(w);
       if (!url) return false;
-      const a = new Audio(url);
+      if (!this.player) this.player = new Audio();
+      const a = this.player;
+      try { a.pause(); } catch (e) {}
+      a.src = url;
       this.current = a;
       a.play().catch(() => {});
       return true;

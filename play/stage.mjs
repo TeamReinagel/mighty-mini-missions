@@ -1,7 +1,7 @@
 import { soundContext } from "./bump.mjs";
-import { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word, voicePicker } from "./kit.mjs";
+import { kid, say, afterLine, lineDone, quiet, load, save, markReady, practice, stepParam, el, streak, fresh, word, voicePicker } from "./kit.mjs";
 
-export { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word };
+export { kid, say, afterLine, lineDone, quiet, load, save, markReady, practice, stepParam, el, streak, fresh, word };
 
 export function openGame(root, { title, background }) {
   const who = kid();

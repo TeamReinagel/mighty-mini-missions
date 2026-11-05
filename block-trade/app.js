@@ -1,6 +1,6 @@
 import { addWithTrade, subWithTrade } from "../play/rounds.mjs";
 import { runRounds } from "../play/set.mjs";
-import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam } from "../play/stage.mjs";
+import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam, afterLine } from "../play/stage.mjs";
 
 const GAME = "block-trade";
 const LEVELS = [
@@ -107,7 +107,7 @@ async function addRound(problem) {
           open.src = "assets/sealed.jpg";
           ready.append(sealedImage());
           ui.speak("Ten rocks. The crate closes. That is one more ten.");
-          await wait(700);
+          await afterLine(700);
           open.src = "assets/crate.jpg";
           inside.replaceChildren();
           inCrate = 0;

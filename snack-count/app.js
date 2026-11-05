@@ -3,7 +3,7 @@
 // never signals when to stop.
 import { fewestCoins } from "../play/rounds.mjs";
 import { runRounds } from "../play/set.mjs";
-import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam, practice } from "../play/stage.mjs";
+import { openGame, pic, chime, shake, record, forceOpen, levelRow, el, kid, load, save, fresh, word, stepParam, practice, afterLine } from "../play/stage.mjs";
 import { checkOrder, emptyPrompt, missPrompt, orderPrompt, placeScoops } from "./stand.mjs";
 
 const GAME = "snack-count";
@@ -168,8 +168,6 @@ function tray(count, unit, { from = count, cherry = false } = {}) {
   return box;
 }
 
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
 function levels(scene, redraw) {
   levelRow(scene, ladder, state, level, (id) => {
     level = id;
@@ -316,7 +314,7 @@ async function buildOrder(count, names) {
   hero.src = "assets/bunny-happy.jpg";
   chime(true);
   ui.speak("Here you go!");
-  await wait(1300);
+  await afterLine(1300);
   return first;
 }
 
@@ -405,7 +403,7 @@ async function buildParty(count, item) {
   hero.src = "assets/bunny-happy.jpg";
   chime(true);
   ui.speak("Here you go!");
-  await wait(1300);
+  await afterLine(1300);
   return first;
 }
 
@@ -462,7 +460,7 @@ async function payBill(price, item) {
   });
   const fewest = used === best;
   ui.speak(fewest ? `Paid with ${used} coins. Record pay!` : `Paid! Next time, try it with ${best} coins.`);
-  await wait(1600);
+  await afterLine(1600);
   return { exact, fewest };
 }
 

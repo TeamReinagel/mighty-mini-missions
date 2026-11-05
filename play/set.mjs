@@ -1,7 +1,5 @@
-import { el, kid } from "./stage.mjs";
+import { el, kid, afterLine } from "./stage.mjs";
 import { roundsFor } from "./round-length.mjs";
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Plays the set with no button between problems. One button after the set starts another.
 export function runRounds({ ui, game, play, pause = 700, line = "That round is done.", before, after, rest }) {
@@ -23,7 +21,7 @@ export function runRounds({ ui, game, play, pause = 700, line = "That round is d
       before?.();
       for (let i = 0; i < count; i += 1) {
         await play();
-        if (i < count - 1) await wait(pause);
+        if (i < count - 1) await afterLine(pause); // let the last line finish first
       }
       after?.();
     } finally {
