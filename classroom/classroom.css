@@ -164,8 +164,17 @@ button, a {
 
 .btn-icon {
   flex: none;
-  font-size: 1.55em;
-  line-height: 1;
+  width: 1.65em;
+  height: 1.65em;
+  line-height: 0;
+}
+
+.btn-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 24%;
+  object-fit: cover;
 }
 
 .btn-label {
@@ -179,7 +188,8 @@ button, a {
 }
 
 .mission-row .btn-icon {
-  font-size: 2rem;
+  width: 2.35rem;
+  height: 2.35rem;
 }
 
 .mission-copy {
@@ -467,13 +477,13 @@ a.card {
   font: inherit;
   font-weight: 800;
   text-align: center;
-  cursor: pointer;
 }
 
 .stamp-mark {
   display: block;
-  font-size: 1.7rem;
-  line-height: 1.1;
+  width: 2rem;
+  height: 2rem;
+  margin: 0 auto;
 }
 
 .stamp-label {
@@ -541,11 +551,13 @@ a.card {
 }
 
 .hero-title .btn-icon {
-  font-size: 0.9em;
+  width: 1.2em;
+  height: 1.2em;
 }
 
 .hero-start .btn-icon {
-  font-size: 1.5em;
+  width: 2.1em;
+  height: 2.1em;
 }
 
 .hero-kind {
@@ -555,11 +567,22 @@ a.card {
   font-weight: 700;
 }
 
+.tap-cue {
+  margin: 10px 0 6px;
+  color: var(--ink);
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-align: center;
+}
+
 .hero-start {
   width: 100%;
   min-height: 88px;
   border-radius: 22px;
   font-size: 2rem;
+  box-shadow:
+    0 8px 0 color-mix(in srgb, var(--kid) 55%, black),
+    0 0 0 7px #ffd95a;
 }
 
 .hero-choices {
@@ -582,7 +605,8 @@ a.card {
 }
 
 .hero-choice .btn-icon {
-  font-size: 2.2rem;
+  width: 3rem;
+  height: 3rem;
 }
 
 .hero-choice .mission-copy {
