@@ -1,6 +1,7 @@
 const STORAGE_KEY = "mighty-mini-missions:v1";
 const PROFILES_STORAGE_KEY = "mighty-mini-missions:profiles";
-const fallbackData = window.MAX_MISSIONS_FALLBACK_DATA;
+// missions-data.js (70 KB) is only fetched when missions.json can't be (ex: file://).
+let fallbackData = window.MAX_MISSIONS_FALLBACK_DATA;
 
 const AVATAR_EMOJI = { rocket: "🚀", star: "⭐", bear: "🐻", heart: "❤️", sun: "☀️" };
 const LEVEL_ORDER = ["toddler", "prek", "kinder", "1st", "any"];
@@ -85,9 +86,16 @@ const DIFFICULTY_LABELS = {
   hard: "Hard"
 };
 
+// One sound channel for the page: a new one per tap is slow to start on the tablets, and
+// browsers refuse new ones after a few dozen.
+let soundCtx = null;
 function playSound(type) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    if (!soundCtx || soundCtx.state === "closed") soundCtx = new Ctx();
+    if (soundCtx.state === "suspended") soundCtx.resume().catch(() => {});
+    const ctx = soundCtx;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
@@ -377,6 +385,15 @@ async function loadMissionData() {
     return await res.json();
   } catch {
     // Fallback for file:// or strict browsers.
+    if (!fallbackData) {
+      await new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = "./missions-data.js";
+        script.onload = script.onerror = resolve;
+        document.head.appendChild(script);
+      });
+      fallbackData = window.MAX_MISSIONS_FALLBACK_DATA;
+    }
     return fallbackData ?? { missions: [], templateVariables: {} };
   }
 }
@@ -394,18 +411,11 @@ function showOnly(panelId, ids) {
   const toShow = $(panelId);
   const toHide = ids.filter((id) => id !== panelId).map((id) => $(id));
 
+  // The old screen leaves at once, so the two never stack for a moment (and a missed
+  // transitionend can't leave the old one on the page). The new screen fades in.
   toHide.forEach((el) => {
-    if (el.classList.contains("hidden")) return;
-    el.classList.add("panel-transition-out");
-    el.addEventListener(
-      "transitionend",
-      function onOut() {
-        el.removeEventListener("transitionend", onOut);
-        el.classList.add("hidden");
-        el.classList.remove("panel-transition-out");
-      },
-      { once: true }
-    );
+    el.classList.add("hidden");
+    el.classList.remove("panel-transition-out");
   });
 
   const wasHidden = toShow.classList.contains("hidden");
@@ -745,12 +755,20 @@ async function main() {
     syncChrome();
   }
 
-  function hubTile(activity, tag) {
+  // `tile` is a small copy of the icon (see tools/make-tiles.py). Tiles in the folded
+  // More/Archives lists wait to download until the list is opened.
+  function hubTile(activity, tag, { lazy = false } = {}) {
     const frame = document.createElement("span");
     frame.className = "hub-icon-frame";
     const icon = document.createElement("img");
     icon.className = "hub-icon";
-    icon.src = activity.icon || "";
+    icon.decoding = "async";
+    if (lazy) icon.loading = "lazy";
+    const full = activity.icon || "";
+    icon.src = activity.tile || full;
+    if (activity.tile && full) {
+      icon.addEventListener("error", () => { if (icon.src !== new URL(full, location.href).href) icon.src = full; }, { once: true });
+    }
     icon.alt = "";
     icon.draggable = false;
     if (activity.iconScale) icon.style.transform = `scale(${Number(activity.iconScale)})`;
@@ -817,7 +835,7 @@ async function main() {
 
     moreGrid.innerHTML = "";
     for (const activity of more) {
-      const tile = hubTile(activity, "");
+      const tile = hubTile(activity, "", { lazy: true });
       if (tile) moreGrid.appendChild(tile);
     }
     hubMore.classList.toggle("hidden", moreGrid.children.length === 0);
@@ -826,7 +844,7 @@ async function main() {
     if (archiveGrid && hubArchive) {
       archiveGrid.innerHTML = "";
       for (const activity of archive) {
-        const tile = hubTile(activity, "");
+        const tile = hubTile(activity, "", { lazy: true });
         if (tile) archiveGrid.appendChild(tile);
       }
       hubArchive.classList.toggle("hidden", archiveGrid.children.length === 0);
@@ -988,8 +1006,10 @@ async function main() {
       missionImageHint.textContent = cached.hint || "Illustration (cached for this session).";
       setHidden("missionImageWrap", false);
     } else {
-      // Try to load a pre-generated illustration (works offline).
-      const pregenSrc = `./illustrations/${mission.id}.png`;
+      // Try to load a pre-generated illustration (works offline). illustrations/web/ holds
+      // 768px JPEG copies (tools/make-tiles.py); the 1024px PNG is the fallback.
+      const pregenSrc = `./illustrations/web/${mission.id}.jpg`;
+      const fullSrc = `./illustrations/${mission.id}.png`;
       const onDone = () => {
         missionImage.onload = null;
         missionImage.onerror = null;
@@ -1000,6 +1020,10 @@ async function main() {
         setHidden("missionImageWrap", false);
       };
       missionImage.onerror = () => {
+        if (missionImage.src.endsWith(".jpg")) {
+          missionImage.src = fullSrc;
+          return;
+        }
         onDone();
         missionImage.removeAttribute("src");
         setHidden("missionImageWrap", true);
@@ -1011,60 +1035,20 @@ async function main() {
     fillList(missionSteps, rendered.steps ?? []);
     missionSiblingStation.textContent = rendered.siblingStation || "Give littles a simple parallel station (blocks, stickers, sensory bin).";
 
-    // Render twists if available
-    if (mission.twists) {
-      twistsList.innerHTML = "";
-      if (mission.twists.easier) {
-        const btn = document.createElement("button");
-        btn.className = "secondary small";
-        btn.textContent = "Easier: " + mission.twists.easier;
-        btn.type = "button";
-        btn.addEventListener("click", () => {
-          if (!current) return;
-          const targetDiff = easierDifficulty(current.raw.difficulty);
-          const sameCat = missions.filter((m) => m.category === current.raw.category);
-          const candidates = sameCat.filter((m) => difficultyRank(m.difficulty) <= difficultyRank(targetDiff));
-          const pick = candidates.length ? pickOne(candidates) : null;
-          if (pick) {
-            showMission(pick, { note: "(Easier try)" });
-          } else {
-            showMission(current.raw, { templateMode: "min", note: mission.twists.easier });
-          }
-        });
-        twistsList.appendChild(btn);
-      }
-      if (mission.twists.harder) {
-        const btn = document.createElement("button");
-        btn.className = "secondary small";
-        btn.textContent = "Harder: " + mission.twists.harder;
-        btn.type = "button";
-        btn.addEventListener("click", () => {
-          if (!current) return;
-          const sameCat = missions.filter((m) => m.category === current.raw.category);
-          const candidates = sameCat.filter((m) => difficultyRank(m.difficulty) > difficultyRank(current.raw.difficulty));
-          const pick = candidates.length ? pickOne(candidates) : null;
-          if (pick) {
-            showMission(pick, { note: "(Harder try)" });
-          } else {
-            statusText.textContent = mission.twists.harder;
-          }
-        });
-        twistsList.appendChild(btn);
-      }
-      if (mission.twists.variant) {
-        const btn = document.createElement("button");
-        btn.className = "secondary small";
-        btn.textContent = "Variant: " + mission.twists.variant;
-        btn.type = "button";
-        btn.addEventListener("click", () => {
-          statusText.textContent = mission.twists.variant;
-        });
-        twistsList.appendChild(btn);
-      }
-      setHidden("missionTwists", false);
-    } else {
-      setHidden("missionTwists", true);
+    // Twists are ways to play this same mission a little easier or harder. They read as tips
+    // for the grown-up; "Try #2 (easier)" below is still the way to switch missions.
+    const twists = mission.twists || {};
+    const tips = [["Easier", twists.easier], ["Harder", twists.harder], ["Variant", twists.variant]].filter(([, text]) => text);
+    twistsList.innerHTML = "";
+    for (const [kind, text] of tips) {
+      const tip = document.createElement("p");
+      tip.className = "twist-tip";
+      const strong = document.createElement("strong");
+      strong.textContent = `${kind}: `;
+      tip.append(strong, substituteTemplates(text, rendered._vars || {}));
+      twistsList.appendChild(tip);
     }
+    setHidden("missionTwists", tips.length === 0);
 
     updateFavoriteStar(mission.id);
 

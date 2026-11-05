@@ -1,6 +1,7 @@
 // Activities on a child's page. Missions is one option.
 // To add a game, append an object with title, icon, href, the skills it practices, and the
-// levels it suits. A child's home screen shows the games that practice something they are
+// levels it suits. `tile` is a small copy of the icon for the home screen; make it with
+// `python3 tools/make-tiles.py` (the full-size icon is used until it exists). A child's home screen shows the games that practice something they are
 // working on at their level; everything else waits under "More games".
 // A game with `after` stays off both lists for that child until the earlier skill is in use.
 // The flag lives in localStorage `mighty-ready.v1` and is set by the game that comes before it.
@@ -37,6 +38,7 @@ window.MIGHTY_GAMES = [
     id: "today-with-joyce",
     title: "Today with Joyce",
     icon: "./classroom/joyce.png",
+    tile: "./shared/tiles/today-with-joyce.webp",
     href: "./classroom/",
     alwaysHome: true
   },
@@ -45,6 +47,7 @@ window.MIGHTY_GAMES = [
     title: "Missions",
     kind: "missions",
     icon: "./logo.png",
+    tile: "./shared/tiles/missions.webp",
     iconScale: 1.55,
     practices: ["missions"],
     levels: ["prek", "k", "1st", "2nd"]
@@ -53,6 +56,7 @@ window.MIGHTY_GAMES = [
     id: "moon-path",
     title: "The Moon Path",
     icon: "./moon-path/assets/camp.png?v=1",
+    tile: "./shared/tiles/moon-path.webp",
     href: "./moon-path/",
     profiles: ["connor"],
     practices: ["letters", "letter-sounds"],
@@ -62,6 +66,7 @@ window.MIGHTY_GAMES = [
     id: "monster-hunt",
     title: "Monster Hunt",
     icon: "./word-monsters/icons/icon-192.png",
+    tile: "./shared/tiles/monster-hunt.webp",
     href: "./word-monsters/",
     archive: true,
     practices: ["colors-shapes", "counting", "letters", "letter-sounds"],
@@ -71,6 +76,7 @@ window.MIGHTY_GAMES = [
     id: "lost-helpers",
     title: "The Lost Helpers",
     icon: "./lost-helpers/assets/icon.jpg",
+    tile: "./shared/tiles/lost-helpers.webp",
     href: "./lost-helpers/",
     practices: ["colors-shapes", "counting", "letters", "letter-sounds", "sight-words", "rhyming", "math-facts", "money"],
     levels: ["toddler", "prek", "k", "1st", "2nd"]
@@ -79,6 +85,7 @@ window.MIGHTY_GAMES = [
     id: "ghost-word-run",
     title: "Christmas Word Run",
     icon: "./ghost-word-run/icons/icon-192.png?v=2",
+    tile: "./shared/tiles/ghost-word-run.webp",
     href: "./ghost-word-run/",
     practices: ["sight-words", "rhyming"],
     levels: ["k", "1st", "2nd"]
@@ -87,6 +94,7 @@ window.MIGHTY_GAMES = [
     id: "coin-record-run",
     title: "Coin Record Run",
     icon: "./coin-record-run/icons/icon-192.png",
+    tile: "./shared/tiles/coin-record-run.webp",
     href: "./coin-record-run/",
     practices: ["money", "counting"],
     levels: ["k", "1st", "2nd"]
@@ -95,6 +103,7 @@ window.MIGHTY_GAMES = [
     id: "monster-maker",
     title: "Monster Maker",
     icon: "./monster-maker/icons/icon-192.png",
+    tile: "./shared/tiles/monster-maker.webp",
     href: "./monster-maker/",
     practices: ["counting", "math-facts", "feelings"],
     levels: ["prek", "k", "1st", "2nd"]
@@ -103,6 +112,7 @@ window.MIGHTY_GAMES = [
     id: "train-set",
     title: "Train Set",
     icon: "./train-set/icons/icon-192.png",
+    tile: "./shared/tiles/train-set.webp",
     href: "./train-set/",
     practices: ["colors-shapes"],
     levels: ["toddler", "prek"]
@@ -111,6 +121,7 @@ window.MIGHTY_GAMES = [
     id: "hatch-match",
     title: "Hatch Match",
     icon: "./hatch-match/icons/icon-192.png",
+    tile: "./shared/tiles/hatch-match.webp",
     href: "./hatch-match/",
     practices: ["letters"],
     levels: ["prek", "k"]
@@ -119,6 +130,7 @@ window.MIGHTY_GAMES = [
     id: "otter-slide",
     title: "Otter Slide",
     icon: "./otter-slide/icons/icon-192.png",
+    tile: "./shared/tiles/otter-slide.webp",
     href: "./otter-slide/",
     practices: ["blending"],
     levels: ["prek", "k", "1st"]
@@ -127,6 +139,7 @@ window.MIGHTY_GAMES = [
     id: "color-tap",
     title: "Dino Picnic",
     icon: "./color-tap/assets/icon.jpg",
+    tile: "./shared/tiles/color-tap.webp",
     href: "./color-tap/",
     profiles: ["ethan"],
     practices: ["colors-shapes"],
@@ -136,6 +149,7 @@ window.MIGHTY_GAMES = [
     id: "snack-count",
     title: "Sundae Stand",
     icon: "./snack-count/assets/icon.jpg",
+    tile: "./shared/tiles/snack-count.webp",
     href: "./snack-count/",
     profiles: ["ethan", "connor", "gabi", "max"],
     practices: ["counting"],
@@ -146,6 +160,7 @@ window.MIGHTY_GAMES = [
     id: "flower-beds",
     title: "Flower Beds",
     icon: "./flower-beds/assets/icon.png",
+    tile: "./shared/tiles/flower-beds.webp",
     href: "./flower-beds/",
     profiles: ["gabi"],
     practices: ["counting"],
@@ -156,6 +171,7 @@ window.MIGHTY_GAMES = [
     id: "more-or-fewer",
     title: "Lost Sheep",
     icon: "./more-or-fewer/assets/icon.jpg",
+    tile: "./shared/tiles/more-or-fewer.webp",
     href: "./more-or-fewer/",
     profiles: ["connor", "gabi"],
     practices: ["counting"],
@@ -166,6 +182,7 @@ window.MIGHTY_GAMES = [
     id: "pattern-park",
     title: "Dino Express",
     icon: "./pattern-park/assets/icon.jpg",
+    tile: "./shared/tiles/pattern-park.webp",
     href: "./pattern-park/",
     profiles: ["connor", "gabi"],
     practices: ["counting"],
@@ -176,6 +193,7 @@ window.MIGHTY_GAMES = [
     id: "nest-numbers",
     title: "Nest Numbers",
     icon: "./nest-numbers/assets/icon.jpg",
+    tile: "./shared/tiles/nest-numbers.webp",
     href: "./nest-numbers/",
     profiles: ["connor"],
     practices: ["counting"],
@@ -185,6 +203,7 @@ window.MIGHTY_GAMES = [
     id: "big-little",
     title: "Big or Little",
     icon: "./big-little/assets/icon.jpg",
+    tile: "./shared/tiles/big-little.webp",
     href: "./big-little/",
     profiles: ["connor"],
     practices: ["counting"],
@@ -194,6 +213,7 @@ window.MIGHTY_GAMES = [
     id: "basket-sort",
     title: "Basket Sort",
     icon: "./basket-sort/assets/icon.jpg",
+    tile: "./shared/tiles/basket-sort.webp",
     href: "./basket-sort/",
     profiles: ["connor"],
     practices: ["colors-shapes"],
@@ -203,6 +223,7 @@ window.MIGHTY_GAMES = [
     id: "shape-tap",
     title: "Shape Blocks",
     icon: "./shape-tap/assets/icon.jpg",
+    tile: "./shared/tiles/shape-tap.webp",
     href: "./shape-tap/",
     profiles: ["connor"],
     practices: ["colors-shapes"],
@@ -212,6 +233,7 @@ window.MIGHTY_GAMES = [
     id: "my-name",
     title: "My Name",
     icon: "./my-name/assets/icon.jpg",
+    tile: "./shared/tiles/my-name.webp",
     href: "./my-name/",
     profiles: ["connor"],
     practices: ["letters"],
@@ -221,6 +243,7 @@ window.MIGHTY_GAMES = [
     id: "two-jobs",
     title: "Two Jobs",
     icon: "./two-jobs/assets/icon.jpg",
+    tile: "./shared/tiles/two-jobs.webp",
     href: "./two-jobs/",
     profiles: ["connor"],
     practices: ["directions"],
@@ -231,6 +254,7 @@ window.MIGHTY_GAMES = [
     id: "sound-bugs",
     title: "Jungle Jump",
     icon: "./sound-bugs/assets/icon.jpg",
+    tile: "./shared/tiles/sound-bugs.webp",
     href: "./sound-bugs/",
     profiles: ["connor"],
     practices: ["letter-sounds"],
@@ -241,6 +265,7 @@ window.MIGHTY_GAMES = [
     id: "sound-teams",
     title: "Tide Pool",
     icon: "./sound-teams/assets/icon.jpg",
+    tile: "./shared/tiles/sound-teams.webp",
     href: "./sound-teams/",
     profiles: ["gabi"],
     practices: ["blending"],
@@ -251,6 +276,7 @@ window.MIGHTY_GAMES = [
     id: "block-trade",
     title: "Moon Crates",
     icon: "./block-trade/assets/icon.jpg",
+    tile: "./shared/tiles/block-trade.webp",
     href: "./block-trade/",
     profiles: ["max"],
     practices: ["math-facts"],
@@ -268,6 +294,7 @@ window.MIGHTY_GAMES = [
     id: "mario-super-world",
     title: "Mario Super World",
     icon: "./max-games/mario-super-world/icon.png",
+    tile: "./shared/tiles/mario-super-world.webp",
     href: "./max-games/mario-super-world/",
     profiles: ["max"],
     practices: ["game-design"]

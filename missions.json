@@ -1708,6 +1708,462 @@
         "forMax": "You're sending real mail that someone gets to read!",
         "forParent": "Builds: writing to communicate, names and short words, spacing, social connection."
       }
+    },
+    {
+      "id": "math-brick-tens-trade",
+      "category": "math",
+      "difficulty": "hard",
+      "level": "1st",
+      "minutes": "10–15",
+      "title": "Brick Bank: Trade 10 for a Tower",
+      "prompt": "Build numbers with LEGO or Duplo: towers of 10 are tens, single bricks are ones. When you have 10 loose bricks, trade them for a tower!",
+      "materials": [
+        "About 40 small bricks (LEGO, Duplo, or snap cubes)",
+        "Paper with two boxes: Tens | Ones",
+        "2 dice (or number cards)"
+      ],
+      "steps": [
+        "Grown-up shows one first: snap 10 bricks into a tower. 'This tower is one ten.'",
+        "Roll the dice and add that many single bricks to the Ones box.",
+        "Got 10 or more ones? Snap 10 together and move the tower to Tens.",
+        "Say your number: '2 towers and 3 bricks is 23.'",
+        "First to 50 wins. Bonus: write the number each turn."
+      ],
+      "siblingStation": "Littles snap bricks into towers of 5 and count them.",
+      "twists": {
+        "easier": "Use one die and stop at 30.",
+        "harder": "Start at 50 and take bricks away. Break a tower when you run out of ones."
+      },
+      "skills": {
+        "forMax": "You're the bank! Ten loose bricks always trade for one tower.",
+        "forParent": "Builds: place value, regrouping (carrying) with a concrete model before paper. Pairs with Joyce's regrouping lesson: same idea, real objects."
+      }
+    },
+    {
+      "id": "math-quarter-shop",
+      "category": "math",
+      "difficulty": "medium",
+      "level": "1st",
+      "minutes": "10–15",
+      "title": "Quarter Shop",
+      "prompt": "Open a shop where everything costs 25 cents. Shoppers have to pay with different coins each time.",
+      "materials": [
+        "Real coins: pennies, nickels, dimes, quarters",
+        "5 toys to 'sell'",
+        "Sticky notes for price tags"
+      ],
+      "steps": [
+        "Write 25¢ on a sticky note for each toy.",
+        "Shopper 1 pays with one quarter.",
+        "Shopper 2 pays with dimes and nickels only.",
+        "Shopper 3 pays with nickels only. How many does it take?",
+        "Shopkeeper counts every payment out loud before handing over the toy."
+      ],
+      "siblingStation": "Littles are shoppers: they hand over a quarter and get a toy.",
+      "twists": {
+        "easier": "Price everything at 10¢ and use dimes, nickels, and pennies.",
+        "harder": "Price things at 35¢ or 50¢ and give change from a dollar."
+      },
+      "skills": {
+        "forMax": "You're the shopkeeper. Make sure every shopper paid exactly 25 cents!",
+        "forParent": "Builds: nickel, dime, and quarter values; equal amounts made different ways; skip counting by 5s and 10s."
+      }
+    },
+    {
+      "id": "math-clock-countdown",
+      "category": "math",
+      "difficulty": "medium",
+      "level": "1st",
+      "minutes": "10",
+      "title": "Clock Detective",
+      "prompt": "Use a real clock to figure out how many hours until something fun happens today.",
+      "materials": [
+        "A clock with hands (a toy clock or paper plate clock works)",
+        "Today's plan: lunch, rest, dinner, bedtime"
+      ],
+      "steps": [
+        "Set the clock to now (round to the hour).",
+        "Pick an event: 'Dinner is at 5.'",
+        "Move the hour hand one hour at a time. Jump or clap each hour.",
+        "Say it: 'Dinner is 3 hours away.'",
+        "Do 3 events. Which one is the longest wait?"
+      ],
+      "siblingStation": "Littles hold up a finger for every clap.",
+      "twists": {
+        "easier": "Only count 1 or 2 hours ahead.",
+        "harder": "Go backwards: 'We had breakfast at 8. How many hours ago was that?'"
+      },
+      "skills": {
+        "forMax": "Detectives count the hours to crack the case!",
+        "forParent": "Builds: elapsed time in whole hours (his current AdaptedMind edge), reading an analog clock, counting on."
+      }
+    },
+    {
+      "id": "math-inch-foot-yard",
+      "category": "math",
+      "difficulty": "medium",
+      "level": "1st",
+      "minutes": "10–15",
+      "title": "Inch, Foot, or Yard?",
+      "prompt": "Guess the best unit first, then measure to check: inches for little things, feet for medium things, yards for long things.",
+      "materials": [
+        "A ruler (1 foot) and a yardstick or string cut to 1 yard",
+        "6 things to measure (a crayon, a book, a chair, the couch, the hallway, a toy car)"
+      ],
+      "steps": [
+        "Hold up the ruler: 'This is one foot. The tiny marks are inches.'",
+        "Pick a thing. Guess first: inch, foot, or yard?",
+        "Measure it with that tool.",
+        "If the number got really big or really tiny, try a different unit.",
+        "Line the things up from shortest to longest."
+      ],
+      "siblingStation": "Littles find something longer than their arm and something shorter.",
+      "twists": {
+        "easier": "Just sort things into 'smaller than the ruler' and 'bigger than the ruler.'",
+        "harder": "Measure the hallway in feet AND yards. Why is the yard number smaller?"
+      },
+      "skills": {
+        "forMax": "Pick the right tool for the job, like a real builder!",
+        "forParent": "Builds: customary units and choosing the best unit for a length (flagged for a recheck on AdaptedMind), estimating."
+      }
+    },
+    {
+      "id": "phonics-vowel-team-treasure",
+      "category": "phonics",
+      "difficulty": "medium",
+      "level": "1st",
+      "minutes": "10–15",
+      "title": "Vowel Team Treasure Hunt",
+      "prompt": "Two vowels walk together! Find word cards hidden around the room and sort them by their vowel team.",
+      "materials": [
+        "12 sticky notes with words: rain, play, tail, day, feet, read, tree, beach, boat, snow, coat, grow",
+        "3 'team bases' on the floor: AI/AY, EE/EA, OA/OW"
+      ],
+      "steps": [
+        "Grown-up hides the 12 sticky notes.",
+        "Find one, read it out loud.",
+        "Run it to the right team base.",
+        "When all 12 are home, read each team's words fast."
+      ],
+      "siblingStation": "Littles carry the found notes and say 'Go team!'",
+      "twists": {
+        "easier": "Use only two teams (AI/AY and EE/EA) and 8 words.",
+        "harder": "Add a silly sentence: use 2 words from one team in one sentence."
+      },
+      "skills": {
+        "forMax": "Vowel teams make one sound together. You're the coach putting them on the right team!",
+        "forParent": "Builds: vowel team decoding (current Reading.com scope), quick word reading, movement between reads."
+      }
+    },
+    {
+      "id": "writing-grocery-list",
+      "category": "writing",
+      "difficulty": "medium",
+      "level": "kinder",
+      "minutes": "10",
+      "title": "Grocery List Writer",
+      "prompt": "Write 3 things our family really needs from the store. Your list goes to the store with us!",
+      "materials": [
+        "Paper with 3 big boxes or wide lines",
+        "A pencil",
+        "The fridge and pantry to check"
+      ],
+      "steps": [
+        "Walk to the fridge and pantry. What are we out of?",
+        "Say the first word slowly. Write one sound at a time.",
+        "Draw a tiny picture next to each word.",
+        "Read your list to a grown-up, then stick it on the fridge."
+      ],
+      "siblingStation": "Littles draw one thing they want on the list.",
+      "twists": {
+        "easier": "Write just 1 word and draw the rest.",
+        "harder": "Add how many: '2 apples, 1 milk.'"
+      },
+      "skills": {
+        "forMax": "Real writers write things people actually use!",
+        "forParent": "Builds: writing with a purpose, sounding out to spell, letter size in big boxes (handwriting is his weaker strand)."
+      }
+    },
+    {
+      "id": "phonics-bed-check",
+      "category": "phonics",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "5–8",
+      "title": "B-D Bed Check",
+      "prompt": "Make a 'bed' with your hands to remember which way b and d face, then check letters around the house.",
+      "materials": [
+        "Your two hands",
+        "6 cards: b, d, b, d, p, b (or letter magnets)"
+      ],
+      "steps": [
+        "Make two thumbs-up and press your fists together. That's a bed! The left hand is b, the right hand is d.",
+        "Say 'b-b-bed' with the left hand and 'd-d-d' with the right.",
+        "Grown-up holds up a card. Make your bed and check which hand it matches.",
+        "Say the sound, then hop once."
+      ],
+      "siblingStation": "Littles make a 'bed' with their hands and lie their head on it.",
+      "twists": {
+        "easier": "Only b and d, 4 cards.",
+        "harder": "Read short words: bed, dad, bad, dig, bib."
+      },
+      "skills": {
+        "forMax": "Your hands always know which way b and d go!",
+        "forParent": "Builds: b/d reversal fix (Gabi's reading card starts with this reminder), letter-sound link, a self-check she can use anywhere."
+      }
+    },
+    {
+      "id": "phonics-pillow-slide",
+      "category": "phonics",
+      "difficulty": "medium",
+      "level": "prek",
+      "minutes": "8–12",
+      "title": "Pillow Slide Words",
+      "prompt": "Step on a pillow for each sound, then slide your feet together to say the word, like Otter Slide!",
+      "materials": [
+        "3 pillows or paper plates in a row",
+        "Word list: sun, map, pig, hop, bed, cat, fun, sit"
+      ],
+      "steps": [
+        "Grown-up says a word slowly: /s/ /u/ /n/.",
+        "Step on one pillow for each sound and say it.",
+        "Slide back across all three, saying the sounds together faster and faster.",
+        "Shout the word: 'SUN!'",
+        "Swap: you say the sounds, grown-up slides."
+      ],
+      "siblingStation": "Littles jump on a pillow when they hear their name.",
+      "twists": {
+        "easier": "Two-sound words: up, at, in, on.",
+        "harder": "Put a letter card on each pillow and read the sounds yourself."
+      },
+      "skills": {
+        "forMax": "Slide the sounds together and the word pops out!",
+        "forParent": "Builds: blending short-vowel CVC words (sliding is what gets Gabi to push sounds together), phonemic awareness."
+      }
+    },
+    {
+      "id": "math-snack-plates",
+      "category": "math",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "5–10",
+      "title": "Snack Plate Adding",
+      "prompt": "Put some snacks on one plate and some on another. Slide them together. How many now?",
+      "materials": [
+        "2 small plates and 1 big bowl",
+        "Up to 5 small snacks (crackers, grapes, cereal)"
+      ],
+      "steps": [
+        "Put 2 on one plate and 1 on the other.",
+        "Count each plate out loud, touching each snack.",
+        "Slide both plates into the bowl and count all of them.",
+        "Say it: '2 and 1 make 3.'",
+        "Try new numbers. Never more than 5 total. Eat your answer!"
+      ],
+      "siblingStation": "Littles drop snacks into the bowl one at a time while everyone counts.",
+      "twists": {
+        "easier": "Only make totals of 2 and 3.",
+        "harder": "Hide one plate under a napkin. 'There are 5 in all and 3 here. How many are hiding?'"
+      },
+      "skills": {
+        "forMax": "Two little groups make one bigger group. Yum!",
+        "forParent": "Builds: adding within 5 with real objects, one-to-one counting, the words 'and' and 'make.'"
+      }
+    },
+    {
+      "id": "math-hop-to-twenty",
+      "category": "math",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "5–10",
+      "title": "Hop to 20",
+      "prompt": "Make a path of 20 spots and hop along it counting every hop.",
+      "materials": [
+        "Chalk outside, or tape or paper plates inside",
+        "A marker to number the spots"
+      ],
+      "steps": [
+        "Make 20 spots in a line (grown-up writes the numbers).",
+        "Hop on each spot and say its number.",
+        "At 10, stop and do a big jump: 'Ten!'",
+        "Keep going to 20, then hop backwards to 1."
+      ],
+      "siblingStation": "Littles hop to 5 with a hand to hold.",
+      "twists": {
+        "easier": "Path of 10.",
+        "harder": "Grown-up calls a number, you run to that spot."
+      },
+      "skills": {
+        "forMax": "Your feet can count all the way to 20!",
+        "forParent": "Builds: counting to 20 in order, numeral recognition 1-20, teen numbers after the ten jump."
+      }
+    },
+    {
+      "id": "responsibility-two-step-helper",
+      "category": "responsibility",
+      "difficulty": "easy",
+      "level": "toddler",
+      "minutes": "5",
+      "title": "Two-Step Helper",
+      "prompt": "Listen to two jobs, then do them both in order, like the game Two Jobs!",
+      "materials": [
+        "Things around the house: a sock, a ball, a book, a cup"
+      ],
+      "steps": [
+        "Grown-up says two jobs: 'Touch the door, then bring me a sock.'",
+        "Hold up 1 finger for the first job and 2 fingers for the second.",
+        "Do them both, in that order.",
+        "Come back and say what you did: 'Door, then sock!'"
+      ],
+      "siblingStation": "Big kids give the two-step jobs to the littles.",
+      "twists": {
+        "easier": "One job at a time.",
+        "harder": "Three jobs: 'Clap, spin, then sit on the rug.'"
+      },
+      "skills": {
+        "forMax": "You remembered two whole jobs!",
+        "forParent": "Builds: listening, holding two directions in memory, sequencing (first/then). Matches Connor's Two Jobs game."
+      }
+    },
+    {
+      "id": "math-sock-match-count",
+      "category": "math",
+      "difficulty": "easy",
+      "level": "toddler",
+      "minutes": "5–10",
+      "title": "Sock Match Count",
+      "prompt": "Find the sock partners in the laundry and count the pairs!",
+      "materials": [
+        "A pile of clean socks (5 to 10 pairs)"
+      ],
+      "steps": [
+        "Dump the socks on the floor.",
+        "Pick one sock. Find its partner by color.",
+        "Put the pair in a row.",
+        "When all are matched, count the pairs together: '1, 2, 3...'"
+      ],
+      "siblingStation": "Littles find all the socks of one color.",
+      "twists": {
+        "easier": "Only 3 pairs with very different colors.",
+        "harder": "Count the socks by 2s: 2, 4, 6, 8."
+      },
+      "skills": {
+        "forMax": "You're a sock detective, and the laundry helper too!",
+        "forParent": "Builds: color and pattern matching, one-to-one counting, a real household job."
+      }
+    },
+    {
+      "id": "nature-leaf-line-up",
+      "category": "nature",
+      "difficulty": "easy",
+      "level": "toddler",
+      "minutes": "10",
+      "title": "Fall Leaf Line-Up",
+      "prompt": "Collect fall leaves, then line them up from smallest to biggest.",
+      "materials": [
+        "A bag or basket",
+        "Leaves from outside (5 to 10)"
+      ],
+      "steps": [
+        "Go outside and collect 5 leaves of different sizes.",
+        "Find the tiniest one. Put it first.",
+        "Find the biggest one. Put it last.",
+        "Fill in the middle, then count the line together.",
+        "Bonus: sort them by color (red, yellow, brown)."
+      ],
+      "siblingStation": "Littles crunch leaves and say each leaf's color.",
+      "twists": {
+        "easier": "Just find one big leaf and one little leaf.",
+        "harder": "Line up 10 leaves and say which number is the biggest one."
+      },
+      "skills": {
+        "forMax": "Small, medium, BIG! You put them all in order.",
+        "forParent": "Builds: comparing size, ordering, counting, color words, outdoor movement."
+      }
+    },
+    {
+      "id": "nature-color-basket-hunt",
+      "category": "nature",
+      "difficulty": "easy",
+      "level": "toddler",
+      "minutes": "5",
+      "title": "Color Basket Hunt",
+      "prompt": "Pick one color. Walk around and fill a basket with things that are that color.",
+      "materials": [
+        "A basket",
+        "Toys and safe things around the house"
+      ],
+      "steps": [
+        "Pick a color together: red, blue, yellow, or green.",
+        "Walk around and find 3 things that color.",
+        "Put each one in the basket and say its color: 'Red ball!'",
+        "Dump them out and pick a new color."
+      ],
+      "siblingStation": "Big kids hide 3 things of the color for the littles to find.",
+      "twists": {
+        "easier": "Grown-up holds up two things: 'Which one is red?'",
+        "harder": "Find things of two colors and sort them into two piles."
+      },
+      "skills": {
+        "forMax": "You found all the colors!",
+        "forParent": "Builds: color names (Ethan's focus), matching, following a simple direction, walking while looking."
+      }
+    },
+    {
+      "id": "responsibility-table-setter",
+      "category": "responsibility",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "5–10",
+      "title": "Table Setter",
+      "prompt": "Set the table for a real meal: one plate, one cup, and one spoon for every person.",
+      "materials": [
+        "Plates, cups, and spoons (unbreakable is fine)",
+        "The family table"
+      ],
+      "steps": [
+        "Count how many people are eating.",
+        "Put one plate at every seat.",
+        "Put one cup by every plate, then one spoon.",
+        "Check: does every plate have a cup and a spoon?"
+      ],
+      "siblingStation": "Littles carry napkins and put one on each plate.",
+      "twists": {
+        "easier": "Plates only.",
+        "harder": "Add a name card at every seat. Write or trace each name."
+      },
+      "skills": {
+        "forMax": "Everyone's spot is ready because of you!",
+        "forParent": "Builds: one-to-one correspondence, counting a set, a real family job with a clear finish."
+      }
+    },
+    {
+      "id": "social-thankful-tower",
+      "category": "social",
+      "difficulty": "easy",
+      "level": "prek",
+      "minutes": "8–12",
+      "title": "Thankful Tower",
+      "prompt": "Take turns adding a block to one family tower. Every block is something you're thankful for!",
+      "materials": [
+        "Blocks (any kind)",
+        "Everyone who wants to play"
+      ],
+      "steps": [
+        "Sit in a circle around the building spot.",
+        "On your turn, say one thing you're thankful for and add a block.",
+        "Wait for the next person: listen to what they say.",
+        "Keep going until the tower falls or reaches 20 blocks. Count them!"
+      ],
+      "siblingStation": "Littles add a block and say one word, like 'Mama' or 'dog.'",
+      "twists": {
+        "easier": "Everyone just names a favorite thing.",
+        "harder": "Say who you're thankful for and why."
+      },
+      "skills": {
+        "forMax": "A tower full of good things, built by the whole family.",
+        "forParent": "Builds: turn-taking, listening to others, gratitude language (Thanksgiving week), counting the finished tower."
+      }
     }
   ],
   "templateVariables": {

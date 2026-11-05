@@ -1,3 +1,4 @@
+import { soundContext } from "./bump.mjs";
 import { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word, voicePicker } from "./kit.mjs";
 
 export { kid, say, load, save, markReady, practice, stepParam, el, streak, fresh, word };
@@ -66,7 +67,8 @@ export function pic(src, label, value) {
 
 export function chime(good) {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = soundContext();
+    if (!ctx) return;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);

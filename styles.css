@@ -40,15 +40,22 @@ body {
   background: radial-gradient(1200px 700px at 15% 10%, rgba(120, 166, 255, 0.22), transparent 60%),
     radial-gradient(1000px 700px at 80% 0%, rgba(154, 255, 200, 0.12), transparent 55%),
     linear-gradient(180deg, #0a0f1d, #070a14);
+  /* One screen of glow that stays put; a long game list scrolls over plain night instead of
+     showing the glow again as a lighter band. */
+  background-color: #070a14;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--text);
 }
 
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
+  /* 80px taller than the screen so the drift never shows a bare strip at the bottom. */
+  inset: 0 0 -80px;
   z-index: 0;
   pointer-events: none;
+  will-change: transform;
   background-image:
     radial-gradient(circle at center, rgba(255, 255, 255, 0.6) 1px, transparent 1px),
     radial-gradient(circle at center, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
@@ -536,6 +543,16 @@ ol {
   font-size: 13px;
   line-height: 1.4;
   padding: 10px 12px;
+}
+
+.twist-tip {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .mission-bottom {
@@ -1549,4 +1566,17 @@ a.hub-tile:active {
 /* The status bar only matters on the missions screen. */
 body:not(.on-missions) .app-footer {
   display: none;
+}
+
+/* When the tablet asks for less motion: no drifting stars, floating pictures, pulses, or
+   confetti. Screens still change, they just don't travel. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

@@ -120,9 +120,46 @@ function stopClip() {
   player = null;
 }
 
+// Lines the tablet has already heard are kept in the browser's cache, so a prompt plays at
+// once (and offline) the next time instead of waiting on the server. Bump VOICE_CACHE if the
+// voices change.
+const VOICE_CACHE = "mighty-voice-v1";
+const VOICE_CACHE_MAX = 600;
+
+function voiceCacheUrl(key) {
+  return new URL(`/__voice/${encodeURIComponent(key)}`, location.href).href;
+}
+
+async function savedClip(key) {
+  try {
+    if (typeof caches === "undefined") return "";
+    const cache = await caches.open(VOICE_CACHE);
+    const hit = await cache.match(voiceCacheUrl(key));
+    if (!hit) return "";
+    return URL.createObjectURL(await hit.blob());
+  } catch {
+    return "";
+  }
+}
+
+async function keepClip(key, blob) {
+  try {
+    if (typeof caches === "undefined") return;
+    const cache = await caches.open(VOICE_CACHE);
+    await cache.put(voiceCacheUrl(key), new Response(blob, { headers: { "Content-Type": blob.type || "audio/mpeg" } }));
+    const keys = await cache.keys();
+    for (const old of keys.slice(0, Math.max(0, keys.length - VOICE_CACHE_MAX))) await cache.delete(old);
+  } catch { /* storage full or private mode: the line still plays */ }
+}
+
 async function fetchClip(text, voiceName) {
   const key = `${voiceName}:${text}`;
   if (clips.has(key)) return clips.get(key);
+  const saved = await savedClip(key);
+  if (saved) {
+    clips.set(key, saved);
+    return saved;
+  }
   const control = new AbortController();
   const timer = setTimeout(() => control.abort(), 6000);
   try {
@@ -134,7 +171,13 @@ async function fetchClip(text, voiceName) {
     });
     const data = res.ok ? await res.json() : null;
     if (!data?.audioBase64) return "";
-    const src = `data:audio/mpeg;base64,${data.audioBase64}`;
+    const dataUrl = `data:audio/mpeg;base64,${data.audioBase64}`;
+    let src = dataUrl;
+    try {
+      const blob = await (await fetch(dataUrl)).blob();
+      src = URL.createObjectURL(blob);
+      keepClip(key, blob);
+    } catch { /* play the data address instead */ }
     clips.set(key, src);
     return src;
   } catch {

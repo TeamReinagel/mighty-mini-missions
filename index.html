@@ -4,14 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0b1020" />
-    <link rel="icon" type="image/png" href="./logo.png" />
+    <link rel="icon" type="image/png" href="./shared/tiles/logo-96.png" />
     <title>Mighty Mini Missions</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="app-header">
       <div class="brand">
-        <img class="logo" src="./logo.png" alt="" aria-hidden="true" />
+        <img class="logo" src="./shared/tiles/logo-96.png" alt="" aria-hidden="true" />
         <div class="titles">
           <div class="title">Mighty Mini Missions</div>
           <div class="subtitle" id="headerSubtitle">Tap → choose → go play</div>
@@ -133,7 +133,7 @@
           <h2 class="mission-title" id="missionTitle"></h2>
           <p class="mission-prompt" id="missionPrompt"></p>
           <div class="mission-image hidden" id="missionImageWrap" aria-label="Mission illustration">
-            <img id="missionImage" alt="Mission illustration" loading="lazy" />
+            <img id="missionImage" alt="Mission illustration" decoding="async" />
             <div class="muted small" id="missionImageHint"></div>
           </div>
 
@@ -371,7 +371,6 @@
       </div>
     </footer>
 
-    <script src="./missions-data.js"></script>
     <script src="./games.js"></script>
     <script src="./progress.js"></script>
     <script src="./app.js"></script>
