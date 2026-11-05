@@ -64,6 +64,23 @@
 # where the browser supports it. Hatch Match loads nothing cross-origin except the
 # model files, which Hugging Face serves with CORS.
 [[headers]]
+  for = "/reading-trail/*"
+  [headers.values]
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Resource-Policy = "same-origin"
+
+[[headers]]
+  for = "/play/*"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "same-origin"
+
+[[headers]]
+  for = "/progress.js"
+  [headers.values]
+    Cross-Origin-Resource-Policy = "same-origin"
+
+[[headers]]
   for = "/hatch-match/*"
   [headers.values]
     Cross-Origin-Opener-Policy = "same-origin"

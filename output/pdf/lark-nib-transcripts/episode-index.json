@@ -1,0 +1,938 @@
+[
+  {
+    "season": 1,
+    "episode": 1,
+    "title": "The Moon Path",
+    "file": "season-1/s01e01-the-moon-path.pdf",
+    "pages": 10,
+    "words": 2673,
+    "source": "existing manuscript"
+  },
+  {
+    "season": 1,
+    "episode": 2,
+    "title": "The Apple Catcher",
+    "file": "season-1/s01e02-the-apple-catcher.pdf",
+    "pages": 3,
+    "words": 925,
+    "source": "existing manuscript"
+  },
+  {
+    "season": 1,
+    "episode": 3,
+    "title": "The Sail That Wouldn't Stay",
+    "file": "season-1/s01e03-the-sail-that-wouldnt-stay.pdf",
+    "pages": 3,
+    "words": 854,
+    "source": "existing manuscript"
+  },
+  {
+    "season": 1,
+    "episode": 4,
+    "title": "The Tipping Table",
+    "file": "season-1/s01e04-the-tipping-table.pdf",
+    "pages": 2,
+    "words": 734,
+    "source": "new authored draft"
+  },
+  {
+    "season": 1,
+    "episode": 5,
+    "title": "A Pocket for the Map",
+    "file": "season-1/s01e05-a-pocket-for-the-map.pdf",
+    "pages": 2,
+    "words": 716,
+    "source": "new authored draft"
+  },
+  {
+    "season": 1,
+    "episode": 6,
+    "title": "The Little Ink Box",
+    "file": "season-1/s01e06-the-little-ink-box.pdf",
+    "pages": 2,
+    "words": 707,
+    "source": "new authored draft"
+  },
+  {
+    "season": 1,
+    "episode": 7,
+    "title": "The Noisy Wagon",
+    "file": "season-1/s01e07-the-noisy-wagon.pdf",
+    "pages": 2,
+    "words": 668,
+    "source": "new authored draft"
+  },
+  {
+    "season": 1,
+    "episode": 8,
+    "title": "The Red Ribbon",
+    "file": "season-1/s01e08-the-red-ribbon.pdf",
+    "pages": 2,
+    "words": 661,
+    "source": "new authored draft"
+  },
+  {
+    "season": 1,
+    "episode": 9,
+    "title": "The Map That Came Home",
+    "file": "season-1/s01e09-the-map-that-came-home.pdf",
+    "pages": 2,
+    "words": 697,
+    "source": "new authored draft"
+  },
+  {
+    "season": 1,
+    "episode": 10,
+    "title": "The Door in the Tree",
+    "file": "season-1/s01e10-the-door-in-the-tree.pdf",
+    "pages": 3,
+    "words": 771,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 1,
+    "title": "The Bag at the Door",
+    "file": "season-2/s02e01-the-bag-at-the-door.pdf",
+    "pages": 4,
+    "words": 1076,
+    "source": "existing manuscript"
+  },
+  {
+    "season": 2,
+    "episode": 2,
+    "title": "The Fan at the Fork",
+    "file": "season-2/s02e02-the-fan-at-the-fork.pdf",
+    "pages": 3,
+    "words": 867,
+    "source": "existing manuscript"
+  },
+  {
+    "season": 2,
+    "episode": 3,
+    "title": "On the Wrong Stump",
+    "file": "season-2/s02e03-on-the-wrong-stump.pdf",
+    "pages": 2,
+    "words": 440,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 4,
+    "title": "The Kit That Would Not Fit",
+    "file": "season-2/s02e04-the-kit-that-would-not-fit.pdf",
+    "pages": 2,
+    "words": 434,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 5,
+    "title": "The Hat on the Handle",
+    "file": "season-2/s02e05-the-hat-on-the-handle.pdf",
+    "pages": 2,
+    "words": 432,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 6,
+    "title": "The Wet Pen",
+    "file": "season-2/s02e06-the-wet-pen.pdf",
+    "pages": 2,
+    "words": 443,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 7,
+    "title": "The Gate and the Log",
+    "file": "season-2/s02e07-the-gate-and-the-log.pdf",
+    "pages": 2,
+    "words": 446,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 8,
+    "title": "The Little Ledge",
+    "file": "season-2/s02e08-the-little-ledge.pdf",
+    "pages": 2,
+    "words": 427,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 9,
+    "title": "The Box Beneath the Bench",
+    "file": "season-2/s02e09-the-box-beneath-the-bench.pdf",
+    "pages": 2,
+    "words": 420,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 10,
+    "title": "The Cup in the Mud",
+    "file": "season-2/s02e10-the-cup-in-the-mud.pdf",
+    "pages": 2,
+    "words": 441,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 11,
+    "title": "The Shade That Wandered",
+    "file": "season-2/s02e11-the-shade-that-wandered.pdf",
+    "pages": 2,
+    "words": 431,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 12,
+    "title": "Pack the Right Sack",
+    "file": "season-2/s02e12-pack-the-right-sack.pdf",
+    "pages": 2,
+    "words": 424,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 13,
+    "title": "The Bell That Hissed",
+    "file": "season-2/s02e13-the-bell-that-hissed.pdf",
+    "pages": 2,
+    "words": 432,
+    "source": "new authored draft"
+  },
+  {
+    "season": 2,
+    "episode": 14,
+    "title": "The First Post Round",
+    "file": "season-2/s02e14-the-first-post-round.pdf",
+    "pages": 2,
+    "words": 438,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 1,
+    "title": "The Tree Beyond the Trees",
+    "file": "season-3/s03e01-the-tree-beyond-the-trees.pdf",
+    "pages": 2,
+    "words": 437,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 2,
+    "title": "The Jammed Jar",
+    "file": "season-3/s03e02-the-jammed-jar.pdf",
+    "pages": 2,
+    "words": 440,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 3,
+    "title": "The Van with the Wrong Load",
+    "file": "season-3/s03e03-the-van-with-the-wrong-load.pdf",
+    "pages": 2,
+    "words": 428,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 4,
+    "title": "A Cape for the Case",
+    "file": "season-3/s03e04-a-cape-for-the-case.pdf",
+    "pages": 2,
+    "words": 445,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 5,
+    "title": "The Yes That Meant Yet",
+    "file": "season-3/s03e05-the-yes-that-meant-yet.pdf",
+    "pages": 2,
+    "words": 426,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 6,
+    "title": "A Quack Beside the Path",
+    "file": "season-3/s03e06-a-quack-beside-the-path.pdf",
+    "pages": 2,
+    "words": 428,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 7,
+    "title": "The Rope at the Hill Home",
+    "file": "season-3/s03e07-the-rope-at-the-hill-home.pdf",
+    "pages": 2,
+    "words": 433,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 8,
+    "title": "The Box Facing Backward",
+    "file": "season-3/s03e08-the-box-facing-backward.pdf",
+    "pages": 2,
+    "words": 427,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 9,
+    "title": "The Zigzag Strip",
+    "file": "season-3/s03e09-the-zigzag-strip.pdf",
+    "pages": 2,
+    "words": 428,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 10,
+    "title": "The Line Across the Floor",
+    "file": "season-3/s03e10-the-line-across-the-floor.pdf",
+    "pages": 2,
+    "words": 439,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 11,
+    "title": "The Ring That Rang",
+    "file": "season-3/s03e11-the-ring-that-rang.pdf",
+    "pages": 2,
+    "words": 414,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 12,
+    "title": "The Tune in the Tube",
+    "file": "season-3/s03e12-the-tune-in-the-tube.pdf",
+    "pages": 2,
+    "words": 419,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 13,
+    "title": "The Shade That Would Not Shift",
+    "file": "season-3/s03e13-the-shade-that-would-not-shift.pdf",
+    "pages": 2,
+    "words": 430,
+    "source": "new authored draft"
+  },
+  {
+    "season": 3,
+    "episode": 14,
+    "title": "My First Beacon",
+    "file": "season-3/s03e14-my-first-beacon.pdf",
+    "pages": 2,
+    "words": 445,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 1,
+    "title": "A Seat for a Sea Tale",
+    "file": "season-4/s04e01-a-seat-for-a-sea-tale.pdf",
+    "pages": 2,
+    "words": 426,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 2,
+    "title": "The Chest with Two Hinges",
+    "file": "season-4/s04e02-the-chest-with-two-hinges.pdf",
+    "pages": 2,
+    "words": 428,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 3,
+    "title": "The Ramp by the Cart",
+    "file": "season-4/s04e03-the-ramp-by-the-cart.pdf",
+    "pages": 2,
+    "words": 417,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 4,
+    "title": "The Fern on the Return Slip",
+    "file": "season-4/s04e04-the-fern-on-the-return-slip.pdf",
+    "pages": 2,
+    "words": 419,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 5,
+    "title": "The Bird and the Turn",
+    "file": "season-4/s04e05-the-bird-and-the-turn.pdf",
+    "pages": 2,
+    "words": 429,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 6,
+    "title": "The Thin Path",
+    "file": "season-4/s04e06-the-thin-path.pdf",
+    "pages": 2,
+    "words": 430,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 7,
+    "title": "This Bank, That Bank",
+    "file": "season-4/s04e07-this-bank-that-bank.pdf",
+    "pages": 2,
+    "words": 429,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 8,
+    "title": "The Moon Book",
+    "file": "season-4/s04e08-the-moon-book.pdf",
+    "pages": 2,
+    "words": 427,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 9,
+    "title": "The Book That Would Not Stay",
+    "file": "season-4/s04e09-the-book-that-would-not-stay.pdf",
+    "pages": 2,
+    "words": 435,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 10,
+    "title": "The Rope Around the Bow",
+    "file": "season-4/s04e10-the-rope-around-the-bow.pdf",
+    "pages": 2,
+    "words": 433,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 11,
+    "title": "The Train for Another Day",
+    "file": "season-4/s04e11-the-train-for-another-day.pdf",
+    "pages": 2,
+    "words": 428,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 12,
+    "title": "The Boat on the Note",
+    "file": "season-4/s04e12-the-boat-on-the-note.pdf",
+    "pages": 2,
+    "words": 412,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 13,
+    "title": "The Coin and the Toy",
+    "file": "season-4/s04e13-the-coin-and-the-toy.pdf",
+    "pages": 2,
+    "words": 419,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 14,
+    "title": "The Haul Across the Lawn",
+    "file": "season-4/s04e14-the-haul-across-the-lawn.pdf",
+    "pages": 2,
+    "words": 422,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 15,
+    "title": "The Fork at the Port",
+    "file": "season-4/s04e15-the-fork-at-the-port.pdf",
+    "pages": 2,
+    "words": 433,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 16,
+    "title": "The Cell for the Receipt",
+    "file": "season-4/s04e16-the-cell-for-the-receipt.pdf",
+    "pages": 2,
+    "words": 420,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 17,
+    "title": "The Gem-Shaped Pad",
+    "file": "season-4/s04e17-the-gem-shaped-pad.pdf",
+    "pages": 2,
+    "words": 426,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 18,
+    "title": "Which Wheel to Turn",
+    "file": "season-4/s04e18-which-wheel-to-turn.pdf",
+    "pages": 2,
+    "words": 410,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 19,
+    "title": "The Phone Book at the Pond",
+    "file": "season-4/s04e19-the-phone-book-at-the-pond.pdf",
+    "pages": 2,
+    "words": 418,
+    "source": "new authored draft"
+  },
+  {
+    "season": 4,
+    "episode": 20,
+    "title": "The First Storyboat Round",
+    "file": "season-4/s04e20-the-first-storyboat-round.pdf",
+    "pages": 2,
+    "words": 429,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 1,
+    "title": "Sunset at the Wrong Time",
+    "file": "season-5/s05e01-sunset-at-the-wrong-time.pdf",
+    "pages": 2,
+    "words": 418,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 2,
+    "title": "Go to the Little Shelter",
+    "file": "season-5/s05e02-go-to-the-little-shelter.pdf",
+    "pages": 2,
+    "words": 458,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 3,
+    "title": "The Theme on the Cover",
+    "file": "season-5/s05e03-the-theme-on-the-cover.pdf",
+    "pages": 2,
+    "words": 430,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 4,
+    "title": "A Light for the Night Note",
+    "file": "season-5/s05e04-a-light-for-the-night-note.pdf",
+    "pages": 2,
+    "words": 431,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 5,
+    "title": "The Farmer's Corner",
+    "file": "season-5/s05e05-the-farmers-corner.pdf",
+    "pages": 2,
+    "words": 427,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 6,
+    "title": "The Table with the Little Ending",
+    "file": "season-5/s05e06-the-table-with-the-little-ending.pdf",
+    "pages": 2,
+    "words": 412,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 7,
+    "title": "The Tall Marker",
+    "file": "season-5/s05e07-the-tall-marker.pdf",
+    "pages": 2,
+    "words": 419,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 8,
+    "title": "The Bank Beneath the Leaves",
+    "file": "season-5/s05e08-the-bank-beneath-the-leaves.pdf",
+    "pages": 2,
+    "words": 425,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 9,
+    "title": "What the Keeper Planted",
+    "file": "season-5/s05e09-what-the-keeper-planted.pdf",
+    "pages": 2,
+    "words": 420,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 10,
+    "title": "The Wheel Still Turning",
+    "file": "season-5/s05e10-the-wheel-still-turning.pdf",
+    "pages": 2,
+    "words": 422,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 11,
+    "title": "The Helper Lever",
+    "file": "season-5/s05e11-the-helper-lever.pdf",
+    "pages": 2,
+    "words": 414,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 12,
+    "title": "Sunlight and Raincoats",
+    "file": "season-5/s05e12-sunlight-and-raincoats.pdf",
+    "pages": 2,
+    "words": 423,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 13,
+    "title": "A Little Word Goes Quiet",
+    "file": "season-5/s05e13-a-little-word-goes-quiet.pdf",
+    "pages": 2,
+    "words": 438,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 14,
+    "title": "The Reset at Last",
+    "file": "season-5/s05e14-the-reset-at-last.pdf",
+    "pages": 2,
+    "words": 435,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 15,
+    "title": "A Page Nobody Practiced",
+    "file": "season-5/s05e15-a-page-nobody-practiced.pdf",
+    "pages": 2,
+    "words": 397,
+    "source": "new authored draft"
+  },
+  {
+    "season": 5,
+    "episode": 16,
+    "title": "The Garden Opens",
+    "file": "season-5/s05e16-the-garden-opens.pdf",
+    "pages": 2,
+    "words": 430,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 1,
+    "title": "Unpack the Almost Machine",
+    "file": "season-6/s06e01-unpack-the-almost-machine.pdf",
+    "pages": 2,
+    "words": 426,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 2,
+    "title": "Redo the First Try",
+    "file": "season-6/s06e02-redo-the-first-try.pdf",
+    "pages": 2,
+    "words": 422,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 3,
+    "title": "Helpful Handles",
+    "file": "season-6/s06e03-helpful-handles.pdf",
+    "pages": 2,
+    "words": 417,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 4,
+    "title": "Slowly Through the Rollers",
+    "file": "season-6/s06e04-slowly-through-the-rollers.pdf",
+    "pages": 2,
+    "words": 426,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 5,
+    "title": "The Endless Page",
+    "file": "season-6/s06e05-the-endless-page.pdf",
+    "pages": 2,
+    "words": 427,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 6,
+    "title": "Boxes for the Right Things",
+    "file": "season-6/s06e06-boxes-for-the-right-things.pdf",
+    "pages": 2,
+    "words": 423,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 7,
+    "title": "Painted, Not Waiting",
+    "file": "season-6/s06e07-painted-not-waiting.pdf",
+    "pages": 2,
+    "words": 423,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 8,
+    "title": "Running Without Getting Away",
+    "file": "season-6/s06e08-running-without-getting-away.pdf",
+    "pages": 2,
+    "words": 412,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 9,
+    "title": "Hoping Is Not Hopping",
+    "file": "season-6/s06e09-hoping-is-not-hopping.pdf",
+    "pages": 2,
+    "words": 410,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 10,
+    "title": "One Story-Making Station",
+    "file": "season-6/s06e10-one-story-making-station.pdf",
+    "pages": 2,
+    "words": 421,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 11,
+    "title": "A Sentence for Someone",
+    "file": "season-6/s06e11-a-sentence-for-someone.pdf",
+    "pages": 2,
+    "words": 447,
+    "source": "new authored draft"
+  },
+  {
+    "season": 6,
+    "episode": 12,
+    "title": "Almost Becomes Ready",
+    "file": "season-6/s06e12-almost-becomes-ready.pdf",
+    "pages": 2,
+    "words": 442,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 1,
+    "title": "The Morning the Brook Went Quiet",
+    "file": "season-7/s07e01-the-morning-the-brook-went-quiet.pdf",
+    "pages": 2,
+    "words": 433,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 2,
+    "title": "The Arrow Under the Bridge",
+    "file": "season-7/s07e02-the-arrow-under-the-bridge.pdf",
+    "pages": 2,
+    "words": 426,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 3,
+    "title": "The Busy Page",
+    "file": "season-7/s07e03-the-busy-page.pdf",
+    "pages": 2,
+    "words": 434,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 4,
+    "title": "A Because That Needed Proof",
+    "file": "season-7/s07e04-a-because-that-needed-proof.pdf",
+    "pages": 2,
+    "words": 434,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 5,
+    "title": "Look Before the Lever",
+    "file": "season-7/s07e05-look-before-the-lever.pdf",
+    "pages": 2,
+    "words": 421,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 6,
+    "title": "The Label on the Wrong Side",
+    "file": "season-7/s07e06-the-label-on-the-wrong-side.pdf",
+    "pages": 2,
+    "words": 425,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 7,
+    "title": "Two Notes, Two Mornings",
+    "file": "season-7/s07e07-two-notes-two-mornings.pdf",
+    "pages": 2,
+    "words": 429,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 8,
+    "title": "First the Branch, Then the Brook",
+    "file": "season-7/s07e08-first-the-branch-then-the-brook.pdf",
+    "pages": 2,
+    "words": 430,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 9,
+    "title": "A Question the Page Can Answer",
+    "file": "season-7/s07e09-a-question-the-page-can-answer.pdf",
+    "pages": 2,
+    "words": 436,
+    "source": "new authored draft"
+  },
+  {
+    "season": 7,
+    "episode": 10,
+    "title": "The Brook and the New Page",
+    "file": "season-7/s07e10-the-brook-and-the-new-page.pdf",
+    "pages": 2,
+    "words": 397,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 1,
+    "title": "Pick Our Path",
+    "file": "season-8/s08e01-pick-our-path.pdf",
+    "pages": 2,
+    "words": 461,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 2,
+    "title": "Another Page, One Better Plan",
+    "file": "season-8/s08e02-another-page-one-better-plan.pdf",
+    "pages": 6,
+    "words": 1281,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 3,
+    "title": "Help When We Need It",
+    "file": "season-8/s08e03-help-when-we-need-it.pdf",
+    "pages": 6,
+    "words": 1268,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 4,
+    "title": "Tell the Crew",
+    "file": "season-8/s08e04-tell-the-crew.pdf",
+    "pages": 6,
+    "words": 1284,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 5,
+    "title": "A New Topic on Our Route",
+    "file": "season-8/s08e05-a-new-topic-on-our-route.pdf",
+    "pages": 6,
+    "words": 1247,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 6,
+    "title": "The Longer Useful Page",
+    "file": "season-8/s08e06-the-longer-useful-page.pdf",
+    "pages": 6,
+    "words": 1306,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 7,
+    "title": "A New Note for Our Path",
+    "file": "season-8/s08e07-a-new-note-for-our-path.pdf",
+    "pages": 4,
+    "words": 1131,
+    "source": "new authored draft"
+  },
+  {
+    "season": 8,
+    "episode": 8,
+    "title": "The Atlas We Make",
+    "file": "season-8/s08e08-the-atlas-we-make.pdf",
+    "pages": 6,
+    "words": 1516,
+    "source": "new authored draft"
+  }
+]
