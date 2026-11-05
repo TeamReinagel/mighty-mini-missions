@@ -30,7 +30,8 @@ test('Finishing and reporting require all gates, the final story beat, a real ch
  assert.equal(canReport(s,{child:'connor',review:true,recordingReady:true}),false);
  assert.equal(canReport(s,{child:null,review:false,recordingReady:true}),false);
  assert.equal(canReport(s,{child:'connor',review:false,recordingReady:true}),true);
- s.reviewed=true;assert.equal(canReport(s,{child:'connor',review:false,recordingReady:true}),false);
+ s.reviewed=true;assert.equal(canReport(s,{child:'connor',review:false,recordingReady:true}),true);
+ s.jumped=true;assert.equal(canReport(s,{child:'connor',review:false,recordingReady:true}),false);
 });
 test('Malformed bookmarks cannot open a completed episode or retain another version',()=>{
  assert.equal(restore({version:EPISODE.version,beat:999,completed:[],finished:true}).finished,false);

@@ -53,15 +53,22 @@
   }
 
   let timer = null;
-  let sending = false;
+  // One send at a time. A finish that arrives while a send is going out waits,
+  // then sends what that first batch left in the queue.
+  let tail = Promise.resolve();
 
-  async function flush({ keepalive = false } = {}) {
+  function flush({ keepalive = false } = {}) {
+    const run = tail.then(() => drain({ keepalive }));
+    tail = run.then(() => {}, () => {});
+    return run;
+  }
+
+  async function drain({ keepalive = false } = {}) {
     clearTimeout(timer);
     timer = null;
-    if (!canSync || sending || !navigator.onLine) return;
+    if (!canSync || !navigator.onLine) return;
     const batch = readQueue().slice(0, BATCH);
     if (!batch.length) return;
-    sending = true;
     try {
       const res = await fetch(ENDPOINT, {
         method: "POST",
@@ -69,21 +76,24 @@
         body: JSON.stringify({ events: batch }),
         keepalive
       });
-      if (res.ok) {
-        const sent = new Set(batch.map((e) => e.id));
-        const rest = readQueue().filter((e) => !sent.has(e.id));
-        writeQueue(rest);
-        if (rest.length) schedule();
+      if (!res.ok) {
+        schedule();
+        return;
       }
+      const sent = new Set(batch.map((e) => e.id));
+      const queuedBefore = readQueue().length;
+      writeQueue(readQueue().filter((e) => !sent.has(e.id)));
+      const left = readQueue().length;
+      if (left && left < queuedBefore) return drain({ keepalive });
+      if (left) schedule();
     } catch (_) {
       // Offline or endpoint missing (local server): keep the queue for next time.
-    } finally {
-      sending = false;
+      schedule();
     }
   }
 
   function schedule() {
-    if (!timer) timer = setTimeout(flush, FLUSH_DELAY_MS);
+    if (!timer) timer = setTimeout(() => { flush(); }, FLUSH_DELAY_MS);
   }
 
   /**
@@ -97,8 +107,10 @@
    * @param {object} [e.extra]  small extra details (rating, note, level)
    */
   function log(e) {
-    if (!e || !e.game || !e.skill) return;
-    const kid = resolveKid(e.player);
+    if (!e || !e.game || !e.skill) return false;
+    const kid = e.kid
+      ? { id: String(e.kid).toLowerCase(), name: e.player ? String(e.player) : String(e.kid) }
+      : resolveKid(e.player);
     const q = readQueue();
     q.push({
       id: newId(),
@@ -113,11 +125,13 @@
     });
     writeQueue(q);
     schedule();
+    return true;
   }
 
   document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "hidden") flush({ keepalive: true });
+    flush({ keepalive: document.visibilityState === "hidden" });
   });
+  window.addEventListener("pagehide", () => flush({ keepalive: true }));
   window.addEventListener("online", () => flush());
   window.addEventListener("load", () => setTimeout(flush, 1500));
 

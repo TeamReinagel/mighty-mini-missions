@@ -17,14 +17,17 @@ const stop=()=>{run++;resumeRecorded=false;voice.stop();};
 const beat=()=>BEATS[state.beat];
 const saySupport=text=>voice.read(text,'support');
 const joyceBase=['localhost','127.0.0.1'].includes(location.hostname)?'https://mighty-mini-missions.netlify.app/classroom/':'../classroom/';
-for(const id of ['joyce-return','finish-return'])$(id).href=`${joyceBase}${child?`?kid=${encodeURIComponent(child)}`:''}`;
+for(const id of ['joyce-return','finish-return']){
+  const link=$(id);link.href=`${joyceBase}${child?`?kid=${encodeURIComponent(child)}`:''}`;
+  link.addEventListener('click',()=>{save();window.MightyProgress?.flush?.({keepalive:true});});
+}
 function button(text,fn,cls=''){const b=document.createElement('button');b.type='button';b.className=cls;b.textContent=text;b.addEventListener('click',fn);return b;}
 function node(tag,cls='',text=''){const n=document.createElement(tag);n.className=cls;n.textContent=text;return n;}
 function artwork(name,alt='',cls=''){const img=document.createElement('img');img.src=storyAsset(`./assets/${name}.png`);img.alt=alt;img.className=cls;img.draggable=false;return img;}
 function reportAttempt(attempt){
   // Device narration and scene review are rehearsal only. Never create child evidence from this preview.
   if(!attempt||!child||review||state.reviewed||!voice.ready)return;
-  window.MightyProgress?.log?.({player:child[0].toUpperCase()+child.slice(1),game:'bag-at-the-door',skill:attempt.supported?'Story participation':'Word recognition',item:`bag-at-the-door:${attempt.id}`,correct:attempt.correct,extra:{episode:EPISODE.id,firstResponse:true,supported:attempt.supported,choice:attempt.choice,measure:attempt.measure}});
+  window.MightyProgress?.log?.({kid:child,player:child[0].toUpperCase()+child.slice(1),game:'bag-at-the-door',skill:attempt.supported?'Story participation':'Word recognition',item:`bag-at-the-door:${attempt.id}`,correct:attempt.correct,extra:{episode:EPISODE.id,firstResponse:true,supported:attempt.supported,choice:attempt.choice,measure:attempt.measure}});
 }
 function feedback(text){$('feedback').hidden=false;$('feedback').textContent=text;saySupport(text);}
 function help(id){addHelp(state,id);save();const g=GATES[id];feedback(g.hints?.[g.answer]||'Try the same little step with us. We can hold our places.');}
@@ -123,12 +126,14 @@ function advanceBeat(){
   state.beat++;paragraph=0;save();showBeat();
 }
 function showBeat(){stage.show(beat());$('scene-name').textContent=beat().scene==='path'?'The first direction':'The Treasure Tree library';turnOpen=false;readParagraph();}
+function reportCompletion(){
+  if(!canReport(state,{child,review,recordingReady:voice.ready})||state.completionReported)return;
+  const queued=window.MightyProgress?.log?.({kid:child,player:child[0].toUpperCase()+child.slice(1),game:'bag-at-the-door',skill:'Story participation',item:EPISODE.completionItem,correct:null,extra:{episode:EPISODE.id,completed:true}});
+  if(queued!==false&&typeof window.MightyProgress?.log==='function'){state.completionReported=true;save();window.MightyProgress.flush?.();}
+}
 function finish(){
   stop();$('story').hidden=true;$('finish').hidden=false;$('pause').disabled=true;
-  if(canReport(state,{child,review,recordingReady:voice.ready})&&!state.completionReported){
-    const queued=window.MightyProgress?.log?.({player:child[0].toUpperCase()+child.slice(1),game:'bag-at-the-door',skill:'Story participation',item:EPISODE.completionItem,correct:null,extra:{episode:EPISODE.id,completed:true}});
-    if(queued!==false&&typeof window.MightyProgress?.log==='function'){state.completionReported=true;save();window.MightyProgress.flush?.();}
-  }
+  reportCompletion();
 }
 function start(reset=false){
   stop();if(reset){state=freshState();save();}started=true;paused=false;paragraph=0;
@@ -136,7 +141,7 @@ function start(reset=false){
   if(state.finished)finish();else showBeat();
 }
 $('start').onclick=()=>start();$('restart').onclick=()=>start(true);$('replay').onclick=()=>start(true);
-$('next').onclick=()=>{const skippedNarration=Boolean(voice.player.active);stop();if(turnOpen)return;if(!voice.ready||skippedNarration)state.reviewed=true;if(beat().gate&&state.completed.includes(beat().gate)&&paragraph===beat().paragraphs.length-1)advanceBeat();else advanceParagraph();};
+$('next').onclick=()=>{const skippedNarration=Boolean(voice.player.active&&!voice.player.failed);stop();if(turnOpen)return;if(!voice.ready||skippedNarration)state.reviewed=true;if(beat().gate&&state.completed.includes(beat().gate)&&paragraph===beat().paragraphs.length-1)advanceBeat();else advanceParagraph();};
 $('again').onclick=()=>{if(turnOpen)saySupport(GATES[beat().gate].prompt);else readParagraph();};
 function pauseStory(){paused=true;if(voice.player.active){resumeRecorded=true;voice.player.pause();stage.speaker=null;}else stop();if(!$('paused').open)$('paused').showModal();}
 $('pause').onclick=pauseStory;
@@ -145,7 +150,7 @@ for(const b of document.querySelectorAll('[data-close]'))b.onclick=()=>$(b.datas
 $('grownup').onclick=()=>{stop();paused=true;const seconds=Math.round(RECORDING.sourceDuration||0);$('production-status').textContent=voice.ready?`${EPISODE.title}. Supplied ElevenLabs recording: ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}. The complete recording is retained, with five pauses for child turns. Season 2 allowance: 9–11 minutes including normal turns.`:`${EPISODE.title}. Device narration preview; supplied recording could not be loaded.`;$('local-notes').textContent=JSON.stringify({attempts:state.attempts,supported:state.helped,completedTurns:state.completed,reviewOnly:review||!voice.ready},null,2);$('parent').showModal();};
 $('parent').addEventListener('close',()=>{paused=false;if(started&&!state.finished&&!turnOpen)readParagraph();});
 BEATS.forEach((b,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${i+1}. ${b.id.replaceAll('-',' ')}`;$('scene-select').append(o);});
-$('jump').onclick=()=>{stop();state.beat=Number($('scene-select').value);state.reviewed=true;state.finished=false;paragraph=0;save();$('parent').close();$('welcome').hidden=true;$('finish').hidden=true;$('story').hidden=false;started=true;showBeat();};
+$('jump').onclick=()=>{stop();state.beat=Number($('scene-select').value);state.reviewed=true;state.jumped=true;state.finished=false;paragraph=0;save();$('parent').close();$('welcome').hidden=true;$('finish').hidden=true;$('story').hidden=false;started=true;showBeat();};
 $('read').onclick=()=>{
   stop();$('chapter').replaceChildren();
   for(const row of CHAPTER){const section=node('section');section.append(node('p','chapter-text',row.adult));const target=node('div','chapter-target');target.append(word(row.child,'chapter-'+row.child),button('Model the word',()=>saySupport(row.child)));section.append(target);$('chapter').append(section);}
@@ -156,4 +161,5 @@ window.addEventListener('pagehide',()=>{save();voice.stop();});
 Promise.all([voice.init(),stage.load((n,total)=>{$('start').textContent=`Getting the crew ready ${n}/${total}…`;})]).then(()=>{
   $('audio-status').textContent=voice.ready?'Narrated with your ElevenLabs recording.':'Production preview with device narration.';
   $('start').disabled=false;$('start').textContent=state.finished?'Open our collection':state.beat?'Continue our delivery':'Begin our delivery';$('restart').hidden=!state.beat&&!state.finished;
+  if(state.finished)reportCompletion();
 }).catch(()=>{$('start').disabled=false;$('start').textContent='Begin our delivery';$('scene-name').textContent='Art could not load · story and turns remain available';});

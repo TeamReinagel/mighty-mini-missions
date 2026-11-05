@@ -23,7 +23,7 @@ Each brief has a resolved local plot, a necessary contribution to the season, cu
 
 ## Episode 2 · The Apple Catcher
 
-Production update, November 1: [The Apple Catcher](s1e2-apple-catcher-production.md) is built in `apple-catcher/` with original art and the supplied 6:39.670 recording. Its estimated total is about nine minutes including child turns and feedback; actual child-paced timing remains unmeasured. From November 2, 2026 it is Connor’s story-day reading mission in [the two-week plan](two-week-plan-2026-11-02.md). Later chapters below remain authored briefs.
+Production update, November 1: [The Apple Catcher](s1e2-apple-catcher-production.md) is built in `apple-catcher/` with original art and the supplied 6:39.670 recording. Its estimated total is about nine minutes including child turns and feedback; actual child-paced timing remains unmeasured. From November 2, 2026 it is Connor’s reading mission on the story days in [the two-week plan](two-week-plan-2026-11-02.md). Later chapters below remain authored briefs.
 
 **Story question:** Can the crew stop a tumbling crop of apples from crushing the orchard's old route box?
 

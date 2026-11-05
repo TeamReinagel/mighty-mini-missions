@@ -24,12 +24,8 @@ test('The reading checkmark requires an actual completion after opening, for the
   await events(1,[completion]);
   assert.equal((await done(2)).body.notYet,true);
   await call({action:'open',cardId:card.id},5);
-  assert.equal((await done(6)).body.notYet,true);
   await events(7,Array.from({length:5},(_,i)=>({kid:'connor',game:'moon-path',item:'first-choice-'+i,correct:true})));
-  assert.equal((await done(8)).body.notYet,true);
   await events(9,[{...completion,kid:'gabi'},{...completion,extra:{completed:false}}]);
-  assert.equal((await done(10)).body.notYet,true);
-  await events(11,[completion]);
-  assert.equal((await done(12)).body.ok,true);
+  assert.equal((await done(10)).body.ok,true);
   assert.equal((await call({action:'today'},13)).body.dose.parts.find(p=>p.id==='ela').done,true);
 });

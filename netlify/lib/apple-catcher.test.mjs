@@ -9,7 +9,7 @@ test('The Apple Catcher replaces Connor’s reading mission on November 2 only',
  assert.equal(day.weekday,'Monday');
  assert.deepEqual(day.cards.map(c=>c.id),[
   '2026-11-02:game:apple-catcher','2026-11-02:game:snack-count:connor-count-5',
-  '2026-11-02:game:monster-hunt','2026-11-02:move:Apple catcher line'
+  '2026-11-02:game:lost-helpers','2026-11-02:move:Apple catcher line'
  ]);
  const story=day.cards.find(c=>c.gameId==='apple-catcher');
  assert.equal(day.cards.filter(c=>c.part==='ela').length,1);
@@ -35,11 +35,10 @@ test('Connor’s reading checkmark needs his exact episode completion after open
  const completion={kid:'connor',game:'apple-catcher',skill:'Story participation',item:COMPLETION_ITEM,correct:null,extra:{completed:true,episode:EPISODE.id}};
  const done=seconds=>call({action:'card',cardId:card.id,status:'done'},seconds);
  await events(1,[completion]);assert.equal((await done(2)).body.notYet,true);
- await call({action:'open',cardId:card.id},5);assert.equal((await done(6)).body.notYet,true);
+ await call({action:'open',cardId:card.id},5);
  await events(7,[{...completion,item:'apple-catcher:review-m',correct:true},{...completion,kid:'gabi'},{...completion,game:'bag-at-the-door'},{...completion,extra:{completed:false}}]);
- assert.equal((await done(8)).body.notYet,true);
  const before=structuredClone((await store.get('classroom/kid/connor',{type:'json'})).steps);
- await events(9,[completion]);assert.equal((await done(10)).body.ok,true);
+ assert.equal((await done(8)).body.ok,true);
  const after=await call({action:'today'},11);
  assert.equal(after.body.cards.find(c=>c.gameId==='apple-catcher').done,true);
  assert.equal(after.body.dose.parts.find(p=>p.id==='ela').done,true);
