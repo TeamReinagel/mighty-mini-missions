@@ -44,17 +44,17 @@
   const wordsInRange = (from, to) => SIGHT_WORDS_300.slice(from - 1, to);
 
   // Christmas Word Run "Tricky Words" fill: Reading.com Parent Scope & Sequence words
-  // introduced in lessons 97 back through 94 (most recent first), capped at 30.
+  // introduced in lessons 109 back through 106 (most recent first), capped at 30.
   // Source: https://www.reading.com/uploads/parent_scope_and_sequence.pdf
   const TRICKY_FILL_WORDS = [
-    // Lesson 97 (Al)
-    "calls", "small", "real", "throws", "always", "almost", "baseball", "zero", "wall",
-    // Lesson 96 (Review)
-    "round", "clock", "scores", "would", "should", "base", "prize",
-    // Lesson 95 (Soft c)
-    "race", "fence", "twice", "place", "danced", "chance", "their", "our", "lace",
-    // Lesson 94 (Review) — first 5 to reach 30
-    "slip", "frown", "brown", "skates", "how"
+    // Lesson 109 (Ph)
+    "phone", "ranger", "photos", "elephant", "behind", "trunk", "closer", "hippos", "animals",
+    // Lesson 108 (Review)
+    "bike", "upset", "quit", "okay", "brave", "proud", "brake", "pedals", "pushes",
+    // Lesson 107 (Review)
+    "hall", "paint", "coats", "while", "outside", "inside", "fur", "extra", "road",
+    // Lesson 106 (Oa) — first 3 to reach 30
+    "hair", "coast", "float"
   ];
 
   // Words that sound alike can't share a row: the child picks by ear, so both would be "right".

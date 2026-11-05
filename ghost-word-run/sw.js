@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "gwr-christmas-v5";
+const VERSION = "gwr-christmas-v6";
 const CORE = [
   "./",
   "index.html",

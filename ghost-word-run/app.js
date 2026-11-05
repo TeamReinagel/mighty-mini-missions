@@ -256,7 +256,7 @@
   }
 
   // Tricky Words: words this child asked Joyce about on the tablet, then words they
-  // missed here, topped up to TRICKY_MIN with Reading.com words from lesson 97 back.
+  // missed here, topped up to TRICKY_MIN with Reading.com words from lesson 109 back.
   const TRICKY_MIN = 30;
   const trickyKid = window.MightyProgress?.currentKid?.().id || "unknown";
   const TRICKY_STORE_KEY = `mightyMini.ghostWordRun.tricky.${trickyKid}`;

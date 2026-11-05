@@ -78,7 +78,7 @@ window.MIGHTY_GAMES = [
   {
     id: "ghost-word-run",
     title: "Christmas Word Run",
-    icon: "./ghost-word-run/icons/icon-192.png",
+    icon: "./ghost-word-run/icons/icon-192.png?v=2",
     href: "./ghost-word-run/",
     practices: ["sight-words", "rhyming"],
     levels: ["k", "1st", "2nd"]
