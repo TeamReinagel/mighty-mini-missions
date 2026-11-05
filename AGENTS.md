@@ -43,7 +43,42 @@ New Mighty Mini Missions learning games practice one essential skill as well as 
 - The child never sees the essential-skill name, step, or score. Nothing is locked behind it.
 - A miss sets the player back a little and lets them continue. A hint is available without ending the round.
 - At the top of the game script, one comment names the step id from `netlify/lib/skills.mjs` and the moment that practices it.
-- Games already on the site stay as they are until that game is the one being changed. Sid's build prompt in `netlify/lib/design-studio.mjs` carries the same rule.
+- Games already on the site stay as they are until that game is the one being changed. Sid's build prompt in `netlify/lib/design-studio.mjs` carries these rules.
+
+### Testing and reporting
+
+Dylan Wiliam (formative assessment: a try matters only when it changes what happens next, and feedback should cause thinking rather than an emotional reaction) and Thomas R. Guskey (report product, process, and progress separately; judge the latest evidence against the criterion, not an average and not a curve). This matches Lee Ann Jung's rule already used here: say what the child can do now, keep behavior out of that claim, and say what was measured.
+
+- Log the first response, before a hint, with `practice()`: skill, item, and whether that first try was right. A retry after a hint is not a new first try.
+- A try counts only if it changes the next moment: repeat that item, narrow the choice, offer the hint, or move on. The hint answers the choice the child made.
+- After a miss, the child sees what to try next. No score, percent, grade, or scolding. Praise does not stand in for the next action.
+- What "done" looks like stays visible in the picture while they play.
+- Parent-facing notes keep three claims apart: what the child can do now, how they stuck with it (time, retries, leaving), and what changed since the last look. Do not fold those into one number.
+- Judge the latest first tries against the skill this game practices. An early miss does not cancel a later run of first-try successes, and one lucky streak does not count as mastery. A few tries stay "a few tries."
+- Compare a child to that skill, not to a sibling. Skipping a game is not a zero on the skill.
+
+### Screen and hierarchy
+
+Don Norman (*The Design of Everyday Things*: signifiers, mapping, constraints, feedback, and a conceptual model the child can see) and Edward Tufte (*The Visual Display of Quantitative Information* and *Envisioning Information*: show the data, erase non-data ink, layer and separate, smallest effective difference).
+
+- One job on the screen. Portrait, touch first, big targets.
+- The child touches the object itself. The next touch is the largest, highest-contrast thing, and it looks like something a hand can pick up.
+- A spoken prompt leaves the same goal in the picture. Do not require reading, and do not require remembering a line that already ended.
+- A drop or a tap counts only in a real target. An incomplete answer does nothing.
+- The touch shows up on that object at once, then the result.
+- The thing being learned is the data. Scores, timers, level names, and totals are smaller and sit at the edge. The background is quieter and still.
+- Two choices differ by the feature under practice, and the meaning sits on the object rather than in a legend.
+- Remove decoration that does not change the choice.
+
+### Motion and sound
+
+Dan Saffer (*Microinteractions*: trigger, rules, feedback, loops and modes; feedback illuminates the rules, and less is more), Issara Willenskomer (UX in Motion: motion supports usability, it eases, and a microinteraction finishes within about 400ms), and William Gaver (auditory icons: a short everyday sound of the event, mapped by analogy, alongside the picture).
+
+- A touch is a small interaction: the object that was touched answers, eased, and finished within 400ms. The next touch still works during that answer. Objects that did not change stay still.
+- A right answer may turn that object into its result. A celebration that outlasts the next prompt comes out.
+- When the device asks for reduced motion, skip travel, bounce, and shake. Keep the state change.
+- Each event has one short everyday sound that starts with the picture, and the same event always uses that sound. A coin clinks; a miss is a softer, shorter bump. Never a buzzer, alarm, or sad sting.
+- The picture still carries the message with the sound off. No background music during a try.
 
 ## Product behavior to preserve
 
