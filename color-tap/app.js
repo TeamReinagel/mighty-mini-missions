@@ -11,7 +11,7 @@ const FOODS = [
 const TOYS = [
   { id: "red", src: "assets/ball.jpg", name: "red ball" },
   { id: "yellow", src: "assets/duck.jpg", name: "yellow duck" },
-  { id: "blue", src: "assets/cup.jpg", name: "blue cup" },
+  { id: "blue", src: "../train-set/art/engine_blue.png", name: "blue train" },
   { id: "green", src: "assets/frog.jpg", name: "green frog" }
 ];
 

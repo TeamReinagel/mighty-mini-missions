@@ -7,7 +7,7 @@ export const THINGS = [
   { id: "lemon", name: "lemon", color: "yellow", kind: "food" },
   { id: "duck", name: "duck", color: "yellow", kind: "toy" },
   { id: "berries", name: "blueberries", color: "blue", kind: "food" },
-  { id: "cup", name: "cup", color: "blue", kind: "toy" },
+  { id: "train", name: "train", color: "blue", kind: "toy" },
   { id: "pear", name: "pear", color: "green", kind: "food" },
   { id: "frog", name: "frog", color: "green", kind: "toy" }
 ];
@@ -18,7 +18,7 @@ export const THING_SRC = {
   lemon: "../color-tap/assets/lemon.jpg",
   duck: "../color-tap/assets/duck.jpg",
   berries: "../color-tap/assets/blue.jpg",
-  cup: "../color-tap/assets/cup.jpg",
+  train: "../train-set/art/engine_blue.png",
   pear: "../color-tap/assets/pear.jpg",
   frog: "../color-tap/assets/frog.jpg"
 };

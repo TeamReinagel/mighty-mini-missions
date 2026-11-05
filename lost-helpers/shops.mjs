@@ -13,17 +13,15 @@ const COLORS = [
   { id: "green", name: "green", src: "../color-tap/assets/pear.jpg" }
 ];
 
+// Each word must start with its letter, and the picture must show that word.
 const LETTERS = [
   { letter: "a", word: "apple", src: "../color-tap/assets/apple.jpg" },
-  { letter: "m", word: "ball", src: "../color-tap/assets/ball.jpg" },
-  { letter: "s", word: "sun", src: "assets/tile.jpg" },
-  { letter: "t", word: "toy", src: "../color-tap/assets/duck.jpg" },
-  { letter: "p", word: "pear", src: "../color-tap/assets/pear.jpg" },
-  { letter: "n", word: "nest", src: "assets/bun.png" },
-  { letter: "c", word: "cup", src: "../color-tap/assets/cup.jpg" },
   { letter: "b", word: "ball", src: "../color-tap/assets/ball.jpg" },
+  { letter: "c", word: "cup", src: "../color-tap/assets/cup.jpg" },
   { letter: "d", word: "duck", src: "../color-tap/assets/duck.jpg" },
-  { letter: "g", word: "frog", src: "../color-tap/assets/frog.jpg" }
+  { letter: "f", word: "frog", src: "../color-tap/assets/frog.jpg" },
+  { letter: "l", word: "lemon", src: "../color-tap/assets/lemon.jpg" },
+  { letter: "p", word: "pear", src: "../color-tap/assets/pear.jpg" }
 ];
 
 const COINS = [

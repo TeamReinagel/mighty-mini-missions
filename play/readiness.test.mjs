@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { colorRound, jobRound, kindRound, missNumber, missSize, missSort, nameRound, numberRound, shapeRound, sizeRound, SHAPES } from "./readiness.mjs";
+import { THINGS, colorRound, jobRound, kindRound, missNumber, missSize, missSort, nameRound, numberRound, shapeRound, sizeRound, SHAPES } from "./readiness.mjs";
 
 function rngFrom(...values) {
   let i = 0;
@@ -45,6 +45,13 @@ test("a kind sort puts food in one basket and a toy in the other", () => {
   const deal = kindRound(rngFrom(0.2, 0.7, 0.4));
   assert.deepEqual(deal.models.map((item) => item.kind).sort(), ["food", "toy"]);
   assert.ok(deal.models.every((item) => item.id !== deal.item.id));
+});
+
+test("food and toy sorts only use clear foods and clear toys", () => {
+  const foods = THINGS.filter((item) => item.kind === "food").map((item) => item.id).sort();
+  const toys = THINGS.filter((item) => item.kind === "toy").map((item) => item.id).sort();
+  assert.deepEqual(foods, ["apple", "berries", "lemon", "pear"]);
+  assert.deepEqual(toys, ["ball", "duck", "frog", "train"]);
 });
 
 test("his name stays on the card, and the closer set shares his first letter", () => {
