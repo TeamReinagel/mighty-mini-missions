@@ -1,0 +1,129 @@
+/* The Gem Gym (puzzle-barn). The blocks and scales are the data; everything else stays quiet. */
+
+.scene { align-content: start; justify-items: center; }
+.board, .twin, .below, .tools { width: 100%; display: grid; justify-items: center; gap: 12px; }
+.twin:empty, .below:empty { display: none; }
+.tools { justify-items: end; }
+
+/* ---- Block Towers ---- */
+.tower { display: grid; gap: 6px; justify-items: center; }
+.block-row { display: flex; gap: 6px; }
+.block {
+  width: min(112px, 21vw);
+  height: min(78px, 15vw);
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 14px;
+  background: url("assets/block.png") center / 100% 100% no-repeat;
+  color: var(--ink);
+  text-shadow: 0 0 6px #fff, 0 0 3px #fff, 0 0 1px #fff;
+  font-size: clamp(1.4rem, 6vw, 2rem);
+  font-weight: 900;
+  padding: 0;
+}
+.block.blank { background: rgba(36, 24, 70, .42); border: 3px dashed rgba(255, 255, 255, .95); box-shadow: 0 5px 0 rgba(36, 28, 51, .18); }
+.block.on { outline: 5px solid var(--kid); outline-offset: 2px; background-color: white; }
+.block.look { outline: 5px solid white; outline-offset: 3px; }
+.block.pencil { color: #6b6478; font-style: italic; font-weight: 600; }
+.block.clash { box-shadow: inset 0 0 0 4px #e07a5f; }
+.block.inked { animation: settle .25s ease-out; }
+.block:disabled { opacity: 1; }
+.tower.done .block { filter: saturate(1.25) brightness(1.05); }
+@keyframes settle { from { transform: scale(1.12); } }
+
+.mini-tower .block { width: 64px; height: 44px; font-size: 1.2rem; }
+.twin { padding: 8px; border-radius: 20px; background: rgba(10, 14, 30, .45); max-width: 420px; }
+
+.pad { display: grid; grid-template-columns: repeat(3, 64px); gap: 8px; justify-content: center; }
+.pad[hidden] { display: none; }
+.key {
+  height: 56px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 900;
+  box-shadow: 0 5px 0 rgba(36, 28, 51, .2);
+}
+.key.ok { background: var(--kid); color: white; }
+.key.word { font-size: 1.05rem; }
+
+.hint { min-height: 48px; font-size: 1rem; }
+.hint.glow { outline: 4px solid #ffd15c; animation: breathe 1.6s ease-in-out infinite; }
+@keyframes breathe { 50% { transform: scale(1.06); } }
+
+/* ---- Barn Scales ---- */
+.facts { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.scale { display: grid; justify-items: center; padding: 8px 10px 6px; border-radius: 20px; background: rgba(10, 14, 30, .38); }
+.scale.look { outline: 4px solid white; outline-offset: 3px; }
+.beam {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding-bottom: 12px;
+  background: url("assets/plank.png") center bottom / 100% 16px no-repeat;
+  transition: transform .35s ease;
+}
+.beam.tilt-right { transform: rotate(7deg); }
+.beam.tilt-left { transform: rotate(-7deg); }
+.pivot { width: 8px; }
+.stand { width: 44px; height: auto; margin-top: -2px; }
+.pan {
+  min-width: 96px;
+  min-height: 52px;
+  max-width: 230px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  justify-content: center;
+  align-content: flex-end;
+  padding: 4px 10px 14px;
+  background: url("assets/pan.png") center bottom / 100% 60% no-repeat;
+}
+.thing { display: block; height: 52px; width: auto; }
+.thing.big { height: 64px; }
+.thing.gem { height: 30px; }
+.fact .thing { height: 44px; }
+.fact .thing.big { height: 54px; }
+.fact .thing.gem { height: 26px; }
+.ask .pan { min-width: 130px; min-height: 70px; }
+.ask .pan.gems { outline: 3px dashed rgba(255, 255, 255, .8); outline-offset: -3px; border-radius: 18px; }
+.take { border: 0; background: none; padding: 0; }
+.scale.done { box-shadow: inset 0 0 0 4px #9be27a; }
+.mini-facts .thing { height: 26px; }
+.mini-facts .thing.big { height: 32px; }
+.mini-facts .thing.gem { height: 16px; }
+.mini-facts .pan { min-width: 60px; min-height: 34px; }
+.below .add, .below .play { min-width: 160px; }
+.add { display: flex; align-items: center; gap: 8px; }
+.add .gem { height: 36px; }
+.below { grid-auto-flow: column; justify-content: center; }
+
+.explain { display: grid; gap: 14px; justify-items: center; margin-top: 10vh; }
+
+/* ---- Monsters and the team ---- */
+.monster { display: inline-block; height: 52px; }
+.monster svg { display: block; width: 100%; height: 100%; }
+.starters { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.starter { border: 0; padding: 12px; border-radius: 24px; background: rgba(255, 255, 255, .78); box-shadow: 0 5px 0 rgba(36, 28, 51, .18); }
+.starter .monster { height: min(150px, 30vw); }
+.grow { display: grid; gap: 14px; justify-items: center; margin-top: 4vh; }
+.grow .star { height: min(240px, 46vw); }
+.star.evolved { animation: evolve .4s ease-out; }
+@keyframes evolve { from { transform: scale(.7); filter: brightness(1.8); } }
+.sparks { display: flex; gap: 10px; }
+.spark { width: 22px; height: 22px; border-radius: 50%; background: rgba(255, 255, 255, .35); border: 3px solid white; }
+.spark.on { background: #ffd23f; }
+.shelf .mate { border: 0; padding: 4px; border-radius: 16px; background: rgba(255, 255, 255, .55); }
+.shelf .mate.on { outline: 3px solid var(--kid); background: white; }
+.shelf .mate .monster { height: 56px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .beam { transition: none; }
+  .block.inked, .hint.glow, .star.evolved { animation: none; }
+}
+
+.below { align-items: start; }
+.below .go { height: auto; align-self: start; }

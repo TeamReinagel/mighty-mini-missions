@@ -8,3 +8,6 @@ npm-debug.log*
 # Local server secrets/env
 server/.env
 server/env
+
+# The Gem Gym (puzzle-barn) raw paintings (large); the sized copies live in puzzle-barn/assets/
+puzzle-barn/tools/source/

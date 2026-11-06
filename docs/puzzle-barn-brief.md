@@ -1,6 +1,8 @@
-# Puzzle Barn: design brief
+# The Gem Gym (puzzle-barn): design brief
 
-Working title. Max names it (Stephanie's choice, 2026-11-05). The code keeps the name in one place, so renaming is a one-line change, and the folder and cache names stay `puzzle-barn` / `pb-`.
+**Name: The Gem Gym.** Max named it on 2026-11-06 (it started as Puzzle Barn, then Monster Puzzles). The name lives in one place (`NAME` in `puzzle-barn/app.js`), and the folder and cache names stay `puzzle-barn` / `pb-`.
+
+**Look (changed 2026-11-06):** Max wasn't excited about a farm theme. He loves Pokémon, Mario, and video games, so the game uses Word Monsters' original monsters and worlds: crystal block towers, monster scales weighed in gems, and a team of monsters that evolves as he solves puzzles. No characters, art, or names from Pokémon, Mario, or any other game.
 
 Written 2026-11-05. Status: brief only, nothing built.
 
@@ -17,7 +19,7 @@ In early January 2027, Stephanie will choose between adding Beast Academy and ke
 1. **Read aloud.** Joyce reads every puzzle, so Max is never held back by text. Later, Gabi and Connor can do real logic puzzles without reading.
 2. **Hints that don't give the answer away.** Each hint points at the next thing to look at. None of them gives the answer.
 3. **Ask "How did you know?"** After a solve, Max explains his thinking out loud. The report quotes what he said.
-4. **Use their world.** The puzzles are homestead things: hay bales, eggs, goats, the garden, and Learning Land.
+4. **Use what he loves.** Monsters to collect and evolve, worlds to play in, and the same monsters he already knows from Word Monsters.
 5. **Report the struggle, not just the score.** Friday's report shows where he got stuck, what he tried, and whether he kept going.
 
 ## What it must not do
@@ -34,9 +36,9 @@ In early January 2027, Stephanie will choose between adding Beast Academy and ke
 
 Both types are easy for code to generate and to solve, and the solver proves each puzzle has exactly one answer.
 
-**1. Hay Bale Stacks (number pyramids)**
+**1. Block Towers (number pyramids)**
 
-Bales are stacked in rows, and each bale's number is the sum of the two bales under it. Some bales are blank.
+Crystal blocks are stacked in rows, and each block's number is the sum of the two blocks under it. Some blocks are empty.
 
 | Level | What it asks |
 |---|---|
@@ -45,15 +47,15 @@ Bales are stacked in rows, and each bale's number is the sum of the two bales un
 | 3 | 4 rows, sums within 100. Ties to his current edge, adding to 100. |
 | 4 | 4 rows, where no blank can be filled first by simple adding or subtracting. He has to reason about two blanks at once. |
 
-**2. Barn Scales (balance puzzles)**
+**2. Monster Scales (balance puzzles)**
 
-Pictures of eggs, pumpkins, and goats sit on balance scales. "2 eggs balance 1 pumpkin. How many eggs balance 3 pumpkins?"
+Little monsters, big monsters, and gems sit on balance scales. The monsters are his partner's own species: stage 1 is the little one, stage 3 the big one. "A little monster balances 2 gems. How many gems balance 3 little monsters?"
 
 | Level | What it asks |
 |---|---|
 | 1 | One fact, one question. Replace one item with its match. |
-| 2 | Two facts that chain together: goat to pumpkins, then pumpkins to eggs. |
-| 3 | A known amount on one side: "A pumpkin and 2 eggs balance 6 eggs." |
+| 2 | Two facts that chain together: big monster to little monsters, then little monsters to gems. |
+| 3 | A known amount on one side: "A little monster and 2 gems balance 6 gems." |
 | 4 | Two unknowns, solved by comparing two scales. |
 
 Balance puzzles are early algebra without symbols. They are the clearest example of "you weren't shown how."
@@ -61,15 +63,16 @@ Balance puzzles are early algebra without symbols. They are the clearest example
 ### How a puzzle plays
 
 - **Joyce reads the puzzle.** The goal stays visible in the picture. Uses `say()` and `afterLine()` from `play/kit.mjs`.
-- **Answering.** Max taps a blank bale and picks a number. For scales, he drags items onto the empty pan.
-- **A miss.** The answer comes off softly, and Joyce answers the choice he actually made: "Those two make 9, and the bale says 12." Then he keeps going. No buzzer and nothing taken away, per `AGENTS.md`.
+- **Answering.** Max taps an empty block and types a number. For scales, he taps "Add a gem" to put gems on the empty pan, taps a gem to take it off, and taps "Let go" to see whether it balances.
+- **A miss.** The answer comes off softly, and Joyce answers the choice he actually made: "Those two make 9, and the block says 12." Then he keeps going. No buzzer and nothing taken away, per `AGENTS.md`.
 - **The Hint button** is always there, and the hints climb a ladder:
-  1. **Where to look.** One blank lights up, the one the solver can fill next. "Start with this bale. What's under it?"
-  2. **How to think.** "If you know the top and one bottom bale, you can work backward."
+  1. **Where to look.** One empty block lights up, the one the solver can fill next. "Start with this block. Look at the two blocks under it."
+  2. **How to think.** "If you know the top and one bottom block, you can work backward."
   3. **A worked twin.** Joyce works a different, easier puzzle of the same kind, one step at a time. His own puzzle stays his. The hints never give the answer to his puzzle.
 - **Being stuck.** After about 45 seconds with no taps, the Hint button glows. Joyce never offers a hint on her own, and she never says "hurry."
 - **"How did you know?"** After a solve, on about one puzzle in three, Joyce asks: "How did you figure that out?" He holds a big mic button and talks. The browser transcribes his answer, the same way the classroom's "I'll read it" button does (`hearWord` in `classroom/classroom.js`), and Joyce gives one short fixed reply ("Thanks for telling me how you thought about it"). There is no live AI conversation, and no judging what he said. Only the transcript is saved, no audio. "Skip" is always there.
 - **Round length.** One round is 3 puzzles. A card is 15 minutes at most, the usual section limit.
+- **The team.** The first time, Max picks a partner from three baby monsters. Every solved puzzle gives the partner a spark, hints or not, because sticking with it is what counts. Two sparks evolve it (stage 1 to 2 to 3). A fully grown partner hatches a new monster, which joins the team. The team sits on the shelf at the bottom edge, and tapping one makes it the partner. All of this happens between puzzles, never during one.
 
 ### Essential skill
 
@@ -95,13 +98,13 @@ Logging follows the testing rules in `AGENTS.md`.
 
 ### Where it goes in the code
 
-- **The game.** `puzzle-barn/` follows the layout of `block-trade/`: `index.html`, `app.js`, `styles.css`, `sw.js` with its own cache prefix `pb-`, and the `play/stage.mjs` kit.
+- **The game.** `puzzle-barn/` follows the layout of `block-trade/`: `index.html`, `app.js`, `styles.css`, and the `play/stage.mjs` kit. Like Moon Crates, it has no service worker yet. If the tablet check shows it needs to work offline, add `sw.js` with its own cache prefix, `pb-`.
 - **The puzzle logic.** Pure modules with no DOM, in `puzzle-barn/puzzles/`:
   - `pyramid.mjs` and `scales.mjs`: generate, solve, count solutions, and choose the next step to fill.
   - `hints.mjs`: the hint wording for a given state and a given wrong answer.
 - **The bank.** A build script, `puzzle-barn/tools/build-bank.mjs`, writes `puzzle-barn/bank.json` with about 60 puzzles per level per type. The bank is committed so a person can read it.
 - **The game's card.** One entry each in `ROUND_LENGTH` (`play/round-length.mjs`) and `EVIDENCE` (`netlify/lib/classroom.mjs`). Max gets a card on full days.
-- **Where it sits in his dose.** It is Max's **math** on some days, taking turns with AdaptedMind: Puzzle Barn 2 school days a week, AdaptedMind the other 3 (Stephanie's choice, 2026-11-05). The exact weekdays get set when his board is built. ELA is not touched: when Reading.com ends, its place goes to the Lark & Nib series. On days when math is AdaptedMind, Puzzle Barn can also be offered as a bonus once his dose is done. That tests it in the same place Beast Academy would go.
+- **Where it sits in his dose.** It is Max's **math** on some days, taking turns with AdaptedMind: The Gem Gym 2 school days a week, AdaptedMind the other 3 (Stephanie's choice, 2026-11-05). The exact weekdays get set when his board is built. ELA is not touched: when Reading.com ends, its place goes to the Lark & Nib series. On days when math is AdaptedMind, Puzzle Barn can also be offered as a bonus once his dose is done. That tests it in the same place Beast Academy would go.
 
 ### Tests that must pass before release
 
@@ -115,11 +118,11 @@ Logging follows the testing rules in `AGENTS.md`.
 - **The existing suites still pass:** `npm run -s test:joyce` and `npm run -s test:lark-nib`.
 - **A check on Max's own Android tablet** before the card goes on the board:
   - Voice
-  - Dragging items
+  - Tapping gems on and off
   - The mic button and transcription
-  - Offline reload
+  - Reloading on a weak connection
 
-## Phase 2: January and later, only if Puzzle Barn wins
+## Phase 2: January and later, only if The Gem Gym wins
 
 These are listed so Phase 1 doesn't make them harder. They are not part of the pilot.
 
@@ -142,20 +145,20 @@ During the first week of January, Max takes Beast Academy's free placement test 
 | Is it reliable? | The number of "it didn't work" moments in December. |
 | What did it cost? | Stephanie's time: setup, fixes, approvals. |
 
-**If Puzzle Barn wins,** start Phase 2. **If Beast Academy wins,** add it for Max, and keep Puzzle Barn as the read-aloud version for Gabi and Connor.
+**If The Gem Gym wins,** start Phase 2. **If Beast Academy wins,** add it for Max, and keep The Gem Gym as the read-aloud version for Gabi and Connor.
 
 ## Timeline
 
 | When | What |
 |---|---|
 | November (reliability month) | Build the puzzle engine, bank, tests, and game. Nothing goes on the kids' boards. |
-| Late November | Check it on Max's tablet. When Reading.com ends, Lark & Nib becomes his ELA, and Puzzle Barn starts taking turns with AdaptedMind as his math. |
+| Late November | Check it on Max's tablet. When Reading.com ends, Lark & Nib becomes his ELA, and The Gem Gym starts taking turns with AdaptedMind as his math. |
 | December | Max plays. Friday reports include the puzzle section. |
 | First week of January | Beast Academy placement and samples. Make the comparison. Stephanie decides. |
 
 ## Questions for Stephanie before building
 
-1. ~~**The name.**~~ Decided: Max names it. Stephanie asks him once there's something he can see, so he's naming a real thing. The look stays homestead unless his name points somewhere else.
-2. ~~**How often.**~~ Decided: Puzzle Barn 2 days a week and AdaptedMind 3, both in Max's math spot.
+1. ~~**The name.**~~ Decided: Max named it The Gem Gym (2026-11-06), after the look moved to Word Monsters.
+2. ~~**How often.**~~ Decided: The Gem Gym 2 days a week and AdaptedMind 3, both in Max's math spot.
 3. ~~**"How did you know?"**~~ Decided: saving the text of his answer (no audio) for Friday's report is fine.
 4. ~~**The repository is public.**~~ Decided: `netlify.toml` returns 404 for `/docs/*`, the same way it does for `/netlify/*`. Nothing the site loads lives in `docs/`.

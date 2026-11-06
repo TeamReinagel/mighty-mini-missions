@@ -21,7 +21,8 @@ export const ROUND_LENGTH = {
   "basket-sort": 4,
   "shape-tap": 4,
   "my-name": 4,
-  "two-jobs": 4
+  "two-jobs": 4,
+  "puzzle-barn": 3
 };
 
 export function roundsFor(game, kidId) {
