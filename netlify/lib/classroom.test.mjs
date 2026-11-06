@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CVC, itemsFor, wordParts } from "./classroom-content.mjs";
 import {
-  applyAttempt, buildDay, conferencePackage, decidePlan, dropLastNoteSpots, evidenceFor, handleClassroom, isMastered,
+  applyAttempt, buildDay, conferencePackage, decidePlan, dropEarlyMastery, dropLastNoteSpots, evidenceFor, handleClassroom, isMastered,
   memoryStore, noteSignal, recordNoteSteps, rhythmFor, setEssentialOff, stepById, weekdayIndex
 } from "./classroom.mjs";
 
@@ -380,7 +380,52 @@ test("counting past ten opens Flower Beds for Gabi", () => {
     date: MONDAY,
     state: { steps: { "connor-count-5": MASTERED, "connor-count-10": MASTERED } }
   });
-  assert.equal(connor.cards.find((card) => card.stepId === "connor-count-20").gameId, "snack-count");
+  const counting = connor.cards.find((card) => card.part === "math");
+  assert.equal(counting.stepId, "connor-count-10", "mastery from the old 3-of-4 rule does not count");
+  assert.equal(counting.review, false);
+  assert.match(counting.href, /snack-count\/\?kid=connor&step=connor-count-10/);
+
+  const earned = buildDay({
+    kidId: "connor",
+    date: MONDAY,
+    state: { steps: { "connor-count-5": MASTERED, "connor-count-10": { ...MASTERED, coverRule: true } } }
+  });
+  assert.equal(earned.cards.find((card) => card.stepId === "connor-count-20").gameId, "snack-count");
+});
+
+test("Connor learns counting to 10 only with every quantity, 75%, and three days", () => {
+  const def = stepById("connor", "connor-count-10");
+  const play = (rec, date, tries) => tries.reduce((acc, [n, correct]) => applyAttempt(acc, correct, def, { date, item: `${n} scoops` }), rec);
+  const allTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => [n, true]);
+
+  const oneDay = play(undefined, "2026-11-02", [...allTen, [3, true], [4, true]]);
+  assert.equal(oneDay.mastered, false, "one sitting is not enough");
+
+  let rec = play(undefined, "2026-11-02", [[1, true], [2, true], [3, true], [4, true]]);
+  rec = play(rec, "2026-11-03", [[5, true], [6, false], [6, true], [7, true]]);
+  rec = play(rec, "2026-11-04", [[8, true], [9, true], [10, false], [1, true]]);
+  assert.equal(rec.mastered, false, "10 has no right first try yet");
+  rec = play(rec, "2026-11-04", [[10, true]]);
+  assert.equal(rec.mastered, true);
+  assert.equal(rec.coverRule, true);
+
+  let shaky = play(undefined, "2026-11-02", allTen.slice(0, 4));
+  shaky = play(shaky, "2026-11-03", allTen.slice(4, 8));
+  shaky = play(shaky, "2026-11-04", [[3, false], [4, false], [5, false], [6, false], [7, false], [9, true], [10, true]]);
+  assert.equal(shaky.mastered, false, "every quantity, three days, but the latest 12 are 7 right: under 75%");
+});
+
+test("old counting mastery goes back to practicing, keeping the tries", () => {
+  const state = dropEarlyMastery("connor", {
+    steps: {
+      "connor-count-5": MASTERED,
+      "connor-count-10": { ...MASTERED, shownAt: "2026-11-03", nextCheck: "2026-11-04" }
+    }
+  });
+  assert.equal(state.steps["connor-count-5"].mastered, true);
+  assert.equal(state.steps["connor-count-10"].mastered, false);
+  assert.equal(state.steps["connor-count-10"].shownAt, undefined);
+  assert.equal(state.steps["connor-count-10"].graded, 6);
 });
 
 async function gabiReadyToAdd(store) {

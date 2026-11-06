@@ -123,8 +123,8 @@ export const CHAINS = {
       id: "counting",
       steps: [
         step({ id: "connor-count-5", title: "Counting to 5", strand: "connor-count", strandName: "Counting", activity: "count", min: 1, max: 5, skill: "Counting", teach: "Tap each one. I'll count with you.", items: 4, masteryMin: 4, masteryHits: 3 }),
-        step({ id: "connor-count-10", title: "Counting to 10", strand: "connor-count", strandName: "Counting", activity: "count", min: 6, max: 10, skill: "Counting", teach: "A few more this time. Touch each one.", items: 4, masteryMin: 4, masteryHits: 3 }),
-        step({ id: "connor-count-20", title: "Counting to 20", strand: "connor-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "Big groups. Go slowly.", items: 4, masteryMin: 4, masteryHits: 3 }),
+        step({ id: "connor-count-10", title: "Counting to 10", strand: "connor-count", strandName: "Counting", activity: "count", min: 1, max: 10, skill: "Counting", teach: "A few more this time. Touch each one.", items: 4, cover: true }),
+        step({ id: "connor-count-20", title: "Counting to 20", strand: "connor-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "Big groups. Go slowly.", items: 4, cover: true }),
         step({ id: "connor-more", title: "More and fewer", strand: "connor-compare", strandName: "Comparing", activity: "compare", skill: "More and fewer", teach: "Which side has more? Count to check.", items: 4, masteryMin: 4, masteryHits: 3 }),
         step({ id: "connor-patterns", title: "Patterns", strand: "connor-compare", strandName: "Comparing", activity: "pattern", skill: "Patterns", teach: "What comes next? Say it, then tap it.", items: 4, masteryMin: 4, masteryHits: 3 })
       ]
@@ -284,8 +284,34 @@ export function rhythmFor(weekday) {
   return "full";
 }
 
+// A `cover` step (min..max quantities) is learned only when every quantity has had a right
+// first try, the latest COVER_WINDOW first tries are at least 75% right, and the tries came on
+// at least COVER_DAYS different days. One good sitting is not enough.
+const COVER_WINDOW = 12;
+const COVER_DAYS = 3;
+
+function quantityOf(item) {
+  const found = String(item ?? "").match(/\d+/);
+  return found ? Number(found[0]) : null;
+}
+
+function coverMet(rec, stepDef) {
+  const right = rec.right || {};
+  for (let n = stepDef.min; n <= stepDef.max; n += 1) if (!right[n]) return false;
+  if ((rec.days || []).length < COVER_DAYS) return false;
+  const recent = (rec.recent || []).slice(-COVER_WINDOW);
+  if (recent.length < COVER_WINDOW) return false;
+  return recent.filter(Boolean).length / recent.length >= 0.75;
+}
+
+// Mastery saved under an older, looser rule does not count for a `cover` step.
+function learned(rec, stepDef) {
+  return isMastered(rec, stepDef) || Boolean(rec?.mastered && (!stepDef?.cover || rec.coverRule));
+}
+
 export function isMastered(rec, stepDef) {
   if (!rec?.graded) return false;
+  if (stepDef?.cover) return coverMet(rec, stepDef);
   const need = stepDef?.masteryMin ?? 6;
   const hits = stepDef?.masteryHits ?? Math.max(1, need - 1);
   const recent = (rec.recent || []).slice(-need);
@@ -296,15 +322,21 @@ export function isMastered(rec, stepDef) {
 export function applyAttempt(rec, correct, stepDef, meta = {}) {
   const base = rec || { graded: 0, correct: 0, recent: [] };
   if (correct !== true && correct !== false) {
-    return { ...base, mastered: Boolean(base.mastered) || isMastered(base, stepDef) };
+    return { ...base, mastered: learned(base, stepDef) };
   }
   const next = {
     ...base,
     graded: (base.graded || 0) + 1,
     correct: (base.correct || 0) + (correct ? 1 : 0),
-    recent: [...(base.recent || []), correct].slice(-8)
+    recent: [...(base.recent || []), correct].slice(-COVER_WINDOW)
   };
-  next.mastered = Boolean(base.mastered) || isMastered(next, stepDef);
+  if (stepDef?.cover) {
+    const n = quantityOf(meta.item);
+    if (correct && n !== null && n >= stepDef.min && n <= stepDef.max) next.right = { ...(base.right || {}), [n]: ((base.right || {})[n] || 0) + 1 };
+    if (meta.date && !(base.days || []).includes(meta.date)) next.days = [...(base.days || []), meta.date].sort().slice(-10);
+  }
+  next.mastered = learned(base, stepDef) || isMastered(next, stepDef);
+  if (stepDef?.cover && next.mastered) next.coverRule = true;
   const showedAgain = Boolean(base.slipping) && next.mastered && isMastered(next, stepDef);
   const firstShow = !base.mastered && !base.shownAt && next.mastered;
   if (showedAgain || firstShow) {
@@ -335,7 +367,19 @@ function emptyPlan() {
 }
 
 async function loadState(store, kidId) {
-  return { ...emptyState(), ...((await store.get(kidKey(kidId), { type: "json" })) || {}) };
+  return dropEarlyMastery(kidId, { ...emptyState(), ...((await store.get(kidKey(kidId), { type: "json" })) || {}) });
+}
+
+// A `cover` step marked learned under the older 3-of-4 rule goes back to practicing,
+// keeping its tries, so the skill map and checks agree with the new rule.
+export function dropEarlyMastery(kidId, state) {
+  for (const [id, rec] of Object.entries(state.steps || {})) {
+    const def = stepById(kidId, id);
+    if (!def?.cover || !rec?.mastered || rec.coverRule) continue;
+    const { mastered, shownAt, shownVia, nextCheck, checks, confirmedAt, slipping, checkMisses, ...rest } = rec;
+    state.steps = { ...state.steps, [id]: { ...rest, mastered: false } };
+  }
+  return state;
 }
 
 async function saveState(store, kidId, state) {
@@ -383,11 +427,11 @@ export function frontier(chain, state, plan) {
   for (const item of chain.steps) {
     if (item.placed) continue;
     if (state.steps?.[item.id]?.slipping) return { ...item, review: true };
-    const known = isMastered(state.steps?.[item.id], item) || state.steps?.[item.id]?.mastered;
+    const known = learned(state.steps?.[item.id], item);
     if (known && holds[item.id]) return { ...item, review: true };
     if (known) continue;
     if (holds[item.id]) {
-      const earlier = chain.steps.filter((candidate, index) => index < chain.steps.indexOf(item) && !candidate.placed && (state.steps?.[candidate.id]?.mastered || isMastered(state.steps?.[candidate.id], candidate)));
+      const earlier = chain.steps.filter((candidate, index) => index < chain.steps.indexOf(item) && !candidate.placed && learned(state.steps?.[candidate.id], candidate));
       const prev = earlier.at(-1);
       return prev ? { ...prev, review: true } : { ...item, review: true };
     }
@@ -1157,7 +1201,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const correct = grade(item, body.picked, Number(body.prompt || 0), Boolean(body.unsure));
     const before = Boolean(state.steps?.[stepDef.id]?.mastered);
     state.steps = { ...(state.steps || {}) };
-    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], correct, stepDef, { date, via: "lesson" });
+    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], correct, stepDef, { date, via: "lesson", item: item.item });
     if (correct === false) markMiss(state, date, stepDef.id);
     const loggedItem = item.type === "regroup" ? `${item.item} ${item.prompts?.[Number(body.prompt || 0)]?.id || ""}`.trim() : item.item;
     state.log = [...(state.log || []), { t: now.toISOString(), day: date, stepId: stepDef.id, item: loggedItem, correct }];
@@ -1187,7 +1231,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (typeof body.correct !== "boolean") return { status: 400, body: { error: "Joyce couldn't save that play." } };
     const before = Boolean(state.steps?.[stepDef.id]?.mastered);
     state.steps = { ...(state.steps || {}) };
-    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], body.correct, stepDef, { date, via: "game" });
+    state.steps[stepDef.id] = applyAttempt(state.steps[stepDef.id], body.correct, stepDef, { date, via: "game", item: body.item });
     if (body.correct === false) markMiss(state, date, stepDef.id);
     const loggedItem = String(body.item || stepDef.title).slice(0, 160);
     state.log = [...(state.log || []), { t: now.toISOString(), day: date, stepId: stepDef.id, item: loggedItem, correct: body.correct }];

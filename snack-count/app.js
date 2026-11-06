@@ -34,7 +34,7 @@ const LADDERS = {
   ],
   connor: [
     { id: "5", label: "To 5", min: 1, max: 5, flag: "count-5" },
-    { id: "10", label: "To 10", min: 6, max: 10, flag: "count-10" },
+    { id: "10", label: "To 10", min: 1, max: 10, flag: "count-10" },
     { id: "20", label: "To 20", min: 11, max: 20, flag: "count-20" }
   ],
   gabi: [
@@ -57,15 +57,32 @@ const ui = openGame(document.querySelector("#app"), { title: "Sundae Stand", bac
 const state = load(GAME) || { stars: {}, open: [ladder[0].id], prizes: [] };
 forceOpen(state, ladder.map((item) => item.id), STEPS[stepParam()]);
 if (!state.open?.length) state.open = [ladder[0].id];
-let level = [...state.open].reverse().find((id) => ladder.some((item) => item.id === id)) || ladder[0].id;
+// A Joyce card names the step, so it starts there even if this tablet opened a bigger level before.
+const asked = ladder.some((item) => item.id === STEPS[stepParam()]) ? STEPS[stepParam()] : null;
+let level = asked || [...state.open].reverse().find((id) => ladder.some((item) => item.id === id)) || ladder[0].id;
 
 function spec() {
   return ladder.find((item) => item.id === level) || ladder[0];
 }
 
+// Counting orders come from a shuffled bag, so every quantity in the level comes up
+// before any repeats. Joyce needs a right first try on each one.
 function orderSize() {
   const item = spec();
-  return item.min + Math.floor(rng() * (item.max - item.min + 1));
+  if (item.adds) return item.min + Math.floor(rng() * (item.max - item.min + 1));
+  state.bags = state.bags || {};
+  let bag = (state.bags[item.id] || []).filter((n) => n >= item.min && n <= item.max);
+  if (!bag.length) {
+    bag = Array.from({ length: item.max - item.min + 1 }, (_, i) => item.min + i);
+    for (let i = bag.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(rng() * (i + 1));
+      [bag[i], bag[j]] = [bag[j], bag[i]];
+    }
+  }
+  const count = bag.pop();
+  state.bags[item.id] = bag;
+  save(GAME, state);
+  return count;
 }
 
 function vesselFor(count) {
