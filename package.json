@@ -6,7 +6,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test:joyce": "node --test netlify/lib/joyce-tablet*.test.mjs netlify/lib/classroom.test.mjs netlify/lib/moon-path.test.mjs netlify/lib/bag-at-the-door.test.mjs netlify/lib/apple-catcher.test.mjs netlify/lib/reading-trail.test.mjs netlify/lib/handwriting.test.mjs netlify/lib/skills.test.mjs netlify/lib/design-studio.test.mjs play/*.test.mjs moon-path/tools/verify.mjs moon-path/tools/*.test.mjs bag-at-the-door/tools/*.test.mjs apple-catcher/tools/*.test.mjs lark-play/*.test.mjs puzzle-barn/puzzles/*.test.mjs",
+    "test:joyce": "node --test netlify/lib/joyce-tablet*.test.mjs netlify/lib/classroom.test.mjs netlify/lib/slack-files.test.mjs netlify/lib/joyce-inbox.test.mjs netlify/lib/moon-path.test.mjs netlify/lib/bag-at-the-door.test.mjs netlify/lib/apple-catcher.test.mjs netlify/lib/reading-trail.test.mjs netlify/lib/handwriting.test.mjs netlify/lib/skills.test.mjs netlify/lib/design-studio.test.mjs play/*.test.mjs moon-path/tools/verify.mjs moon-path/tools/*.test.mjs bag-at-the-door/tools/*.test.mjs apple-catcher/tools/*.test.mjs lark-play/*.test.mjs puzzle-barn/puzzles/*.test.mjs",
     "build:joyce": "bash joyce-tablet/build.sh",
     "test:joyce:android": "bash joyce-tablet/build.sh testDebugUnitTest lintDebug",
     "test:lark-nib": "node --test shared/lark-nib/tests/*.test.mjs"

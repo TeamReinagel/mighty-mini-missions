@@ -1,5 +1,6 @@
 import { getStore } from "@netlify/blobs";
 import { enqueue, verifySlack } from "../lib/slack.mjs";
+import { acceptMessage } from "../lib/slack-files.mjs";
 
 // Slack endpoint for Joyce: Events API messages and button clicks (Approve / Not now) both arrive here.
 // Slack wants an answer within 3 seconds, so this only checks the request and hands the
@@ -40,7 +41,9 @@ export default async (req) => {
   const e = body.event;
   if (body.type !== "event_callback" || e?.type !== "message") return new Response("ok");
   // Skip edits, deletes, joins, and bot posts (including Joyce's own messages).
-  if (e.subtype || e.bot_id || !e.text?.trim()) return new Response("ok");
+  // A message with an attachment is a "file_share" and is kept, with its files.
+  const accepted = acceptMessage(e);
+  if (!accepted) return new Response("ok");
 
   // Slack retries if we're slow; the event id keeps a retry from being handled twice.
   const store = getStore({ name: "progress", consistency: "strong" });
@@ -54,7 +57,7 @@ export default async (req) => {
       eventId: body.event_id,
       joyceUserId: body.authorizations?.[0]?.user_id,
       appId: body.api_app_id,
-      event: { text: e.text, user: e.user, channel: e.channel, channel_type: e.channel_type, ts: e.ts, thread_ts: e.thread_ts }
+      event: { text: e.text || "", user: e.user, channel: e.channel, channel_type: e.channel_type, ts: e.ts, thread_ts: e.thread_ts, files: accepted.files }
     });
   } catch (err) {
     // Let Slack's retry try again.

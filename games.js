@@ -53,16 +53,6 @@ window.MIGHTY_GAMES = [
     levels: ["prek", "k", "1st", "2nd"]
   },
   {
-    id: "moon-path",
-    title: "The Moon Path",
-    icon: "./moon-path/assets/camp.png?v=1",
-    tile: "./shared/tiles/moon-path.webp",
-    href: "./moon-path/",
-    profiles: ["connor"],
-    practices: ["letters", "letter-sounds"],
-    levels: ["prek", "k"]
-  },
-  {
     id: "monster-hunt",
     title: "Monster Hunt",
     icon: "./word-monsters/icons/icon-192.png",

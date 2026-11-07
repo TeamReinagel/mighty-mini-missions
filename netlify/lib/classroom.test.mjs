@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CVC, itemsFor, wordParts } from "./classroom-content.mjs";
 import {
-  applyAttempt, buildDay, conferencePackage, decidePlan, dropEarlyMastery, dropLastNoteSpots, evidenceFor, handleClassroom, isMastered,
+  applyAttempt, buildDay, conferencePackage, decidePlan, dropEarlyMastery, dropLastNoteSpots, evidenceFor, handleClassroom, handsFirst, isMastered,
   memoryStore, noteSignal, recordNoteSteps, rhythmFor, setEssentialOff, stepById, weekdayIndex
 } from "./classroom.mjs";
 
@@ -459,6 +459,17 @@ test("answering updates mastery and a cheer waits for the channel", async () => 
     now: new Date(now.getTime() + 2000)
   });
   assert.equal(hit.body.correct, true);
+  assert.equal(hit.body.explain, true);
+  assert.match(hit.body.say, /How did you know\? Tell me\.$/);
+  const next = itemsFor(step, "2026-10-21", [])[1];
+  const again = await handleClassroom({
+    store,
+    body: { action: "answer", kid: "gabi", stepId: step.id, item: next.item, index: 1, picked: next.answer },
+    now: new Date(now.getTime() + 4000)
+  });
+  assert.equal(again.body.correct, true);
+  assert.equal(again.body.explain, false);
+  assert.doesNotMatch(again.body.say, /How did you know/);
 
   const stuck = await handleClassroom({
     store,
@@ -875,3 +886,19 @@ test("a check can avoid words the child just practiced", () => {
   for (const item of next) assert.ok(CVC.a.includes(item.word));
 });
 
+
+test("a new picture starts with real blocks, only before the first try", () => {
+  const add = stepById("gabi", "gabi-add");
+  assert.match(handsFirst({ steps: {} }, add), /get 5 blocks/);
+  assert.equal(handsFirst({ steps: { "gabi-add": { graded: 1, correct: 1, recent: [true] } } }, add), "");
+  assert.equal(handsFirst({ steps: {} }, { ...add, review: true }), "");
+  assert.match(handsFirst({ steps: {} }, stepById("max", "max-regroup-show")), /Snap 10 ones together/);
+  assert.equal(handsFirst({ steps: {} }, stepById("gabi", "gabi-sh")), "");
+});
+
+test("a new regrouping game card asks for blocks before play", () => {
+  const day = buildDay({ kidId: "max", date: MONDAY, state: { steps: {} }, plan: {} });
+  const card = day.cards.find((entry) => entry.stepId === "max-regroup-show");
+  assert.equal(card.kind, "game");
+  assert.match(card.say, /^Before you start, get your blocks\..*Play one round of Moon Crates/);
+});

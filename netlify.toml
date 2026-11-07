@@ -37,6 +37,13 @@
   status = 404
   force = true
 
+# Grown-up page for sending reports to Joyce; keep it out of search results.
+[[headers]]
+  for = "/joyce-inbox/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+    Referrer-Policy = "no-referrer"
+
 [[headers]]
   for = "/joyce-latest.json"
   [headers.values]

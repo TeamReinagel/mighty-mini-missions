@@ -132,6 +132,12 @@ test("a second hint still withholds the answer and a third says it", async () =>
   assert.equal(third.body.done, false);
   assert.equal(third.body.revealed, true);
   assert.match(third.body.say, /the answer is 8/i);
+  assert.match(third.body.say, /Now you say it\.$/);
+  const fourth = await handleTabletRequest({
+    store, env, fetchImpl: fetchStep,
+    body: { kid: "max", imageBase64: image, followUp: true, sessionId: first.body.sessionId, question: "eight" }
+  });
+  assert.equal(fourth.body.say, "Yes, Max. You said 8.");
   const saved = [...store.data.values()].find((v) => v.kind === "tablet-help");
   assert.equal(saved.outcome, null);
   assert.match(saved.text, /1\)/);
@@ -208,6 +214,7 @@ test("she stays she, with the sh sound, and is not renamed friends", async () =>
   });
   assert.equal(third.body.revealed, true);
   assert.match(third.body.say, /the word is she/i);
+  assert.match(third.body.say, /Now you say it\.$/);
   assert.doesNotMatch(third.body.say, /\bfriends\b/i);
   assert.doesNotMatch(third.body.say, /\bD\b/);
 });

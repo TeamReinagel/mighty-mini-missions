@@ -1173,6 +1173,7 @@ async function submit(picked, extra = {}) {
     }
     popStar();
     await say(data.say);
+    if (data.explain) await waitForNext();
     if (item.type === "regroup" && promptIndex + 1 < item.prompts.length) {
       promptIndex += 1;
       renderItem();
@@ -1252,6 +1253,22 @@ function feedback(panel, text, kind) {
 }
 
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// After "How did you know?" the child explains out loud, then taps Next.
+function waitForNext() {
+  return new Promise((resolve) => {
+    const row = el("div", "actions");
+    const next = btn("go", "turn", "Next");
+    next.addEventListener("click", () => {
+      row.remove();
+      resolve();
+    });
+    row.append(next);
+    const note = document.querySelector("#feedback");
+    (note?.parentElement || app).append(row);
+    next.focus();
+  });
+}
 
 // Play opens in another tab. Coming back loads a new page, so a card already
 // opened today keeps I'm done tappable. The server still requires the real finish.

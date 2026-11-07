@@ -38,6 +38,29 @@ export async function chatText(opts) {
   return text;
 }
 
+/**
+ * Read files (PDFs and pictures) and answer in plain text. `files` are `{ name, mediaType, base64 }`.
+ * PDFs go as file parts; pictures go as image parts.
+ */
+export async function chatFileText({ system, text, files, env = process.env, ...opts }) {
+  const userContent = [
+    { type: "text", text },
+    ...(files || []).filter((f) => f?.base64).map((f) => (f.mediaType === "application/pdf"
+      ? { type: "file", file: { filename: f.name || "file.pdf", file_data: `data:application/pdf;base64,${f.base64}` } }
+      : { type: "image_url", image_url: { url: `data:${f.mediaType || "image/jpeg"};base64,${f.base64}`, detail: "high" } }))
+  ];
+  const out = (await chat({
+    ...opts,
+    env,
+    system,
+    user: text,
+    userContent,
+    model: opts.model || env.OPENAI_VISION_MODEL || env.OPENAI_MODEL || "gpt-4o-mini"
+  })).trim();
+  if (!out) throw new Error("OpenAI returned an empty reply");
+  return out;
+}
+
 /** Vision JSON call. `images` are `{ base64, mediaType, detail }`. */
 export async function chatVisionJSON({ system, text, images, env = process.env, ...opts }) {
   const userContent = [

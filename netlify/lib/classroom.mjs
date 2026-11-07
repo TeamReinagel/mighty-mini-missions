@@ -517,11 +517,30 @@ function teachingFor(item) {
   };
 }
 
+// Real objects before a new picture: the first time a step's picture stands for blocks
+// (tens and ones, a row of ten, two groups put together), Joyce has the child build it first.
+const HANDS = {
+  regroup: "Before you start, get your blocks. Snap 10 ones together into a ten. That's the trade: 10 ones make one ten.",
+  add: "Before we start, get 5 blocks. Make a group of 2 and a group of 3. Push them together and count them all.",
+  "gabi-count-20": "Before you play, get 10 blocks and line them up in a row. That's one full flower bed: ten."
+};
+
+export function handsFirst(state, item) {
+  if (item.review || state.steps?.[item.id]?.graded) return "";
+  return HANDS[item.id] || HANDS[item.activity] || "";
+}
+
+// "How did you know?" after the first right answer of the day on a lesson that takes thinking.
+// Ages 4 and up; the child answers out loud, and Next moves on.
+const EXPLAIN_TYPES = new Set(["add", "build", "compare", "count", "pattern", "regroup"]);
+
 function lessonCard(kidId, item, date, state) {
   const shorter = Boolean(state.shorter);
   const count = item.review ? Math.min(3, item.items || 3) : Math.max(item.activity === "story" ? 1 : 3, (item.items || 6) - (shorter ? 2 : 0));
   const shaped = { ...item, items: count };
-  const taught = teachingFor(item);
+  const lesson = teachingFor(item);
+  const hands = handsFirst(state, item);
+  const taught = hands ? { ...lesson, beats: [hands, ...lesson.beats] } : lesson;
   const missed = Array.isArray(item.missed) ? item.missed : missedItems(state, item.id);
   return {
     id: `${date}:lesson:${item.id}${item.review ? ":review" : ""}`,
@@ -558,7 +577,9 @@ const SKILL_GAMES = {
 function skillCard(kidId, item, date, state) {
   const spec = STEP_GAMES[item.id] || SKILL_GAMES[item.activity];
   if (!spec) return lessonCard(kidId, item, date, state);
-  const [id, title, href, say] = spec;
+  const [id, title, href, play] = spec;
+  const hands = handsFirst(state, item);
+  const say = hands ? `${hands} ${play}` : play;
   return {
     id: `${date}:game:${id}:${item.id}`,
     kind: "game",
@@ -1206,6 +1227,8 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const loggedItem = item.type === "regroup" ? `${item.item} ${item.prompts?.[Number(body.prompt || 0)]?.id || ""}`.trim() : item.item;
     state.log = [...(state.log || []), { t: now.toISOString(), day: date, stepId: stepDef.id, item: loggedItem, correct }];
     const justMastered = !before && state.steps[stepDef.id].mastered;
+    const rightToday = state.log.filter((entry) => entry.stepId === stepDef.id && entry.day === date && entry.correct === true && !entry.check).length;
+    const explain = correct === true && rightToday === 1 && !justMastered && kid.age >= 4 && EXPLAIN_TYPES.has(item.type);
     let praise = "";
     if (justMastered) {
       praise = parentPraise(kid.name, { ...stepDef, items: lesson.items });
@@ -1220,9 +1243,9 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const say = correct === null
       ? `I'll say ${item.word || "it"}. Then you say it with me.`
       : correct
-        ? yesLine(item, justMastered, kid.name, stepDef.title)
+        ? `${yesLine(item, justMastered, kid.name, stepDef.title)}${explain ? " How did you know? Tell me." : ""}`
         : "Not that one. Listen once more, then try again.";
-    return { status: 200, body: { ok: true, correct, say, justMastered, praise, skill: stepDef.skill, item: loggedItem } };
+    return { status: 200, body: { ok: true, correct, say, explain, justMastered, praise, skill: stepDef.skill, item: loggedItem } };
   }
 
   if (action === "practice") {

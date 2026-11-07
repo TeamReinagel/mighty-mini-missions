@@ -7,6 +7,7 @@ import { decidePlan, postConference, academicCatalogText, allowedStepIds, dropLa
 import { catalogText, cleanStepIds } from "./skills.mjs";
 import { buildKidContext, runWeeklyReport } from "./report.mjs";
 import { post, respond, slackGet } from "./slack.mjs";
+import { failedLine, readFiles, withFiles } from "./slack-files.mjs";
 
 // Joyce's behavior. Everything here runs in the background worker (netlify/functions/joyce-work.mjs),
 // so it can take as long as the AI needs. Nothing new is adopted without an Approve click.
@@ -24,7 +25,7 @@ When the family asks about a child's learning, talk the way a teacher talks with
 // What Joyce knows about herself, so she can answer "how do you work?" honestly and specifically.
 const ABOUT_JOYCE = `How you work (answer questions about yourself from this; don't invent beyond it):
 - What you do: every Friday at 3pm Central you post a learning report per child (progress, what's tricky, what to try next), then a short parent-teacher conference with Approve buttons for any big change. During the school block the kids open Today with Joyce on Mighty Mini Missions. You assign the day's cards, teach the lesson, and send a cheer to the grown-up's phone for a real win or a child who is truly stuck. Family members tell you things they notice in everyday life ("Max counted coins on his own") and you save them for the report. You tell the family how each child is doing, suggest activities for today, and recap what they practiced, on request. You learn lessons, new abilities, and code changes, but only after Stephanie clicks Approve. You move to the next lesson inside an approved path on your own. Starting a brand-new strand, slowing down, shortening the day, and Max's reading after Reading.com wait for Approve.
-- How you know what the kids did: each child plays Mighty Mini Missions on their own tablet, picked on the home screen. The games (Christmas Word Run for sight words and rhyming, The Lost Helpers village for colors shapes letters counting patterns sorting writing and Max's harder shops, Monster Hunt kept in Archives, Coin Record Run for money, Monster Maker for early math and reading, Train Set for colors and shapes, Hatch Match for matching big and little letters (items like "Bb"), Otter Slide for blending three-letter CVC words (items like "cat"), plus off-screen Missions) log every answer: which child, which skill, which item, and whether it was right on the first try. The tablets sync that to you when online. You also use the observations people tell you, and a Kindergarten to 2nd-grade monthly milestones spreadsheet for what comes next. On the Android tablets, a Joyce button can float over other apps. When a child taps it, you see one screenshot, they point at a word or circle a problem, and you give a short hint out loud. Sight words are not sounded out. If they are still stuck after two hints, you say the answer. That moment is saved as an observation (what they pointed at, the hints, whether you told them the answer, and whether they got it). You don't watch the screen the rest of the time. Off the app and off those help moments, you only know what someone tells you.
+- How you know what the kids did: each child plays Mighty Mini Missions on their own tablet, picked on the home screen. The games (Christmas Word Run for sight words and rhyming, The Lost Helpers village for colors shapes letters counting patterns sorting writing and Max's harder shops, Monster Hunt kept in Archives, Coin Record Run for money, Monster Maker for early math and reading, Train Set for colors and shapes, Hatch Match for matching big and little letters (items like "Bb"), Otter Slide for blending three-letter CVC words (items like "cat"), plus off-screen Missions) log every answer: which child, which skill, which item, and whether it was right on the first try. The tablets sync that to you when online. You also use the observations people tell you, and a Kindergarten to 2nd-grade monthly milestones spreadsheet for what comes next. On the Android tablets, a Joyce button can float over other apps. When a child taps it, you see one screenshot, they point at a word or circle a problem, and you give a short hint out loud. Sight words are not sounded out. If they are still stuck after two hints, you say the answer and ask them to say it back. That moment is saved as an observation (what they pointed at, the hints, whether you told them the answer, and whether they got it). You don't watch the screen the rest of the time. Off the app and off those help moments, you only know what someone tells you.
 - Mastery: an item is mastered when it's right on the first try the last 3 times and 75%+ overall. On each child's skill map, a practiced skill is confirmed only after a later cold check. Eight essential skills from the Skills Builder Universal Framework (Listening, Speaking, Problem Solving, Creativity, Adapting, Planning, Leadership, Teamwork) are confirmed from spotted moments, mostly notes the family tells you. Children do not see those steps. Stephanie can turn essential-skill spotting off in one line.
 - Tech stack: a static HTML/CSS/JavaScript site (no framework) hosted on Netlify, with Netlify Functions (Node.js) for your logic and Netlify Blobs for storage. You're a Slack app (Events API plus interactive buttons; slow work runs in Netlify background functions). Your writing comes from OpenAI (gpt-4o-mini by default). Code changes go to a Cursor cloud agent that opens a pull request on GitHub (TeamReinagel/mighty-mini-missions) for Stephanie to review; that needs a Cursor API key in Netlify. The code was written with Cursor.
 - Privacy: game answers, observations, and your conversations with the family live in the site's Netlify Blobs storage. You don't keep general family chat.`;
@@ -56,6 +57,8 @@ What you can do:
 8. unmet: if you're asked for something you can't do and it isn't worth proposing, say what in a few words.
 9. skillSpots: "off" when they tell you to stop counting essential skills or skill spots, "on" when they tell you to count them again.
 10. dropLastSpots: true when they say a skill you just counted was wrong ("not that", "don't count that").
+
+Attached files: a message may end with the contents of files they attached, each marked 'Attached file "<name>"'. A file sent to you is said to you, even with no typed words. A progress report from an app or program (AdaptedMind, Reading.com, a worksheet, a test) about a child is an observation: one entry per child, naming the source and dates, what they mastered, what they are working on, and the few numbers that matter, in two to four sentences, not the whole table.
 
 When to act:
 - Direct messages are always to you.
@@ -438,13 +441,29 @@ async function handleWithoutAI({ store, env, fetchImpl, event, eventId, where, i
 export async function handleMessage({ store, env = process.env, fetchImpl = fetch, event, eventId, joyceUserId, appId }) {
   const isDirect = event.channel_type === "im";
   const namer = makeNamer({ env, fetchImpl, joyceUserId });
-  const text = await readable(event.text, namer);
+  const typed = await readable(event.text || "", namer);
   const where = { channel: event.channel, threadTs: isDirect && !event.thread_ts ? undefined : event.thread_ts || event.ts };
+  const mentionsJoyce = /@Joyce\b|\bJoyce\b/i.test(typed);
+
+  // Attachments are read only when the message is to Joyce (a DM, or it names her), so family
+  // photos shared in the channel are never sent anywhere.
+  const files = Array.isArray(event.files) ? event.files : [];
+  const forJoyce = files.length > 0 && (isDirect || mentionsJoyce);
+  if (forJoyce && !env.OPENAI_API_KEY) {
+    await post({ ...where, text: "I can't read attachments until my OpenAI key is set up. Paste the text into a message for now." }, { env, fetchImpl });
+    if (!typed.trim()) return;
+  }
+  const { read, failed } = forJoyce && env.OPENAI_API_KEY ? await readFiles(files, { env, fetchImpl }) : { read: [], failed: [] };
+  const fileTrouble = failedLine(failed);
+  const text = withFiles(typed, read);
+  if (!text.trim()) {
+    if (fileTrouble) await post({ ...where, text: fileTrouble }, { env, fetchImpl });
+    return;
+  }
 
   if (!env.OPENAI_API_KEY) return handleWithoutAI({ store, env, fetchImpl, event: { ...event, text }, eventId, where, isDirect });
 
   const mem = await loadMemory(store);
-  const mentionsJoyce = /@Joyce\b|\bJoyce\b/i.test(text);
   const convo = await conversation({ event, appId, joyceUserId, isDirect, mentionsJoyce, env, fetchImpl, namer });
   const speaker = await namer(event.user);
   const role = approverIds(env).includes(event.user) ? " (approves what you learn)" : "";
@@ -463,7 +482,8 @@ export async function handleMessage({ store, env = process.env, fetchImpl = fetc
   }
 
   const did = [];
-  const parts = [];
+  const parts = fileTrouble ? [fileTrouble] : [];
+  if (read.length) did.push("read-files");
 
   if (plan.skillSpots === "off" || plan.skillSpots === "on") {
     await setEssentialOff(store, plan.skillSpots === "off");

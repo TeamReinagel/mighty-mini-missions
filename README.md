@@ -101,7 +101,21 @@ What the report counts as:
 7. On each tablet, open Mighty Mini Missions once and tap that child's name.
 8. Test Joyce: post "Max tested Joyce" in the channel (she should reply in a thread), then message her "what should we do today?".
 
-If you created the Slack app from an older manifest, update it from the manifest again (with the same `YOUR-SITE` replacement), then click **Reinstall to Workspace**. Newer versions add **Interactivity** (for the Approve buttons) and the `users:read` permission (so Joyce knows who's talking).
+If you created the Slack app from an older manifest, update it from the manifest again (with the same `YOUR-SITE` replacement), then click **Reinstall to Workspace**. Newer versions add **Interactivity** (for the Approve buttons), the `users:read` permission (so Joyce knows who's talking), and `files:read` (so she can open files you send her).
+
+### Sending Joyce files
+
+Send Joyce a file in a direct message, or in a channel message that names her: a PDF (like an app's progress report), a photo of a worksheet, a forwarded email, or a text file. She reads it and saves what it says about each child for Friday's report. Files in channel messages that don't name her are never opened. If she can't open a file, she says why instead of dropping it. Opening files needs the Slack app's `files:read` permission.
+
+### AdaptedMind in Friday's report
+
+Joyce can't sign in to AdaptedMind, and no AdaptedMind password is stored. Two things bring its reports to her inbox (`/api/joyce-inbox`), and each becomes a note for Max's Friday report:
+
+- **Recent lessons, weekly (one tap):** open `/joyce-inbox/` on the site once per device, paste the inbox key, and add the **Send to Joyce** button to your bookmarks (drag it to the bookmarks bar, or on a phone copy its code into a bookmark's address). Each week, open [AdaptedMind's recent lessons](https://www.adaptedmind.com/performance-panel/lessons/recent) signed in as usual and tap the bookmark. The page's text goes to Joyce. You can also copy the page and paste it on `/joyce-inbox/`.
+- **Daily Progress Update emails (automatic):** a Google Apps Script in your Gmail sends each new email's text every hour. Setup steps are at the top of `tools/joyce-inbox/adaptedmind-email.gs`.
+- **Friday reminder:** if the recent lessons haven't come in by 1pm Friday, Joyce DMs you the link, before the 3pm report.
+
+Setup: add `JOYCE_INBOX_KEY` in Netlify (a long password you make up, for example from `openssl rand -hex 24`), redeploy, then use the same key on `/joyce-inbox/` and in the Gmail script. Optional: `JOYCE_NUDGE_HOUR` (default `13`).
 
 ### Joyce on the Android tablets
 

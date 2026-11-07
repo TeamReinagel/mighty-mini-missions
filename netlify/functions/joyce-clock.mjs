@@ -3,8 +3,10 @@ import { loadMemory } from "../lib/joyce-memory.mjs";
 import { enqueue } from "../lib/slack.mjs";
 
 // Runs hourly and starts Joyce's timed work in the family's time zone (so daylight saving
-// never shifts it): the Friday report, weekday-morning abilities, and checks on code changes.
+// never shifts it): the Friday report, the Friday AdaptedMind reminder, weekday-morning
+// abilities, and checks on code changes.
 const REPORT_HOUR = Number(process.env.REPORT_HOUR || 15);
+const NUDGE_HOUR = Number(process.env.JOYCE_NUDGE_HOUR || 13);
 const MORNING_HOUR = Number(process.env.JOYCE_MORNING_HOUR || 7);
 
 export default async (req, context) => {
@@ -21,6 +23,7 @@ export default async (req, context) => {
 
   const jobs = [];
   if (weekday === "Fri" && hour === REPORT_HOUR) jobs.push({ kind: "weekly" });
+  if (weekday === "Fri" && hour === NUDGE_HOUR && process.env.JOYCE_INBOX_KEY) jobs.push({ kind: "nudge" });
   if (!["Sat", "Sun"].includes(weekday) && hour === MORNING_HOUR && mem.skills.some((s) => s.schedule === "weekday-morning")) {
     jobs.push({ kind: "morning" });
   }
