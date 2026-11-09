@@ -10,6 +10,7 @@ import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
 import { scheduledBagAtDoorCard, COMPLETION_ITEM as BAG_AT_DOOR_COMPLETION } from "../../bag-at-the-door/integration.mjs";
 import { scheduledAppleCatcherCard, COMPLETION_ITEM as APPLE_CATCHER_COMPLETION } from "../../apple-catcher/integration.mjs";
 import { COMPLETION_ITEM as SAIL_COMPLETION } from "../../sail-that-wouldnt-stay/integration.mjs";
+import { COMPLETION_ITEM as FAN_COMPLETION } from "../../fan-at-the-fork/integration.mjs";
 import { larkAssignment } from "../../lark-play/plan.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
@@ -184,6 +185,7 @@ const EVIDENCE = {
   "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION },
   "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION },
   "sail-that-wouldnt-stay": { game: "sail-that-wouldnt-stay", need: 1, item: SAIL_COMPLETION },
+  "fan-at-the-fork": { game: "fan-at-the-fork", need: 1, item: FAN_COMPLETION },
   "nest-numbers": { game: "nest-numbers", need: ROUND_LENGTH["nest-numbers"] },
   "big-little": { game: "big-little", need: ROUND_LENGTH["big-little"] },
   "basket-sort": { game: "basket-sort", need: ROUND_LENGTH["basket-sort"] },
@@ -213,7 +215,7 @@ const PART_TITLES = {
   ethan: { learn: "Learn" }
 };
 const PART_ORDER = ["ela", "math", "write", "learn", "ready", "bonus"];
-const LARK_EPISODES = new Set(["moon-path", "apple-catcher", "bag-at-the-door", "sail-that-wouldnt-stay"]);
+const LARK_EPISODES = new Set(["moon-path", "apple-catcher", "bag-at-the-door", "sail-that-wouldnt-stay", "fan-at-the-fork"]);
 // Counting or math is mission 1. The story is mission 2, so its pictures can arrive during mission 1.
 const LARK_PART_ORDER = ["math", "ela", "write", "learn", "ready", "bonus"];
 const WRITERS = new Set(["max"]);

@@ -2,6 +2,6 @@
 
 S1E3's supplied 6:19 ElevenLabs story recording is integrated with 38 contiguous clips, 76 caption/speaker cues and six task pauses. Short help and word models retain the temporary support voices.
 
-Open `/sail-that-wouldnt-stay/?kid=connor&review=1` to review without reporting learning. Release: November 3, 2026. Assigned to Connor for November 4, 2026 only, in place of The Moon Path; the mission requires the real completed-episode event. The recurring plan is unchanged.
+Open `/sail-that-wouldnt-stay/?kid=connor&review=1` to review without reporting learning. Release: November 3, 2026. Assigned to Connor for November 4 and November 9, 2026, in place of The Moon Path; the mission requires the real completed-episode event. The recurring plan is unchanged.
 
 The original MP3 remains outside the web publish tree. Saved alignment and media audits are in `tools/`. Run `python3 tools/rebuild-recording.py --check` from this folder to check the edit plan. A different recording needs a new source hash and alignment.

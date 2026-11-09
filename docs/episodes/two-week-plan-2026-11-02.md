@@ -8,14 +8,16 @@ The same pattern continues after November 13. A new episode fills that child's e
 
 Stephanie assigned Season 1, Episode 3, **The Sail That Wouldn’t Stay**, to Connor for November 4 only, replacing The Moon Path. His other missions and the recurring plan stay the same.
 
+On November 8 Stephanie set November 9 to new episodes, because Connor had already finished The Moon Path and The Apple Catcher and Gabi had finished The Bag at the Door. Connor gets **The Sail That Wouldn’t Stay** (S1E3) and Gabi gets **The Fan at the Fork** (S2E2), for that day only. Friday, November 6 was skipped for Max’s birthday.
+
 | Day | Connor | Hands-on | Gabi | Hands-on |
 | --- | --- | --- | --- | --- |
 | Mon Nov 2 | The Apple Catcher | Tell someone, "I am an apple catcher." | The Bag at the Door | Fold three papers and put them in a bag. |
 | Tue Nov 3 | The Moon Path | The usual move card | Otter Slide | The usual move card |
 | Wed Nov 4 | The Sail That Wouldn’t Stay (S1E3) | The usual move card | Otter Slide | The usual move card |
 | Thu Nov 5 | The Moon Path | The usual move card | Otter Slide | The usual move card |
-| Fri Nov 6 | The Apple Catcher | Same as Monday | The Bag at the Door | Same as Monday |
-| Mon Nov 9 | The Moon Path | The usual move card | Otter Slide | The usual move card |
+| Fri Nov 6 | Skipped (Max’s birthday) | | Skipped | |
+| Mon Nov 9 | The Sail That Wouldn’t Stay (S1E3) | The usual move card | The Fan at the Fork (S2E2) | The usual move card |
 | Tue Nov 10 | The Moon Path | The usual move card | Otter Slide | The usual move card |
 | Wed Nov 11 | The Apple Catcher | Same as Monday | The Bag at the Door | Same as Monday |
 | Thu Nov 12 | The Moon Path | The usual move card | Otter Slide | The usual move card |

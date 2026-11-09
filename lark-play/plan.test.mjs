@@ -4,6 +4,8 @@ import { readFileSync } from "node:fs";
 import { buildDay, handleClassroom, memoryStore, weekdayIndex } from "../netlify/lib/classroom.mjs";
 import { COMPLETION_ITEM as SAIL_COMPLETION } from "../sail-that-wouldnt-stay/integration.mjs";
 import { EPISODE as SAIL_EPISODE } from "../sail-that-wouldnt-stay/episode.mjs";
+import { COMPLETION_ITEM as FAN_COMPLETION } from "../fan-at-the-fork/integration.mjs";
+import { EPISODE as FAN_EPISODE } from "../fan-at-the-fork/episode.mjs";
 import { STORY_ASSET_REV } from "../shared/story-cache.mjs";
 import { chicagoWeekday } from "./plan.mjs";
 
@@ -17,7 +19,6 @@ const EPISODE = {
 const USUAL = [
   "2026-11-03",
   "2026-11-05",
-  "2026-11-09",
   "2026-11-10",
   "2026-11-12",
   "2026-11-13",
@@ -25,7 +26,7 @@ const USUAL = [
 ];
 
 test("the Chicago weekday matches the classroom", () => {
-  for (const date of [...Object.keys(EPISODE), ...USUAL, "2026-11-04"]) assert.equal(chicagoWeekday(date), weekdayIndex(date));
+  for (const date of [...Object.keys(EPISODE), ...USUAL, "2026-11-04", "2026-11-09"]) assert.equal(chicagoWeekday(date), weekdayIndex(date));
 });
 
 test("Connor gets S1E3 instead of Moon Path on November 4, preserving the rest of his board", () => {
@@ -61,6 +62,51 @@ test("Connor gets S1E3 instead of Moon Path on November 4, preserving the rest o
   for (const otherDate of [...Object.keys(EPISODE), ...USUAL]) {
     assert.equal(buildDay({ kidId: "connor", date: otherDate }).cards.some((card) => card.gameId === SAIL_EPISODE.gameId), false);
   }
+});
+
+test("November 9 gives Connor S1E3 and Gabi S2E2, keeping counting and the rest of each board", () => {
+  const date = "2026-11-09";
+  for (const [kidId, episode, count] of [["connor", SAIL_EPISODE, "connor-count-5"], ["gabi", FAN_EPISODE, "gabi-count-10"]]) {
+    const day = buildDay({ kidId, date });
+    const reading = day.cards.filter((card) => card.part === "ela");
+    assert.deepEqual(reading.map((card) => card.gameId), [episode.gameId], kidId);
+    assert.equal(reading[0].title, episode.title);
+    assert.equal(reading[0].href, `../${episode.gameId}/?kid=${kidId}`);
+    assert.equal(reading[0].done, false);
+    assert.equal(day.cards.some((card) => card.stepId === count), true, kidId);
+    assert.deepEqual(day.dose.parts.slice(0, 2).map((part) => part.id), ["math", "ela"], kidId);
+    for (const href of reading[0].prefetch) {
+      assert.ok(href.endsWith(`?v=${STORY_ASSET_REV}`));
+      assert.ok(readFileSync(new URL(href, import.meta.url)).length > 0, href);
+    }
+  }
+  assert.equal(FAN_COMPLETION, FAN_EPISODE.completionItem);
+  for (const kidId of ["max", "ethan"]) {
+    assert.equal(buildDay({ kidId, date }).cards.some((card) => card.gameId === FAN_EPISODE.gameId || card.gameId === SAIL_EPISODE.gameId), false);
+  }
+  for (const otherDate of [...Object.keys(EPISODE), ...USUAL, "2026-11-04"]) {
+    assert.equal(buildDay({ kidId: "gabi", date: otherDate }).cards.some((card) => card.gameId === FAN_EPISODE.gameId), false, otherDate);
+  }
+});
+
+test("S2E2 needs Gabi's real episode finish", async () => {
+  const store = memoryStore();
+  const start = Date.parse("2026-11-09T15:00:00Z");
+  const call = (body, seconds) => handleClassroom({ store, env: {}, body: { kid: "gabi", ...body }, now: new Date(start + seconds * 1000) });
+  const today = await call({ action: "today" }, 0);
+  const card = today.body.cards.find((entry) => entry.gameId === FAN_EPISODE.gameId);
+  const done = (seconds) => call({ action: "card", cardId: card.id, status: "done" }, seconds);
+  const events = (seconds, rows) => store.setJSON(`events/2026-11-09/${start + seconds * 1000}-story`, rows);
+  const completion = { kid: "gabi", game: FAN_EPISODE.gameId, skill: "Story participation", item: FAN_COMPLETION, correct: null, extra: { episode: FAN_EPISODE.id, completed: true } };
+  assert.equal((await done(1)).body.notYet, true);
+  await call({ action: "open", cardId: card.id }, 2);
+  await events(3, [{ ...completion, kid: "connor" }, { ...completion, game: "bag-at-the-door" }, { ...completion, extra: { completed: false } }]);
+  assert.equal((await done(4)).body.notYet, true);
+  await events(5, [completion]);
+  assert.equal((await done(6)).body.ok, true);
+  const after = await call({ action: "today" }, 7);
+  assert.equal(after.body.cards.find((entry) => entry.id === card.id).done, true);
+  assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
 });
 
 test("S1E3 needs Connor's real episode finish and does not grant reading mastery", async () => {

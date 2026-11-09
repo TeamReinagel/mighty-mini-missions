@@ -8,6 +8,7 @@
 import { appleCatcherCard } from "../apple-catcher/integration.mjs";
 import { bagAtDoorCard } from "../bag-at-the-door/integration.mjs";
 import { episodeCard as sailCard } from "../sail-that-wouldnt-stay/integration.mjs";
+import { episodeCard as fanCard } from "../fan-at-the-fork/integration.mjs";
 
 export const LARK_START = "2026-11-02";
 
@@ -73,9 +74,17 @@ function cardFor(kidId, date, kind, index) {
   return null;
 }
 
+// Stephanie's one-day assignments replace that day's card, not the recurring plan.
+// November 9: Connor had finished Moon Path and The Apple Catcher, and Gabi had
+// finished The Bag at the Door, so each gets the next produced episode.
+const ONE_DAY = {
+  "2026-11-04": { connor: sailCard },
+  "2026-11-09": { connor: sailCard, gabi: fanCard }
+};
+
 export function larkAssignment(kidId, date) {
-  // Stephanie's one-day assignment replaces the Moon Path fallback, not the recurring plan.
-  if (kidId === "connor" && date === "2026-11-04") return { card: sailCard(date, kidId), handsOn: null };
+  const oneDay = ONE_DAY[date]?.[kidId];
+  if (oneDay) return { card: oneDay(date, kidId), handsOn: null };
   if (kidId !== "connor" && kidId !== "gabi") return null;
   const kind = role(date);
   if (!kind) return null;
