@@ -47,7 +47,8 @@ test("lesson items stay inside the real word lists", () => {
 });
 
 test("regrouping opens as Block Trade", () => {
-  const day = buildDay({ kidId: "max", date: MONDAY });
+  // Regrouping keeps Tuesday and Thursday while First Grade gaps take Monday, Wednesday, and Friday.
+  const day = buildDay({ kidId: "max", date: "2026-10-20" });
   const lesson = day.cards.find((card) => card.stepId === "max-regroup-show");
   assert.equal(lesson.gameId, "block-trade");
   assert.match(lesson.href, /block-trade/);
@@ -72,7 +73,8 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   }
 
   const max = buildDay({ kidId: "max", date: FRIDAY });
-  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "math:app", "math:game", "write:write", "bonus:game", "bonus:move"]);
+  // Friday: Reading.com, a word-study lesson, AdaptedMind, a First Grade math lesson, writing, and a bonus.
+  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "ela:lesson", "math:app", "math:lesson", "write:write", "bonus:game", "bonus:move"]);
   assert.equal(max.cards[0].askLesson, true);
   assert.deepEqual(max.dose.parts.map((part) => part.title), ["Reading", "Math", "Writing", "Bonus"]);
   assert.match(max.greeting, /Trainer day\. Reading, math and writing, then one bonus/);
@@ -490,7 +492,7 @@ test("answering updates mastery and a cheer waits for the channel", async () => 
 test("a game stays on today's board after the skill is mastered", async () => {
   const store = memoryStore();
   const env = {};
-  const monday = new Date("2026-10-19T15:00:00Z");
+  const monday = new Date("2026-10-20T15:00:00Z");
   await store.setJSON("classroom/kid/max", {
     steps: { "max-regroup-show": { graded: 2, correct: 2, recent: [true, true] } }
   });
@@ -525,7 +527,7 @@ test("a game stays on today's board after the skill is mastered", async () => {
     store,
     env,
     body: { action: "today", kid: "max" },
-    now: new Date("2026-10-20T15:00:00Z")
+    now: new Date("2026-10-22T15:00:00Z")
   });
   const next = tuesday.body.cards.find((card) => card.stepId === "max-regroup");
   assert.equal(next.gameId, "block-trade");
@@ -900,7 +902,7 @@ test("a new picture starts with real blocks, only before the first try", () => {
 });
 
 test("a new regrouping game card asks for blocks before play", () => {
-  const day = buildDay({ kidId: "max", date: MONDAY, state: { steps: {} }, plan: {} });
+  const day = buildDay({ kidId: "max", date: "2026-10-20", state: { steps: {} }, plan: {} });
   const card = day.cards.find((entry) => entry.stepId === "max-regroup-show");
   assert.equal(card.kind, "game");
   assert.match(card.say, /^Before you start, get your blocks\..*Play one round of Moon Crates/);

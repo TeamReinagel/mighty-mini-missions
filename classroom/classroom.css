@@ -138,6 +138,26 @@ button, a {
   letter-spacing: 0.04em;
 }
 
+.big-sentence {
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  text-align: center;
+  margin: 8px 0 16px;
+  line-height: 1.3;
+}
+
+/* Bar graph: label column, a track with one faint line per unit, and the scale under it. */
+.graph { margin: 4px 0 18px; display: grid; gap: 10px; }
+.graph-title { font-weight: 700; font-size: 1.15rem; text-align: center; }
+.graph-row { display: grid; grid-template-columns: minmax(7rem, 11rem) minmax(0, 1fr); align-items: center; gap: 12px; }
+.graph-label { font-size: 1.1rem; }
+.graph-track {
+  position: relative; height: 2.2rem; border-left: 2px solid currentColor;
+  background-image: repeating-linear-gradient(to right, transparent 0, transparent calc(100% / var(--units) - 1px), rgba(127, 127, 127, 0.35) calc(100% / var(--units) - 1px), rgba(127, 127, 127, 0.35) calc(100% / var(--units)));
+}
+.graph-bar { height: 100%; background: #4fa3ff; border-radius: 0 6px 6px 0; }
+.graph-scale { position: relative; height: 1.4rem; border-top: 2px solid currentColor; }
+.graph-tick { position: absolute; top: 2px; transform: translateX(-50%); font-size: 0.95rem; font-variant-numeric: tabular-nums; }
+
 .row, .choices, .tiles, .groups {
   display: flex;
   flex-wrap: wrap;

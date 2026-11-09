@@ -1,5 +1,6 @@
 import { chatJSON } from "./ai.mjs";
-import { skillMaps } from "./classroom.mjs";
+import { skillMaps, stepMilestones } from "./classroom.mjs";
+import { baselineMet } from "./baselines.mjs";
 import { GAME_NAMES, curriculumText, nextSteps } from "./curriculum.mjs";
 import { KIDS, allMilestones, guideFor, kidById } from "./kids.mjs";
 
@@ -218,7 +219,7 @@ Reply with JSON only:
 
 const formatGuide = ({ next, later }) => {
   if (!next.length) return "Milestone guide: (none)";
-  return `Milestone guide, next up (pick "Try next" from these):\n${next.map((m) => `${m.id} (${m.grade}, ${m.area}, ${m.month}): ${m.text}`).join("\n")}` +
+  return `Milestone guide, next up (pick "Try next" from these):\n${next.map((m) => `${m.id} (${m.grade}, ${m.area}, ${m.month}): ${m.text}${m.status ? ` [Stephanie: ${m.status}${m.note ? `. ${m.note}` : ""}]` : ""}`).join("\n")}` +
     (later.length ? `\nLater milestones (only for crediting skills shown early):\n${later.map((m) => `${m.id}: ${m.text}`).join("\n")}` : "");
 };
 
@@ -309,6 +310,12 @@ async function collectWeek({ store, state, since, now, tz }) {
 
   const kids = structuredClone(state.kids);
   const summaries = [];
+  let fromSteps = {};
+  try {
+    fromSteps = await stepMilestones(store);
+  } catch (err) {
+    console.error("Reading Joyce's steps for milestones failed:", err);
+  }
   const kidIds = new Set([...KIDS.filter((k) => !k.quiet).map((k) => k.id), ...Object.keys(kids), ...byKid.keys(), ...obsByKid.keys()]);
   for (const kidId of kidIds) {
     const kidEvents = byKid.get(kidId) || [];
@@ -327,8 +334,8 @@ async function collectWeek({ store, state, since, now, tz }) {
       note: profile?.note,
       week: analyzeKid(kidState, kidEvents),
       observations: kidObs,
-      milestonesMetSoFar: Object.keys(kidState.milestones).length,
-      guide: guideFor(profile, new Set(Object.keys(kidState.milestones)))
+      milestonesMetSoFar: new Set([...Object.keys(kidState.milestones), ...baselineMet(kidId), ...(fromSteps[kidId] || [])]).size,
+      guide: guideFor(profile, new Set([...Object.keys(kidState.milestones), ...baselineMet(kidId), ...(fromSteps[kidId] || [])]))
     });
   }
   return { events, observations, kids, summaries };

@@ -134,6 +134,27 @@ export const CHAINS = {
         step({ id: "max-regroup-show", title: "Trading tens", strand: "max-regroup", strandName: "Regrouping", activity: "regroup", fixed: true, skill: "Regrouping", teach: "When the ones make 10, we trade them for a ten.", items: 1, masteryMin: 3, masteryHits: 3 }),
         step({ id: "max-regroup", title: "Adding with a trade", strand: "max-regroup", strandName: "Regrouping", activity: "regroup", skill: "Regrouping", teach: "Ones first. Trade if you have 10 or more. Then count the tens.", items: 2, masteryMin: 6, masteryHits: 5 })
       ]
+    },
+    // First Grade gaps from Stephanie's check (2026-11-08). `milestone` is the sheet goal each step
+    // closes. A `checkFirst` step starts as shown, so Joyce gives a three-question cold check
+    // before teaching it; a miss sends it back to lessons.
+    {
+      id: "g1-math",
+      steps: [
+        step({ id: "max-skip-count", title: "Skip counting by 2s, 5s, and 10s", strand: "max-g1-math", strandName: "First Grade math", activity: "skip", skill: "Skip counting", teach: "Skip counting adds the same number each time.", items: 5, checkFirst: true, milestone: "G1-Dec-Math-1" }),
+        step({ id: "max-odd-even", title: "Odd and even", strand: "max-g1-math", strandName: "First Grade math", activity: "odd-even", skill: "Odd and even", teach: "Even numbers make pairs with none left over.", items: 6, milestone: "G1-Dec-Math-1" }),
+        step({ id: "max-bar-graphs", title: "Reading bar graphs", strand: "max-g1-math", strandName: "First Grade math", activity: "bar-graph", skill: "Bar graphs", teach: "Find the bar, then read the number at its end.", items: 5, milestone: "G1-Apr-Math-1" }),
+        step({ id: "max-3d-shapes", title: "Solid shapes", strand: "max-g1-math", strandName: "First Grade math", activity: "shapes-3d", skill: "3D shapes", teach: "Solid shapes are shapes you can hold.", items: 5, checkFirst: true, milestone: "G1-May-Math-1" })
+      ]
+    },
+    {
+      id: "words",
+      steps: [
+        step({ id: "max-compound", title: "Compound words", strand: "max-words", strandName: "Word study", activity: "compound", skill: "Compound words", teach: "Two small words can join into one bigger word.", items: 5, milestone: "G1-Dec-ELA-1" }),
+        step({ id: "max-contractions", title: "Contractions", strand: "max-words", strandName: "Word study", activity: "contraction", skill: "Contractions", teach: "A contraction squeezes two words into one.", items: 5, milestone: "G1-Dec-ELA-1" }),
+        step({ id: "max-parts-of-speech", title: "Nouns, verbs, and adjectives", strand: "max-words", strandName: "Word study", activity: "parts-of-speech", skill: "Parts of speech", teach: "A noun names, a verb acts, an adjective describes.", items: 6, milestone: "G1-Feb-ELA-1" }),
+        step({ id: "max-sentences", title: "Building sentences", strand: "max-words", strandName: "Word study", activity: "sentences", skill: "Building sentences", teach: "A sentence tells a whole idea.", items: 4, milestone: "G1-Feb-ELA-1" })
+      ]
     }
   ],
   ethan: [
@@ -200,7 +221,7 @@ const FREE = {
   ethan: [GAMES.train]
 };
 
-const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: "math", regroup: "math", play: "learn" };
+const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: "math", regroup: "math", "g1-math": "math", words: "ela", play: "learn" };
 const PART_TITLES = {
   max: { ela: "Reading", math: "Math", write: "Writing" },
   gabi: { ela: "Reading", math: "Math" },
@@ -362,7 +383,49 @@ function emptyPlan() {
 }
 
 async function loadState(store, kidId) {
-  return dropEarlyMastery(kidId, { ...emptyState(), ...((await store.get(kidKey(kidId), { type: "json" })) || {}) });
+  return seedChecks(kidId, dropEarlyMastery(kidId, { ...emptyState(), ...((await store.get(kidKey(kidId), { type: "json" })) || {}) }));
+}
+
+// A step Stephanie thinks is known but hasn't seen lately starts as shown, with a cold check
+// due on CHECK_FIRST_FROM. Passing confirms it; a miss sends it back to lessons.
+const CHECK_FIRST_FROM = "2026-11-09";
+
+export function seedChecks(kidId, state) {
+  for (const def of allSteps(kidId)) {
+    if (!def.checkFirst || state.steps?.[def.id]) continue;
+    state.steps = {
+      ...(state.steps || {}),
+      [def.id]: { graded: 0, correct: 0, recent: [], mastered: true, shownAt: CHECK_FIRST_FROM, shownVia: "parent", nextCheck: CHECK_FIRST_FROM, checks: [] }
+    };
+  }
+  return state;
+}
+
+// The milestone sheet goals a child's steps have closed. A goal counts once every step tagged
+// with it is learned; a `checkFirst` step also needs a passed cold check.
+export function milestonesFromSteps(kidId, state = {}) {
+  const byGoal = new Map();
+  for (const def of allSteps(kidId)) {
+    if (!def.milestone) continue;
+    if (!byGoal.has(def.milestone)) byGoal.set(def.milestone, []);
+    byGoal.get(def.milestone).push(def);
+  }
+  const met = [];
+  for (const [goal, defs] of byGoal) {
+    const done = defs.every((def) => {
+      const rec = state.steps?.[def.id];
+      if (!rec || rec.slipping) return false;
+      return def.checkFirst ? Boolean(rec.confirmedAt) : learned(rec, def);
+    });
+    if (done) met.push(goal);
+  }
+  return met;
+}
+
+export async function stepMilestones(store) {
+  const out = {};
+  for (const id of Object.keys(CLASS_KIDS)) out[id] = milestonesFromSteps(id, await loadState(store, id));
+  return out;
 }
 
 // A `cover` step marked learned under the older 3-of-4 rule goes back to practicing,
@@ -503,7 +566,15 @@ function teachingFor(item) {
     compare: ["Two groups. I count the first, then the second. The bigger count is more.", "Count one side, then count the other side."],
     pattern: ["A pattern repeats. Red, blue, red, blue. What comes next is red.", "Say the pattern out loud, then tap what comes next."],
     add: ["I count the first group. Then I keep counting the second group. The last number is how many altogether.", "Count the first group, then keep counting the second group."],
-    color: ["I'll say a color. Tap the one that is that color.", "Tap the color I say."]
+    color: ["I'll say a color. Tap the one that is that color.", "Tap the color I say."],
+    skip: ["Skip counting jumps by the same number every time. By 2s: 2, 4, 6, 8. By 5s: 5, 10, 15, 20. By 10s: 10, 20, 30, 40.", "Find how big each jump is, then make one more jump."],
+    "odd-even": ["Even numbers split into pairs with none left over. Six is three pairs, so six is even. Seven is three pairs and one left over, so seven is odd. A quick trick: look at the last digit. 0, 2, 4, 6, or 8 means even. 1, 3, 5, 7, or 9 means odd.", "Look at the last digit. 0, 2, 4, 6, or 8 is even. 1, 3, 5, 7, or 9 is odd."],
+    "bar-graph": ["A bar graph shows how many with bars. Find the bar you want, follow its end down to the numbers, and read how many. The longest bar is the most. To find how many more, read both bars and find the difference.", "Find the bar, then follow its end down to the numbers."],
+    "shapes-3d": ["Flat shapes lie on paper. Solid shapes are ones you can hold. A ball is a sphere. A die is a cube. A can is a cylinder. An ice cream cone is a cone. A box is a rectangular prism.", "Think about how it would feel in your hand: round all over, flat square faces, a can, a point, or a box."],
+    compound: ["Two small words can join into one bigger word. Sun and shine make sunshine. Rain and bow make rainbow. Each part is a word on its own.", "Look for a small word you know, then see what word is left."],
+    contraction: ["A contraction squeezes two words into one. A little mark called an apostrophe takes the place of the missing letters. Do not becomes don't. I am becomes I'm.", "The apostrophe sits where letters were left out."],
+    "parts-of-speech": ["Words have jobs. A noun names a person, place, or thing, like dog. A verb is the action, like runs. An adjective describes, like big. The big dog runs: big is the adjective, dog is the noun, runs is the verb.", "Ask: does it name something, show an action, or describe?"],
+    sentences: ["A sentence tells a whole idea. It starts with a capital letter and ends with a period. The cat sat on the mat. Describing words make a sentence better: The fluffy cat sat on the mat.", "A whole idea, a capital letter at the start, and a period at the end."]
   };
   const pair = scripts[item.activity] || [item.teach || "Watch, then you try.", item.teach || "Watch, then you try."];
   return {
@@ -914,14 +985,22 @@ function mathCard(date) {
   return { id: `${date}:app:math`, kind: "app", part: "math", title: "AdaptedMind", href: APPS.math.href, say: APPS.math.say };
 }
 
+// Max fills his First Grade gaps before Second Grade work in that subject (Stephanie, 2026-11-08).
+// A word-study lesson follows Reading.com. Joyce's math lesson is a First Grade gap on Monday,
+// Wednesday, and Friday and regrouping on Tuesday and Thursday, until the gaps are done.
 function maxCards({ date, state, plan, rhythm, write }) {
   const lesson = state.readingLesson || READING_START;
-  const regroup = lessonFrontiers("max", state, plan)[0];
+  const found = lessonFrontiers("max", state, plan);
+  const regroup = found.find((item) => item.strand === "max-regroup");
+  const firstGrade = found.find((item) => item.strand === "max-g1-math");
+  const words = found.find((item) => item.strand === "max-words");
+  const math = firstGrade && (weekdayIndex(date) % 2 === 1 || !regroup) ? firstGrade : regroup || firstGrade;
   if (rhythm === "weekend") return [gameCard(date, GAMES.coins), moveCard("max", date)];
   return [
     readingCard(date, lesson),
+    ...(words ? [skillCard("max", words, date, state)] : []),
     mathCard(date),
-    ...(regroup ? [skillCard("max", regroup, date, state)] : []),
+    ...(math ? [skillCard("max", math, date, state)] : []),
     ...(write ? [writeCard(date, write)] : []),
     gameCard(date, GAMES.coins, "bonus"),
     moveCard("max", date, "bonus")

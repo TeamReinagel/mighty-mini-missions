@@ -607,6 +607,7 @@ function renderWrite() {
   wrote.disabled = true;
   wrote.addEventListener("click", () => {
     if (card.word) renderWriteWord();
+    else if (card.sentenceSay) renderWriteSentence();
     else renderWriteCheck();
   });
   const again = btn("quiet", "watch", "Watch again");
@@ -652,13 +653,30 @@ function renderWriteWord() {
   panel.append(el("p", "prompt", card.wordSay), el("div", "write-word", card.word));
   const wrote = btn("go", "write", "I wrote it");
   wrote.disabled = true;
-  wrote.addEventListener("click", renderWriteCheck);
+  wrote.addEventListener("click", () => (card.sentenceSay ? renderWriteSentence() : renderWriteCheck()));
   const again = btn("quiet", "listen", "Hear it again");
   again.addEventListener("click", () => replay(card.wordSay));
   const row = el("div", "actions");
   row.append(wrote, again);
   panel.append(row);
   say(card.wordSay).then(() => { if (wrote.isConnected) wrote.disabled = false; });
+}
+
+// One sentence of a story he tells first. He says it, then writes only that sentence.
+function renderWriteSentence() {
+  teachGen += 1;
+  hush();
+  const panel = shell(card.title);
+  panel.append(el("p", "prompt", card.sentenceSay));
+  const wrote = btn("go", "write", "I wrote my sentence");
+  wrote.disabled = true;
+  wrote.addEventListener("click", renderWriteCheck);
+  const again = btn("quiet", "listen", "Hear it again");
+  again.addEventListener("click", () => replay(card.sentenceSay));
+  const row = el("div", "actions");
+  row.append(wrote, again);
+  panel.append(row);
+  say(card.sentenceSay).then(() => { if (wrote.isConnected) wrote.disabled = false; });
 }
 
 function renderWriteCheck() {
@@ -913,8 +931,39 @@ function drawItem(panel, item, prompt, ready) {
   if (item.type === "add") return drawAdd(panel, item, ready);
   if (item.type === "pattern") return drawPattern(panel, item, ready);
   if (item.type === "regroup") return drawRegroup(panel, item, prompt, ready);
-  if (item.show) panel.append(el("div", "big-number", String(item.show)));
+  if (item.type === "graph") drawGraph(panel, item.graph);
+  if (item.show) panel.append(el("div", item.showSize === "sentence" ? "big-sentence" : "big-number", String(item.show)));
   drawChoices(panel, prompt.choices || item.choices, (id) => submit(id), ready);
+}
+
+// A bar graph: one bar per row against a numbered scale, so the child reads the number at the bar's end.
+function drawGraph(panel, graph) {
+  if (!graph) return;
+  const box = el("figure", "graph");
+  box.append(el("figcaption", "graph-title", graph.title));
+  const max = graph.max || Math.max(...graph.bars.map((bar) => bar.value));
+  box.style.setProperty("--units", String(max));
+  for (const bar of graph.bars) {
+    const row = el("div", "graph-row");
+    row.append(el("span", "graph-label", `${bar.emoji} ${bar.label}`));
+    const track = el("div", "graph-track");
+    const fill = el("div", "graph-bar");
+    fill.style.width = `${(bar.value / max) * 100}%`;
+    track.append(fill);
+    row.append(track);
+    box.append(row);
+  }
+  const axis = el("div", "graph-row graph-axis");
+  axis.append(el("span", "graph-label", ""));
+  const scale = el("div", "graph-scale");
+  for (let n = 0; n <= max; n += 1) {
+    const tick = el("span", "graph-tick", String(n));
+    tick.style.left = `${(n / max) * 100}%`;
+    scale.append(tick);
+  }
+  axis.append(scale);
+  box.append(axis);
+  panel.append(box);
 }
 
 function drawChoices(panel, choices, onPick, ready) {

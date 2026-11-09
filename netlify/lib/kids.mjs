@@ -1,4 +1,5 @@
 import { MILESTONES } from "./milestones.mjs";
+import { REVIEW_MILESTONES, baselineNote } from "./baselines.mjs";
 
 // Who Joyce reports on, and which milestone sheets guide "what to introduce next".
 // `id` must match the profile id in the Mighty Mini Missions app (lowercase name for the defaults).
@@ -9,12 +10,12 @@ export const KIDS = [
     id: "max",
     name: "Max",
     age: 5,
-    where: "Reading.com lesson 109 of 120, finished from Today with Joyce; AdaptedMind on smart practice. Joyce teaches regrouping. Coins stay in Coin Record Run. Known gaps: coins, regrouping. Handwriting is well behind reading: tracing is fine, writing on his own is hesitant, and letters run much bigger than the lines. Today with Joyce has a daily writing card (one lowercase letter by formation family, on paper that narrows from big boxes to lines), and missions have a Writing category.",
+    where: "Reading.com lesson 110 of 120, finished from Today with Joyce; AdaptedMind on smart practice. First Grade comes first: Stephanie's 2026-11-08 check found 33 of 60 First Grade goals met, and Second Grade work in a subject waits until that subject's First Grade goals are all met. Joyce teaches the gaps: compound words, contractions, nouns/verbs/adjectives and sentences after Reading.com; skip counting and 3D shapes (cold checks first), odd and even, and bar graphs on Monday, Wednesday, and Friday; regrouping (a Second Grade goal, kept on purpose) on Tuesday and Thursday. Coins are doing well now (First Grade money met; Coin Record Run continues). Writing is the main gap: tracing is fine, writing on his own is more comfortable but still well behind reading, and he can dictate stories but not write them. Today with Joyce has a daily writing card (one lowercase letter by formation family, paper that narrows from big boxes to lines), and every other writing day he writes one sentence of a story he tells. Science and social studies gaps (plants, life cycles, space, maps of Arkansas and US symbols, local government, landforms) are topics to cover with real-world missions, not drills.",
     // The tablet helper skips single-letter sounds for a reader at this level.
     knowsLetterSounds: true,
+    // First Grade in every subject; a subject moves on to Second Grade only when its First Grade goals are all met.
     guides: [
-      { grade: "Second Grade", areas: ["Math"] },
-      { grade: "First Grade", areas: ["ELA", "Science", "Social Studies", "Bible/Character"] },
+      { grade: "First Grade", then: "Second Grade" },
       { grade: "Kindergarten", areas: ["Writing", "Physical Fitness and Gross Motor Skills", "Life Skills", "Social-Emotional Development", "Practical Arts and Creativity"] }
     ]
   },
@@ -69,16 +70,37 @@ export function allMilestones() {
  */
 export function guideFor(kid, metIds, perArea = 3) {
   const all = allMilestones();
+  const met = withReviews(all, metIds);
   const next = [];
   const later = [];
-  for (const { grade, areas } of kid?.guides || []) {
+  const note = (m) => {
+    const open = baselineNote(kid?.id, m.id);
+    return open ? { ...m, status: open.status, ...(open.note ? { note: open.note } : {}) } : m;
+  };
+  for (const { grade, areas, then } of kid?.guides || []) {
     for (const area of areas || MILESTONES[grade].areas) {
-      const unmet = all.filter((m) => m.grade === grade && m.area === area && !metIds.has(m.id));
-      next.push(...unmet.slice(0, perArea));
-      later.push(...unmet.slice(perArea));
+      let unmet = all.filter((m) => m.grade === grade && m.area === area && !met.has(m.id));
+      // This subject's grade is done: move on to the next grade's same subject.
+      if (!unmet.length && then && MILESTONES[then]?.areas.includes(area)) {
+        unmet = all.filter((m) => m.grade === then && m.area === area && !met.has(m.id));
+      }
+      next.push(...unmet.slice(0, perArea).map(note));
+      later.push(...unmet.slice(perArea).map(note));
     }
   }
   return { next, later };
+}
+
+// A review month (REVIEW_MILESTONES) is met once the rest of its grade and subject is met.
+export function withReviews(all, metIds) {
+  const met = new Set(metIds);
+  for (const id of REVIEW_MILESTONES) {
+    const goal = all.find((m) => m.id === id);
+    if (!goal || met.has(id)) continue;
+    const rest = all.filter((m) => m.grade === goal.grade && m.area === goal.area && m.id !== id);
+    if (rest.every((m) => met.has(m.id))) met.add(id);
+  }
+  return met;
 }
 
 export function findKidsIn(text) {

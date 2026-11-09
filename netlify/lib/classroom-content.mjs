@@ -158,6 +158,14 @@ function buildItems(step, seed, missed) {
   if (step.activity === "add") return addItems(step, rng, n);
   if (step.activity === "regroup") return regroupItems(step, rng, n);
   if (step.activity === "color") return colorItems(rng, n);
+  if (step.activity === "skip") return skipItems(rng, n);
+  if (step.activity === "odd-even") return oddEvenItems(rng, n);
+  if (step.activity === "bar-graph") return graphItems(rng, n);
+  if (step.activity === "shapes-3d") return solidItems(rng, n, prefer);
+  if (step.activity === "compound") return compoundItems(rng, n, prefer);
+  if (step.activity === "contraction") return contractionItems(rng, n, prefer);
+  if (step.activity === "parts-of-speech") return partsItems(rng, n);
+  if (step.activity === "sentences") return sentenceItems(rng, n);
   return [];
 }
 
@@ -480,6 +488,7 @@ function colorItems(rng, n) {
 export function helpLine(item, tries) {
   if (!item) return "Look again at the one we are on.";
   if (tries >= 2) return "Let's take a wiggle break. Hop five times, then we can try this one again.";
+  if (item.hint) return item.hint;
   if (item.type === "build" || item.type === "read") {
     return "Say the sounds slowly, then push them together.";
   }
@@ -490,4 +499,215 @@ export function helpLine(item, tries) {
   if (item.type === "regroup") return "Start with the ones. If you have 10 or more ones, trade 10 of them for a ten.";
   if (item.type === "story") return "I'll read the page again. Then you read the same words.";
   return "Listen one more time, then tap the one that matches.";
+}
+
+// ---------- First Grade gaps for Max: math ----------
+
+function numberChoices(answer, others, rng) {
+  const set = [answer];
+  for (const value of others) if (value > 0 && !set.includes(value)) set.push(value);
+  return set.slice(0, 3);
+}
+
+function skipItems(rng, n) {
+  const items = [];
+  const steps = [2, 5, 10];
+  for (let i = 0; i < n; i += 1) {
+    const by = steps[i % steps.length];
+    const start = by * (1 + Math.floor(rng() * (by === 2 ? 20 : by === 5 ? 15 : 8)));
+    const shown = [start, start + by, start + 2 * by];
+    const answer = start + 3 * by;
+    const choices = numberChoices(answer, [answer + by, answer - 1, answer + 1], rng);
+    items.push({
+      ...choiceItem(`Count by ${by}s. What number comes next?`, answer, choices, rng),
+      show: `${shown.join(", ")}, ?`,
+      item: `${by}s from ${start}`,
+      hint: `Each jump adds ${by}. ${shown.at(-1)} plus ${by} is the next number.`
+    });
+  }
+  return items;
+}
+
+function oddEvenItems(rng, n) {
+  const pool = shuffle(rng, Array.from({ length: 39 }, (_, i) => i + 2));
+  return pool.slice(0, n).map((value) => {
+    const even = value % 2 === 0;
+    const last = value % 10;
+    return {
+      type: "choice",
+      say: `Is ${value} odd or even?`,
+      show: String(value),
+      answer: even ? "even" : "odd",
+      choices: [{ id: "odd", label: "Odd" }, { id: "even", label: "Even" }],
+      item: String(value),
+      hint: `Look at the last digit, ${last}. Numbers ending in 0, 2, 4, 6, or 8 are even. Numbers ending in 1, 3, 5, 7, or 9 are odd.`
+    };
+  });
+}
+
+const GRAPHS = [
+  { title: "Favorite fruit", unit: "kids", rows: [["🍎", "apples"], ["🍌", "bananas"], ["🍇", "grapes"], ["🍓", "strawberries"]] },
+  { title: "Pets on our street", unit: "pets", rows: [["🐶", "dogs"], ["🐱", "cats"], ["🐟", "fish"], ["🐰", "rabbits"]] },
+  { title: "Weather this month", unit: "days", rows: [["☀️", "sunny"], ["🌧️", "rainy"], ["☁️", "cloudy"], ["❄️", "snowy"]] },
+  { title: "Birds at the feeder", unit: "birds", rows: [["🐦", "sparrows"], ["🐤", "finches"], ["🦅", "hawks"], ["🦉", "owls"]] }
+];
+
+function graphItems(rng, n) {
+  const items = [];
+  for (let i = 0; i < n; i += 1) {
+    const g = GRAPHS[Math.floor(rng() * GRAPHS.length)];
+    const rows = shuffle(rng, g.rows).slice(0, 3);
+    const values = shuffle(rng, [2, 3, 4, 5, 6, 7, 8]).slice(0, 3);
+    const bars = rows.map(([emoji, label], k) => ({ emoji, label, value: values[k] }));
+    const graph = { title: g.title, max: 8, bars };
+    const kind = i % 3;
+    const [a, b] = bars;
+    if (kind === 0) {
+      items.push({
+        ...choiceItem(`How many ${a.label}?`, a.value, numberChoices(a.value, [a.value + 1, a.value - 1, a.value + 2], rng), rng),
+        type: "graph", graph, item: `${g.title}: how many ${a.label}`,
+        hint: `Find the ${a.label} bar. Follow its end down to the numbers.`
+      });
+    } else if (kind === 1) {
+      const most = bars.reduce((x, y) => (y.value > x.value ? y : x));
+      items.push({
+        type: "graph", graph, say: `Which has the most ${g.unit}?`, answer: most.label,
+        choices: shuffle(rng, bars).map((bar) => ({ id: bar.label, label: `${bar.emoji} ${bar.label}` })),
+        item: `${g.title}: most`,
+        hint: "The longest bar shows the most."
+      });
+    } else {
+      const [big, small] = a.value >= b.value ? [a, b] : [b, a];
+      const diff = big.value - small.value;
+      items.push({
+        ...choiceItem(`How many more ${big.label} than ${small.label}?`, diff, numberChoices(diff, [diff + 1, diff + 2, big.value], rng), rng),
+        type: "graph", graph, item: `${g.title}: ${big.label} minus ${small.label}`,
+        hint: `Read both bars. ${big.label} is ${big.value}. ${small.label} is ${small.value}. Count up from ${small.value} to ${big.value}.`
+      });
+    }
+  }
+  return items;
+}
+
+const SOLIDS = [
+  { emoji: "⚽", thing: "soccer ball", shape: "sphere" },
+  { emoji: "🌍", thing: "globe", shape: "sphere" },
+  { emoji: "🎲", thing: "die", shape: "cube" },
+  { emoji: "🧊", thing: "ice cube", shape: "cube" },
+  { emoji: "🥫", thing: "soup can", shape: "cylinder" },
+  { emoji: "🔋", thing: "battery", shape: "cylinder" },
+  { emoji: "🍦", thing: "ice cream cone", shape: "cone" },
+  { emoji: "📦", thing: "box", shape: "rectangular prism" },
+  { emoji: "🧱", thing: "brick", shape: "rectangular prism" }
+];
+const SOLID_NAMES = ["sphere", "cube", "cylinder", "cone", "rectangular prism"];
+
+function solidItems(rng, n, prefer) {
+  const picked = take(rng, SOLIDS.map((s) => s.thing), n, prefer).map((thing) => SOLIDS.find((s) => s.thing === thing));
+  return picked.map((solid) => {
+    const others = shuffle(rng, SOLID_NAMES.filter((name) => name !== solid.shape)).slice(0, 2);
+    return {
+      ...choiceItem(`What solid shape is a ${solid.thing}?`, solid.shape, [solid.shape, ...others], rng),
+      show: solid.emoji,
+      item: solid.thing,
+      hint: {
+        sphere: "Round all over, like a ball. That's a sphere.",
+        cube: "Six flat faces, all the same square. That's a cube.",
+        cylinder: "Two flat circles on the ends and a curved side, like a can. That's a cylinder.",
+        cone: "A flat circle at one end and a point at the other. That's a cone.",
+        "rectangular prism": "Six flat faces, and some are longer rectangles, like a box. That's a rectangular prism."
+      }[solid.shape]
+    };
+  });
+}
+
+// ---------- First Grade gaps for Max: words ----------
+
+const COMPOUNDS = [
+  ["sun", "shine"], ["rain", "bow"], ["cup", "cake"], ["foot", "ball"], ["bed", "room"], ["sun", "flower"],
+  ["snow", "man"], ["tooth", "brush"], ["back", "pack"], ["mail", "box"], ["pop", "corn"], ["star", "fish"],
+  ["dog", "house"], ["rain", "coat"], ["gold", "fish"], ["play", "ground"], ["bath", "tub"], ["air", "plane"],
+  ["cow", "boy"], ["fire", "truck"]
+];
+
+function compoundItems(rng, n, prefer) {
+  const words = COMPOUNDS.map(([a, b]) => a + b);
+  const chosen = take(rng, words, n, prefer);
+  return chosen.map((word, i) => {
+    const [a, b] = COMPOUNDS[words.indexOf(word)];
+    if (i % 2 === 0) {
+      const others = shuffle(rng, words.filter((w) => w !== word && !w.startsWith(a))).slice(0, 2);
+      return { ...choiceItem(`Put the two words together. ${a} and ${b} make what word?`, word, [word, ...others], rng), show: `${a} + ${b}`, item: word, hint: `Say ${a}, then say ${b} right after it. ${a}${b}.` };
+    }
+    const right = `${a} + ${b}`;
+    const wrong = [`${word.slice(0, a.length - 1)} + ${word.slice(a.length - 1)}`, `${word.slice(0, a.length + 1)} + ${word.slice(a.length + 1)}`];
+    return { ...choiceItem(`Which two words make ${word}?`, right, [right, ...wrong], rng), show: word, item: word, hint: `Look for a small word you know at the start. Then see what word is left.` };
+  });
+}
+
+const CONTRACTIONS = [
+  ["do not", "don't"], ["can not", "can't"], ["is not", "isn't"], ["did not", "didn't"], ["was not", "wasn't"],
+  ["I am", "I'm"], ["it is", "it's"], ["we are", "we're"], ["you are", "you're"], ["they are", "they're"],
+  ["I will", "I'll"], ["she is", "she's"], ["he is", "he's"], ["let us", "let's"], ["have not", "haven't"]
+];
+
+function contractionItems(rng, n, prefer) {
+  const shorts = CONTRACTIONS.map(([, short]) => short);
+  const chosen = take(rng, shorts, n, prefer);
+  return chosen.map((short, i) => {
+    const long = CONTRACTIONS[shorts.indexOf(short)][0];
+    const others = shuffle(rng, CONTRACTIONS.filter(([, s]) => s !== short)).slice(0, 2);
+    if (i % 2 === 0) {
+      return { ...choiceItem(`Which word is the short way to say ${long}?`, short, [short, ...others.map(([, s]) => s)], rng), show: long, item: short, hint: `The apostrophe takes the place of the missing letters in ${long}.` };
+    }
+    return { ...choiceItem(`What two words make ${short}?`, long, [long, ...others.map(([l]) => l)], rng), show: short, item: short, hint: `Put the missing letters back where the apostrophe is.` };
+  });
+}
+
+const SENTENCES = [
+  ["The big dog runs.", "dog", "runs", "big"], ["A red bird sings.", "bird", "sings", "red"],
+  ["The happy girl jumps.", "girl", "jumps", "happy"], ["My little cat sleeps.", "cat", "sleeps", "little"],
+  ["The tall man walks.", "man", "walks", "tall"], ["A green frog hops.", "frog", "hops", "green"],
+  ["The cold wind blows.", "wind", "blows", "cold"], ["Two small fish swim.", "fish", "swim", "small"],
+  ["The loud train stops.", "train", "stops", "loud"], ["A soft rabbit hides.", "rabbit", "hides", "soft"],
+  ["The fast car zooms.", "car", "zooms", "fast"], ["My brave brother climbs.", "brother", "climbs", "brave"]
+];
+const KINDS = [
+  { key: 1, name: "noun", say: "Which word is the noun, the naming word?", hint: "A noun names a person, place, or thing." },
+  { key: 2, name: "verb", say: "Which word is the verb, the action word?", hint: "A verb is what someone or something does." },
+  { key: 3, name: "adjective", say: "Which word is the adjective, the describing word?", hint: "An adjective tells what something is like: its size, color, or feeling." }
+];
+
+function partsItems(rng, n) {
+  const rows = shuffle(rng, SENTENCES).slice(0, n);
+  return rows.map((row, i) => {
+    const kind = KINDS[i % KINDS.length];
+    const answer = row[kind.key];
+    return { ...choiceItem(kind.say, answer, [row[1], row[2], row[3]], rng), show: row[0], showSize: "sentence", item: `${kind.name}: ${row[0]}`, hint: kind.hint };
+  });
+}
+
+function sentenceItems(rng, n) {
+  const rows = shuffle(rng, SENTENCES).slice(0, n);
+  return rows.map(([sentence, noun, verb, adj], i) => {
+    if (i % 2 === 0) {
+      const words = sentence.replace(".", "").split(" ");
+      const lower = sentence[0].toLowerCase() + sentence.slice(1, -1);
+      const scrambled = [...words.slice(1), words[0].toLowerCase()].join(" ") + ".";
+      const fragment = words.slice(0, -1).join(" ");
+      return {
+        ...choiceItem("Which one is a complete sentence?", sentence, [sentence, lower, fragment, scrambled], rng),
+        item: `sentence: ${sentence}`,
+        hint: "A sentence tells a whole idea, starts with a capital letter, and ends with a period."
+      };
+    }
+    const blank = sentence.replace(`${adj} `, "___ ");
+    return {
+      ...choiceItem(`Pick a describing word for the blank.`, adj, [adj, verb, noun], rng),
+      show: blank,
+      showSize: "sentence",
+      item: `describe: ${sentence}`,
+      hint: "The blank needs a word that tells what the thing is like."
+    };
+  });
 }

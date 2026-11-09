@@ -82,12 +82,14 @@ function wordFor(index) {
   return pool.length ? pool[index % pool.length] : null;
 }
 
-/** What today's card asks for, from how many writing days are done and the current paper. */
+/** What today's card asks for, from how many writing days are done and the current paper.
+ * Every other writing day also asks for one sentence of a story he tells first: he can dictate
+ * stories but not yet write them (Stephanie, 2026-11-08), so he writes just one sentence. */
 export function writeToday(writing = {}) {
   const count = Math.max(0, Number(writing.count) || 0);
   const index = count % WRITE_LETTERS.length;
   const size = Math.min(WRITE_SIZES.length - 1, Math.max(0, Number(writing.size) || 0));
-  return { letter: WRITE_LETTERS[index].letter, word: wordFor(index), size };
+  return { letter: WRITE_LETTERS[index].letter, word: wordFor(index), size, sentence: count % 2 === 1 };
 }
 
 export function writeLesson(plan) {
@@ -103,6 +105,9 @@ export function writeLesson(plan) {
     writeText: `Now you. On your ${paper.label} paper, write ${entry.letter} three times. Start where I started.`,
     word: plan.word || null,
     wordSay: plan.word ? `Now write the word ${plan.word}.` : null,
+    sentenceSay: plan.sentence
+      ? "Story time. Tell a grown-up a short story, out loud. Then pick one sentence from it and write just that sentence on your paper. Start with a capital letter and end with a period. Spell the words the best you can."
+      : null,
     check: "Look at your letters. Do they stay inside the lines?",
     paper: paper.id
   };
