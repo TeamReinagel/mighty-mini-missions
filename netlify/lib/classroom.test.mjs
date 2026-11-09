@@ -79,10 +79,11 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   assert.equal(buildDay({ kidId: "max", date: "2026-10-24" }).cards.some((card) => card.kind === "write"), false);
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
-  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Counting", "Reading", "Bonus"]);
-  const story = connor.cards.find((card) => card.gameId === "moon-path");
-  assert.equal(story.part, "ela");
-  assert.match(story.href, /moon-path\/\?kid=connor/);
+  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Reading", "Counting", "Bonus"]);
+  // The Moon Path is a finished episode, not his reading card. A letter game is.
+  assert.equal(connor.cards.some((card) => card.gameId === "moon-path"), false);
+  assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.gameId), ["lost-helpers"]);
+  assert.deepEqual(connor.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["hatch-match"]);
   assert.equal(connor.cards.some((card) => card.stepId === "connor-names-1"), false);
   assert.ok(connor.cards.some((card) => card.stepId === "connor-count-5"));
 
@@ -146,7 +147,9 @@ test("Connor's practice card rotates from November 3 and finishes after four pla
     assert.equal(card.gameId, id, date);
     assert.match(card.href, new RegExp(`${id}/\\?kid=connor`));
     assert.match(card.say, /Play one round of /);
-    assert.deepEqual(day.dose.parts.map((part) => part.id), ["math", "ela", "ready", "bonus"]);
+    // The counting card leads only on a day with an episode, so its pictures load during counting.
+    const episode = day.cards.some((entry) => entry.part === "ela" && entry.say && entry.goal === "Finish the adventure, then come back");
+    assert.deepEqual(day.dose.parts.map((part) => part.id), episode ? ["math", "ela", "ready", "bonus"] : ["ela", "math", "ready", "bonus"], date);
     assert.equal(day.cards.filter((entry) => entry.part === "ela").length, 1);
     assert.equal(day.cards.some((entry) => entry.stepId === "connor-count-5"), true);
     for (const kid of ["gabi", "max", "ethan"]) {
@@ -172,7 +175,7 @@ test("Connor's practice card rotates from November 3 and finishes after four pla
 
 test("The Lost Helpers is checked under the name it logs, lost-helpers", async () => {
   const store = memoryStore();
-  const start = "2026-10-19T15:00:00Z";
+  const start = "2026-10-20T15:00:00Z";
   const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now: at(start) });
   const hunt = first.body.cards.find((card) => card.gameId === "lost-helpers");
   assert.equal(hunt.part, "bonus");

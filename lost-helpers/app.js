@@ -103,7 +103,7 @@ function optionButton(option) {
 }
 
 async function playFind(shop) {
-  const find = makeFind(shop.id, who.id, state, rng);
+  const find = makeFind(shop.id, who.id, state, rng, window.MightyFocus?.get(who.id));
   ui.scene.replaceChildren();
   ui.scene.classList.add("shop-scene");
   ui.scene.style.backgroundImage = `linear-gradient(rgba(20,16,30,.18), rgba(20,16,30,.05)), url("assets/paper.jpg")`;

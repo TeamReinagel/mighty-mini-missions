@@ -77,7 +77,7 @@ async function jumpPath() {
   ui.scene.append(hero, pads);
   let first = true;
   for (let step = 0; step < 3; step += 1) {
-    const item = soundRound(letters(), rng);
+    const item = soundRound(letters(), rng, window.MightyFocus?.get()?.sounds || []);
     pads.replaceChildren();
     ui.speak(`Jump to ${item.sound}.`);
     const landed = await new Promise((resolve) => {
@@ -108,7 +108,7 @@ async function jumpPath() {
 }
 
 async function round() {
-  const danced = await dance(soundRound(letters(), rng));
+  const danced = await dance(soundRound(letters(), rng, window.MightyFocus?.get()?.sounds || []));
   const jumped = await jumpPath();
   const clean = danced && jumped;
   const next = level === "1" ? "2" : null;

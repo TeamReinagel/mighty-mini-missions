@@ -6,12 +6,8 @@
 
 import { createHash } from "node:crypto";
 import { helpLine, itemsFor } from "./classroom-content.mjs";
-import { moonPathCard, COMPLETION_ITEM } from "../../moon-path/integration.mjs";
-import { scheduledBagAtDoorCard, COMPLETION_ITEM as BAG_AT_DOOR_COMPLETION } from "../../bag-at-the-door/integration.mjs";
-import { scheduledAppleCatcherCard, COMPLETION_ITEM as APPLE_CATCHER_COMPLETION } from "../../apple-catcher/integration.mjs";
-import { COMPLETION_ITEM as SAIL_COMPLETION } from "../../sail-that-wouldnt-stay/integration.mjs";
-import { COMPLETION_ITEM as FAN_COMPLETION } from "../../fan-at-the-fork/integration.mjs";
-import { larkAssignment } from "../../lark-play/plan.mjs";
+import { larkAssignment, larkPick } from "../../lark-play/plan.mjs";
+import { EPISODE_IDS, SERIES, focusFor, recordFinished, seriesFor } from "../../lark-play/episodes.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
 import {
@@ -181,11 +177,8 @@ const EVIDENCE = {
   "lost-helpers": { game: "lost-helpers", need: ROUND_LENGTH["lost-helpers"] },
   "train-set": { game: "train-set", need: ROUND_LENGTH["train-set"] },
   "ghost-word-run": { game: "ghost-word-run", need: ROUND_LENGTH["ghost-word-run"] },
-  "moon-path": { game: "moon-path", need: 1, item: COMPLETION_ITEM },
-  "bag-at-the-door": { game: "bag-at-the-door", need: 1, item: BAG_AT_DOOR_COMPLETION },
-  "apple-catcher": { game: "apple-catcher", need: 1, item: APPLE_CATCHER_COMPLETION },
-  "sail-that-wouldnt-stay": { game: "sail-that-wouldnt-stay", need: 1, item: SAIL_COMPLETION },
-  "fan-at-the-fork": { game: "fan-at-the-fork", need: 1, item: FAN_COMPLETION },
+  // A Lark and Nib episode needs its real completion event.
+  ...Object.fromEntries(Object.values(SERIES).flat().map((entry) => [entry.gameId, { game: entry.gameId, need: 1, item: entry.completionItem }])),
   "nest-numbers": { game: "nest-numbers", need: ROUND_LENGTH["nest-numbers"] },
   "big-little": { game: "big-little", need: ROUND_LENGTH["big-little"] },
   "basket-sort": { game: "basket-sort", need: ROUND_LENGTH["basket-sort"] },
@@ -215,7 +208,7 @@ const PART_TITLES = {
   ethan: { learn: "Learn" }
 };
 const PART_ORDER = ["ela", "math", "write", "learn", "ready", "bonus"];
-const LARK_EPISODES = new Set(["moon-path", "apple-catcher", "bag-at-the-door", "sail-that-wouldnt-stay", "fan-at-the-fork"]);
+const LARK_EPISODES = EPISODE_IDS;
 // Counting or math is mission 1. The story is mission 2, so its pictures can arrive during mission 1.
 const LARK_PART_ORDER = ["math", "ela", "write", "learn", "ready", "bonus"];
 const WRITERS = new Set(["max"]);
@@ -751,7 +744,11 @@ function pinBoard(state, kidId, date, plan) {
     missed: missedItems(state, item.id)
   }));
   const day = { done: [], skipped: [], quit: [], ...(state.days?.[date] || {}) };
-  day.board = { shorter, lessons, check: pinCheck(state, kidId, date), ...(WRITERS.has(kidId) ? { write: writeToday(state.writing) } : {}) };
+  day.board = {
+    shorter, lessons, check: pinCheck(state, kidId, date),
+    ...(seriesFor(kidId).length ? { lark: larkPick(kidId, date, state) } : {}),
+    ...(WRITERS.has(kidId) ? { write: writeToday(state.writing) } : {})
+  };
   state.days = { ...(state.days || {}), [date]: day };
   return true;
 }
@@ -818,25 +815,13 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, write });
   else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
   else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.helpers });
-  const lark = larkAssignment(kidId, date);
-  if (!lark) {
-    const story = scheduledBagAtDoorCard(date, kidId);
-    if (story) cards.splice(cards.findLastIndex((card) => card.part === "ela") + 1, 0, story);
-  }
+  const lark = larkAssignment(kidId, date, working, board && "lark" in board ? board.lark : undefined);
   const pinned = board?.check;
   if (pinned?.stepId && rhythm !== "weekend") {
     const def = stepById(kidId, pinned.stepId);
     if (def && pinned.items?.length) cards = insertCheck(cards, checkCard(kidId, def, date, pinned.items));
   }
   if (lark) cards = placeLark(cards, lark, date);
-  else {
-    const readingStory = scheduledAppleCatcherCard(date, kidId);
-    if (readingStory) {
-      const at = cards.findIndex((card) => card.part === "ela");
-      cards = cards.filter((card) => card.part !== "ela");
-      cards.splice(at < 0 ? 0 : at, 0, readingStory);
-    }
-  }
   cards = placeReadiness(cards, kidId, date);
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);
@@ -883,14 +868,22 @@ function lessonForAnswer(kidId, stepDef, date, state, plan) {
   );
 }
 
+// Connor's reading card is a letter game: letter names, letter sounds, and big and little letters.
+// The Lost Helpers leads on Monday, Wednesday, and Friday and Hatch Match on Tuesday and Thursday.
+// The other one is his bonus. The Moon Path is a finished episode, not a reading game.
+function connorLetterGames(date) {
+  return weekdayIndex(date) % 2 === 1 ? [GAMES.helpers, GAMES.hatch] : [GAMES.hatch, GAMES.helpers];
+}
+
 function pairCards({ kidId, date, state, plan, rhythm, game }) {
   const found = lessonFrontiers(kidId, state, plan);
   if (rhythm === "weekend") return [gameCard(date, game), moveCard(kidId, date)];
   const counting = found.find((item) => partFor(kidId, item.id) === "math");
+  const [letters, other] = connorLetterGames(date);
   const cards = kidId === "connor"
-    ? [moonPathCard(date, kidId), ...(counting ? [skillCard(kidId, counting, date, state)] : [])]
+    ? [gameCard(date, letters, "ela"), ...(counting ? [skillCard(kidId, counting, date, state)] : [])]
     : found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
-  let bonus = game;
+  let bonus = kidId === "connor" ? other : game;
   if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.helpers : GAMES.otter;
   cards.push(gameCard(date, bonus, "bonus"), moveCard(kidId, date, "bonus"));
   return cards;
@@ -967,6 +960,34 @@ async function playedSince(store, kidId, game, since, now, completionItem) {
     }
   }
   return played;
+}
+
+// An episode can be finished outside Joyce's card (from its own link or a replay). Once a day,
+// look back through the last few days of saved events for this child's real episode finishes.
+// A finish checked off on Joyce's card is already saved, so this only catches the others.
+const FINISH_LOOKBACK = 3;
+
+async function noteEpisodeFinishes(store, kidId, state, date) {
+  const series = seriesFor(kidId);
+  if (!series.length || state.episodeScan === date) return false;
+  const items = new Map(series.map((entry) => [entry.completionItem, entry.gameId]));
+  const folders = [];
+  for (let back = FINISH_LOOKBACK; back >= -1; back -= 1) folders.push(shiftDay(date, -back));
+  const listed = await Promise.all(folders.map((folder) => store.list({ prefix: `events/${folder}/` })));
+  const keys = listed.flatMap((found) => (found?.blobs || []).map((blob) => blob.key));
+  const batches = await Promise.all(keys.map(async (key) => ({ key, events: await store.get(key, { type: "json" }) })));
+  for (const { key, events } of batches) {
+    const received = Number(String(key).split("/")[2]?.split("-")[0]);
+    if (!Number.isFinite(received)) continue;
+    for (const event of Array.isArray(events) ? events : []) {
+      const gameId = items.get(event?.item);
+      if (gameId && event.kid === kidId && event.game === gameId && event.extra?.completed === true) {
+        recordFinished(state, gameId, localDate({}, new Date(received)));
+      }
+    }
+  }
+  state.episodeScan = date;
+  return true;
 }
 
 async function roomStatus({ store, env, fetchImpl, date, plan }) {
@@ -1171,8 +1192,17 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   if (action === "live") return liveSession({ store, env, fetchImpl, kidId, kid, date, sdp: body.sdp, now });
 
   const state = await loadState(store, kidId);
+
+  // The practice games ask which sounds and words a recent episode introduced. This reads only;
+  // it never pins today's board.
+  if (action === "focus") {
+    if (await noteEpisodeFinishes(store, kidId, state, date)) await saveState(store, kidId, state);
+    return { status: 200, body: focusFor(kidId, state, date) };
+  }
+
   const plan = await loadPlan(store);
   if (plan.kids?.[kidId]?.shorter) state.shorter = true;
+  if (action === "today" && await noteEpisodeFinishes(store, kidId, state, date)) await saveState(store, kidId, state);
   if (settleShown(state, date)) await saveState(store, kidId, state);
   if (pinBoard(state, kidId, date, plan)) await saveState(store, kidId, state);
 
@@ -1346,9 +1376,11 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (status === "done" && target?.kind === "check" && !checkFinished(day, target.stepId)) {
       return { status: 200, body: { ok: false, redo: true, say: "That one isn't finished yet. We'll do each part." } };
     }
+    let finishedEpisode = false;
     if (status === "done" && preview.dose && target?.kind === "game") {
       const rule = evidenceFor(kidId, target.gameId);
       const played = rule ? await playedSince(store, kidId, rule.game, day.opened?.[cardId], now, rule.item) : 0;
+      finishedEpisode = Boolean(rule?.item && EPISODE_IDS.has(target.gameId) && played >= rule.need);
       if (rule && played < rule.need) {
         return {
           status: 200,
@@ -1374,6 +1406,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     for (const key of ["done", "skipped", "quit", "eased"]) day[key] = (day[key] || []).filter((id) => id !== cardId);
     day[status].push(cardId);
     state.days = { ...(state.days || {}), [date]: day };
+    if (finishedEpisode) recordFinished(state, target.gameId, date);
     if (status === "done" && target?.kind === "check") {
       const stepDef = stepById(kidId, target.stepId);
       const closed = stepDef ? closeCheck(state, date, stepDef) : null;

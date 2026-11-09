@@ -1,30 +1,12 @@
-// Monday, Wednesday, and Friday can hold a produced Lark and Nib episode.
-// Tuesday, Thursday, and a story day with no episode yet keep the games
-// already in Today with Joyce. The short Lark games are not part of this plan.
-// Produced now: The Apple Catcher (Connor) and The Bag at the Door (Gabi).
-// When the next episode is ready, replace that child's empty story slot and
-// add its card beside the two builders below.
+// Monday, Wednesday, and Friday are Lark and Nib story days for Connor and Gabi.
+// A story day gives that child the next episode in lark-play/episodes.mjs that they
+// have not finished. A missed day just waits for the next story day, and a finished
+// episode never comes back. With no unfinished episode, the day keeps its usual cards.
+// Tuesday and Thursday keep the usual cards.
 
-import { appleCatcherCard } from "../apple-catcher/integration.mjs";
-import { bagAtDoorCard } from "../bag-at-the-door/integration.mjs";
-import { episodeCard as sailCard } from "../sail-that-wouldnt-stay/integration.mjs";
-import { episodeCard as fanCard } from "../fan-at-the-fork/integration.mjs";
+import { nextEpisode, episodeById } from "./episodes.mjs";
 
 export const LARK_START = "2026-11-02";
-
-const CONNOR_STORY = ["apple-catcher", null];
-const GABI_STORY = ["bag-at-the-door", null];
-
-const HANDS = {
-  "apple-catcher": {
-    title: "Apple catcher line",
-    say: "Tell someone, I am an apple catcher. Then tap I did it."
-  },
-  "bag-at-the-door": {
-    title: "Three invitations",
-    say: "Fold three little papers into invitations and put them in a bag. Then tap I did it."
-  }
-};
 
 // Same Chicago weekday as classroom.mjs. Noon US Central, so the date does not flip in the evening.
 export function chicagoWeekday(date) {
@@ -34,61 +16,25 @@ export function chicagoWeekday(date) {
   return { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[name];
 }
 
-function role(date) {
-  if (!date || date < LARK_START) return null;
+export function isStoryDay(date) {
+  if (!date || date < LARK_START) return false;
   const day = chicagoWeekday(date);
-  if (day === 1 || day === 3 || day === 5) return "story";
-  if (day === 2 || day === 4) return "practice";
-  return null;
+  return day === 1 || day === 3 || day === 5;
 }
 
-function eachDate(from, to) {
-  const [year, month, day] = from.split("-").map(Number);
-  const cursor = new Date(Date.UTC(year, month - 1, day));
-  const out = [];
-  while (cursor.toISOString().slice(0, 10) <= to) {
-    out.push(cursor.toISOString().slice(0, 10));
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-  }
-  return out;
-}
-
-function roleIndex(date, wanted) {
-  let index = -1;
-  for (const iso of eachDate(LARK_START, date)) {
-    if (role(iso) === wanted) index += 1;
-  }
-  return index;
-}
-
-function cardFor(kidId, date, kind, index) {
-  if (kind !== "story") return null;
-  if (kidId === "connor") {
-    const play = CONNOR_STORY[index % CONNOR_STORY.length];
-    return play === "apple-catcher" ? appleCatcherCard(date, kidId) : null;
-  }
-  if (kidId === "gabi") {
-    const play = GABI_STORY[index % GABI_STORY.length];
-    return play === "bag-at-the-door" ? bagAtDoorCard(date, kidId) : null;
-  }
-  return null;
-}
-
-// Stephanie's one-day assignments replace that day's card, not the recurring plan.
-// November 9: Connor had finished Moon Path and The Apple Catcher, and Gabi had
-// finished The Bag at the Door, so each gets the next produced episode.
-const ONE_DAY = {
-  "2026-11-04": { connor: sailCard },
-  "2026-11-09": { connor: sailCard, gabi: fanCard }
-};
-
-export function larkAssignment(kidId, date) {
-  const oneDay = ONE_DAY[date]?.[kidId];
-  if (oneDay) return { card: oneDay(date, kidId), handsOn: null };
+// The episode gameId for this child's story slot today, or null. Joyce pins this on the
+// day's board, so finishing the episode does not swap in the next one until tomorrow.
+export function larkPick(kidId, date, state = {}) {
   if (kidId !== "connor" && kidId !== "gabi") return null;
-  const kind = role(date);
-  if (!kind) return null;
-  const card = cardFor(kidId, date, kind, roleIndex(date, kind));
-  if (!card) return null;
-  return { card, handsOn: HANDS[card.gameId] || null };
+  if (!isStoryDay(date)) return null;
+  return nextEpisode(kidId, state)?.gameId || null;
+}
+
+// `pinned` is the gameId saved on today's board (null for no story). Undefined means
+// the board was not pinned yet, so the pick comes from what the child has finished.
+export function larkAssignment(kidId, date, state = {}, pinned) {
+  const gameId = pinned === undefined ? larkPick(kidId, date, state) : pinned;
+  const entry = gameId ? episodeById(gameId) : null;
+  if (!entry) return null;
+  return { card: entry.card(date, kidId), handsOn: entry.handsOn || null };
 }

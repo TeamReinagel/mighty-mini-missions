@@ -131,6 +131,18 @@ function pick(rng, list) {
   return list[Math.floor(rng() * list.length)];
 }
 
+// Letters a recent Lark and Nib episode introduced come up three times as often.
+function pickLetter(rng, focus) {
+  const sounds = focus?.sounds || [];
+  const weights = LETTERS.map((entry) => (sounds.includes(entry.letter) ? 3 : 1));
+  let x = rng() * weights.reduce((a, b) => a + b, 0);
+  for (const [i, entry] of LETTERS.entries()) {
+    x -= weights[i];
+    if (x < 0) return entry;
+  }
+  return LETTERS.at(-1);
+}
+
 function choices(rng, right, decoys, n = 3) {
   const pool = shuffle(rng, decoys.filter((item) => item !== right)).slice(0, n - 1);
   return shuffle(rng, [right, ...pool]);
@@ -144,7 +156,7 @@ function pic(src, label, value) {
   return { kind: "pic", src, label, value: value ?? label };
 }
 
-export function makeFind(shopId, kidId, state, rng) {
+export function makeFind(shopId, kidId, state, rng, focus = null) {
   const hard = Boolean(state.shops?.[shopId]?.hard) || kidId === "max";
 
   if (shopId === "paint") {
@@ -228,7 +240,7 @@ export function makeFind(shopId, kidId, state, rng) {
   }
 
   if (shopId === "post") {
-    const want = pick(rng, LETTERS);
+    const want = pickLetter(rng, focus);
     const alts = choices(rng, want, LETTERS);
     return {
       skill: "Letter names",
@@ -241,7 +253,7 @@ export function makeFind(shopId, kidId, state, rng) {
   }
 
   if (shopId === "bell") {
-    const want = pick(rng, LETTERS);
+    const want = pickLetter(rng, focus);
     const alts = choices(rng, want, LETTERS);
     return {
       skill: "Letter sounds",

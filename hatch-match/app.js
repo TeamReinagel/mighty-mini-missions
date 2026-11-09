@@ -263,7 +263,14 @@ function replay(el, cls) {
 }
 
 // ---------- which letters, how many eggs ----------
-const pool = () => (state.settings.letters === 'all' ? ORDER : state.intro);
+// Letters from a Lark and Nib episode finished in the last two weeks join the nest and come
+// up more often (shared/focus.js). The child's own first tries still decide what they know.
+const focusLetters = () => (window.MightyFocus?.get(kid.id)?.sounds || []).map((s) => s.toUpperCase()).filter((L) => ORDER.includes(L));
+const isFocus = (L) => focusLetters().includes(L);
+const pool = () => {
+  const base = state.settings.letters === 'all' ? ORDER : state.intro;
+  return [...base, ...focusLetters().filter((L) => !base.includes(L))];
+};
 
 // Add the next letter once she knows all but one of the current ones.
 function maybeIntroduce() {
@@ -287,9 +294,13 @@ function pickTarget() {
   const all = pool();
   const avoid = session.recent.slice(0, all.length >= 6 ? 2 : 1);
   const list = all.filter((L) => !avoid.includes(L));
-  const total = list.reduce((a, L) => a + weight(L), 0);
+  // Each nest starts with one episode letter, when there is one.
+  const fresh = session.focusSeen ? [] : list.filter(isFocus);
+  if (fresh.length) { session.focusSeen = true; return pick(fresh); }
+  const focusWeight = (L) => (isFocus(L) ? weight(L) * 3 : weight(L));
+  const total = list.reduce((a, L) => a + focusWeight(L), 0);
   let x = Math.random() * total;
-  for (const L of list) { x -= weight(L); if (x < 0) return L; }
+  for (const L of list) { x -= focusWeight(L); if (x < 0) return L; }
   return list[list.length - 1];
 }
 const maxChoices = () => (pool().length >= 8 ? 4 : 3);

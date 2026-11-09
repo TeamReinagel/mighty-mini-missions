@@ -2,196 +2,187 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { buildDay, handleClassroom, memoryStore, weekdayIndex } from "../netlify/lib/classroom.mjs";
-import { COMPLETION_ITEM as SAIL_COMPLETION } from "../sail-that-wouldnt-stay/integration.mjs";
 import { EPISODE as SAIL_EPISODE } from "../sail-that-wouldnt-stay/episode.mjs";
-import { COMPLETION_ITEM as FAN_COMPLETION } from "../fan-at-the-fork/integration.mjs";
 import { EPISODE as FAN_EPISODE } from "../fan-at-the-fork/episode.mjs";
 import { STORY_ASSET_REV } from "../shared/story-cache.mjs";
-import { chicagoWeekday } from "./plan.mjs";
+import { SERIES, FINISHED_BEFORE, finishedEpisodes, focusFor, nextEpisode, recordFinished } from "./episodes.mjs";
+import { chicagoWeekday, isStoryDay } from "./plan.mjs";
 
-const EPISODE = {
-  "2026-11-02": ["apple-catcher", "bag-at-the-door"],
-  "2026-11-06": ["apple-catcher", "bag-at-the-door"],
-  "2026-11-11": ["apple-catcher", "bag-at-the-door"],
-  "2026-11-16": ["apple-catcher", "bag-at-the-door"]
-};
+const STORY_DAYS = ["2026-11-09", "2026-11-11", "2026-11-13", "2026-11-16"];
+const OTHER_DAYS = ["2026-11-10", "2026-11-12", "2026-11-17"];
+const ALL_FINISHED = (kidId) => ({ episodes: Object.fromEntries(SERIES[kidId].map((entry) => [entry.gameId, "2026-11-01"])) });
+const ela = (day) => day.cards.filter((card) => card.part === "ela").map((card) => card.gameId);
 
-const USUAL = [
-  "2026-11-03",
-  "2026-11-05",
-  "2026-11-10",
-  "2026-11-12",
-  "2026-11-13",
-  "2026-11-17"
-];
+const at = (iso, seconds = 0) => new Date(Date.parse(iso) + seconds * 1000);
+const call = (store, kid, body, when) => handleClassroom({ store, env: {}, body: { kid, ...body }, now: when });
+const finish = (store, kid, gameId, item, when) => store.setJSON(`events/${when.toISOString().slice(0, 10)}/${when.getTime()}-story`, [
+  { kid, game: gameId, skill: "Story participation", item, correct: null, extra: { completed: true } }
+]);
 
 test("the Chicago weekday matches the classroom", () => {
-  for (const date of [...Object.keys(EPISODE), ...USUAL, "2026-11-04", "2026-11-09"]) assert.equal(chicagoWeekday(date), weekdayIndex(date));
+  for (const date of [...STORY_DAYS, ...OTHER_DAYS, "2026-11-04", "2026-11-14"]) assert.equal(chicagoWeekday(date), weekdayIndex(date));
+  assert.deepEqual(STORY_DAYS.map(isStoryDay), [true, true, true, true]);
+  assert.deepEqual([...OTHER_DAYS, "2026-11-14", "2026-10-30"].map(isStoryDay), [false, false, false, false, false]);
 });
 
-test("Connor gets S1E3 instead of Moon Path on November 4, preserving the rest of his board", () => {
-  const date = "2026-11-04";
-  const counting = `${date}:game:snack-count:connor-count-5`;
-  const previousReading = `${date}:game:moon-path`;
-  const state = { steps: {}, days: { [date]: {
-    done: [counting, previousReading],
-    opened: { [previousReading]: `${date}T15:00:00Z` },
-    board: { shorter: false, lessons: [{ id: "connor-count-5", missed: [] }],
-      check: { stepId: "connor-names-1", items: [{ item: "letter-a" }] } }
-  } } };
-  const day = buildDay({ kidId: "connor", date, state });
-  const story = day.cards.find((card) => card.part === "ela");
-  assert.deepEqual(day.cards.filter((card) => card.part === "ela").map((card) => card.gameId), ["sail-that-wouldnt-stay"]);
-  assert.equal(story.title, SAIL_EPISODE.title);
-  assert.equal(story.href, "../sail-that-wouldnt-stay/?kid=connor");
-  assert.equal(story.done, false);
-  assert.equal(day.cards.find((card) => card.id === counting).done, true);
-  assert.equal(day.cards.find((card) => card.part === "ready").gameId, "big-little");
-  assert.equal(day.cards.filter((card) => card.part === "bonus").length, 2);
-  assert.deepEqual(day.dose.parts.slice(0, 2).map((part) => part.id), ["math", "ela"]);
-  assert.equal(day.dose.parts.find((part) => part.id === "ela").done, false);
-  for (const href of story.prefetch) {
-    assert.ok(href.endsWith(`?v=${STORY_ASSET_REV}`));
-    assert.ok(readFileSync(new URL(href, import.meta.url)).length > 0);
+test("each child's list matches what the episodes introduce", async () => {
+  for (const entry of Object.values(SERIES).flat()) {
+    if (entry.gameId === "moon-path") continue;
+    const { EPISODE } = await import(`../${entry.gameId}/episode.mjs`);
+    assert.equal(entry.completionItem, EPISODE.completionItem, entry.gameId);
+    assert.deepEqual(entry.sounds, EPISODE.introduced, entry.gameId);
+    assert.deepEqual(entry.words, EPISODE.targets, entry.gameId);
   }
-  assert.equal(SAIL_COMPLETION, SAIL_EPISODE.completionItem);
-  assert.equal(buildDay({ kidId: "gabi", date }).cards.find((card) => card.part === "ela").gameId, "otter-slide");
-  for (const kidId of ["max", "gabi", "ethan"]) {
-    assert.equal(buildDay({ kidId, date }).cards.some((card) => card.gameId === SAIL_EPISODE.gameId), false);
+  assert.deepEqual(SERIES.connor.map((entry) => entry.label), ["S1E1", "S1E2", "S1E3"]);
+  assert.deepEqual(SERIES.gabi.map((entry) => entry.label), ["S2E1", "S2E2"]);
+});
+
+test("a story day gives each child their next unfinished episode", () => {
+  assert.deepEqual(Object.keys(FINISHED_BEFORE.connor), ["moon-path", "apple-catcher"]);
+  assert.deepEqual(Object.keys(FINISHED_BEFORE.gabi), ["bag-at-the-door"]);
+  for (const date of STORY_DAYS) {
+    assert.deepEqual(ela(buildDay({ kidId: "connor", date })), ["sail-that-wouldnt-stay"], date);
+    assert.deepEqual(ela(buildDay({ kidId: "gabi", date })), ["fan-at-the-fork"], date);
   }
-  for (const otherDate of [...Object.keys(EPISODE), ...USUAL]) {
-    assert.equal(buildDay({ kidId: "connor", date: otherDate }).cards.some((card) => card.gameId === SAIL_EPISODE.gameId), false);
+  for (const date of OTHER_DAYS) {
+    assert.equal(buildDay({ kidId: "connor", date }).cards.some((card) => card.gameId === "sail-that-wouldnt-stay"), false, date);
+    assert.equal(buildDay({ kidId: "gabi", date }).cards.some((card) => card.gameId === "fan-at-the-fork"), false, date);
   }
 });
 
-test("November 9 gives Connor S1E3 and Gabi S2E2, keeping counting and the rest of each board", () => {
-  const date = "2026-11-09";
-  for (const [kidId, episode, count] of [["connor", SAIL_EPISODE, "connor-count-5"], ["gabi", FAN_EPISODE, "gabi-count-10"]]) {
-    const day = buildDay({ kidId, date });
-    const reading = day.cards.filter((card) => card.part === "ela");
-    assert.deepEqual(reading.map((card) => card.gameId), [episode.gameId], kidId);
-    assert.equal(reading[0].title, episode.title);
-    assert.equal(reading[0].href, `../${episode.gameId}/?kid=${kidId}`);
-    assert.equal(reading[0].done, false);
-    assert.equal(day.cards.some((card) => card.stepId === count), true, kidId);
+test("a finished episode never comes back, and with none left the story day keeps its usual cards", () => {
+  const connor = buildDay({ kidId: "connor", date: "2026-11-09", state: ALL_FINISHED("connor") });
+  assert.deepEqual(ela(connor), ["lost-helpers"]);
+  assert.equal(connor.cards.some((card) => card.gameId === "moon-path"), false);
+  const gabi = buildDay({ kidId: "gabi", date: "2026-11-09", state: ALL_FINISHED("gabi") });
+  assert.deepEqual(ela(gabi), ["otter-slide"]);
+  assert.equal(gabi.cards.some((card) => card.stepId === "gabi-count-10"), true);
+  assert.equal(nextEpisode("connor", ALL_FINISHED("connor")), null);
+});
+
+test("Connor's reading is a letter game, never The Moon Path", () => {
+  const tuesday = buildDay({ kidId: "connor", date: "2026-11-10" });
+  assert.deepEqual(ela(tuesday), ["hatch-match"]);
+  assert.deepEqual(tuesday.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["lost-helpers"]);
+  const storyDay = buildDay({ kidId: "connor", date: "2026-11-09" });
+  assert.deepEqual(storyDay.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["hatch-match"]);
+  for (const date of [...STORY_DAYS, ...OTHER_DAYS]) {
+    const day = buildDay({ kidId: "connor", date });
+    assert.equal(day.cards.some((card) => card.gameId === "moon-path"), false, date);
+    assert.equal(day.cards.some((card) => card.stepId === "connor-count-5"), true, date);
+  }
+});
+
+test("a story card checked off on an earlier board counts as finished", () => {
+  const state = { days: { "2026-11-04": { done: ["2026-11-04:game:sail-that-wouldnt-stay"] } } };
+  assert.equal(finishedEpisodes("connor", state)["sail-that-wouldnt-stay"], "2026-11-04");
+  assert.equal(buildDay({ kidId: "connor", date: "2026-11-09", state }).cards.some((card) => card.gameId === "sail-that-wouldnt-stay"), false);
+  const s = {};
+  assert.equal(recordFinished(s, "fan-at-the-fork", "2026-11-09"), true);
+  assert.equal(recordFinished(s, "fan-at-the-fork", "2026-11-11"), false);
+  assert.equal(recordFinished(s, "made-up", "2026-11-11"), false);
+  assert.deepEqual(s.episodes, { "fan-at-the-fork": "2026-11-09" });
+});
+
+test("Gabi's finish is saved, today's card stays put, and her next story day moves on", async () => {
+  const store = memoryStore();
+  const start = at("2026-11-09T15:00:00Z");
+  const today = await call(store, "gabi", { action: "today" }, start);
+  const card = today.body.cards.find((entry) => entry.gameId === FAN_EPISODE.gameId);
+  assert.ok(card);
+  const done = (seconds) => call(store, "gabi", { action: "card", cardId: card.id, status: "done" }, at("2026-11-09T15:00:00Z", seconds));
+  assert.equal((await done(1)).body.notYet, true);
+  await call(store, "gabi", { action: "open", cardId: card.id }, at("2026-11-09T15:00:00Z", 2));
+  await store.setJSON(`events/2026-11-09/${start.getTime() + 3000}-story`, [
+    { kid: "connor", game: FAN_EPISODE.gameId, item: FAN_EPISODE.completionItem, extra: { completed: true } },
+    { kid: "gabi", game: "bag-at-the-door", item: FAN_EPISODE.completionItem, extra: { completed: true } },
+    { kid: "gabi", game: FAN_EPISODE.gameId, item: FAN_EPISODE.completionItem, extra: { completed: false } }
+  ]);
+  assert.equal((await done(4)).body.notYet, true);
+  const before = structuredClone((await store.get("classroom/kid/gabi", { type: "json" })).steps);
+  await finish(store, "gabi", FAN_EPISODE.gameId, FAN_EPISODE.completionItem, at("2026-11-09T15:00:00Z", 5));
+  assert.equal((await done(6)).body.ok, true);
+  const saved = await store.get("classroom/kid/gabi", { type: "json" });
+  assert.equal(saved.episodes[FAN_EPISODE.gameId], "2026-11-09");
+  assert.deepEqual(saved.steps, before, "a finished episode is not mastery");
+  const later = await call(store, "gabi", { action: "today" }, at("2026-11-09T18:00:00Z"));
+  assert.equal(later.body.cards.find((entry) => entry.id === card.id).done, true);
+  assert.equal(later.body.dose.parts.find((part) => part.id === "ela").done, true);
+  const wednesday = await call(store, "gabi", { action: "today" }, at("2026-11-11T15:00:00Z"));
+  assert.equal(wednesday.body.cards.some((entry) => entry.gameId === FAN_EPISODE.gameId), false);
+});
+
+test("a missed story day waits: the same episode comes back on the next story day", async () => {
+  const store = memoryStore();
+  const monday = await call(store, "connor", { action: "today" }, at("2026-11-09T15:00:00Z"));
+  assert.deepEqual(ela(monday.body), [SAIL_EPISODE.gameId]);
+  const wednesday = await call(store, "connor", { action: "today" }, at("2026-11-11T15:00:00Z"));
+  assert.deepEqual(ela(wednesday.body), [SAIL_EPISODE.gameId]);
+});
+
+test("a finish outside Joyce's card is found the next morning", async () => {
+  const store = memoryStore();
+  // Sunday evening in Chicago is already Monday in UTC.
+  await finish(store, "connor", SAIL_EPISODE.gameId, SAIL_EPISODE.completionItem, at("2026-11-09T01:30:00Z"));
+  const monday = await call(store, "connor", { action: "today" }, at("2026-11-09T15:00:00Z"));
+  assert.equal(monday.body.cards.some((entry) => entry.gameId === SAIL_EPISODE.gameId), false);
+  assert.deepEqual(ela(monday.body), ["lost-helpers"]);
+  const saved = await store.get("classroom/kid/connor", { type: "json" });
+  assert.equal(saved.episodes[SAIL_EPISODE.gameId], "2026-11-08");
+});
+
+test("practice games get the sounds and words of episodes finished in the last two weeks", async () => {
+  const gabi = focusFor("gabi", { episodes: { "fan-at-the-fork": "2026-11-09" } }, "2026-11-10");
+  assert.deepEqual(gabi.sounds, ["f", "d"]);
+  assert.deepEqual(gabi.words, ["fan", "fin", "fit", "pad", "sad", "did", "dim"]);
+  assert.equal(gabi.until, "2026-11-23");
+  assert.deepEqual(focusFor("gabi", {}, "2026-11-16").sounds, [], "the boost ends after 14 days");
+  assert.deepEqual(focusFor("connor", {}, "2026-11-09").sounds, ["a"]);
+  assert.deepEqual(focusFor("max", {}, "2026-11-09"), { kid: "max", sounds: [], words: [], episodes: [], until: null });
+
+  const store = memoryStore();
+  const asked = await call(store, "connor", { action: "focus" }, at("2026-11-09T14:00:00Z"));
+  assert.equal(asked.status, 200);
+  assert.deepEqual(asked.body.sounds, ["a"]);
+  const saved = await store.get("classroom/kid/connor", { type: "json" });
+  assert.equal(saved.days?.["2026-11-09"]?.board, undefined, "asking for focus does not pin the board");
+});
+
+test("today's story is pinned with the board", async () => {
+  const store = memoryStore();
+  await call(store, "connor", { action: "today" }, at("2026-11-09T15:00:00Z"));
+  const saved = await store.get("classroom/kid/connor", { type: "json" });
+  assert.equal(saved.days["2026-11-09"].board.lark, SAIL_EPISODE.gameId);
+  saved.episodes = { [SAIL_EPISODE.gameId]: "2026-11-09" };
+  await store.setJSON("classroom/kid/connor", saved);
+  const again = await call(store, "connor", { action: "today" }, at("2026-11-09T16:00:00Z"));
+  assert.deepEqual(ela(again.body), [SAIL_EPISODE.gameId]);
+  const tuesday = await call(store, "connor", { action: "today" }, at("2026-11-10T15:00:00Z"));
+  assert.equal((await store.get("classroom/kid/connor", { type: "json" })).days["2026-11-10"].board.lark, null);
+  assert.deepEqual(ela(tuesday.body), ["hatch-match"]);
+});
+
+test("an episode is the second mission, and the day card can fetch its opening pictures", () => {
+  for (const kidId of ["connor", "gabi"]) {
+    const day = buildDay({ kidId, date: "2026-11-09" });
     assert.deepEqual(day.dose.parts.slice(0, 2).map((part) => part.id), ["math", "ela"], kidId);
-    for (const href of reading[0].prefetch) {
+    const story = day.cards.find((card) => card.part === "ela");
+    assert.ok(story.prefetch.length > 0);
+    for (const href of story.prefetch) {
       assert.ok(href.endsWith(`?v=${STORY_ASSET_REV}`));
       assert.ok(readFileSync(new URL(href, import.meta.url)).length > 0, href);
     }
   }
-  assert.equal(FAN_COMPLETION, FAN_EPISODE.completionItem);
+  assert.deepEqual(buildDay({ kidId: "gabi", date: "2026-11-10" }).dose.parts[0].id, "ela");
+});
+
+test("weekends, earlier days, and the other children are left alone", () => {
+  assert.equal(buildDay({ kidId: "gabi", date: "2026-11-14" }).dose, null);
+  assert.equal(buildDay({ kidId: "connor", date: "2026-11-15" }).dose, null);
+  assert.equal(buildDay({ kidId: "connor", date: "2026-10-30" }).cards.some((card) => card.gameId === "sail-that-wouldnt-stay"), false);
   for (const kidId of ["max", "ethan"]) {
-    assert.equal(buildDay({ kidId, date }).cards.some((card) => card.gameId === FAN_EPISODE.gameId || card.gameId === SAIL_EPISODE.gameId), false);
+    for (const date of STORY_DAYS) {
+      assert.equal(buildDay({ kidId, date }).cards.some((card) => SERIES.connor.concat(SERIES.gabi).some((entry) => entry.gameId === card.gameId)), false);
+    }
   }
-  for (const otherDate of [...Object.keys(EPISODE), ...USUAL, "2026-11-04"]) {
-    assert.equal(buildDay({ kidId: "gabi", date: otherDate }).cards.some((card) => card.gameId === FAN_EPISODE.gameId), false, otherDate);
-  }
-});
-
-test("S2E2 needs Gabi's real episode finish", async () => {
-  const store = memoryStore();
-  const start = Date.parse("2026-11-09T15:00:00Z");
-  const call = (body, seconds) => handleClassroom({ store, env: {}, body: { kid: "gabi", ...body }, now: new Date(start + seconds * 1000) });
-  const today = await call({ action: "today" }, 0);
-  const card = today.body.cards.find((entry) => entry.gameId === FAN_EPISODE.gameId);
-  const done = (seconds) => call({ action: "card", cardId: card.id, status: "done" }, seconds);
-  const events = (seconds, rows) => store.setJSON(`events/2026-11-09/${start + seconds * 1000}-story`, rows);
-  const completion = { kid: "gabi", game: FAN_EPISODE.gameId, skill: "Story participation", item: FAN_COMPLETION, correct: null, extra: { episode: FAN_EPISODE.id, completed: true } };
-  assert.equal((await done(1)).body.notYet, true);
-  await call({ action: "open", cardId: card.id }, 2);
-  await events(3, [{ ...completion, kid: "connor" }, { ...completion, game: "bag-at-the-door" }, { ...completion, extra: { completed: false } }]);
-  assert.equal((await done(4)).body.notYet, true);
-  await events(5, [completion]);
-  assert.equal((await done(6)).body.ok, true);
-  const after = await call({ action: "today" }, 7);
-  assert.equal(after.body.cards.find((entry) => entry.id === card.id).done, true);
-  assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
-});
-
-test("S1E3 needs Connor's real episode finish and does not grant reading mastery", async () => {
-  const store = memoryStore();
-  const start = Date.parse("2026-11-04T15:00:00Z");
-  const call = (body, seconds) => handleClassroom({ store, env: {}, body: { kid: "connor", ...body }, now: new Date(start + seconds * 1000) });
-  const today = await call({ action: "today" }, 0);
-  const card = today.body.cards.find((entry) => entry.gameId === SAIL_EPISODE.gameId);
-  const done = (seconds) => call({ action: "card", cardId: card.id, status: "done" }, seconds);
-  const events = (seconds, rows) => store.setJSON(`events/2026-11-04/${start + seconds * 1000}-story`, rows);
-  const completion = { kid: "connor", game: SAIL_EPISODE.gameId, skill: "Story participation", item: SAIL_COMPLETION, correct: null, extra: { episode: SAIL_EPISODE.id, completed: true } };
-  assert.equal((await done(1)).body.notYet, true);
-  await call({ action: "open", cardId: card.id }, 2);
-  await events(3, [
-    { ...completion, kid: "gabi" },
-    { ...completion, game: "moon-path" },
-    { ...completion, item: "sail-that-wouldnt-stay:new-s", correct: true },
-    { ...completion, extra: { completed: false } }
-  ]);
-  assert.equal((await done(4)).body.notYet, true);
-  const before = structuredClone((await store.get("classroom/kid/connor", { type: "json" })).steps);
-  await events(5, [completion]);
-  assert.equal((await done(6)).body.ok, true);
-  const after = await call({ action: "today" }, 7);
-  assert.equal(after.body.cards.find((entry) => entry.id === card.id).done, true);
-  assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
-  assert.equal(after.body.dose.parts.find((part) => part.id === "math").done, false);
-  assert.deepEqual((await store.get("classroom/kid/connor", { type: "json" })).steps, before);
-});
-
-test("Connor and Gabi get a produced episode only on the story days that have one", () => {
-  for (const [date, [connorGame, gabiGame]] of Object.entries(EPISODE)) {
-    const connor = buildDay({ kidId: "connor", date });
-    const gabi = buildDay({ kidId: "gabi", date });
-    assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.gameId), [connorGame], date);
-    assert.deepEqual(gabi.cards.filter((card) => card.part === "ela").map((card) => card.gameId), [gabiGame], date);
-    assert.equal(connor.cards.some((card) => card.stepId === "connor-count-5"), true);
-    assert.equal(gabi.cards.some((card) => card.stepId === "gabi-count-10"), true);
-    assert.match(connor.cards.find((card) => card.kind === "move").say, /Then tap I did it\.$/);
-    assert.match(gabi.cards.find((card) => card.kind === "move").say, /Then tap I did it\.$/);
-    assert.equal(gabi.cards.some((card) => card.gameId === "otter-slide"), false);
-  }
-});
-
-test("other school days keep Moon Path, Otter Slide, and the games already on the board", () => {
-  for (const date of USUAL) {
-    const connor = buildDay({ kidId: "connor", date });
-    const gabi = buildDay({ kidId: "gabi", date });
-    assert.equal(connor.cards.find((card) => card.part === "ela").gameId, "moon-path", date);
-    assert.equal(gabi.cards.find((card) => card.part === "ela").gameId, "otter-slide", date);
-    assert.equal(connor.cards.some((card) => String(card.href || "").includes("lark-play")), false, date);
-    assert.equal(gabi.cards.some((card) => String(card.href || "").includes("lark-play")), false, date);
-    assert.equal(connor.cards.some((card) => card.stepId === "connor-count-5"), true, date);
-    assert.equal(gabi.cards.some((card) => card.stepId === "gabi-count-10"), true, date);
-  }
-});
-
-test("a Lark and Nib episode is the second mission, and the day card can fetch its opening pictures", () => {
-  for (const date of [...Object.keys(EPISODE), ...USUAL]) {
-    const connor = buildDay({ kidId: "connor", date });
-    assert.deepEqual(connor.dose.parts.slice(0, 2).map((part) => part.id), ["math", "ela"], date);
-    const story = connor.cards.find((card) => card.part === "ela");
-    assert.ok(story.prefetch?.some((href) => href.includes(`/assets/camp.png?v=${STORY_ASSET_REV}`) || href.includes(`/assets/orchard.png?v=${STORY_ASSET_REV}`)), date);
-    assert.ok(story.prefetch.every((href) => href.includes(`?v=${STORY_ASSET_REV}`)));
-  }
-  for (const [date] of Object.entries(EPISODE)) {
-    const gabi = buildDay({ kidId: "gabi", date });
-    assert.deepEqual(gabi.dose.parts.slice(0, 2).map((part) => part.id), ["math", "ela"], date);
-    const story = gabi.cards.find((card) => card.part === "ela");
-    assert.ok(story.prefetch.some((href) => href.includes(`library.png?v=${STORY_ASSET_REV}`)));
-  }
-  for (const date of USUAL) {
-    assert.equal(buildDay({ kidId: "gabi", date }).dose.parts[0].id, "ela", date);
-  }
-  const html = [
-    "apple-catcher/index.html",
-    "bag-at-the-door/index.html"
-  ].map((file) => readFileSync(new URL(`../${file}`, import.meta.url), "utf8")).join("\n");
-  assert.equal(html.includes("assets/") && html.includes(".png\""), false);
-});
-
-test("the plan leaves earlier days, weekends, and the other children alone", () => {
-  assert.equal(buildDay({ kidId: "connor", date: "2026-10-30" }).cards.find((card) => card.part === "ela").gameId, "moon-path");
-  assert.equal(buildDay({ kidId: "gabi", date: "2026-11-07" }).dose, null);
-  assert.equal(buildDay({ kidId: "connor", date: "2026-11-08" }).dose, null);
-  assert.equal(buildDay({ kidId: "max", date: "2026-11-02" }).cards[0].kind, "app");
-  assert.equal(buildDay({ kidId: "ethan", date: "2026-11-04" }).cards.some((card) => String(card.gameId || "").startsWith("lark-")), false);
 });

@@ -105,8 +105,11 @@ export const SOUND_GROUPS = [
   ["g", "h", "i", "j", "k", "l"]
 ];
 
-export function soundRound(letters, rng) {
-  const answer = letters[Math.floor(rng() * letters.length)];
+// `focus` letters (from a recent Lark and Nib episode) are the answer three times as often.
+export function soundRound(letters, rng, focus = []) {
+  const weights = letters.map((letter) => (focus.includes(letter) ? 3 : 1));
+  let x = rng() * weights.reduce((a, b) => a + b, 0);
+  const answer = letters.find((_, i) => (x -= weights[i]) < 0) ?? letters.at(-1);
   const wrong = shuffle(rng, letters.filter((letter) => letter !== answer)).slice(0, 2);
   return { answer, sound: SOUND[answer], choices: shuffle(rng, [answer, ...wrong]) };
 }

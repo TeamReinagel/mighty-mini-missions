@@ -1,5 +1,7 @@
 # Lark and Nib, November 2–13, 2026
 
+**Replaced on November 8, 2026.** Joyce no longer follows this calendar. Each story day gives a child their next unfinished episode from `lark-play/episodes.mjs`, and The Moon Path is no longer Connor's reading card. See the README's Today with Joyce section. This page is kept as the record of the first two weeks.
+
 On a Lark and Nib day the episode is the second mission, after counting or math. The day screen starts the opening pictures while that first mission is up.
 
 Monday, Wednesday, and Friday can hold a produced episode. The Apple Catcher and The Bag at the Door stay on the story days below. Tuesday, Thursday, and a story day that is still waiting for the next episode use the games already in Today with Joyce: Moon Path for Connor, Otter Slide for Gabi, with counting and the usual bonus and move card.

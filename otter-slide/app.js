@@ -270,7 +270,15 @@ function replay(el, cls) {
 }
 
 // ---------- which words, how many pictures ----------
-const pool = () => (state.settings.words === 'all' ? ORDER : state.intro);
+// Words from a Lark and Nib episode she finished in the last two weeks join the pond and come
+// up more often (shared/focus.js). Words that start with the episode's new sound get a smaller nudge.
+const focus = () => window.MightyFocus?.get(kid.id) || { sounds: [], words: [] };
+const focusWords = () => focus().words.filter((w) => ORDER.includes(w));
+const isFocus = (w) => focusWords().includes(w);
+const pool = () => {
+  const base = state.settings.words === 'all' ? ORDER : state.intro;
+  return [...base, ...focusWords().filter((w) => !base.includes(w))];
+};
 const shared = (a, b) => [0, 1, 2].filter((i) => a[i] === b[i]).length;
 
 // Add the next word once she knows all but one of the current ones.
@@ -291,13 +299,21 @@ function weight(w) {
   if (R.s < STAR) return 2;
   return 1;
 }
+function focusWeight(w) {
+  if (isFocus(w)) return weight(w) * 3;
+  if (focus().sounds.includes(w[0])) return weight(w) * 2;
+  return weight(w);
+}
 function pickTarget() {
   const all = pool();
   const avoid = session.recent.slice(0, all.length >= 6 ? 2 : 1);
   const list = all.filter((w) => !avoid.includes(w));
-  const total = list.reduce((a, w) => a + weight(w), 0);
+  // Each raft starts with one episode word, when there is one.
+  const fresh = session.focusSeen ? [] : list.filter(isFocus);
+  if (fresh.length) { session.focusSeen = true; return pick(fresh); }
+  const total = list.reduce((a, w) => a + focusWeight(w), 0);
   let x = Math.random() * total;
-  for (const w of list) { x -= weight(w); if (x < 0) return w; }
+  for (const w of list) { x -= focusWeight(w); if (x < 0) return w; }
   return list[list.length - 1];
 }
 // Level 1: two very different pictures. Level 4: a near-twin (cat / cap) that only full blending tells apart.
