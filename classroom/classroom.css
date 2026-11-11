@@ -701,6 +701,40 @@ a.card {
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
+.grown-up-link {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  min-height: 44px;
+  padding: 8px 4px;
+}
+
+.parent-input,
+.parent-note {
+  display: block;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 14px 16px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  font: inherit;
+  font-size: 1.25rem;
+  color: var(--ink);
+  background: white;
+}
+
+.parent-note {
+  resize: vertical;
+  min-height: 5.5rem;
+}
+
 .day-banner {
   position: fixed;
   z-index: 7;

@@ -744,12 +744,14 @@ function markDone(cards, state, date) {
   const day = state.days?.[date] || {};
   const done = new Set(day.done || []);
   const eased = new Set(day.eased || []);
+  // Parent skip (and quit) clears the card for today's dose without claiming the skill.
   const skipped = new Set([...(day.skipped || []), ...(day.quit || [])]);
   return cards.map((card) => ({
     ...card,
-    done: done.has(card.id) || eased.has(card.id),
+    done: done.has(card.id) || eased.has(card.id) || skipped.has(card.id),
     eased: eased.has(card.id),
     skipped: skipped.has(card.id),
+    skipNote: day.skipNotes?.[card.id]?.note || "",
     opened: Boolean(day.opened?.[card.id])
   }));
 }
@@ -1094,6 +1096,10 @@ function liveLeft(state, date, env = {}) {
   return Math.max(0, Math.round((cap - used) / 60));
 }
 
+function sameItem(a, b) {
+  return String(a || "").toLowerCase() === String(b || "").toLowerCase();
+}
+
 function grade(item, picked, promptIndex, unsure) {
   if (!item) return null;
   if (item.type === "story") return true;
@@ -1104,6 +1110,8 @@ function grade(item, picked, promptIndex, unsure) {
     return String(picked) === String(prompt.answer);
   }
   if (item.type === "build" || item.type === "read") return String(picked || "").toLowerCase().replace(/[^a-z]/g, "") === String(item.answer).toLowerCase();
+  // Letter name/sound choices keep the letter case-insensitive so a capital tile still counts.
+  if (item.type === "choice" && String(item.answer || "").length <= 2) return sameItem(picked, item.answer);
   return String(picked) === String(item.answer);
 }
 
@@ -1128,9 +1136,9 @@ function lessonAnswered(state, lesson, date) {
   for (const item of lesson.items || []) {
     if (item.type === "regroup") {
       for (const prompt of item.prompts || []) {
-        if (!hits.some((entry) => entry.item === `${item.item} ${prompt.id}`)) return false;
+        if (!hits.some((entry) => sameItem(entry.item, `${item.item} ${prompt.id}`))) return false;
       }
-    } else if (!hits.some((entry) => entry.item === item.item)) return false;
+    } else if (!hits.some((entry) => sameItem(entry.item, item.item))) return false;
   }
   return (lesson.items || []).length > 0;
 }
@@ -1448,6 +1456,11 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const target = preview?.cards?.find((card) => card.id === cardId);
     const lesson = target?.kind === "lesson" ? target : null;
     const day = { done: [], skipped: [], quit: [], eased: [], ...(state.days?.[date] || {}) };
+    const skipNote = String(body.note || "").trim().slice(0, 280);
+    if (status === "skipped") {
+      if (!target) return { status: 400, body: { error: "That mission isn't on today's board." } };
+      if (skipNote.length < 3) return { status: 400, body: { error: "Add a short note about why you're skipping." } };
+    }
     if (status === "done" && lesson && !lessonAnswered(state, lesson, date)) {
       return { status: 200, body: { ok: false, redo: true, say: "That one isn't finished yet. We'll do each part." } };
     }
@@ -1483,6 +1496,16 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     }
     for (const key of ["done", "skipped", "quit", "eased"]) day[key] = (day[key] || []).filter((id) => id !== cardId);
     day[status].push(cardId);
+    if (status === "skipped") {
+      day.skipNotes = {
+        ...(day.skipNotes || {}),
+        [cardId]: { note: skipNote, at: now.toISOString(), title: target?.title || cardId }
+      };
+    } else if (day.skipNotes?.[cardId]) {
+      const notes = { ...day.skipNotes };
+      delete notes[cardId];
+      day.skipNotes = notes;
+    }
     state.days = { ...(state.days || {}), [date]: day };
     if (finishedEpisode) recordFinished(state, target.gameId, date);
     if (status === "done" && target?.kind === "check") {
@@ -1495,7 +1518,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (status === "done") spotFinished(state, plan, kidId, target?.stepId, date);
     const today = buildDay({ kidId, date, state, plan });
     const complete = Boolean(today.dose?.complete);
-    let said = status === "skipped" ? "We'll leave that one. Nothing wrong with switching." : "Saved.";
+    let said = status === "skipped" ? "Okay. A grown-up skipped that one for today." : "Saved.";
     if (status === "eased") said = "We'll stop that one for today. You worked hard on it.";
     if (status === "done" && lesson?.skill === "Blending CVC words") {
       said = "You built the words. Otter Slide is next. Slide the sounds together.";
@@ -1714,10 +1737,23 @@ function dayStats(state) {
   const rows = Object.values(state.days || {});
   let early = 0;
   for (const day of rows) {
-    const left = (day.quit?.length || 0) + (day.skipped?.length || 0);
+    // Parent-noted skips are intentional and do not count as leaving early.
+    const noted = new Set(Object.keys(day.skipNotes || {}));
+    const left = (day.quit?.length || 0) + (day.skipped || []).filter((id) => !noted.has(id)).length;
     if (left > (day.done?.length || 0)) early += 1;
   }
   return early;
+}
+
+function recentSkipNotes(state) {
+  const rows = Object.entries(state.days || {}).sort(([a], [b]) => b.localeCompare(a)).slice(0, 7);
+  const notes = [];
+  for (const [day, bucket] of rows) {
+    for (const entry of Object.values(bucket.skipNotes || {})) {
+      if (entry?.note) notes.push(`${entry.title || "a mission"} (${day}): ${entry.note}`);
+    }
+  }
+  return notes.slice(0, 4);
 }
 
 export function conferencePackage({ roster, plan = emptyPlan(), date = "" }) {
@@ -1729,6 +1765,8 @@ export function conferencePackage({ roster, plan = emptyPlan(), date = "" }) {
     const bits = [];
     if (mastered.length) bits.push(`finished ${mastered.slice(-3).map((item) => item.title).join(", ")}`);
     if (open.length) bits.push(`working on ${open.map((item) => item.title).join(" and ")}`);
+    const skips = recentSkipNotes(state || {});
+    if (skips.length) bits.push(`parent skipped ${skips.join("; ")}`);
     if (id === "max" && state?.readingLesson) bits.push(`Reading.com lesson ${state.readingLesson}`);
     const mapped = skillMap({
       stepDefs: allSteps(id),

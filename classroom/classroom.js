@@ -299,13 +299,20 @@ function missionTrack() {
   };
 }
 
+function missionStatus(item) {
+  if (!item.done) return KIND_LABEL[item.kind] || "Mission";
+  if (item.skipped) return "Skipped today";
+  if (item.eased) return "Stopped today";
+  return "Done";
+}
+
 function missionRow(item, tone, interactive = true) {
   const row = el(interactive ? "button" : "div", `card mission-row ${tone}`);
   if (interactive) row.type = "button";
   row.append(iconMark(item.done ? "done" : KIND_ICON[item.kind] || "lesson"));
   const copy = el("span", "mission-copy");
   copy.append(el("strong", "", item.done ? `${item.title} ✓` : item.title));
-  copy.append(el("span", "", item.done ? "Done" : KIND_LABEL[item.kind] || "Mission"));
+  copy.append(el("span", "", missionStatus(item)));
   row.append(copy);
   if (interactive) row.addEventListener("click", () => openCard(item));
   return row;
@@ -619,6 +626,7 @@ function renderWrite() {
   });
   const row = el("div", "actions");
   row.append(wrote, again, back);
+  addGrownUp(row);
   const paper = el("a", "paper-link", "Grown-up: print writing paper");
   paper.href = card.paperHref;
   paper.target = "_blank";
@@ -722,6 +730,7 @@ function renderCheckIntro() {
   });
   const row = el("div", "actions");
   row.append(go, back);
+  addGrownUp(row);
   panel.append(row);
   say(card.say);
 }
@@ -752,6 +761,114 @@ function shell(title) {
   return panel;
 }
 
+function parentMath() {
+  const a = 12 + Math.floor(Math.random() * 17);
+  const b = 8 + Math.floor(Math.random() * 14);
+  return { prompt: `${a} + ${b}`, answer: a + b };
+}
+
+function grownUpLink(onOpen) {
+  const link = el("button", "grown-up-link", "Grown-up");
+  link.type = "button";
+  link.addEventListener("click", onOpen);
+  return link;
+}
+
+function renderParentSkip() {
+  if (!card) return;
+  teachGen += 1;
+  hush();
+  const panel = shell(card.title);
+  const gate = parentMath();
+  panel.append(el("p", "prompt", "Grown-up check"));
+  panel.append(el("p", "joyce-line", `What is ${gate.prompt}?`));
+  const answer = el("input", "parent-input");
+  answer.type = "number";
+  answer.inputMode = "numeric";
+  answer.autocomplete = "off";
+  answer.setAttribute("aria-label", `What is ${gate.prompt}?`);
+  const note = el("textarea", "parent-note");
+  note.rows = 3;
+  note.maxLength = 280;
+  note.placeholder = "Why are we skipping this today?";
+  note.hidden = true;
+  const status = el("p", "feedback");
+  status.id = "feedback";
+  const unlock = btn("go", "done", "Check");
+  const skip = btn("go", "stop", "Skip for today");
+  skip.hidden = true;
+  const back = btn("quiet", "back", "Back");
+  back.addEventListener("click", () => {
+    hush();
+    if (card.kind === "check") renderCheckIntro();
+    else if (card.kind === "lesson" && card.beats?.length) renderTeach();
+    else if (card.kind === "lesson") renderItem();
+    else if (card.kind === "write") renderWrite();
+    else renderSimple();
+  });
+  unlock.addEventListener("click", () => {
+    if (Number(answer.value) !== gate.answer) {
+      status.textContent = "Not that number. Try again.";
+      status.className = "feedback no";
+      answer.value = "";
+      answer.focus();
+      return;
+    }
+    status.textContent = "Add a short note, then skip.";
+    status.className = "feedback yes";
+    answer.disabled = true;
+    unlock.hidden = true;
+    note.hidden = false;
+    skip.hidden = false;
+    note.focus();
+  });
+  skip.addEventListener("click", () => {
+    const why = note.value.trim();
+    if (why.length < 3) {
+      status.textContent = "Write a short note first.";
+      status.className = "feedback no";
+      note.focus();
+      return;
+    }
+    finish("skipped", false, why);
+  });
+  const row = el("div", "actions");
+  row.append(unlock, skip, back);
+  panel.append(answer, note, status, row);
+  answer.focus();
+}
+
+function renderStuckFinish(line) {
+  const panel = shell(card?.title || day.name);
+  panel.append(el("p", "prompt", line || "That one isn't finished yet."));
+  panel.append(el("p", "joyce-line", "Go back to the board, keep going, or ask a grown-up to skip it for today."));
+  const again = btn("go", "turn", "Keep going");
+  again.addEventListener("click", () => {
+    index = 0;
+    promptIndex = 0;
+    built = [];
+    helps = 0;
+    if (card.beats?.length) renderTeach();
+    else renderItem();
+  });
+  const board = btn("quiet", "back", "Back to board");
+  board.addEventListener("click", () => {
+    hush();
+    renderBoard();
+  });
+  const grown = grownUpLink(renderParentSkip);
+  const row = el("div", "actions");
+  row.append(again, board, grown);
+  panel.append(row);
+  say(line || "That one isn't finished yet.");
+}
+
+function addGrownUp(row) {
+  if (!card || card.done) return row;
+  row.append(grownUpLink(renderParentSkip));
+  return row;
+}
+
 function renderSimple() {
   const panel = shell(card.title);
   const soon = gameSoonLine();
@@ -770,7 +887,10 @@ function renderSimple() {
       const done = btn("go", "done", "I'm done");
       unlockDone(done, link);
       done.addEventListener("click", () => askLesson(panel));
-      panel.append(done);
+      const row = el("div", "actions");
+      row.append(done);
+      addGrownUp(row);
+      panel.append(row);
       return;
     }
     const done = btn("go", "done", "I'm done");
@@ -778,13 +898,19 @@ function renderSimple() {
     done.addEventListener("click", () => finish("done"));
     const back = btn("quiet", "back", "Back");
     back.addEventListener("click", renderBoard);
-    panel.append(done, back);
+    const row = el("div", "actions");
+    row.append(done, back);
+    addGrownUp(row);
+    panel.append(row);
     return;
   }
   if (card.askLesson) {
     const done = btn("go", "done", "I'm done");
     done.addEventListener("click", () => askLesson(panel));
-    panel.append(done);
+    const row = el("div", "actions");
+    row.append(done);
+    addGrownUp(row);
+    panel.append(row);
     return;
   }
   const done = card.kind === "move"
@@ -799,7 +925,10 @@ function renderSimple() {
   }
   const back = btn("quiet", "back", "Back");
   back.addEventListener("click", renderBoard);
-  panel.append(done, back);
+  const row = el("div", "actions");
+  row.append(done, back);
+  addGrownUp(row);
+  panel.append(row);
 }
 
 function askLesson(panel) {
@@ -876,6 +1005,7 @@ function renderTeach() {
   });
   const row = el("div", "actions");
   row.append(go, again, back);
+  addGrownUp(row);
   panel.append(row);
   const gen = teachGen;
   speakBeats(beat, gen);
@@ -918,6 +1048,7 @@ function renderItem() {
   const back = btn("quiet", "back", "Back");
   back.addEventListener("click", renderBoard);
   row.append(help, again, back);
+  addGrownUp(row);
   panel.append(note, row);
   armIdle();
 }
@@ -1326,7 +1457,7 @@ function unlockDone(done, link) {
   link.addEventListener("click", () => { done.disabled = false; });
 }
 
-async function finish(status, retried = false) {
+async function finish(status, retried = false, note = "") {
   if (!card || busy) return;
   busy = true;
   clearIdle();
@@ -1334,16 +1465,12 @@ async function finish(status, retried = false) {
     if (status === "done" && (card.kind === "game" || card.kind === "app")) {
       try { await window.MightyProgress?.flush?.(); } catch { /* The card check still runs. */ }
     }
-    const data = await api("card", { cardId: card.id, status });
+    const payload = { cardId: card.id, status };
+    if (status === "skipped" && note) payload.note = note;
+    const data = await api("card", payload);
     if (data.redo) {
-      say(data.say);
-      index = 0;
-      promptIndex = 0;
-      built = [];
-      helps = 0;
       busy = false;
-      if (card.beats?.length) renderTeach();
-      else renderItem();
+      renderStuckFinish(data.say);
       return;
     }
     if (data.notYet) {
@@ -1352,14 +1479,14 @@ async function finish(status, retried = false) {
       if (card.kind === "game" && !retried) {
         feedback(app, "Checking...", "");
         await pause(4000);
-        return finish(status, true);
+        return finish(status, true, note);
       }
       feedback(app, data.say, "no");
       say(data.say);
       return;
     }
     const finishedId = card.id;
-    const finishing = status === "done" || status === "eased";
+    const finishing = status === "done" || status === "eased" || status === "skipped";
     day = await api("today");
     warmStory(day);
     hush();
@@ -1372,7 +1499,7 @@ async function finish(status, retried = false) {
       say(`All missions done, ${day.name}!`);
     } else {
       renderBoard({ celebrateId: finishedId });
-      say(missionCheer(data.say));
+      say(status === "skipped" ? data.say : missionCheer(data.say));
     }
   } catch (err) {
     busy = false;

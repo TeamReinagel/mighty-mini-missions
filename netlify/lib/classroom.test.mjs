@@ -258,6 +258,76 @@ test("a lesson can be eased only after Joyce has called for help", async () => {
   assert.equal(after.body.dose.parts.find((part) => part.id === "math").done, true);
 });
 
+test("a parent can skip a lesson with a note and clear today's dose without mastery", async () => {
+  const store = memoryStore();
+  const now = at("2026-10-19T15:00:00Z");
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now });
+  const lesson = first.body.cards.find((card) => card.stepId === "connor-names-1");
+  assert.equal(lesson.kind, "lesson");
+  const missing = await handleClassroom({
+    store,
+    env: {},
+    body: { action: "card", kid: "connor", cardId: lesson.id, status: "skipped" },
+    now
+  });
+  assert.equal(missing.status, 400);
+  const skipped = await handleClassroom({
+    store,
+    env: {},
+    body: { action: "card", kid: "connor", cardId: lesson.id, status: "skipped", note: "Tired and melting after three letter questions." },
+    now
+  });
+  assert.equal(skipped.body.ok, true);
+  assert.match(skipped.body.say, /grown-up skipped/i);
+  const after = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now });
+  const card = after.body.cards.find((entry) => entry.id === lesson.id);
+  assert.equal(card.done, true);
+  assert.equal(card.skipped, true);
+  assert.match(card.skipNote, /Tired and melting/);
+  assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
+  const saved = await store.get("classroom/kid/connor", { type: "json" });
+  assert.equal(saved.steps?.["connor-names-1"]?.mastered, undefined);
+  assert.equal(saved.days[MONDAY].skipNotes[lesson.id].note.includes("Tired"), true);
+  const report = conferencePackage({
+    roster: [{ id: "connor", name: "Connor", state: saved }],
+    date: MONDAY
+  });
+  assert.match(report.summary, /parent skipped.*Letter names/i);
+});
+
+test("Connor's letter-name answers count when the tile case differs", async () => {
+  const store = memoryStore();
+  const now = at("2026-10-19T15:00:00Z");
+  const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now });
+  const lesson = first.body.cards.find((card) => card.stepId === "connor-names-1");
+  let t = now.getTime();
+  for (const [i, item] of lesson.items.entries()) {
+    t += 2000;
+    const out = await handleClassroom({
+      store,
+      env: {},
+      body: {
+        action: "answer",
+        kid: "connor",
+        stepId: lesson.stepId,
+        item: item.item,
+        index: i,
+        picked: String(item.answer).toUpperCase()
+      },
+      now: new Date(t)
+    });
+    assert.equal(out.body.correct, true);
+  }
+  const done = await handleClassroom({
+    store,
+    env: {},
+    body: { action: "card", kid: "connor", cardId: lesson.id, status: "done" },
+    now: new Date(t + 2000)
+  });
+  assert.equal(done.body.ok, true);
+  assert.equal(done.body.redo, undefined);
+});
+
 test("one bonus finishes the dose, and the room is done when everyone who started is done", async () => {
   const store = memoryStore();
   const start = "2026-10-19T15:00:00Z";
