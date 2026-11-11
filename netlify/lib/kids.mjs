@@ -1,5 +1,6 @@
 import { MILESTONES } from "./milestones.mjs";
 import { REVIEW_MILESTONES, baselineNote } from "./baselines.mjs";
+import { READINESS_AREAS, READINESS_GRADE, READINESS_ITEMS } from "./readiness-checklist.mjs";
 
 // Who Joyce reports on, and which milestone sheets guide "what to introduce next".
 // `id` must match the profile id in the Mighty Mini Missions app (lowercase name for the defaults).
@@ -30,9 +31,12 @@ export const KIDS = [
     id: "connor",
     name: "Connor",
     age: 3,
-    where: "Today with Joyce leads letter names and sounds, and counting to 10 then 20, more and fewer, and patterns. From November 3, 2026 each school day also has one practice game, rotating Nest Numbers, Big or Little, Basket Sort, Shape Blocks, My Name, and Two Jobs. Preschool Prep and Duck Duck Moose stay available and are not the daily assignment. Counts objects well; counts to 50 on the abacus with prompting.",
-    note: "Kindergarten milestones are a far horizon for Connor. Suggest only the earliest, playful ones.",
-    guides: [{ grade: "Kindergarten", areas: ["Reading", "Math", "Physical Fitness and Gross Motor Skills", "Life Skills", "Social-Emotional Development", "Practical Arts and Creativity"] }]
+    where: "Today with Joyce follows the Kindergarten Readiness Checklist (Stephanie's 2026-11-09 marks: 19 of 33 met). His board: a Joyce letter lesson (letter names in four groups, then letter sounds; Jungle Jump for sounds A to L), counting to 10 in Sundae Stand until he shows it under the three-day rule, a writing card (lines down, lines across, circles, C, N, R, then CONNOR on big-box paper, two good days to move on), one practice game for a Not sure item (Nest Numbers for numbers 1 to 10, then Basket Sort for sorting), and The Lost Helpers or Hatch Match as a bonus. Lark & Nib episodes on Monday, Wednesday, and Friday. Shapes, colors, comparing, patterns, his name in print, and two-step directions are met. Not yet at home: glue stick. Not sure at home: crayon grip, scissors, small manipulatives, respect for materials, patience.",
+    note: "Connor is 3. Suggest playful, hands-on next steps from his readiness checklist; the Kindergarten sheet starts only after the checklist is done.",
+    guides: [
+      { grade: READINESS_GRADE },
+      { grade: "Kindergarten", areas: ["Reading", "Math", "Physical Fitness and Gross Motor Skills", "Life Skills", "Social-Emotional Development", "Practical Arts and Creativity"], after: READINESS_GRADE }
+    ]
   },
   {
     id: "ethan",
@@ -50,7 +54,7 @@ const areaCode = (area) => area.split(/[ /]/)[0].replace(/:$/, "");
 
 /** Every milestone as { id, grade, month, area, text }. Ids look like "K-Oct-Math-1". */
 export function allMilestones() {
-  const out = [];
+  const out = READINESS_ITEMS.map((item) => ({ ...item, grade: READINESS_GRADE, month: "Checklist" }));
   for (const [grade, sheet] of Object.entries(MILESTONES)) {
     for (const [month, areas] of Object.entries(sheet.months)) {
       for (const [area, goals] of Object.entries(areas)) {
@@ -77,11 +81,13 @@ export function guideFor(kid, metIds, perArea = 3) {
     const open = baselineNote(kid?.id, m.id);
     return open ? { ...m, status: open.status, ...(open.note ? { note: open.note } : {}) } : m;
   };
-  for (const { grade, areas, then } of kid?.guides || []) {
-    for (const area of areas || MILESTONES[grade].areas) {
+  for (const { grade, areas, then, after } of kid?.guides || []) {
+    // A guide with `after` waits until every goal of that earlier list is met.
+    if (after && all.some((m) => m.grade === after && !met.has(m.id))) continue;
+    for (const area of areas || areasOf(grade)) {
       let unmet = all.filter((m) => m.grade === grade && m.area === area && !met.has(m.id));
       // This subject's grade is done: move on to the next grade's same subject.
-      if (!unmet.length && then && MILESTONES[then]?.areas.includes(area)) {
+      if (!unmet.length && then && areasOf(then).includes(area)) {
         unmet = all.filter((m) => m.grade === then && m.area === area && !met.has(m.id));
       }
       next.push(...unmet.slice(0, perArea).map(note));
@@ -89,6 +95,10 @@ export function guideFor(kid, metIds, perArea = 3) {
     }
   }
   return { next, later };
+}
+
+function areasOf(grade) {
+  return grade === READINESS_GRADE ? READINESS_AREAS : MILESTONES[grade]?.areas || [];
 }
 
 // A review month (REVIEW_MILESTONES) is met once the rest of its grade and subject is met.

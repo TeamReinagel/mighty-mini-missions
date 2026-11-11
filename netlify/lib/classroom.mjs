@@ -9,6 +9,7 @@ import { helpLine, itemsFor } from "./classroom-content.mjs";
 import { larkAssignment, larkPick } from "../../lark-play/plan.mjs";
 import { EPISODE_IDS, SERIES, focusFor, recordFinished, seriesFor } from "../../lark-play/episodes.mjs";
 import { paperLabel, recordWrite, writeLesson, writeToday } from "./handwriting.mjs";
+import { prewriteLesson, prewriteMilestones, prewriteStageName, prewriteToday, recordPrewrite } from "./prewriting.mjs";
 import { postCheer } from "./joyce-cheer.mjs";
 import {
   ESSENTIAL, HELP_STEP, PERSIST_STEP, addSpot, applyCheck, checkDue, describeEssential, isEssentialId,
@@ -108,22 +109,31 @@ export const CHAINS = {
       ]
     }
   ],
+  // Connor follows the Kindergarten Readiness Checklist (Stephanie's marks, 2026-11-09).
+  // `milestones` names the checklist items a step closes once every step tagged with it is learned.
   connor: [
     {
       id: "letters",
       steps: [
-        ...letterSteps("connor-names", "hear-name", "connor-names", "Letter names", "Letter names", "I'll say the letter's name. You tap the big letter."),
+        ...letterSteps("connor-names", "hear-name", "connor-names", "Letter names", "Letter names", "I'll say the letter's name. You tap the big letter.")
+          .map((entry) => ({ ...entry, milestones: ["KR-Read-3", "KR-Read-5"] })),
         ...letterSteps("connor-sounds", "hear-sound", "connor-sounds", "Letter sounds", "Letter sounds", "I'll say the sound. You tap the letter.")
+          .map((entry) => ({ ...entry, milestones: ["KR-Read-3"] }))
       ]
     },
     {
       id: "counting",
       steps: [
         step({ id: "connor-count-5", title: "Counting to 5", strand: "connor-count", strandName: "Counting", activity: "count", min: 1, max: 5, skill: "Counting", teach: "Tap each one. I'll count with you.", items: 4, masteryMin: 4, masteryHits: 3 }),
-        step({ id: "connor-count-10", title: "Counting to 10", strand: "connor-count", strandName: "Counting", activity: "count", min: 1, max: 10, skill: "Counting", teach: "A few more this time. Touch each one.", items: 4, cover: true }),
-        step({ id: "connor-count-20", title: "Counting to 20", strand: "connor-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "Big groups. Go slowly.", items: 4, cover: true }),
-        step({ id: "connor-more", title: "More and fewer", strand: "connor-compare", strandName: "Comparing", activity: "compare", skill: "More and fewer", teach: "Which side has more? Count to check.", items: 4, masteryMin: 4, masteryHits: 3 }),
-        step({ id: "connor-patterns", title: "Patterns", strand: "connor-compare", strandName: "Comparing", activity: "pattern", skill: "Patterns", teach: "What comes next? Say it, then tap it.", items: 4, masteryMin: 4, masteryHits: 3 })
+        step({ id: "connor-count-10", title: "Counting to 10", strand: "connor-count", strandName: "Counting", activity: "count", min: 1, max: 10, skill: "Counting", teach: "A few more this time. Touch each one.", items: 4, cover: true, milestones: ["KR-Math-3"] })
+      ]
+    },
+    // The practice stop: checklist items Stephanie marked Not sure that a game can show.
+    {
+      id: "ready",
+      steps: [
+        step({ id: "connor-numbers", title: "Numbers 1 to 10", strand: "connor-ready", strandName: "Readiness", activity: "numbers", skill: "Identifies numbers 1-10", teach: "I'll say a number. You find it.", items: 4, milestones: ["KR-Math-1"] }),
+        step({ id: "connor-sort", title: "Sorting", strand: "connor-ready", strandName: "Readiness", activity: "sort", skill: "Sorting", teach: "Put the ones that go together in the same basket.", items: 4, milestones: ["KR-Math-8"] })
       ]
     }
   ],
@@ -221,18 +231,20 @@ const FREE = {
   ethan: [GAMES.train]
 };
 
-const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: "math", regroup: "math", "g1-math": "math", words: "ela", play: "learn" };
+const PART_OF_CHAIN = { reading: "ela", letters: "ela", math: "math", counting: "math", regroup: "math", "g1-math": "math", words: "ela", ready: "ready", play: "learn" };
 const PART_TITLES = {
   max: { ela: "Reading", math: "Math", write: "Writing" },
   gabi: { ela: "Reading", math: "Math" },
-  connor: { ela: "Reading", math: "Counting", ready: "Practice" },
+  connor: { ela: "Reading", math: "Counting", ready: "Practice", write: "Writing" },
   ethan: { learn: "Learn" }
 };
 const PART_ORDER = ["ela", "math", "write", "learn", "ready", "bonus"];
 const LARK_EPISODES = EPISODE_IDS;
 // Counting or math is mission 1. The story is mission 2, so its pictures can arrive during mission 1.
 const LARK_PART_ORDER = ["math", "ela", "write", "learn", "ready", "bonus"];
-const WRITERS = new Set(["max"]);
+const WRITERS = new Set(["max", "connor"]);
+// Max writes letters by formation family; Connor works through pre-writing strokes to his name.
+const writePlanFor = (kidId, state) => (kidId === "connor" ? prewriteToday(state.prewrite) : writeToday(state.writing));
 
 function partFor(kidId, stepId) {
   const chain = (CHAINS[kidId] || []).find((candidate) => candidate.steps.some((entry) => entry.id === stepId));
@@ -406,9 +418,10 @@ export function seedChecks(kidId, state) {
 export function milestonesFromSteps(kidId, state = {}) {
   const byGoal = new Map();
   for (const def of allSteps(kidId)) {
-    if (!def.milestone) continue;
-    if (!byGoal.has(def.milestone)) byGoal.set(def.milestone, []);
-    byGoal.get(def.milestone).push(def);
+    for (const goal of def.milestones || (def.milestone ? [def.milestone] : [])) {
+      if (!byGoal.has(goal)) byGoal.set(goal, []);
+      byGoal.get(goal).push(def);
+    }
   }
   const met = [];
   for (const [goal, defs] of byGoal) {
@@ -419,6 +432,7 @@ export function milestonesFromSteps(kidId, state = {}) {
     });
     if (done) met.push(goal);
   }
+  if (kidId === "connor") met.push(...prewriteMilestones(state.prewrite));
   return met;
 }
 
@@ -624,8 +638,14 @@ function lessonCard(kidId, item, date, state) {
 }
 
 const STEP_GAMES = {
-  "gabi-count-20": ["flower-beds", "Flower Beds", "../flower-beds/", oneRound("Flower Beds")]
+  "gabi-count-20": ["flower-beds", "Flower Beds", "../flower-beds/", oneRound("Flower Beds")],
+  "connor-numbers": ["nest-numbers", "Nest Numbers", "../nest-numbers/", oneRound("Nest Numbers")],
+  "connor-sort": ["basket-sort", "Basket Sort", "../basket-sort/", oneRound("Basket Sort")]
 };
+
+// Joyce teaches these herself: Hatch Match picks its own letters, and Jungle Jump has
+// levels only for A to F and G to L, so neither can report on these letter groups.
+const JOYCE_TEACHES = new Set(["connor-names-1", "connor-names-2", "connor-names-3", "connor-names-4", "connor-sounds-3", "connor-sounds-4"]);
 
 const SKILL_GAMES = {
   "hear-name": ["hatch-match", "Hatch Match", "../hatch-match/", oneRound("Hatch Match")],
@@ -641,7 +661,7 @@ const SKILL_GAMES = {
 };
 
 function skillCard(kidId, item, date, state) {
-  const spec = STEP_GAMES[item.id] || SKILL_GAMES[item.activity];
+  const spec = JOYCE_TEACHES.has(item.id) ? null : STEP_GAMES[item.id] || SKILL_GAMES[item.activity];
   if (!spec) return lessonCard(kidId, item, date, state);
   const [id, title, href, play] = spec;
   const hands = handsFirst(state, item);
@@ -681,7 +701,7 @@ function moveCard(kidId, date, part) {
 }
 
 function writeCard(date, plan) {
-  const lesson = writeLesson(plan);
+  const lesson = plan.prewrite ? prewriteLesson(plan) : writeLesson(plan);
   return {
     id: `${date}:write`,
     kind: "write",
@@ -818,46 +838,10 @@ function pinBoard(state, kidId, date, plan) {
   day.board = {
     shorter, lessons, check: pinCheck(state, kidId, date),
     ...(seriesFor(kidId).length ? { lark: larkPick(kidId, date, state) } : {}),
-    ...(WRITERS.has(kidId) ? { write: writeToday(state.writing) } : {})
+    ...(WRITERS.has(kidId) ? { write: writePlanFor(kidId, state) } : {})
   };
   state.days = { ...(state.days || {}), [date]: day };
   return true;
-}
-
-// One kindergarten-readiness game each school day, after the story and the counting card.
-// Weekends stay on the usual bonus. The cycle is the checklist order.
-const READINESS_START = "2026-11-03";
-const READINESS = [
-  { id: "nest-numbers", title: "Nest Numbers", href: "../nest-numbers/?kid=connor", say: oneRound("Nest Numbers") },
-  { id: "big-little", title: "Big or Little", href: "../big-little/?kid=connor", say: oneRound("Big or Little") },
-  { id: "basket-sort", title: "Basket Sort", href: "../basket-sort/?kid=connor", say: oneRound("Basket Sort") },
-  { id: "shape-tap", title: "Shape Blocks", href: "../shape-tap/?kid=connor", say: oneRound("Shape Blocks") },
-  { id: "my-name", title: "My Name", href: "../my-name/?kid=connor", say: oneRound("My Name") },
-  { id: "two-jobs", title: "Two Jobs", href: "../two-jobs/?kid=connor", say: oneRound("Two Jobs") }
-];
-
-function readinessGame(date) {
-  if (!date || date < READINESS_START || rhythmFor(weekdayIndex(date)) === "weekend") return null;
-  let index = -1;
-  const [year, month, day] = READINESS_START.split("-").map(Number);
-  const cursor = new Date(Date.UTC(year, month - 1, day));
-  while (cursor.toISOString().slice(0, 10) <= date) {
-    const iso = cursor.toISOString().slice(0, 10);
-    if (rhythmFor(weekdayIndex(iso)) !== "weekend") index += 1;
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-  }
-  return index < 0 ? null : READINESS[index % READINESS.length];
-}
-
-function placeReadiness(cards, kidId, date) {
-  if (kidId !== "connor") return cards;
-  const game = readinessGame(date);
-  if (!game) return cards;
-  const card = gameCard(date, game, "ready");
-  const at = cards.findIndex((entry) => entry.part === "bonus");
-  const next = cards.slice();
-  next.splice(at < 0 ? next.length : at, 0, card);
-  return next;
 }
 
 function placeLark(cards, assignment, date) {
@@ -881,11 +865,11 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
   const board = state.days?.[date]?.board || null;
   const shorter = board ? Boolean(board.shorter) : Boolean(plan.kids?.[kidId]?.shorter);
   const working = { ...state, shorter, ...(board ? { boardLessons: board.lessons } : {}) };
-  const write = WRITERS.has(kidId) ? board?.write || writeToday(state.writing) : null;
+  const write = WRITERS.has(kidId) ? board?.write || writePlanFor(kidId, state) : null;
   let cards = [];
   if (kidId === "max") cards = maxCards({ date, state: working, plan, rhythm, write });
   else if (kidId === "ethan") cards = littleCards({ kidId, date, state: working, plan, rhythm, game: GAMES.train });
-  else cards = pairCards({ kidId, date, state: working, plan, rhythm, game: kidId === "gabi" ? gabiGame(working) : GAMES.helpers });
+  else cards = pairCards({ kidId, date, state: working, plan, rhythm, write, game: kidId === "gabi" ? gabiGame(working) : GAMES.helpers });
   const lark = larkAssignment(kidId, date, working, board && "lark" in board ? board.lark : undefined);
   const pinned = board?.check;
   if (pinned?.stepId && rhythm !== "weekend") {
@@ -893,7 +877,6 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
     if (def && pinned.items?.length) cards = insertCheck(cards, checkCard(kidId, def, date, pinned.items));
   }
   if (lark) cards = placeLark(cards, lark, date);
-  cards = placeReadiness(cards, kidId, date);
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);
   const weekdayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekday];
@@ -939,22 +922,38 @@ function lessonForAnswer(kidId, stepDef, date, state, plan) {
   );
 }
 
-// Connor's reading card is a letter game: letter names, letter sounds, and big and little letters.
-// The Lost Helpers leads on Monday, Wednesday, and Friday and Hatch Match on Tuesday and Thursday.
-// The other one is his bonus. The Moon Path is a finished episode, not a reading game.
-function connorLetterGames(date) {
-  return weekdayIndex(date) % 2 === 1 ? [GAMES.helpers, GAMES.hatch] : [GAMES.hatch, GAMES.helpers];
+// Connor's board follows the Kindergarten Readiness Checklist: a letter lesson (names, then
+// sounds), counting to 10 until he shows it, one practice game for a Not sure item, and his
+// writing card. The Lost Helpers (Mon/Wed/Fri) or Hatch Match (Tue/Thu) is his bonus, with
+// episode letters boosted. The Moon Path is a finished episode, not a reading game.
+function connorBonus(date) {
+  return weekdayIndex(date) % 2 === 1 ? GAMES.helpers : GAMES.hatch;
 }
 
-function pairCards({ kidId, date, state, plan, rhythm, game }) {
+function connorCards({ date, state, plan, write }) {
+  const found = lessonFrontiers("connor", state, plan);
+  const pick = (part) => found.find((item) => partFor("connor", item.id) === part);
+  const letters = pick("ela");
+  const counting = pick("math");
+  const ready = pick("ready");
+  const bonus = connorBonus(date);
+  const reading = letters ? skillCard("connor", letters, date, state) : gameCard(date, bonus.id === GAMES.helpers.id ? GAMES.hatch : GAMES.helpers, "ela");
+  return [
+    reading,
+    ...(counting ? [skillCard("connor", counting, date, state)] : []),
+    ...(write ? [writeCard(date, write)] : []),
+    ...(ready ? [skillCard("connor", ready, date, state)] : []),
+    gameCard(date, bonus, "bonus"),
+    moveCard("connor", date, "bonus")
+  ];
+}
+
+function pairCards({ kidId, date, state, plan, rhythm, game, write }) {
   const found = lessonFrontiers(kidId, state, plan);
   if (rhythm === "weekend") return [gameCard(date, game), moveCard(kidId, date)];
-  const counting = found.find((item) => partFor(kidId, item.id) === "math");
-  const [letters, other] = connorLetterGames(date);
-  const cards = kidId === "connor"
-    ? [gameCard(date, letters, "ela"), ...(counting ? [skillCard(kidId, counting, date, state)] : [])]
-    : found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
-  let bonus = kidId === "connor" ? other : game;
+  if (kidId === "connor") return connorCards({ date, state, plan, write });
+  const cards = found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
+  let bonus = game;
   if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.helpers : GAMES.otter;
   cards.push(gameCard(date, bonus, "bonus"), moveCard(kidId, date, "bonus"));
   return cards;
@@ -1543,6 +1542,22 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     const target = buildDay({ kidId, date, state, plan })?.cards?.find((entry) => entry.kind === "write");
     if (!target) return { status: 400, body: { error: "There's no writing on today's board." } };
     if (typeof body.fits !== "boolean") return { status: 400, body: { error: "Joyce couldn't save that." } };
+    if (kidId === "connor") {
+      const { prewrite, moved, repeat } = recordPrewrite(state.prewrite, { date, fits: body.fits });
+      if (repeat) return { status: 200, body: { ok: true, say: "Saved." } };
+      state.prewrite = prewrite;
+      if (moved) {
+        await cheer(store, env, fetchImpl, state, date, { kind: "win", text: `${kid.name} made ${target.letter} like Joyce's two days in a row. Next he works on ${prewriteStageName(prewrite)}. Take a look at today's page.` });
+      }
+      try {
+        await writeEvent(store, { kidId, name: kid.name, skill: "Pre-writing", item: target.letter, correct: null });
+      } catch (err) {
+        console.error("Saving a writing card failed:", err);
+      }
+      await saveState(store, kidId, state);
+      const say = moved ? `You did it two days in a row. Next time: ${prewriteStageName(prewrite)}.` : body.fits ? "Nice work." : "That's okay. We'll practice it again next time.";
+      return { status: 200, body: { ok: true, say, moved } };
+    }
     const before = state.writing?.size || 0;
     const { writing, moved, repeat } = recordWrite(state.writing, { date, letter: target.letter, fits: body.fits });
     if (repeat) return { status: 200, body: { ok: true, say: "Saved." } };

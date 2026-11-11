@@ -52,7 +52,7 @@ test("a story day gives each child their next unfinished episode", () => {
 
 test("a finished episode never comes back, and with none left the story day keeps its usual cards", () => {
   const connor = buildDay({ kidId: "connor", date: "2026-11-09", state: ALL_FINISHED("connor") });
-  assert.deepEqual(ela(connor), ["lost-helpers"]);
+  assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
   assert.equal(connor.cards.some((card) => card.gameId === "moon-path"), false);
   const gabi = buildDay({ kidId: "gabi", date: "2026-11-09", state: ALL_FINISHED("gabi") });
   assert.deepEqual(ela(gabi), ["otter-slide"]);
@@ -60,12 +60,12 @@ test("a finished episode never comes back, and with none left the story day keep
   assert.equal(nextEpisode("connor", ALL_FINISHED("connor")), null);
 });
 
-test("Connor's reading is a letter game, never The Moon Path", () => {
+test("Connor's reading is a letter lesson, never The Moon Path", () => {
   const tuesday = buildDay({ kidId: "connor", date: "2026-11-10" });
-  assert.deepEqual(ela(tuesday), ["hatch-match"]);
-  assert.deepEqual(tuesday.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["lost-helpers"]);
+  assert.deepEqual(tuesday.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
+  assert.deepEqual(tuesday.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["hatch-match"]);
   const storyDay = buildDay({ kidId: "connor", date: "2026-11-09" });
-  assert.deepEqual(storyDay.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["hatch-match"]);
+  assert.deepEqual(storyDay.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["lost-helpers"]);
   for (const date of [...STORY_DAYS, ...OTHER_DAYS]) {
     const day = buildDay({ kidId: "connor", date });
     assert.equal(day.cards.some((card) => card.gameId === "moon-path"), false, date);
@@ -126,7 +126,7 @@ test("a finish outside Joyce's card is found the next morning", async () => {
   await finish(store, "connor", SAIL_EPISODE.gameId, SAIL_EPISODE.completionItem, at("2026-11-09T01:30:00Z"));
   const monday = await call(store, "connor", { action: "today" }, at("2026-11-09T15:00:00Z"));
   assert.equal(monday.body.cards.some((entry) => entry.gameId === SAIL_EPISODE.gameId), false);
-  assert.deepEqual(ela(monday.body), ["lost-helpers"]);
+  assert.deepEqual(monday.body.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
   const saved = await store.get("classroom/kid/connor", { type: "json" });
   assert.equal(saved.episodes[SAIL_EPISODE.gameId], "2026-11-08");
 });
@@ -159,7 +159,7 @@ test("today's story is pinned with the board", async () => {
   assert.deepEqual(ela(again.body), [SAIL_EPISODE.gameId]);
   const tuesday = await call(store, "connor", { action: "today" }, at("2026-11-10T15:00:00Z"));
   assert.equal((await store.get("classroom/kid/connor", { type: "json" })).days["2026-11-10"].board.lark, null);
-  assert.deepEqual(ela(tuesday.body), ["hatch-match"]);
+  assert.deepEqual(tuesday.body.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
 });
 
 test("an episode is the second mission, and the day card can fetch its opening pictures", () => {

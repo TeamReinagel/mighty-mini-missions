@@ -51,6 +51,42 @@ export const BASELINES = {
   }
 };
 
+// Connor's Kindergarten Readiness Check, marked 2026-11-09 on the "Connor's Readiness Check"
+// artifact (https://claude.ai/artifact/MS1u3Zs8yHjKPDnxpYQgFr). "Counts items up to 10" was left
+// unmarked; Joyce's counting-to-10 step decides it.
+BASELINES.connor = {
+  date: "2026-11-09",
+  source: "Stephanie's readiness check",
+  met: [
+    "KR-Lang-1", "KR-Lang-2", "KR-Lang-3", "KR-Lang-4",
+    "KR-Math-2", "KR-Math-4", "KR-Math-5", "KR-Math-6", "KR-Math-7",
+    "KR-Read-1", "KR-Read-2", "KR-Read-4",
+    "KR-Social-1", "KR-Social-2", "KR-Social-4",
+    "KR-Motor-5",
+    "KR-Ind-1", "KR-Ind-2", "KR-Ind-3"
+  ],
+  open: {
+    "KR-Math-1": { status: "not sure", note: "He can count to 10 and count items to 10; number recognition is untested." },
+    "KR-Math-3": { status: "not marked", note: "Her note on numbers says he can count items to 10. Joyce's counting-to-10 step confirms it." },
+    "KR-Math-8": { status: "not sure" },
+    "KR-Read-3": { status: "not yet" },
+    "KR-Read-5": { status: "not sure" },
+    "KR-Read-6": { status: "not yet" },
+    "KR-Read-7": { status: "not yet" },
+    "KR-Read-8": { status: "not yet" },
+    "KR-Social-3": { status: "not sure" },
+    "KR-Social-5": { status: "not sure" },
+    "KR-Motor-1": { status: "not sure" },
+    "KR-Motor-2": { status: "not sure" },
+    "KR-Motor-3": { status: "not yet" },
+    "KR-Motor-4": { status: "not sure" }
+  },
+  notes: {
+    "KR-Ind-2": "Sometimes needs help with a tough snap on jeans.",
+    "KR-Motor-5": "Runs, hops, gallops, and throws; maybe not true skipping. Catching is tough but sometimes."
+  }
+};
+
 // A review month counts as met once every other goal in its grade and subject is met.
 export const REVIEW_MILESTONES = new Set(["G1-Aug-Math-1"]);
 

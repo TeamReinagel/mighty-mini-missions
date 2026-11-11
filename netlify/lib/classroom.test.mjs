@@ -81,12 +81,12 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   assert.equal(buildDay({ kidId: "max", date: "2026-10-24" }).cards.some((card) => card.kind === "write"), false);
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
-  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Reading", "Counting", "Bonus"]);
-  // The Moon Path is a finished episode, not his reading card. A letter game is.
+  assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Reading", "Counting", "Writing", "Practice", "Bonus"]);
+  // The Moon Path is a finished episode, not his reading card. Joyce's letter lesson is.
   assert.equal(connor.cards.some((card) => card.gameId === "moon-path"), false);
-  assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.gameId), ["lost-helpers"]);
-  assert.deepEqual(connor.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["hatch-match"]);
-  assert.equal(connor.cards.some((card) => card.stepId === "connor-names-1"), false);
+  assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
+  assert.equal(connor.cards.find((card) => card.part === "ela").kind, "lesson");
+  assert.deepEqual(connor.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["lost-helpers"]);
   assert.ok(connor.cards.some((card) => card.stepId === "connor-count-5"));
 
   const ethan = buildDay({ kidId: "ethan", date: MONDAY });
@@ -133,32 +133,22 @@ test("a game card counts only after real play since it was opened", async () => 
   assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
 });
 
-test("Connor's practice card rotates from November 3 and finishes after four plays", async () => {
-  const order = [
-    ["2026-11-03", "nest-numbers"],
-    ["2026-11-04", "big-little"],
-    ["2026-11-05", "basket-sort"],
-    ["2026-11-06", "shape-tap"],
-    ["2026-11-09", "my-name"],
-    ["2026-11-10", "two-jobs"],
-    ["2026-11-11", "nest-numbers"]
-  ];
-  for (const [date, id] of order) {
+test("Connor's practice card is the next Not sure checklist game, and finishes after four plays", async () => {
+  for (const date of ["2026-11-03", "2026-11-10", "2026-11-11"]) {
     const day = buildDay({ kidId: "connor", date });
     const card = day.cards.find((entry) => entry.part === "ready");
-    assert.equal(card.gameId, id, date);
-    assert.match(card.href, new RegExp(`${id}/\\?kid=connor`));
-    assert.match(card.say, /Play one round of /);
-    // The counting card leads only on a day with an episode, so its pictures load during counting.
-    const episode = day.cards.some((entry) => entry.part === "ela" && entry.say && entry.goal === "Finish the adventure, then come back");
-    assert.deepEqual(day.dose.parts.map((part) => part.id), episode ? ["math", "ela", "ready", "bonus"] : ["ela", "math", "ready", "bonus"], date);
-    assert.equal(day.cards.filter((entry) => entry.part === "ela").length, 1);
-    assert.equal(day.cards.some((entry) => entry.stepId === "connor-count-5"), true);
+    assert.equal(card.gameId, "nest-numbers", date);
+    assert.match(card.href, /nest-numbers\/\?kid=connor&step=connor-numbers/);
+    assert.match(card.say, /Play one round of Nest Numbers/);
     for (const kid of ["gabi", "max", "ethan"]) {
       assert.equal(buildDay({ kidId: kid, date }).cards.some((entry) => entry.part === "ready"), false);
     }
   }
-  assert.equal(buildDay({ kidId: "connor", date: "2026-11-02" }).cards.some((entry) => entry.part === "ready"), false);
+  const learned = { graded: 6, correct: 6, recent: [true, true, true, true, true, true], mastered: true };
+  const sorting = buildDay({ kidId: "connor", date: "2026-11-10", state: { steps: { "connor-numbers": learned } } });
+  assert.equal(sorting.cards.find((entry) => entry.part === "ready").gameId, "basket-sort");
+  const none = buildDay({ kidId: "connor", date: "2026-11-10", state: { steps: { "connor-numbers": learned, "connor-sort": learned } } });
+  assert.equal(none.cards.some((entry) => entry.part === "ready"), false);
   assert.equal(buildDay({ kidId: "connor", date: "2026-11-08" }).cards.some((entry) => entry.part === "ready"), false);
 
   const store = memoryStore();
@@ -177,7 +167,7 @@ test("Connor's practice card rotates from November 3 and finishes after four pla
 
 test("The Lost Helpers is checked under the name it logs, lost-helpers", async () => {
   const store = memoryStore();
-  const start = "2026-10-20T15:00:00Z";
+  const start = "2026-10-21T15:00:00Z";
   const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now: at(start) });
   const hunt = first.body.cards.find((card) => card.gameId === "lost-helpers");
   assert.equal(hunt.part, "bonus");
@@ -395,7 +385,8 @@ test("counting past ten opens Flower Beds for Gabi", () => {
     date: MONDAY,
     state: { steps: { "connor-count-5": MASTERED, "connor-count-10": { ...MASTERED, coverRule: true } } }
   });
-  assert.equal(earned.cards.find((card) => card.stepId === "connor-count-20").gameId, "snack-count");
+  // Counting to 20 is not on the readiness checklist, so once 1 to 10 is learned the counting card ends.
+  assert.equal(earned.cards.some((card) => card.part === "math"), false);
 });
 
 test("Connor learns counting to 10 only with every quantity, 75%, and three days", () => {
