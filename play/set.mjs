@@ -7,10 +7,16 @@ export function runRounds({ ui, game, play, pause = 700, line = "That round is d
   let running = false;
   const done = ({ speak = true } = {}) => {
     ui.scene.replaceChildren();
-    if (speak) ui.speak(typeof line === "function" ? line() : line);
-    const again = el("button", "go play", "Play another round");
+    // Sent from a Joyce card: going back to Joyce is the big next touch, another round the small one.
+    const back = window.MightyProgress?.joyceButton?.() || null;
+    if (speak) {
+      const said = typeof line === "function" ? line() : line;
+      ui.speak(back ? `${said} Tap the big button to go back to Joyce.` : said);
+    }
+    const again = el("button", back ? "level" : "go play", "Play another round");
     again.type = "button";
     again.addEventListener("click", () => start());
+    if (back) ui.scene.append(back);
     ui.scene.append(again);
     rest?.(ui.scene, () => done({ speak: false }));
   };
@@ -27,6 +33,8 @@ export function runRounds({ ui, game, play, pause = 700, line = "That round is d
     } finally {
       running = false;
     }
+    // Send the round's answers now, so Joyce sees all of them when he taps I'm done.
+    try { window.MightyProgress?.flush?.(); } catch { /* The queue keeps them for later. */ }
     done();
   };
   return start();

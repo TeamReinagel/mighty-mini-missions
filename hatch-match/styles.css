@@ -149,6 +149,8 @@ header {
 .big-btn img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 8px 8px rgba(0,0,0,.3)); }
 .big-btn:active { transform: scale(.94); }
 .big-btn:disabled { opacity: .5; }
+.big-btn.joyce { width: clamp(140px, 26vmin, 220px); height: clamp(140px, 26vmin, 220px); }
+.big-btn.joyce img { border-radius: 50%; object-fit: cover; border: 6px solid #fff; background: #fff; }
 
 #splash { background: #8fd3f4 url(art/splash.jpg) center / cover; justify-content: flex-start; padding-top: 5vh; gap: 2vh; }
 #splash h1, #yay h1 {

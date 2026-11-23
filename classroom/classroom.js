@@ -94,7 +94,24 @@ function setTalking(on) {
   document.querySelectorAll(".joyce-photo").forEach((img) => img.classList.toggle("talking", on));
 }
 
+// A spoken line can stall on a tablet: the device voice may never say it finished, or audio
+// may never end. Every line Joyce waits on lets go after a generous cap, and hush() lets go of
+// a line it stops, so a screen never stays stuck waiting for speech.
+let releaseHushed = () => {};
+let hushed = new Promise((resolve) => { releaseHushed = resolve; });
+
+function lineCap(text) {
+  return Math.min(25000, 4000 + String(text || "").length * 110);
+}
+
+function capped(line, text) {
+  const stopped = hushed;
+  return Promise.race([line, stopped, new Promise((resolve) => setTimeout(resolve, lineCap(text)))]);
+}
+
 function hush() {
+  releaseHushed();
+  hushed = new Promise((resolve) => { releaseHushed = resolve; });
   speakToken += 1;
   if (voice) {
     voice.onended = null;
@@ -150,7 +167,7 @@ function say(text) {
   const token = speakToken;
   const job = speakChain.then(() => {
     if (token !== speakToken) return;
-    return playLine(text, token);
+    return capped(playLine(text, token), text);
   });
   speakChain = job.catch(() => {});
   return job;
@@ -160,7 +177,7 @@ function replay(text) {
   if (!text) return Promise.resolve();
   hush();
   const token = speakToken;
-  const job = playLine(text, token);
+  const job = capped(playLine(text, token), text);
   speakChain = job.catch(() => {});
   return job;
 }
@@ -642,13 +659,17 @@ function renderWrite() {
       await say(soon);
       if (gen !== teachGen) return;
     }
-    line.textContent = card.sayText;
-    await say(card.say);
-    await showStrokes(svg, line, gen);
-    if (gen !== teachGen) return;
-    line.textContent = card.writeText;
-    await say(card.write);
-    if (gen === teachGen && wrote.isConnected) wrote.disabled = false;
+    try {
+      line.textContent = card.sayText;
+      await say(card.say);
+      await showStrokes(svg, line, gen);
+      if (gen !== teachGen) return;
+      line.textContent = card.writeText;
+      await say(card.write);
+    } finally {
+      // Whatever happened to the demo, the child can still say they wrote it.
+      if (gen === teachGen && wrote.isConnected) wrote.disabled = false;
+    }
   };
   again.addEventListener("click", demo);
   demo();
@@ -1309,6 +1330,10 @@ async function submit(picked, extra = {}) {
   if (busy || !card) return;
   busy = true;
   const item = currentItem();
+  // A spoken line can let go after he leaves this lesson (Back, or the board), so stop then.
+  const gen = teachGen;
+  const mine = card;
+  const left = () => gen !== teachGen || card !== mine;
   try {
     const data = await api("answer", {
       stepId: card.stepId,
@@ -1335,6 +1360,7 @@ async function submit(picked, extra = {}) {
       }
       if (data.correct !== false) popStar();
       await say(data.say);
+      if (left()) return;
       promptIndex = 0;
       built = [];
       index += 1;
@@ -1347,13 +1373,16 @@ async function submit(picked, extra = {}) {
     }
     if (data.correct === false) {
       await say(data.say);
+      if (left()) return;
       const again = item.type === "regroup" ? item.prompts[promptIndex] : item;
       await say(questionLine(item, again));
       return;
     }
     popStar();
     await say(data.say);
+    if (left()) return;
     if (data.explain) await waitForNext();
+    if (left()) return;
     if (item.type === "regroup" && promptIndex + 1 < item.prompts.length) {
       promptIndex += 1;
       renderItem();

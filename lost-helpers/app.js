@@ -206,6 +206,7 @@ async function playFind(shop) {
 async function visitShop(shop) {
   if (busy || storyPlaying || !state.storyHeard) return;
   busy = true;
+  let finished = false;
   try {
     const count = roundsFor(GAME, who.id);
     for (let i = 0; i < count; i += 1) {
@@ -229,9 +230,19 @@ async function visitShop(shop) {
         await wait(450);
       }
     }
+    finished = true;
   } finally {
     busy = false;
     showStreet();
+  }
+  if (!finished) return;
+  // Send the visit's answers now, so Joyce sees all of them when he taps I'm done.
+  try { window.MightyProgress?.flush?.(); } catch { /* The queue keeps them for later. */ }
+  // Sent from a Joyce card: after a full visit, a big button goes back to her.
+  const back = window.MightyProgress?.joyceButton?.({ className: "go play joyce-back" });
+  if (back) {
+    ui.scene.append(back);
+    ui.speak("Tap the big button to go back to Joyce.");
   }
 }
 

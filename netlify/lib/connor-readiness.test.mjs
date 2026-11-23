@@ -91,3 +91,29 @@ test("Connor's writing card saves his own check through Joyce", async () => {
   const max = buildDay({ kidId: "max", date: "2026-11-12" }).cards.find((entry) => entry.kind === "write");
   assert.equal(max.letter, "c", "Max keeps his own letter card");
 });
+
+test("Connor's writing card can be marked done after his writing check", async () => {
+  const store = memoryStore();
+  const call = (body) => handleClassroom({ store, env: {}, body: { kid: "connor", ...body }, now: at("2026-11-23T16:00:00Z") });
+  const day = await call({ action: "today" });
+  const card = day.body.cards.find((entry) => entry.kind === "write");
+  const early = await call({ action: "card", cardId: card.id, status: "done" });
+  assert.equal(early.body.notYet, true, "the card still waits for the writing check");
+  assert.equal((await call({ action: "write", fits: true })).body.ok, true);
+  const done = await call({ action: "card", cardId: card.id, status: "done" });
+  assert.equal(done.body.ok, true);
+  const after = await call({ action: "today" });
+  assert.equal(after.body.cards.find((entry) => entry.id === card.id).done, true);
+});
+
+test("Every game card names the child and Joyce, so play is logged under that child and can come back", () => {
+  for (const kidId of ["max", "gabi", "connor", "ethan"]) {
+    for (let d = 16; d <= 29; d += 1) {
+      const date = `2026-11-${d}`;
+      for (const card of buildDay({ kidId, date }).cards.filter((entry) => entry.kind === "game")) {
+        assert.match(card.href, new RegExp(`[?&]kid=${kidId}(&|$)`), `${kidId} ${date} ${card.title}`);
+        assert.match(card.href, /[?&]from=joyce(&|$)/, `${kidId} ${date} ${card.title}`);
+      }
+    }
+  }
+});

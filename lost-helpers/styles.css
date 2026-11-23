@@ -207,3 +207,10 @@
   box-shadow: 0 8px 0 rgba(36, 28, 51, 0.15);
   touch-action: none;
 }
+
+/* After a full visit from a Joyce card: one big way back, under the map. */
+.joyce-back {
+  display: block;
+  width: min(100%, 520px);
+  margin: 12px auto 0;
+}

@@ -696,7 +696,17 @@ function celebrate() {
   burst(W * 0.3, H * 0.5, { kinds: ['icon_star', 'icon_heart'], count: 14, spread: 260 });
   setTimeout(() => burst(W * 0.7, H * 0.5, { kinds: ['icon_star', 'icon_heart'], count: 14, spread: 260 }), 300);
   say('Hooray! All five babies hatched!');
-  say(pick(OFF_SCREEN), { queue: true });
+  // Send the nest's answers now, so Joyce sees all of them when he taps I'm done.
+  try { window.MightyProgress?.flush?.(); } catch (_) { /* The queue keeps them for later. */ }
+  if (joyceBack) say('Tap Joyce to go back to her.', { queue: true });
+  else say(pick(OFF_SCREEN), { queue: true });
+}
+
+// Sent from a Joyce card: Joyce's picture is the first, biggest button after a nest.
+const joyceBack = window.MightyProgress?.joyceButton?.({ className: 'big-btn joyce', image: '../classroom/joyce.png' }) || null;
+if (joyceBack) {
+  joyceBack.addEventListener('click', () => audio());
+  document.querySelector('#yay .yay-buttons').prepend(joyceBack);
 }
 $('againBtn').addEventListener('click', () => {
   audio();

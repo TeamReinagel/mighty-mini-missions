@@ -1,5 +1,5 @@
 // Bump VERSION whenever app files change so tablets pick up the new copy.
-const VERSION = "hatch-v6";
+const VERSION = "hatch-v7";
 const ART = [
   "mama_blue", "mama_pink", "mama_yellow", "mama_green",
   "egg_blue", "egg_pink", "egg_yellow", "egg_mint",

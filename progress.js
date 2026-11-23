@@ -35,14 +35,28 @@
     }
   }
 
-  // The child picked on the Mighty Mini Missions home screen. Games with their own
-  // player picker (Coin Record Run) pass a name instead.
+  // A child named in the page link (?kid=connor, as Today with Joyce sends), else the child
+  // picked on the Mighty Mini Missions home screen. Games with their own player picker
+  // (Coin Record Run) pass a name instead.
+  const KNOWN_KIDS = ["max", "gabi", "connor", "ethan"];
+
+  function linkedKid(list) {
+    let id = "";
+    try { id = String(new URLSearchParams(location.search).get("kid") || "").toLowerCase(); } catch (_) { return null; }
+    if (!id) return null;
+    const match = list.find((p) => String(p.id).toLowerCase() === id);
+    if (match) return { id: match.id, name: match.name };
+    return KNOWN_KIDS.includes(id) ? { id, name: id.charAt(0).toUpperCase() + id.slice(1) } : null;
+  }
+
   function resolveKid(name) {
     const { list, activeId } = profiles();
     if (name) {
       const match = list.find((p) => String(p.name).toLowerCase() === String(name).toLowerCase());
       return match ? { id: match.id, name: match.name } : { id: String(name).toLowerCase(), name: String(name) };
     }
+    const linked = linkedKid(list);
+    if (linked) return linked;
     const active = list.find((p) => p.id === activeId);
     return active ? { id: active.id, name: active.name } : { id: "unknown", name: "Unknown player" };
   }
@@ -135,5 +149,45 @@
   window.addEventListener("online", () => flush());
   window.addEventListener("load", () => setTimeout(flush, 1500));
 
-  window.MightyProgress = { log, flush, currentKid: () => resolveKid() };
+  // A game opened from a Today with Joyce card carries ?from=joyce. At the end of a round it
+  // offers one big way back: send every answer still waiting, then close this tab (Joyce's tab
+  // is still open behind it) or, where the browser won't close it, open Joyce here.
+  function fromJoyce() {
+    try { return new URLSearchParams(location.search).get("from") === "joyce"; } catch (_) { return false; }
+  }
+
+  let leaving = false;
+  async function backToJoyce() {
+    if (leaving) return;
+    leaving = true;
+    try {
+      await Promise.race([flush({ keepalive: true }), new Promise((resolve) => setTimeout(resolve, 2500))]);
+    } catch (_) { /* Joyce rechecks when he taps I'm done. */ }
+    const kid = linkedKid(profiles().list)?.id || "";
+    try { window.close(); } catch (_) { /* Not a tab this page may close. */ }
+    setTimeout(() => {
+      location.href = `/classroom/${kid ? `?kid=${encodeURIComponent(kid)}` : ""}`;
+    }, 400);
+  }
+
+  // The button a game shows at the end of a round when Joyce sent the child. Null otherwise.
+  function joyceButton({ className = "go play", image = "" } = {}) {
+    if (!fromJoyce()) return null;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = className;
+    button.setAttribute("aria-label", "Back to Joyce");
+    if (image) {
+      const img = document.createElement("img");
+      img.src = image;
+      img.alt = "";
+      button.append(img);
+    } else {
+      button.textContent = "Back to Joyce";
+    }
+    button.addEventListener("click", backToJoyce);
+    return button;
+  }
+
+  window.MightyProgress = { log, flush, currentKid: () => resolveKid(), fromJoyce, backToJoyce, joyceButton };
 })();

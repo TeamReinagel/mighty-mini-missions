@@ -681,6 +681,18 @@ function skillCard(kidId, item, date, state) {
   };
 }
 
+// A game logs play under the child its link names, so every game card carries ?kid=.
+// Without it the game falls back to whoever was last picked on the home screen.
+// from=joyce lets the game end a round with a big button back to this board.
+function withKid(card, kidId) {
+  if (card.kind !== "game" || !card.href) return card;
+  let href = card.href;
+  const add = (param) => { href = `${href}${href.includes("?") ? "&" : "?"}${param}`; };
+  if (!/[?&]kid=/.test(href)) add(`kid=${encodeURIComponent(kidId)}`);
+  if (!/[?&]from=/.test(href)) add("from=joyce");
+  return href === card.href ? card : { ...card, href };
+}
+
 function gameCard(date, game, part) {
   return {
     id: `${date}:game:${game.id}`,
@@ -879,6 +891,7 @@ export function buildDay({ kidId, date, state = emptyState(), plan = emptyPlan()
     if (def && pinned.items?.length) cards = insertCheck(cards, checkCard(kidId, def, date, pinned.items));
   }
   if (lark) cards = placeLark(cards, lark, date);
+  cards = cards.map((card) => withKid(card, kidId));
   cards = markDone(cards, working, date);
   const dose = rhythm === "weekend" ? null : doseOf(kidId, cards);
   const weekdayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][weekday];
@@ -1488,7 +1501,9 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
     if (status === "done" && preview.dose && target?.askLesson && state.readingDay !== date) {
       return { status: 200, body: { ok: false, notYet: true, say: "Finish the next Reading.com lesson, then tell me its number." } };
     }
-    if (status === "done" && preview.dose && target?.kind === "write" && state.writing?.day !== date) {
+    // Connor's writing check saves to his pre-writing path, everyone else's to handwriting.
+    const wroteDay = kidId === "connor" ? state.prewrite?.day : state.writing?.day;
+    if (status === "done" && preview.dose && target?.kind === "write" && wroteDay !== date) {
       return { status: 200, body: { ok: false, notYet: true, say: "Write your letters, then look at them with me." } };
     }
     if (status === "eased" && !(target?.stepId && day.stuck?.[target.stepId])) {
