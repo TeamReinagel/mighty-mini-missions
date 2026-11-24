@@ -2,9 +2,9 @@
 import { LETTER_NAMES, WRITE_LETTERS, PREWRITE } from "./letters.mjs";
 import { THINGS, THING_SRC, SHAPES, shuffle, numberRound, sizeRound, colorRound, kindRound } from "../play/readiness.mjs";
 
+// Stepping stones between a lost helper and its door. A right first try is one stone closer;
+// a miss is one stone back. The fourth stone is the door: the helper is home for good.
 export const NEED = 4;
-
-export const STORY = "Before the shops opened, the helpers ran out to play and forgot the way home. They are hiding along the street. Step into a shop, listen, and find the one that belongs there. They are jumpy. Miss, and they dart off again. Find that shop's helper right the first time, four times in a row, and they curl up and stay.";
 
 const COLORS = [
   { id: "red", name: "red", src: "../color-tap/assets/apple.jpg" },
@@ -63,21 +63,21 @@ const PATTERN_PIECES = [
   { id: "frog", name: "frog", src: "../color-tap/assets/frog.jpg" }
 ];
 
-// Percents sit on the painted storefronts in assets/street.jpg (three rows around the square).
+// Street order. Each shop's color and roof picture are in skin.mjs.
 export const SHOPS = [
-  { id: "path", title: "Path Shop", skill: "Pre-writing", helper: "assets/helper-path.png", x: 1, y: 4, w: 18, h: 28 },
-  { id: "paint", title: "Paint Shop", skill: "Colors", helper: "assets/helper-paint.png", x: 20, y: 3, w: 18, h: 28 },
-  { id: "toys", title: "Toy Shop", skill: "Shapes", helper: "assets/helper-toys.png", x: 39, y: 2, w: 18, h: 28 },
-  { id: "market", title: "Market", skill: "Counting", helper: "assets/helper-market.png", x: 58, y: 2, w: 18, h: 28 },
-  { id: "book", title: "Book Shop", skill: "Sight words", helper: "assets/helper-book.png", x: 77, y: 3, w: 20, h: 29 },
-  { id: "desk", title: "Desk", skill: "Letter writing", helper: "assets/helper-desk.png", x: 1, y: 34, w: 18, h: 27 },
-  { id: "garden", title: "Garden", skill: "Bigger and smaller", helper: "assets/helper-garden.png", x: 20, y: 33, w: 18, h: 28 },
-  { id: "post", title: "Post", skill: "Letter names", helper: "assets/helper-post.png", x: 39, y: 32, w: 18, h: 28 },
-  { id: "bell", title: "Bell Shop", skill: "Letter sounds", helper: "assets/helper-bell.png", x: 58, y: 31, w: 18, h: 29 },
-  { id: "bakery", title: "Bakery", skill: "Adding and subtracting", helper: "assets/helper-bakery.png", x: 77, y: 33, w: 20, h: 29 },
-  { id: "quilt", title: "Quilt Shop", skill: "Patterns", helper: "assets/helper-quilt.png", x: 6, y: 64, w: 28, h: 29 },
-  { id: "laundry", title: "Laundry", skill: "Sorting", helper: "assets/helper-laundry.png", x: 36, y: 64, w: 28, h: 29 },
-  { id: "coins", title: "Coin Shop", skill: "Coins", helper: "assets/helper-coins.png", x: 67, y: 64, w: 28, h: 29 }
+  { id: "path", title: "Path Shop", skill: "Pre-writing", helper: "assets/helper-path.png" },
+  { id: "paint", title: "Paint Shop", skill: "Colors", helper: "assets/helper-paint.png" },
+  { id: "toys", title: "Toy Shop", skill: "Shapes", helper: "assets/helper-toys.png" },
+  { id: "market", title: "Market", skill: "Counting", helper: "assets/helper-market.png" },
+  { id: "book", title: "Book Shop", skill: "Sight words", helper: "assets/helper-book.png" },
+  { id: "desk", title: "Desk", skill: "Letter writing", helper: "assets/helper-desk.png" },
+  { id: "garden", title: "Garden", skill: "Bigger and smaller", helper: "assets/helper-garden.png" },
+  { id: "post", title: "Post", skill: "Letter names", helper: "assets/helper-post.png" },
+  { id: "bell", title: "Bell Shop", skill: "Letter sounds", helper: "assets/helper-bell.png" },
+  { id: "bakery", title: "Bakery", skill: "Adding and subtracting", helper: "assets/helper-bakery.png" },
+  { id: "quilt", title: "Quilt Shop", skill: "Patterns", helper: "assets/helper-quilt.png" },
+  { id: "laundry", title: "Laundry", skill: "Sorting", helper: "assets/helper-laundry.png" },
+  { id: "coins", title: "Coin Shop", skill: "Coins", helper: "assets/helper-coins.png" }
 ];
 
 const READY_KEY = "mighty-ready.v1";
@@ -105,7 +105,7 @@ export function defaultState(kidId) {
     shops.quilt = { streak: 0, home: false, hard: true };
     shops.laundry = { streak: 0, home: false, hard: true };
   }
-  return { storyHeard: false, shops };
+  return { shops };
 }
 
 export function shopOpen(kidId, shopId, state) {
@@ -415,11 +415,13 @@ export function makeFind(shopId, kidId, state, rng, focus = null) {
     const within = hard ? 20 : 10;
     const add = rng() < 0.55;
     const a = 1 + Math.floor(rng() * Math.min(9, within - 1));
-    const b = 1 + Math.floor(rng() * Math.min(9, within - a));
+    let b = 1 + Math.floor(rng() * Math.min(9, within - a));
+    // Take-away never lands on zero: an empty plate looks like a missing card.
+    if (!add && b === a) b = a > 1 ? a - 1 : a + 1;
     const answer = add ? a + b : Math.max(a, b) - Math.min(a, b);
     const left = add ? a : Math.max(a, b);
     const right = add ? b : Math.min(a, b);
-    const decoys = shuffle(rng, [answer + 1, Math.max(0, answer - 1), answer + 2].filter((n) => n !== answer && n <= within)).slice(0, 2);
+    const decoys = shuffle(rng, [answer + 1, answer - 1, answer + 2, answer - 2, answer + 3].filter((n) => n !== answer && n > 0 && n <= within)).slice(0, 2);
     return {
       skill: "Adding and subtracting",
       item: add ? `${left}+${right}` : `${left}-${right}`,
@@ -439,13 +441,15 @@ export function makeFind(shopId, kidId, state, rng, focus = null) {
 
   if (shopId === "path") {
     const path = pick(rng, PREWRITE);
+    // A shape drawn in two lifts (the cross) is two strokes, each with its own green dot.
+    const parts = path.d.split(/ (?=M )/);
     return {
       skill: "Pre-writing",
       item: path.id,
       prompt: path.cue,
       kind: "trace",
-      paths: [{ d: path.d, cue: path.cue }],
-      miss: () => "Stay on the path. Start at the green dot."
+      paths: parts.map((d, i) => ({ d, cue: i === 0 ? path.cue : "Now the next line. Start at the green dot." })),
+      miss: () => "Stay on the road. Start at the green dot."
     };
   }
 
@@ -460,7 +464,7 @@ export function makeFind(shopId, kidId, state, rng, focus = null) {
       kind: "trace",
       letter: entry.letter,
       paths: entry.strokes,
-      miss: () => `Stay on the letter ${LETTER_NAMES[entry.letter]}. Start at the green dot.`
+      miss: () => `Stay on the road. Start at the green dot.`
     };
   }
 
@@ -474,14 +478,14 @@ export function makeFind(shopId, kidId, state, rng, focus = null) {
   };
 }
 
-export function noteStreak(state, shopId, clean) {
+// Moves the helper along the stones: +1 for a right first try, -1 after a miss, 0 to stay.
+// Home is for good: a helper at the door never walks back out.
+export function noteStreak(state, shopId, delta) {
   const rec = state.shops[shopId] || { streak: 0, home: false };
-  if (rec.home) {
-    state.shops[shopId] = rec;
-    return rec;
+  if (!rec.home) {
+    rec.streak = Math.max(0, Math.min(NEED, (rec.streak || 0) + delta));
+    if (rec.streak >= NEED) rec.home = true;
   }
-  rec.streak = clean ? (rec.streak || 0) + 1 : 0;
-  if (rec.streak >= NEED) rec.home = true;
   state.shops[shopId] = rec;
   return rec;
 }
