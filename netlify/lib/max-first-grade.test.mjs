@@ -36,22 +36,23 @@ test("Max's guide stays in First Grade for each subject until that subject is do
   assert.equal(next[0].id, "G2-Sep-Math-1");
 });
 
-test("skip counting and 3D shapes start with a cold check, not a lesson", async () => {
+test("skip counting and 3D shapes start with a cold check, not a lesson or game", async () => {
   const store = memoryStore();
   const monday = await call(store, { action: "today" }, "2026-11-09T15:00:00Z");
   const check = monday.body.cards.find((card) => card.kind === "check");
   assert.equal(check.stepId, "max-skip-count");
   assert.equal(check.items.length, 3);
-  const lessons = monday.body.cards.filter((card) => card.kind === "lesson").map((card) => card.stepId);
-  assert.deepEqual(lessons, ["max-compound", "max-odd-even"]);
+  // Word study and First Grade math play in Word Workshop and Penguin Pond, on their steps.
+  const games = monday.body.cards.filter((card) => card.kind === "game" && card.stepId).map((card) => `${card.gameId}:${card.stepId}`);
+  assert.deepEqual(games, ["word-workshop:max-compound", "penguin-pond:max-odd-even"]);
   const saved = await store.get("classroom/kid/max", { type: "json" });
   assert.equal(saved.steps["max-3d-shapes"].nextCheck, "2026-11-09");
 });
 
-test("a missed cold check sends skip counting back to lessons; a pass confirms it", () => {
+test("a missed cold check sends skip counting back to practice in Penguin Pond; a pass confirms it", () => {
   const failed = seedChecks("max", { steps: { "max-skip-count": { mastered: false, slipping: true, shownAt: "2026-11-09", checks: [{ date: "2026-11-09", right: 1, passed: false }] } } });
   const day = buildDay({ kidId: "max", date: "2026-11-11", state: failed });
-  assert.ok(day.cards.some((card) => card.stepId === "max-skip-count" && card.kind === "lesson"));
+  assert.ok(day.cards.some((card) => card.stepId === "max-skip-count" && card.gameId === "penguin-pond"));
 
   const state = seedChecks("max", {});
   assert.deepEqual(milestonesFromSteps("max", state), [], "shown is not confirmed");

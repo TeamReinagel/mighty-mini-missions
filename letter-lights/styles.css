@@ -1,0 +1,13 @@
+/* Letter Lights: choices are big glowing bulbs with one capital letter each. */
+.skin-letter-lights .scene { background-color: #142235; }
+.skin-letter-lights .pick.bulb-pick {
+  width: clamp(96px, 27vw, 150px); min-width: 0; height: clamp(116px, 32vw, 180px); padding: 0;
+  border-radius: 50% 50% 46% 46% / 58% 58% 42% 42%;
+  background: radial-gradient(circle at 36% 30%, rgba(255, 255, 255, .7), transparent 40%), var(--glow);
+  color: #241c33; font-size: clamp(3.4rem, 13vw, 5rem);
+  box-shadow: 0 0 26px var(--glow), 0 8px 0 rgba(0, 0, 0, .25);
+}
+.skin-letter-lights .pick.bulb-pick.tried { box-shadow: none; }
+.skin-letter-lights .ask-card.model { font-size: clamp(3rem, 12vw, 4.4rem); padding: 4px 28px; border: 4px dashed #9aa4b8; }
+.skin-letter-lights .ask-card.model[hidden] { display: none; }
+.skin-letter-lights .goal { width: min(100%, 540px); }

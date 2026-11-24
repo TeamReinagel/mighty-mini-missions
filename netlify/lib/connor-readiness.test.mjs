@@ -28,11 +28,13 @@ test("Connor's Friday goals come from the checklist, and the Kindergarten sheet 
   assert.ok(after.next.length > 0 && after.next.every((m) => m.grade === "Kindergarten"));
 });
 
-test("letter names and the last sound groups are Joyce lessons; Jungle Jump reports sounds A to L", () => {
+test("Letter Lights reports letter names, Jungle Jump sounds A to L, and Joyce teaches the last sounds", () => {
   const day = buildDay({ kidId: "connor", date: "2026-11-10" });
   const reading = day.cards.find((card) => card.part === "ela");
-  assert.equal(reading.kind, "lesson");
+  assert.equal(reading.kind, "game");
+  assert.equal(reading.gameId, "letter-lights");
   assert.equal(reading.stepId, "connor-names-1");
+  assert.match(reading.href, /letter-lights\/\?kid=connor&step=connor-names-1/);
   const names = Object.fromEntries([1, 2, 3, 4].map((n) => [`connor-names-${n}`, LEARNED]));
   const sounds = buildDay({ kidId: "connor", date: "2026-11-10", state: { steps: names } }).cards.find((card) => card.part === "ela");
   assert.equal(sounds.gameId, "sound-bugs");

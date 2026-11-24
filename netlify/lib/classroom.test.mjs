@@ -74,8 +74,9 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
   }
 
   const max = buildDay({ kidId: "max", date: FRIDAY });
-  // Friday: Reading.com, a word-study lesson, AdaptedMind, a First Grade math lesson, writing, and a bonus.
-  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "ela:lesson", "math:app", "math:lesson", "write:write", "bonus:game", "bonus:move"]);
+  // Friday: Reading.com, a word-study game, AdaptedMind, a First Grade math game, writing, and a bonus.
+  assert.deepEqual(max.cards.map((card) => `${card.part}:${card.kind}`), ["ela:app", "ela:game", "math:app", "math:game", "write:write", "bonus:game", "bonus:move"]);
+  assert.deepEqual(max.cards.filter((card) => card.kind === "game" && card.part !== "bonus").map((card) => card.gameId), ["word-workshop", "penguin-pond"]);
   assert.equal(max.cards[0].askLesson, true);
   assert.deepEqual(max.dose.parts.map((part) => part.title), ["Reading", "Math", "Writing", "Bonus"]);
   assert.match(max.greeting, /Trainer day\. Reading, math and writing, then one bonus/);
@@ -83,10 +84,10 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
 
   const connor = buildDay({ kidId: "connor", date: MONDAY });
   assert.deepEqual(connor.dose.parts.map((part) => part.title), ["Reading", "Counting", "Writing", "Practice", "Bonus"]);
-  // The Moon Path is a finished episode, not his reading card. Joyce's letter lesson is.
+  // The Moon Path is a finished episode, not his reading card. Letter Lights, on his letter step, is.
   assert.equal(connor.cards.some((card) => card.gameId === "moon-path"), false);
   assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
-  assert.equal(connor.cards.find((card) => card.part === "ela").kind, "lesson");
+  assert.equal(connor.cards.find((card) => card.part === "ela").gameId, "letter-lights");
   assert.deepEqual(connor.cards.filter((card) => card.part === "bonus" && card.kind === "game").map((card) => card.gameId), ["lost-helpers"]);
   assert.ok(connor.cards.some((card) => card.stepId === "connor-count-5"));
 
@@ -259,12 +260,12 @@ test("a lesson can be eased only after Joyce has called for help", async () => {
   assert.equal(after.body.dose.parts.find((part) => part.id === "math").done, true);
 });
 
-test("a parent can skip a lesson with a note and clear today's dose without mastery", async () => {
+test("a parent can skip a card with a note and clear today's dose without mastery", async () => {
   const store = memoryStore();
   const now = at("2026-10-19T15:00:00Z");
   const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now });
   const lesson = first.body.cards.find((card) => card.stepId === "connor-names-1");
-  assert.equal(lesson.kind, "lesson");
+  assert.equal(lesson.kind, "game");
   const missing = await handleClassroom({
     store,
     env: {},
@@ -296,11 +297,16 @@ test("a parent can skip a lesson with a note and clear today's dose without mast
   assert.match(report.summary, /parent skipped.*Letter names/i);
 });
 
-test("Connor's letter-name answers count when the tile case differs", async () => {
+test("Connor's letter answers count when the tile case differs", async () => {
   const store = memoryStore();
   const now = at("2026-10-19T15:00:00Z");
+  // Letter names play in Letter Lights now; Joyce still teaches sounds M to Z as her own lesson.
+  const learned = { graded: 6, correct: 6, recent: [true, true, true, true, true, true], mastered: true };
+  const done = ["connor-names-1", "connor-names-2", "connor-names-3", "connor-names-4", "connor-sounds-1", "connor-sounds-2"];
+  await store.setJSON("classroom/kid/connor", { steps: Object.fromEntries(done.map((id) => [id, learned])) });
   const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "connor" }, now });
-  const lesson = first.body.cards.find((card) => card.stepId === "connor-names-1");
+  const lesson = first.body.cards.find((card) => card.stepId === "connor-sounds-3");
+  assert.equal(lesson.kind, "lesson");
   let t = now.getTime();
   for (const [i, item] of lesson.items.entries()) {
     t += 2000;
@@ -319,14 +325,14 @@ test("Connor's letter-name answers count when the tile case differs", async () =
     });
     assert.equal(out.body.correct, true);
   }
-  const done = await handleClassroom({
+  const finished = await handleClassroom({
     store,
     env: {},
     body: { action: "card", kid: "connor", cardId: lesson.id, status: "done" },
     now: new Date(t + 2000)
   });
-  assert.equal(done.body.ok, true);
-  assert.equal(done.body.redo, undefined);
+  assert.equal(finished.body.ok, true);
+  assert.equal(finished.body.redo, undefined);
 });
 
 test("one bonus finishes the dose, and the room is done when everyone who started is done", async () => {

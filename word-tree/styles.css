@@ -1,0 +1,24 @@
+/* Word Tree: choices look like ornaments. */
+.skin-word-tree .pick.bauble {
+  position: relative;
+  width: clamp(98px, 27vw, 150px);
+  min-width: 0;
+  height: clamp(98px, 27vw, 150px);
+  border-radius: 50%;
+  padding: 0 8px;
+  background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, .55), transparent 38%), var(--bauble);
+  color: white;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .28);
+  margin-top: 16px;
+}
+.skin-word-tree .pick.bauble::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: calc(50% - 14px);
+  width: 28px;
+  height: 18px;
+  border-radius: 5px;
+  background: #d9c27a;
+}
+.skin-word-tree .scene { background-color: #18304f; }

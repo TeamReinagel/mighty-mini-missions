@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1b3a63"/>
+  <rect x="232" y="410" width="48" height="50" rx="8" fill="#7a4a24"/>
+  <polygon points="256,110 380,260 132,260" fill="#1f7a4c"/>
+  <polygon points="256,170 420,420 92,420" fill="#23905a"/>
+  <polygon points="256,110 340,210 172,210" fill="#2aa465"/>
+  <polygon points="256,40 272,80 316,82 282,108 294,150 256,126 218,150 230,108 196,82 240,80" fill="#ffd447"/>
+  <circle cx="216" cy="250" r="34" fill="#e8445a"/>
+  <circle cx="306" cy="300" r="34" fill="#3b82f6"/>
+  <circle cx="196" cy="360" r="34" fill="#f5b700"/>
+  <circle cx="330" cy="380" r="30" fill="#a855f7"/>
+  <text x="216" y="262" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="800" fill="#fff">the</text>
+  <text x="306" y="312" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="800" fill="#fff">you</text>
+  <text x="196" y="372" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="800" fill="#fff">I</text>
+</svg>

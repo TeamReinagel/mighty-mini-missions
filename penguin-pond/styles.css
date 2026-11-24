@@ -1,0 +1,51 @@
+/* Penguin Pond: ice floes, the penguin crowd, and the bar graph. */
+.skin-penguin-pond .scene { background-color: #8fc3e6; }
+.skin-penguin-pond .pick.ice { background: #f4fbff; box-shadow: 0 8px 0 rgba(30, 64, 110, .3); }
+
+.floes { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.floe {
+  min-width: 74px; padding: 14px 10px; border-radius: 40% 46% 42% 48%;
+  background: #ffffff; color: #1d3557; font-size: 2rem; font-weight: 900; text-align: center;
+  box-shadow: 0 6px 0 #7fb0d8;
+}
+.floe.gap { background: rgba(255, 255, 255, .45); border: 4px dashed #ffffff; color: #ffffff; }
+.floe.found { background: #ffe066; color: #3b2a00; }
+.floes { align-items: center; gap: 4px; }
+.jump { visibility: hidden; font-weight: 900; color: #1d3557; font-size: 1.1rem; }
+.floes.jumps .jump { visibility: visible; }
+
+.crowd { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; max-width: 560px; padding: 8px; }
+.crowd .spot { width: 62px; transform: rotate(var(--tilt)); }
+.crowd .penguin { width: 62px; height: auto; display: block; }
+.crowd.paired { display: grid; grid-auto-flow: column; grid-template-rows: repeat(2, auto); gap: 4px 22px; }
+.crowd.paired .spot { transform: none; }
+.big-number { font-size: clamp(3rem, 12vw, 5rem); padding: 6px 30px; }
+.big-number.last-digit .digit { background: #ffe58a; border-radius: 12px; padding: 0 .12em; }
+.pick.parity { display: grid; justify-items: center; min-width: 170px; }
+.pick.parity .dots { font-size: 1.4rem; letter-spacing: .1em; color: #3b82f6; }
+
+.graph {
+  display: grid; grid-template-columns: 34px 1fr; grid-template-rows: auto 250px auto;
+  width: min(100%, 520px); padding: 10px 14px 8px 6px; border-radius: 20px; background: rgba(255, 255, 255, .94); color: #1d3557;
+}
+.graph-title { grid-column: 1 / -1; margin: 0 0 8px; text-align: center; font-weight: 800; }
+.axis { position: relative; }
+.tick { position: absolute; right: 6px; transform: translateY(50%); font-size: .95rem; font-weight: 800; }
+.plot {
+  position: relative; display: flex; justify-content: space-around; align-items: flex-end; gap: 10px;
+  border-left: 3px solid #1d3557; border-bottom: 3px solid #1d3557;
+  background: repeating-linear-gradient(to top, transparent 0, transparent calc(10% - 1px), #d5e3f0 calc(10% - 1px), #d5e3f0 10%);
+}
+.col { position: relative; flex: 1; max-width: 90px; height: 100%; display: flex; align-items: flex-end; border: 0; padding: 0; background: transparent; }
+button.col { cursor: pointer; border-radius: 12px 12px 0 0; }
+button.col:hover .bar, button.col.pressed .bar { filter: brightness(1.08); }
+button.col.tried { opacity: .35; }
+button.col.right .bar { outline: 5px solid #ffcf33; }
+.bar { position: relative; display: block; width: 100%; border-radius: 10px 10px 0 0; }
+.col.guide .bar::after {
+  content: ""; position: absolute; top: -2px; right: 100%; width: 600px; border-top: 3px dashed #1d3557; pointer-events: none;
+}
+.plot { overflow: hidden; }
+.names { display: flex; justify-content: space-around; gap: 10px; padding-top: 4px; }
+.name { flex: 1; max-width: 90px; display: grid; justify-items: center; font-weight: 800; }
+.name .penguin { width: 40px; height: auto; }

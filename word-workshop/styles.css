@@ -1,0 +1,12 @@
+/* Word Workshop: wrapped-gift choices, the word-job bins, and the contraction card. */
+.skin-word-workshop .scene { background-color: #5a3a2a; }
+.skin-word-workshop .pick { background: var(--cream); border-bottom: 10px solid var(--paper); }
+.skin-word-workshop .pick.contraction { font-family: "Avenir Next", "Trebuchet MS", sans-serif; letter-spacing: .04em; min-width: clamp(96px, 27vw, 150px); }
+.skin-word-workshop .ask-card .plus { color: #9aa4b8; }
+.skin-word-workshop .clue-pic { margin-left: .3em; }
+.skin-word-workshop .ask-card.show-gone .leaving { color: #c9ced8; text-decoration: line-through; text-decoration-thickness: 4px; }
+.skin-word-workshop .ask-card.sentence { font-size: clamp(1.4rem, 5vw, 2.1rem); font-weight: 800; }
+.skin-word-workshop .pick.job { display: grid; justify-items: center; gap: 2px; min-width: clamp(100px, 28vw, 150px); padding: 10px 8px; }
+.skin-word-workshop .job-icon { font-size: 2.2rem; line-height: 1; }
+.skin-word-workshop .job .pick-text { font-size: clamp(1.4rem, 5vw, 1.9rem); }
+.skin-word-workshop .job-does { font-size: 1rem; font-weight: 700; opacity: .75; }

@@ -208,7 +208,11 @@ const GAMES = {
   flowers: { id: "flower-beds", title: "Flower Beds", href: "../flower-beds/", say: oneRound("Flower Beds") },
   sheep: { id: "more-or-fewer", title: "Lost Sheep", href: "../more-or-fewer/", say: oneRound("Lost Sheep") },
   dino: { id: "pattern-park", title: "Dino Express", href: "../pattern-park/", say: oneRound("Dino Express") },
-  tide: { id: "sound-teams", title: "Tide Pool", href: "../sound-teams/", say: oneRound("Tide Pool") }
+  tide: { id: "sound-teams", title: "Tide Pool", href: "../sound-teams/", say: oneRound("Tide Pool") },
+  wordTree: { id: "word-tree", title: "Word Tree", href: "../word-tree/", say: oneRound("Word Tree") },
+  workshop: { id: "word-workshop", title: "Word Workshop", href: "../word-workshop/", say: oneRound("Word Workshop") },
+  pond: { id: "penguin-pond", title: "Penguin Pond", href: "../penguin-pond/", say: oneRound("Penguin Pond") },
+  lights: { id: "letter-lights", title: "Letter Lights", href: "../letter-lights/", say: oneRound("Letter Lights") }
 };
 
 // Gabi's bonus game changes each school day. It comes from games for goals she has already
@@ -224,6 +228,7 @@ const BONUS_POOL = {
     { game: GAMES.dino, after: "gabi-patterns" },
     { game: GAMES.sheep, after: "gabi-more" },
     { game: GAMES.ghost, after: "gabi-sight-1" },
+    { game: GAMES.wordTree, after: "gabi-sight-1" },
     { game: GAMES.tide, after: "gabi-sh" }
   ]
 };
@@ -267,7 +272,11 @@ const EVIDENCE = {
   "basket-sort": { game: "basket-sort", need: ROUND_LENGTH["basket-sort"] },
   "shape-tap": { game: "shape-tap", need: ROUND_LENGTH["shape-tap"] },
   "my-name": { game: "my-name", need: ROUND_LENGTH["my-name"] },
-  "two-jobs": { game: "two-jobs", need: ROUND_LENGTH["two-jobs"] }
+  "two-jobs": { game: "two-jobs", need: ROUND_LENGTH["two-jobs"] },
+  "word-tree": { game: "word-tree", need: ROUND_LENGTH["word-tree"] },
+  "word-workshop": { game: "word-workshop", need: ROUND_LENGTH["word-workshop"] },
+  "penguin-pond": { game: "penguin-pond", need: ROUND_LENGTH["penguin-pond"] },
+  "letter-lights": { game: "letter-lights", need: ROUND_LENGTH["letter-lights"] }
 };
 
 export function evidenceFor(kidId, gameId) {
@@ -729,15 +738,31 @@ function lessonCard(kidId, item, date, state) {
   };
 }
 
+const asStep = (game) => [game.id, game.title, game.href, game.say];
+
 const STEP_GAMES = {
   "gabi-count-20": ["flower-beds", "Flower Beds", "../flower-beds/", oneRound("Flower Beds")],
   "connor-numbers": ["nest-numbers", "Nest Numbers", "../nest-numbers/", oneRound("Nest Numbers")],
-  "connor-sort": ["basket-sort", "Basket Sort", "../basket-sort/", oneRound("Basket Sort")]
+  "connor-sort": ["basket-sort", "Basket Sort", "../basket-sort/", oneRound("Basket Sort")],
+  // Games built for milestone gaps (2026-11-24). Each opens on the level for its step and
+  // reports only that level's answers to the step.
+  "gabi-sight-1": asStep(GAMES.wordTree),
+  "gabi-sight-2": asStep(GAMES.wordTree),
+  "max-compound": asStep(GAMES.workshop),
+  "max-contractions": asStep(GAMES.workshop),
+  "max-parts-of-speech": asStep(GAMES.workshop),
+  "max-skip-count": asStep(GAMES.pond),
+  "max-odd-even": asStep(GAMES.pond),
+  "max-bar-graphs": asStep(GAMES.pond),
+  "connor-names-1": asStep(GAMES.lights),
+  "connor-names-2": asStep(GAMES.lights),
+  "connor-names-3": asStep(GAMES.lights),
+  "connor-names-4": asStep(GAMES.lights)
 };
 
-// Joyce teaches these herself: Hatch Match picks its own letters, and Jungle Jump has
-// levels only for A to F and G to L, so neither can report on these letter groups.
-const JOYCE_TEACHES = new Set(["connor-names-1", "connor-names-2", "connor-names-3", "connor-names-4", "connor-sounds-3", "connor-sounds-4"]);
+// Joyce teaches these herself: Jungle Jump has levels only for A to F and G to L, so it can't
+// report on these letter-sound groups. (Letter names moved to Letter Lights, which can.)
+const JOYCE_TEACHES = new Set(["connor-sounds-3", "connor-sounds-4"]);
 
 const SKILL_GAMES = {
   "hear-name": ["hatch-match", "Hatch Match", "../hatch-match/", oneRound("Hatch Match")],

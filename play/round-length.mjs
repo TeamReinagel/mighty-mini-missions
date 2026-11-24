@@ -22,7 +22,11 @@ export const ROUND_LENGTH = {
   "shape-tap": 4,
   "my-name": 4,
   "two-jobs": 4,
-  "puzzle-barn": 3
+  "puzzle-barn": 3,
+  "word-tree": 6,
+  "word-workshop": 6,
+  "penguin-pond": 6,
+  "letter-lights": 6
 };
 
 export function roundsFor(game, kidId) {

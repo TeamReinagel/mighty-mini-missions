@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CHAINS, buildDay, goalsOf, handleClassroom, memoryStore } from "./classroom.mjs";
 import { allMilestones } from "./kids.mjs";
-import { findGaps, runGapCheck } from "./milestone-gaps.mjs";
+import { coverage, findGaps, runGapCheck } from "./milestone-gaps.mjs";
+import { baselineMet } from "./baselines.mjs";
 
 const MASTERED = { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] };
 const TUESDAY = "2026-11-24";
@@ -62,9 +63,27 @@ test("a goal with nothing to teach it is a gap, and the next goal is checked too
   const gaps = findGaps("gabi", met);
   const math = gaps.filter((gap) => gap.goal.area === "Math");
   assert.deepEqual(math.map((gap) => [gap.goal.id, gap.when, gap.kind]), [["K-Dec-Math-1", "now", "none"], ["K-Jan-Math-1", "next", "none"]]);
-  const reading = gaps.find((gap) => gap.goal.id === "K-Dec-Reading-1");
-  assert.equal(reading.kind, "lesson");
+  assert.equal(gaps.some((gap) => gap.goal.id === "K-Dec-Reading-1"), false, "Word Tree covers December sight words");
   assert.equal(gaps.some((gap) => gap.goal.id === "K-Nov-Reading-1"), false, "Otter Slide covers short-vowel words");
+
+  // A goal Joyce teaches only as a lesson is still a gap: Max's solid shapes, once December
+  // and April math are met.
+  const maxMet = new Set([...baselineMet("max"), "G1-Dec-Math-1", "G1-Apr-Math-1"]);
+  const shapes = findGaps("max", maxMet).find((gap) => gap.goal.id === "G1-May-Math-1");
+  assert.equal(shapes.kind, "lesson");
+  assert.deepEqual(shapes.lessons, ["Solid shapes"]);
+});
+
+test("the November 24 gaps all have games now", () => {
+  for (const kidId of ["gabi", "max", "connor"]) {
+    assert.deepEqual(findGaps(kidId, new Set(baselineMet(kidId))), [], kidId);
+  }
+  assert.deepEqual(coverage("gabi", "K-Dec-Reading-1").games, ["Word Tree"]);
+  assert.deepEqual(coverage("max", "G1-Dec-ELA-1").games, ["Word Workshop"]);
+  assert.deepEqual(coverage("max", "G1-Feb-ELA-1").games, ["Word Workshop"]);
+  assert.deepEqual(coverage("max", "G1-Dec-Math-1").games, ["Penguin Pond"]);
+  assert.deepEqual(coverage("max", "G1-Apr-Math-1").games, ["Penguin Pond"]);
+  assert.deepEqual(coverage("connor", "KR-Read-5").games, ["Letter Lights"]);
 });
 
 test("Stephanie hears about each gap once, and again when the child reaches it", async () => {
@@ -75,12 +94,10 @@ test("Stephanie hears about each gap once, and again when the child reaches it",
     return { ok: true, json: async () => ({ ok: true }) };
   };
   const env = { SLACK_BOT_TOKEN: "xoxb-test", JOYCE_APPROVERS: "U0STEPH" };
+  // From the baselines, every goal now and next has a game, so nothing is sent.
   const first = await runGapCheck({ store, env, fetchImpl, now: new Date("2026-11-24T13:00:00Z") });
-  assert.equal(first.sent, true);
-  assert.equal(sent.length, 1);
-  assert.equal(sent[0].body.channel, "U0STEPH");
-  assert.match(sent[0].body.text, /Gabi\*, Kindergarten Reading \(working on now\).*K-Dec-Reading-1/s);
-  assert.doesNotMatch(sent[0].body.text, /K-Dec-Math-1/);
+  assert.equal(first.sent, false);
+  assert.equal(sent.length, 0);
 
   const again = await runGapCheck({ store, env, fetchImpl, now: new Date("2026-11-24T14:00:00Z") });
   assert.equal(again.sent, false, "once a day");
@@ -92,8 +109,9 @@ test("Stephanie hears about each gap once, and again when the child reaches it",
   await store.setJSON("classroom/kid/gabi", { steps: Object.fromEntries(math.map((id) => [id, MASTERED])) });
   const ahead = await runGapCheck({ store, env, fetchImpl, now: new Date("2026-11-26T13:00:00Z") });
   assert.equal(ahead.sent, true);
+  assert.equal(sent.at(-1).body.channel, "U0STEPH");
   assert.match(sent.at(-1).body.text, /Gabi\*, Kindergarten Math \(up next\).*K-Dec-Math-1/s);
-  assert.doesNotMatch(sent.at(-1).body.text, /K-Dec-Reading-1/, "already told");
+  assert.doesNotMatch(sent.at(-1).body.text, /K-Dec-Reading-1/, "Word Tree covers it");
 
   // November math done too: she has reached December's math, so it comes once more.
   const through = [...math, "gabi-more", "gabi-add", "gabi-add-10"];

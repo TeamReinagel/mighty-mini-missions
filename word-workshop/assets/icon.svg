@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#6b4630"/>
+  <rect x="96" y="150" width="140" height="120" rx="14" fill="#3b82f6"/>
+  <rect x="158" y="150" width="16" height="120" fill="#fff"/>
+  <rect x="270" y="130" width="150" height="140" rx="14" fill="#e8445a"/>
+  <rect x="337" y="130" width="16" height="140" fill="#fff"/>
+  <path d="M70 360 H420 Q460 360 460 320 V296 H440 V330 Q440 340 428 340 H86 Z" fill="#c62f3c"/>
+  <rect x="80" y="290" width="360" height="60" rx="12" fill="#c62f3c"/>
+  <path d="M60 410 H430 Q470 410 476 380" fill="none" stroke="#f5c542" stroke-width="14" stroke-linecap="round"/>
+  <rect x="112" y="196" width="108" height="40" rx="8" fill="#fff"/>
+  <text x="166" y="226" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="800" fill="#241c33">don't</text>
+  <rect x="285" y="186" width="120" height="40" rx="8" fill="#fff"/>
+  <text x="345" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="800" fill="#241c33">snowman</text>
+</svg>

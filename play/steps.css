@@ -1,0 +1,70 @@
+/* Shared look for the step games (play/steps.mjs). Each game's styles.css adds its own pieces. */
+
+.scene { align-content: start; }
+
+/* The picture that fills as the round goes. Quiet and still; it only changes on a right answer. */
+.goal { justify-self: center; width: min(100%, 420px); }
+.goal svg { display: block; width: 100%; height: auto; max-height: 30vh; margin: 0 auto; }
+
+.board { display: grid; gap: 14px; justify-items: center; }
+
+/* The thing being asked about: big, readable, on a calm card. */
+.ask-card {
+  margin: 0;
+  padding: 12px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .92);
+  color: var(--ink);
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 6px 0 rgba(36, 28, 51, .18);
+}
+.ask-card .gap { display: inline-block; min-width: 2.2em; border-bottom: 5px dashed #9aa4b8; color: #9aa4b8; }
+.ask-card .mark { background: #ffe58a; border-radius: 10px; padding: 0 .2em; }
+
+/* Choices: the largest touch targets on the screen. */
+.picks { gap: clamp(8px, 2.5vw, 16px); }
+.pick {
+  min-width: clamp(88px, 25vw, 128px);
+  min-height: clamp(88px, 22vw, 112px);
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 26px;
+  background: var(--cream);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: clamp(1.9rem, 7vw, 2.8rem);
+  box-shadow: 0 8px 0 rgba(36, 28, 51, .22);
+  touch-action: manipulation;
+}
+.pick .pick-text { display: block; line-height: 1.05; }
+.pick.small-text { font-size: clamp(1.3rem, 4.6vw, 1.8rem); }
+.pick.pressed { transform: translateY(4px); box-shadow: 0 4px 0 rgba(36, 28, 51, .22); }
+.pick.tried { opacity: .35; }
+.pick.right { outline: 6px solid #ffe066; outline-offset: 3px; }
+.pick:disabled:not(.tried):not(.right) { opacity: .55; }
+.pick.right:disabled { opacity: 1; }
+
+.hint-btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 800;
+  color: var(--ink);
+  background: #ffe58a;
+  box-shadow: 0 4px 0 rgba(36, 28, 51, .2);
+}
+.hint-btn[hidden] { display: none; }
+
+.levels { gap: 8px; }
+.levels .level { min-height: 48px; font-size: 1rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .goal .fresh { animation: settle .32s ease-out; }
+  .pick.pressed { transition: transform .08s ease-out; }
+}
+@keyframes settle { from { transform: scale(.4); opacity: .3; } }
+@media (prefers-reduced-motion: reduce) {
+  .goal .fresh, .pick.bad { animation: none; }
+}

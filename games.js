@@ -20,6 +20,8 @@ window.MIGHTY_SKILLS = [
   { id: "math-facts", label: "Adding & subtracting", kid: "Math" },
   { id: "money", label: "Coins & money", kid: "Coins" },
   { id: "feelings", label: "Naming feelings", kid: "Feelings" },
+  { id: "word-study", label: "Compound words, contractions & word jobs", kid: "Word study" },
+  { id: "number-sense", label: "Skip counting, odd & even, bar graphs", kid: "Number sense" },
   { id: "missions", label: "Real-world missions", kid: "Go play" },
   { id: "game-design", label: "Designing games", kid: "My games" }
 ];
@@ -270,6 +272,50 @@ window.MIGHTY_GAMES = [
     href: "./block-trade/",
     profiles: ["max"],
     practices: ["math-facts"],
+    levels: ["1st", "2nd"]
+  },
+  {
+    id: "word-tree",
+    title: "Word Tree",
+    icon: "./word-tree/assets/icon.png",
+    tile: "./shared/tiles/word-tree.webp",
+    href: "./word-tree/",
+    profiles: ["gabi", "max"],
+    practices: ["sight-words"],
+    homeFor: ["gabi"],
+    levels: ["prek", "k", "1st"]
+  },
+  {
+    id: "letter-lights",
+    title: "Letter Lights",
+    icon: "./letter-lights/assets/icon.png",
+    tile: "./shared/tiles/letter-lights.webp",
+    href: "./letter-lights/",
+    profiles: ["connor", "gabi"],
+    practices: ["letters"],
+    homeFor: ["connor"],
+    levels: ["prek", "k"]
+  },
+  {
+    id: "word-workshop",
+    title: "Word Workshop",
+    icon: "./word-workshop/assets/icon.png",
+    tile: "./shared/tiles/word-workshop.webp",
+    href: "./word-workshop/",
+    profiles: ["max"],
+    practices: ["word-study"],
+    homeFor: ["max"],
+    levels: ["1st", "2nd"]
+  },
+  {
+    id: "penguin-pond",
+    title: "Penguin Pond",
+    icon: "./penguin-pond/assets/icon.png",
+    tile: "./shared/tiles/penguin-pond.webp",
+    href: "./penguin-pond/",
+    profiles: ["max"],
+    practices: ["number-sense", "math-facts"],
+    homeFor: ["max"],
     levels: ["1st", "2nd"]
   },
   {
