@@ -87,6 +87,18 @@ BASELINES.connor = {
   }
 };
 
+// Gabi's starting point on the Kindergarten sheet. From her profile in kids.mjs: through Reading.com
+// lesson 34, letters, capitals, and letter sounds are known (b/d/p/q still mix). Stephanie,
+// 2026-11-24: she finished every Otter Slide word, with stars, before the game reported to Joyce,
+// so November's CVC blending is met. Her math starts at counting to 10, so no math goal is marked.
+BASELINES.gabi = {
+  date: "2026-11-24",
+  source: "Gabi's profile (Reading.com lesson 34) and Stephanie's Otter Slide note",
+  met: ["K-Sep-Reading-1", "K-Oct-Reading-1", "K-Nov-Reading-1"],
+  open: {},
+  notes: { "K-Nov-Reading-1": "Every Otter Slide word read, with stars (Stephanie, 2026-11-24)." }
+};
+
 // A review month counts as met once every other goal in its grade and subject is met.
 export const REVIEW_MILESTONES = new Set(["G1-Aug-Math-1"]);
 

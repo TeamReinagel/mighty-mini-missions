@@ -55,7 +55,7 @@ test("a finished episode never comes back, and with none left the story day keep
   assert.deepEqual(connor.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["connor-names-1"]);
   assert.equal(connor.cards.some((card) => card.gameId === "moon-path"), false);
   const gabi = buildDay({ kidId: "gabi", date: "2026-11-09", state: ALL_FINISHED("gabi") });
-  assert.deepEqual(ela(gabi), ["otter-slide"]);
+  assert.deepEqual(gabi.cards.filter((card) => card.part === "ela").map((card) => card.stepId), ["gabi-sight-1"]);
   assert.equal(gabi.cards.some((card) => card.stepId === "gabi-count-10"), true);
   assert.equal(nextEpisode("connor", ALL_FINISHED("connor")), null);
 });

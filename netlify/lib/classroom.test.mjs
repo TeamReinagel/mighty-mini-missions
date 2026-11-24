@@ -2,11 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { CVC, itemsFor, wordParts } from "./classroom-content.mjs";
 import {
-  applyAttempt, buildDay, conferencePackage, decidePlan, dropEarlyMastery, dropLastNoteSpots, evidenceFor, handleClassroom, handsFirst, isMastered,
+  applyAttempt, applyDecision, buildDay, conferencePackage, decidePlan, dropEarlyMastery, dropLastNoteSpots, evidenceFor, handleClassroom, handsFirst, isMastered,
   memoryStore, noteSignal, recordNoteSteps, rhythmFor, setEssentialOff, stepById, weekdayIndex
 } from "./classroom.mjs";
 
 const MONDAY = "2026-10-19";
+const MASTERED = { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] };
 const WEDNESDAY = "2026-10-21";
 const FRIDAY = "2026-10-23";
 
@@ -39,11 +40,11 @@ test("lesson items stay inside the real word lists", () => {
     assert.equal(item.parts.map((part) => part.letters).join(""), item.word);
     assert.match(item.say, /Push them together/);
   }
+  // Gabi's CVC goal is met (every Otter Slide word starred), so her reading is December's sight words.
   const day = buildDay({ kidId: "gabi", date: MONDAY });
-  const reading = day.cards.find((card) => card.stepId === "gabi-cvc-a");
-  assert.equal(reading.kind, "game");
-  assert.match(reading.href, /otter-slide/);
-  assert.equal(day.cards.some((card) => card.stepId === "gabi-sounds"), false);
+  const reading = day.cards.find((card) => card.part === "ela");
+  assert.equal(reading.stepId, "gabi-sight-1");
+  assert.equal(day.cards.some((card) => card.stepId === "gabi-sounds" || card.stepId === "gabi-cvc-a"), false);
 });
 
 test("regrouping opens as Block Trade", () => {
@@ -66,7 +67,7 @@ test("a school day is reading, math, and one bonus, with no clock", () => {
     const gabi = buildDay({ kidId: "gabi", date });
     assert.deepEqual(gabi.dose.parts.map((part) => part.title), ["Reading", "Math", "Bonus"]);
     assert.deepEqual(parts(gabi), ["ela", "math", "bonus", "bonus"]);
-    assert.ok(gabi.cards.some((card) => card.stepId === "gabi-cvc-a" && card.part === "ela"));
+    assert.ok(gabi.cards.some((card) => card.stepId === "gabi-sight-1" && card.part === "ela"));
     assert.ok(gabi.cards.some((card) => card.stepId === "gabi-count-10" && card.part === "math"));
     assert.ok(gabi.cards.every((card) => card.minutes === undefined));
     assert.equal(gabi.dose.complete, false);
@@ -112,25 +113,25 @@ test("a game card counts only after real play since it was opened", async () => 
   const store = memoryStore();
   const start = "2026-10-19T15:00:00Z";
   const first = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now: at(start) });
-  const otter = first.body.cards.find((card) => card.gameId === "otter-slide" && card.part === "ela");
+  const sundae = first.body.cards.find((card) => card.gameId === "snack-count" && card.part === "math");
 
-  await logPlay(store, at(start, -600), "gabi", "otter-slide", 20);
-  await handleClassroom({ store, env: {}, body: { action: "open", kid: "gabi", cardId: otter.id }, now: at(start, 5) });
-  const tooSoon = await finishCard(store, "gabi", otter.id, at(start, 10));
+  await logPlay(store, at(start, -600), "gabi", "snack-count", 20);
+  await handleClassroom({ store, env: {}, body: { action: "open", kid: "gabi", cardId: sundae.id }, now: at(start, 5) });
+  const tooSoon = await finishCard(store, "gabi", sundae.id, at(start, 10));
   assert.equal(tooSoon.body.notYet, true);
   assert.equal(tooSoon.body.played, 0);
 
-  await logPlay(store, at(start, 60), "gabi", "otter-slide", 4);
-  await logPlay(store, at(start, 70), "max", "otter-slide", 5);
-  const short = await finishCard(store, "gabi", otter.id, at(start, 80));
+  await logPlay(store, at(start, 60), "gabi", "snack-count", 5);
+  await logPlay(store, at(start, 70), "max", "snack-count", 5);
+  const short = await finishCard(store, "gabi", sundae.id, at(start, 80));
   assert.equal(short.body.notYet, true);
-  assert.equal(short.body.played, 4);
+  assert.equal(short.body.played, 5);
 
-  await logPlay(store, at(start, 120), "gabi", "otter-slide", 1);
-  const played = await finishCard(store, "gabi", otter.id, at(start, 130));
+  await logPlay(store, at(start, 120), "gabi", "snack-count", 1);
+  const played = await finishCard(store, "gabi", sundae.id, at(start, 130));
   assert.equal(played.body.ok, true);
   const after = await handleClassroom({ store, env: {}, body: { action: "today", kid: "gabi" }, now: at(start, 140) });
-  assert.equal(after.body.dose.parts.find((part) => part.id === "ela").done, true);
+  assert.equal(after.body.dose.parts.find((part) => part.id === "math").done, true);
 });
 
 test("Connor's practice card is the next Not sure checklist game, and finishes after four plays", async () => {
@@ -338,6 +339,8 @@ test("one bonus finishes the dose, and the room is done when everyone who starte
     return { ok: true, json: async () => ({ ok: true }) };
   };
 
+  // Gabi past December's sight-word lessons, so her reading card is a game (Tide Pool).
+  await store.setJSON("classroom/kid/gabi", { steps: { "gabi-sight-1": MASTERED, "gabi-story-cat": MASTERED } });
   const ethan = await handleClassroom({ store, env, fetchImpl, body: { action: "today", kid: "ethan" }, now: at(start) });
   const gabi = await handleClassroom({ store, env, fetchImpl, body: { action: "today", kid: "gabi" }, now: at(start) });
   const waiting = await handleClassroom({ store, env, fetchImpl, body: { action: "room", kid: "ethan" }, now: at(start) });
@@ -376,20 +379,34 @@ test("one bonus finishes the dose, and the room is done when everyone who starte
 test("a hold keeps the child on the step they already know", () => {
   const state = {
     steps: {
-      "gabi-cvc-a": { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] }
+      "gabi-count-10": { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] }
     }
   };
-  const plan = { holds: { "gabi-cvc-e": { why: "not yet" } }, kids: {}, asked: {}, noticed: {}, celebrated: {} };
+  const plan = { holds: { "gabi-numbers": { why: "not yet" } }, kids: {}, asked: {}, noticed: {}, celebrated: {} };
   const day = buildDay({ kidId: "gabi", date: MONDAY, state, plan });
-  const reading = day.cards.find((card) => card.stepId === "gabi-cvc-a");
-  assert.equal(reading.stepId, "gabi-cvc-a");
-  assert.equal(reading.review, true);
-  assert.equal(day.cards.some((card) => card.stepId === "gabi-cvc-e"), false);
+  const math = day.cards.find((card) => card.stepId === "gabi-count-10");
+  assert.equal(math.stepId, "gabi-count-10");
+  assert.equal(math.review, true);
+  assert.equal(day.cards.some((card) => card.stepId === "gabi-numbers"), false);
+});
+
+test("keeping a hard step for another week keeps the child on that step", () => {
+  // Oct 23: "Gabi is still working on Counting to 20 (11 of 36). Keep this step next week", approved.
+  const why = "Gabi is still working on Counting to 20 (11 of 36). Keep this step next week instead of moving on.";
+  const state = { steps: { "gabi-count-10": MASTERED, "gabi-numbers": MASTERED } };
+  for (const hold of [{ why }, { why, keep: true }]) {
+    const plan = { holds: { "gabi-count-20": hold }, kids: {}, asked: {}, noticed: {}, celebrated: {} };
+    const math = buildDay({ kidId: "gabi", date: "2026-11-24", state, plan }).cards.find((card) => card.part === "math");
+    assert.equal(math.stepId, "gabi-count-20");
+    assert.equal(math.review, false);
+  }
+  const approved = applyDecision({}, { id: "slow-gabi-count-20", kind: "hold", stepId: "gabi-count-20", prompt: why }, true);
+  assert.equal(approved.holds["gabi-count-20"].keep, true);
 });
 
 test("conference asks before a new strand, a long struggle, or the end of Reading.com", () => {
   const struggling = {
-    steps: { "gabi-cvc-a": { graded: 8, correct: 2, recent: [false, false, false, false, false, false, false, false] } }
+    steps: { "gabi-sight-1": { graded: 8, correct: 2, recent: [false, false, false, false, false, false, false, false] } }
   };
   const pack = conferencePackage({
     roster: [
@@ -400,7 +417,7 @@ test("conference asks before a new strand, a long struggle, or the end of Readin
     ],
     plan: {}
   });
-  assert.ok(pack.decisions.some((item) => item.id === "slow-gabi-cvc-a"));
+  assert.ok(pack.decisions.some((item) => item.id === "slow-gabi-sight-1"));
   assert.ok(pack.decisions.some((item) => item.id === "read-120"));
 
   const mastered = { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] };
@@ -420,11 +437,11 @@ test("conference asks before a new strand, a long struggle, or the end of Readin
     }],
     plan: {}
   });
-  assert.ok(ready.decisions.some((item) => item.id === "go-gabi-sh"));
+  // After November's short-vowel words, the Kindergarten sheet's December goal is sight words.
+  assert.ok(ready.decisions.some((item) => item.id === "go-gabi-sight-1"));
   assert.equal(ready.decisions.some((item) => item.id === "go-gabi-cvc-a"), false);
 });
 
-const MASTERED = { mastered: true, graded: 6, correct: 6, recent: [true, true, true, true, true, true] };
 
 test("counting past ten opens Flower Beds for Gabi", () => {
   const early = buildDay({ kidId: "gabi", date: MONDAY });
@@ -433,7 +450,7 @@ test("counting past ten opens Flower Beds for Gabi", () => {
   const day = buildDay({
     kidId: "gabi",
     date: MONDAY,
-    state: { steps: { "gabi-count-10": MASTERED } }
+    state: { steps: { "gabi-count-10": MASTERED, "gabi-numbers": MASTERED } }
   });
   const twenty = day.cards.find((card) => card.stepId === "gabi-count-20");
   assert.equal(twenty.gameId, "flower-beds");

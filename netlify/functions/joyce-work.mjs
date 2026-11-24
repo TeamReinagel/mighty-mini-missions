@@ -2,6 +2,7 @@ import { getStore } from "@netlify/blobs";
 import { checkCodeRequests, handleAction, handleMessage, runMorning, runWeekly } from "../lib/joyce-brain.mjs";
 import { verifyJob } from "../lib/slack.mjs";
 import { runFridayNudge, summarizeInbox } from "../lib/joyce-inbox.mjs";
+import { runGapCheck } from "../lib/milestone-gaps.mjs";
 
 // Joyce's background worker (up to 15 minutes per job). Jobs come only from joyce.mjs,
 // joyce-clock.mjs, joyce-inbox.mjs, and report-now.mjs, signed with the Slack signing secret.
@@ -22,6 +23,7 @@ export default async (req) => {
     else if (job.kind === "code-check") await checkCodeRequests({ store });
     else if (job.kind === "inbox") await summarizeInbox({ store, key: job.key });
     else if (job.kind === "nudge") await runFridayNudge({ store });
+    else if (job.kind === "gaps") await runGapCheck({ store });
   } catch (err) {
     console.error(`Joyce job "${job.kind}" failed:`, err);
   }

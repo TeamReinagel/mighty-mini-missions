@@ -68,6 +68,18 @@ function load() {
 }
 let state = load();
 function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (_) { /* storage full or blocked */ } }
+
+// A Today with Joyce card opens this game with her step (?step=gabi-cvc-a). Each word's first try
+// goes to Joyce too, and she credits it to that word's own vowel step, so play moves the path.
+const JOYCE_STEP = new URLSearchParams(location.search).get('step') || '';
+function reportToJoyce(word, correct) {
+  if (!JOYCE_STEP || !kid.id || kid.id === 'unknown') return;
+  fetch('/api/classroom', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'practice', kid: kid.id, step: JOYCE_STEP, item: word, correct })
+  }).catch(() => { /* offline: Joyce misses this try; the progress log still syncs later */ });
+}
 const rec = (w) => state.words[w] || (state.words[w] = { t: 0, r: 0, s: 0, n: 0, star: false });
 
 // ---------- audio: letter sounds and words are recorded clips; effects are synthesized ----------
@@ -715,6 +727,7 @@ async function onRight(btn) {
       newWord: r.fresh || undefined
     }
   });
+  reportToJoyce(r.w, first);
 
   if (first) {
     if (++session.run >= 2) { session.level = Math.min(MAX_LEVEL, session.level + 1); session.run = 0; }

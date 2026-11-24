@@ -17,6 +17,7 @@ import {
 } from "./skills.mjs";
 import { post } from "./slack.mjs";
 import { ROUND_LENGTH } from "../../play/round-length.mjs";
+import { baselineMet } from "./baselines.mjs";
 
 export const CLASS_KIDS = {
   max: { name: "Max", age: 5, color: "#4fa3ff", picture: "../avatars/max.jpg" },
@@ -72,40 +73,55 @@ const vowel = (vowelLetter, title) => step({
   activity: "cvc",
   vowel: vowelLetter,
   skill: "Blending CVC words",
-  teach: `Short ${vowelLetter} says its sound. We'll build words with it.`
+  teach: `Short ${vowelLetter} says its sound. We'll build words with it.`,
+  milestone: "K-Nov-Reading-1"
 });
 
+// Gabi's path follows the Kindergarten sheet of the milestones spreadsheet, month by month in
+// each subject. `milestone` is the sheet goal a step works toward; a goal counts as met once every
+// step tagged with it is learned. A step whose goal is already met (Stephanie's baseline, or a
+// goal Joyce's Friday report credited from an observation) is skipped. A goal with no step here
+// is a gap, and Stephanie gets a Slack note (milestone-gaps.mjs).
 export const CHAINS = {
   gabi: [
     {
       id: "reading",
       steps: [
-        step({ id: "gabi-sounds", title: "Letter sounds", strand: "gabi-sounds", strandName: "Letter sounds", activity: "hear-sound", skill: "Letter sounds", teach: "I'll say a sound. You tap the letter.", placed: true }),
+        step({ id: "gabi-sounds", title: "Letter sounds", strand: "gabi-sounds", strandName: "Letter sounds", activity: "hear-sound", skill: "Letter sounds", teach: "I'll say a sound. You tap the letter.", placed: true, milestone: "K-Sep-Reading-1" }),
+        // November: blending CVC words. Vowels go in Otter Slide's order (a, o, i, u, then e,
+        // since e and i sound alike), so the card names the vowel the game is bringing in.
         vowel("a", "Short a words"),
-        vowel("e", "Short e words"),
-        vowel("i", "Short i words"),
         vowel("o", "Short o words"),
+        vowel("i", "Short i words"),
         vowel("u", "Short u words"),
-        step({ id: "gabi-sh", title: "Words with sh", strand: "gabi-digraphs", strandName: "Digraphs", activity: "digraph", pattern: "sh", skill: "Digraphs", teach: "S and h together say sh, like in ship." }),
-        step({ id: "gabi-ch", title: "Words with ch", strand: "gabi-digraphs", strandName: "Digraphs", activity: "digraph", pattern: "ch", skill: "Digraphs", teach: "C and h together say ch, like in chip." }),
-        step({ id: "gabi-th", title: "Words with th", strand: "gabi-digraphs", strandName: "Digraphs", activity: "digraph", pattern: "th", skill: "Digraphs", teach: "T and h together say th, like in thin." }),
-        step({ id: "gabi-blends", title: "Starting blends", strand: "gabi-blends", strandName: "Blends", activity: "blend", skill: "Starting blends", teach: "Some words start with two sounds that stay together, like s and t in stop." }),
-        step({ id: "gabi-sight-1", title: "Sight words, set 1", strand: "gabi-sight", strandName: "Sight words", activity: "sight", from: 0, span: 25, skill: "Sight words", teach: "Some words we say as a whole word." }),
-        step({ id: "gabi-sight-2", title: "Sight words, set 2", strand: "gabi-sight", strandName: "Sight words", activity: "sight", from: 25, span: 25, skill: "Sight words", teach: "More whole words. I'll tell you when not to sound one out." }),
-        step({ id: "gabi-story-cat", title: "Story: The Cat", strand: "gabi-stories", strandName: "Stories", activity: "story", story: "story-cat", skill: "Stories", teach: "We'll read The Cat, one page at a time.", items: 1, masteryMin: 1, masteryHits: 1 }),
-        step({ id: "gabi-story-hen", title: "Story: The Red Hen", strand: "gabi-stories", strandName: "Stories", activity: "story", story: "story-hen", skill: "Stories", teach: "We'll read The Red Hen.", items: 1, masteryMin: 1, masteryHits: 1 }),
-        step({ id: "gabi-story-ship", title: "Story: The Ship", strand: "gabi-stories", strandName: "Stories", activity: "story", story: "story-ship", skill: "Stories", teach: "We'll read The Ship.", items: 1, masteryMin: 1, masteryHits: 1 })
+        vowel("e", "Short e words"),
+        // December: sight words (aim for 10-15) and simple storybooks.
+        step({ id: "gabi-sight-1", title: "Sight words, set 1", strand: "gabi-sight", strandName: "Sight words", activity: "sight", from: 0, span: 25, skill: "Sight words", teach: "Some words we say as a whole word.", milestone: "K-Dec-Reading-1" }),
+        step({ id: "gabi-story-cat", title: "Story: The Cat", strand: "gabi-stories", strandName: "Stories", activity: "story", story: "story-cat", skill: "Stories", teach: "We'll read The Cat, one page at a time.", items: 1, masteryMin: 1, masteryHits: 1, milestone: "K-Dec-Reading-1" }),
+        // January: simple sentences with support and 20-30 sight words. The sheet doesn't name
+        // digraphs or blends; they come here because the January stories need them.
+        step({ id: "gabi-sh", title: "Words with sh", strand: "gabi-digraphs", strandName: "Digraphs", activity: "digraph", pattern: "sh", skill: "Digraphs", teach: "S and h together say sh, like in ship.", milestone: "K-Jan-Reading-1" }),
+        step({ id: "gabi-ch", title: "Words with ch", strand: "gabi-digraphs", strandName: "Digraphs", activity: "digraph", pattern: "ch", skill: "Digraphs", teach: "C and h together say ch, like in chip.", milestone: "K-Jan-Reading-1" }),
+        step({ id: "gabi-th", title: "Words with th", strand: "gabi-digraphs", strandName: "Digraphs", activity: "digraph", pattern: "th", skill: "Digraphs", teach: "T and h together say th, like in thin.", milestone: "K-Jan-Reading-1" }),
+        step({ id: "gabi-blends", title: "Starting blends", strand: "gabi-blends", strandName: "Blends", activity: "blend", skill: "Starting blends", teach: "Some words start with two sounds that stay together, like s and t in stop.", milestone: "K-Jan-Reading-1" }),
+        step({ id: "gabi-sight-2", title: "Sight words, set 2", strand: "gabi-sight", strandName: "Sight words", activity: "sight", from: 25, span: 25, skill: "Sight words", teach: "More whole words. I'll tell you when not to sound one out.", milestone: "K-Jan-Reading-1" }),
+        step({ id: "gabi-story-hen", title: "Story: The Red Hen", strand: "gabi-stories", strandName: "Stories", activity: "story", story: "story-hen", skill: "Stories", teach: "We'll read The Red Hen.", items: 1, masteryMin: 1, masteryHits: 1, milestone: "K-Jan-Reading-1" }),
+        step({ id: "gabi-story-ship", title: "Story: The Ship", strand: "gabi-stories", strandName: "Stories", activity: "story", story: "story-ship", skill: "Stories", teach: "We'll read The Ship.", items: 1, masteryMin: 1, masteryHits: 1, milestone: "K-Jan-Reading-1" })
       ]
     },
     {
       id: "math",
       steps: [
-        step({ id: "gabi-count-10", title: "Counting to 10", strand: "gabi-count", strandName: "Counting", activity: "count", min: 1, max: 10, skill: "Counting", teach: "Tap each picture as you count.", items: 4, masteryMin: 4, masteryHits: 3 }),
-        step({ id: "gabi-count-20", title: "Counting to 20", strand: "gabi-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "Each bed holds ten. Fill the first bed, then count the rest." }),
-        step({ id: "gabi-numbers", title: "Number names", strand: "gabi-numbers", strandName: "Numbers", activity: "numbers", skill: "Numbers", teach: "I'll show a number. You say it and tap it." }),
-        step({ id: "gabi-more", title: "More and fewer", strand: "gabi-numbers", strandName: "Numbers", activity: "compare", skill: "More and fewer", teach: "Count both sides, then pick more or fewer." }),
-        step({ id: "gabi-patterns", title: "Patterns", strand: "gabi-patterns", strandName: "Patterns", activity: "pattern", skill: "Patterns", teach: "Say the pattern out loud, then pick what comes next." }),
-        step({ id: "gabi-add", title: "Adding within 5", strand: "gabi-add", strandName: "Adding", activity: "add", maxSum: 5, skill: "Adding within 5", teach: "Count the first group, then keep counting the second." })
+        // September: recognize and count numbers 1-10.
+        step({ id: "gabi-count-10", title: "Counting to 10", strand: "gabi-count", strandName: "Counting", activity: "count", min: 1, max: 10, skill: "Counting", teach: "Tap each picture as you count.", items: 4, masteryMin: 4, masteryHits: 3, milestone: "K-Sep-Math-1" }),
+        step({ id: "gabi-numbers", title: "Number names", strand: "gabi-numbers", strandName: "Numbers", activity: "numbers", skill: "Numbers", teach: "I'll show a number. You say it and tap it.", milestone: "K-Sep-Math-1" }),
+        // October: count 11-20; AB, AAB, ABB patterns.
+        step({ id: "gabi-count-20", title: "Counting to 20", strand: "gabi-count", strandName: "Counting", activity: "count", min: 11, max: 20, skill: "Counting", teach: "Each bed holds ten. Fill the first bed, then count the rest.", milestone: "K-Oct-Math-1" }),
+        step({ id: "gabi-patterns", title: "Patterns", strand: "gabi-patterns", strandName: "Patterns", activity: "pattern", skill: "Patterns", teach: "Say the pattern out loud, then pick what comes next.", milestone: "K-Oct-Math-1" }),
+        // November: more and less; simple addition within 10.
+        step({ id: "gabi-more", title: "More and fewer", strand: "gabi-numbers", strandName: "Numbers", activity: "compare", skill: "More and fewer", teach: "Count both sides, then pick more or fewer.", milestone: "K-Nov-Math-1" }),
+        step({ id: "gabi-add", title: "Adding within 5", strand: "gabi-add", strandName: "Adding", activity: "add", maxSum: 5, skill: "Adding within 5", teach: "Count the first group, then keep counting the second.", milestone: "K-Nov-Math-1" }),
+        step({ id: "gabi-add-10", title: "Adding within 10", strand: "gabi-add", strandName: "Adding", activity: "add", maxSum: 10, skill: "Adding within 10", teach: "Count the first group, then keep counting the second. Bigger groups this time.", milestone: "K-Nov-Math-1" })
       ]
     }
   ],
@@ -187,8 +203,44 @@ const GAMES = {
   monsters: { id: "monster-hunt", title: "Monster Hunt", href: "../word-monsters/", say: oneRound("Monster Hunt") },
   helpers: { id: "lost-helpers", title: "The Lost Helpers", href: "../lost-helpers/", say: oneRound("The Lost Helpers") },
   train: { id: "train-set", title: "Train Set", href: "../train-set/", say: "Play with the trains, then come back and tap I played." },
-  ghost: { id: "ghost-word-run", title: "Christmas Word Run", href: "../ghost-word-run/", say: "Play Christmas Word Run, then come back and tap I played." }
+  ghost: { id: "ghost-word-run", title: "Christmas Word Run", href: "../ghost-word-run/", say: "Play Christmas Word Run, then come back and tap I played." },
+  sundae: { id: "snack-count", title: "Sundae Stand", href: "../snack-count/", say: oneRound("Sundae Stand") },
+  flowers: { id: "flower-beds", title: "Flower Beds", href: "../flower-beds/", say: oneRound("Flower Beds") },
+  sheep: { id: "more-or-fewer", title: "Lost Sheep", href: "../more-or-fewer/", say: oneRound("Lost Sheep") },
+  dino: { id: "pattern-park", title: "Dino Express", href: "../pattern-park/", say: oneRound("Dino Express") },
+  tide: { id: "sound-teams", title: "Tide Pool", href: "../sound-teams/", say: oneRound("Tide Pool") }
 };
+
+// Gabi's bonus game changes each school day. It comes from games for goals she has already
+// reached on the milestone sheet (`after`: that step is learned, or its goal is met), never the game already on her
+// board. Lost Helpers and Hatch Match review letters, which she has met.
+const BONUS_POOL = {
+  gabi: [
+    { game: GAMES.helpers },
+    { game: GAMES.hatch },
+    { game: GAMES.otter, after: "gabi-cvc-a" },
+    { game: GAMES.sundae, after: "gabi-count-10" },
+    { game: GAMES.flowers, after: "gabi-count-20" },
+    { game: GAMES.dino, after: "gabi-patterns" },
+    { game: GAMES.sheep, after: "gabi-more" },
+    { game: GAMES.ghost, after: "gabi-sight-1" },
+    { game: GAMES.tide, after: "gabi-sh" }
+  ]
+};
+
+function rotatingBonus(kidId, date, state, onBoard) {
+  const pool = (BONUS_POOL[kidId] || []).filter((entry) => {
+    if (onBoard.has(entry.game.id)) return false;
+    if (!entry.after) return true;
+    const def = stepById(kidId, entry.after);
+    return Boolean(def && (learned(state.steps?.[entry.after], def) || goalMet(def, metElsewhere(kidId, state))));
+  });
+  if (!pool.length) return null;
+  // A plain day count, so back-to-back days get different games.
+  const [year, month, day] = date.split("-").map(Number);
+  const dayNumber = Math.floor(Date.UTC(year, month - 1, day) / 86400000);
+  return pool[dayNumber % pool.length].game;
+}
 
 // A game card is done once this many answers from that game reach the progress log after the
 // card was opened. `game` is the name the game logs under, which is not always the card's id.
@@ -378,6 +430,16 @@ export function applyAttempt(rec, correct, stepDef, meta = {}) {
   return next;
 }
 
+// Otter Slide mixes vowels as the child learns words, so a short-vowel word is credited to the
+// step for its own vowel, whichever vowel step the card named. Other games credit the named step.
+export function practiceStep(kidId, stepId, item) {
+  const named = stepById(kidId, stepId);
+  if (named?.activity !== "cvc") return named;
+  const word = String(item || "").toLowerCase();
+  if (!/^[a-z]{3}$/.test(word)) return named;
+  return allSteps(kidId).find((entry) => entry.strand === named.strand && entry.vowel === word[1]) || named;
+}
+
 export function allSteps(kidId) {
   return (CHAINS[kidId] || []).flatMap((chain) => chain.steps);
 }
@@ -395,7 +457,9 @@ function emptyPlan() {
 }
 
 async function loadState(store, kidId) {
-  return seedChecks(kidId, dropEarlyMastery(kidId, { ...emptyState(), ...((await store.get(kidKey(kidId), { type: "json" })) || {}) }));
+  const state = seedChecks(kidId, dropEarlyMastery(kidId, { ...emptyState(), ...((await store.get(kidKey(kidId), { type: "json" })) || {}) }));
+  state.credited = await reportCredits(store, kidId);
+  return state;
 }
 
 // A step Stephanie thinks is known but hasn't seen lately starts as shown, with a cold check
@@ -454,7 +518,22 @@ export function dropEarlyMastery(kidId, state) {
   return state;
 }
 
-async function saveState(store, kidId, state) {
+// Goals Joyce's Friday report credited from game data or a parent's observation. The key is
+// report.mjs's STATE_KEY (report.mjs imports this file, so it can't be imported back).
+const REPORT_STATE_KEY = "state/report.json";
+
+export async function reportCredits(store, kidId) {
+  try {
+    const report = await store.get(REPORT_STATE_KEY, { type: "json" });
+    return Object.keys(report?.kids?.[kidId]?.milestones || {});
+  } catch (err) {
+    console.error("Reading the report's milestones failed:", err);
+    return [];
+  }
+}
+
+async function saveState(store, kidId, { credited, ...state }) {
+  void credited;
   const days = Object.keys(state.days || {}).sort().slice(-21);
   const cheers = Object.keys(state.cheers || {}).sort().slice(-14);
   const live = Object.keys(state.liveSeconds || {}).sort().slice(-14);
@@ -494,15 +573,28 @@ function missedItems(state, stepId) {
   return found;
 }
 
-export function frontier(chain, state, plan) {
+export const goalsOf = (def) => def?.milestones || (def?.milestone ? [def.milestone] : []);
+
+// A step is passed over when every milestone goal it works toward is already met another way.
+const goalMet = (item, met) => goalsOf(item).length > 0 && goalsOf(item).every((goal) => met.has(goal));
+
+// `met` holds milestone goals met outside the steps: Stephanie's baseline and goals the Friday
+// report credited. A step slipping on a skill still comes back for another look.
+// Holds saved before `keep` existed are recognized by the conference prompt they came from.
+const keepsStep = (hold) => Boolean(hold?.keep) || /is still working on /.test(String(hold?.why || ""));
+
+export function frontier(chain, state, plan, met = new Set()) {
   const holds = plan?.holds || {};
   for (const item of chain.steps) {
     if (item.placed) continue;
     if (state.steps?.[item.id]?.slipping) return { ...item, review: true };
+    if (goalMet(item, met)) continue;
     const known = learned(state.steps?.[item.id], item);
     if (known && holds[item.id]) return { ...item, review: true };
     if (known) continue;
-    if (holds[item.id]) {
+    // "Keep this step next week" (a long struggle) keeps the child on this same step. Only a
+    // "Not now" on a brand-new step sends them back to the step before it.
+    if (holds[item.id] && !keepsStep(holds[item.id])) {
       const earlier = chain.steps.filter((candidate, index) => index < chain.steps.indexOf(item) && !candidate.placed && learned(state.steps?.[candidate.id], candidate));
       const prev = earlier.at(-1);
       return prev ? { ...prev, review: true } : { ...item, review: true };
@@ -660,6 +752,12 @@ const SKILL_GAMES = {
   regroup: ["block-trade", "Moon Crates", "../block-trade/", oneRound("Moon Crates")]
 };
 
+// The game a step is played in, or null when Joyce teaches it as her own lesson.
+export function stepGame(item) {
+  const spec = JOYCE_TEACHES.has(item.id) ? null : STEP_GAMES[item.id] || SKILL_GAMES[item.activity];
+  return spec ? { id: spec[0], title: spec[1] } : null;
+}
+
 function skillCard(kidId, item, date, state) {
   const spec = JOYCE_TEACHES.has(item.id) ? null : STEP_GAMES[item.id] || SKILL_GAMES[item.activity];
   if (!spec) return lessonCard(kidId, item, date, state);
@@ -671,7 +769,9 @@ function skillCard(kidId, item, date, state) {
     kind: "game",
     part: partFor(kidId, item.id),
     gameId: id,
-    title: item.review ? `Another look: ${title}` : title,
+    // The step goes in the title: one game can hold several steps in a row (Sundae Stand is
+    // counting to 10, then number names), and the board should show which one this is.
+    title: item.review ? `Another look: ${title}: ${item.title}` : `${title}: ${item.title}`,
     href: `${href}?kid=${encodeURIComponent(kidId)}&step=${encodeURIComponent(item.id)}`,
     say,
     goal: "Play, then come back",
@@ -787,6 +887,12 @@ function gabiGame(state) {
   return GAMES.otter;
 }
 
+// Goals met outside Joyce's steps. `credited` is loaded fresh on each request from the Friday
+// report's state and never saved with the child.
+function metElsewhere(kidId, state) {
+  return new Set([...baselineMet(kidId), ...(state.credited || [])]);
+}
+
 function lessonFrontiers(kidId, state, plan) {
   if (Array.isArray(state.boardLessons)) {
     return state.boardLessons.map((entry) => {
@@ -795,7 +901,8 @@ function lessonFrontiers(kidId, state, plan) {
       return { ...found, review: Boolean(entry.review), missed: entry.missed || [] };
     }).filter(Boolean);
   }
-  return (CHAINS[kidId] || []).map((chain) => frontier(chain, state, plan)).filter(Boolean);
+  const met = metElsewhere(kidId, state);
+  return (CHAINS[kidId] || []).map((chain) => frontier(chain, state, plan, met)).filter(Boolean);
 }
 
 function settleShown(state, date) {
@@ -968,8 +1075,9 @@ function pairCards({ kidId, date, state, plan, rhythm, game, write }) {
   if (rhythm === "weekend") return [gameCard(date, game), moveCard(kidId, date)];
   if (kidId === "connor") return connorCards({ date, state, plan, write });
   const cards = found.slice(0, 2).map((item) => skillCard(kidId, item, date, state));
-  let bonus = game;
-  if (cards.some((card) => card.gameId === bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.helpers : GAMES.otter;
+  const onBoard = new Set(cards.map((card) => card.gameId).filter(Boolean));
+  let bonus = rotatingBonus(kidId, date, state, onBoard) || game;
+  if (onBoard.has(bonus.id)) bonus = bonus.id === "otter-slide" ? GAMES.helpers : GAMES.otter;
   cards.push(gameCard(date, bonus, "bonus"), moveCard(kidId, date, "bonus"));
   return cards;
 }
@@ -1380,7 +1488,7 @@ export async function handleClassroom({ store, env = process.env, fetchImpl = fe
   }
 
   if (action === "practice") {
-    const stepDef = stepById(kidId, String(body.step || ""));
+    const stepDef = practiceStep(kidId, String(body.step || ""), body.item);
     if (!stepDef) return { status: 400, body: { error: "That game isn't on this child's path." } };
     if (typeof body.correct !== "boolean") return { status: 400, body: { error: "Joyce couldn't save that play." } };
     const before = Boolean(state.steps?.[stepDef.id]?.mastered);
@@ -1871,7 +1979,9 @@ export function applyDecision(plan, decision, yes) {
     kids: { ...(plan.kids || {}) },
     celebrated: { ...(plan.celebrated || {}) }
   };
-  if (decision.kind === "hold" && yes) next.holds[decision.stepId] = { why: decision.prompt };
+  if (decision.kind === "hold" && yes) {
+    next.holds[decision.stepId] = { why: decision.prompt, ...(String(decision.id).startsWith("slow-") ? { keep: true } : {}) };
+  }
   if (decision.kind === "hold" && !yes) delete next.holds[decision.stepId];
   if (decision.kind === "notice" && yes) {
     next.noticed[decision.stepId] = true;
